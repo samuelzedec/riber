@@ -1,0 +1,11 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+  
+  <!-- Pacotes para o domínio e aplicação -->
+  <ItemGroup>
+    <PackageVersion Include="MediatR.Contracts" Version="2.0.1"/>
+  </ItemGroup>
+</Project>

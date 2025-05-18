@@ -1,0 +1,32 @@
+<Project>
+  <!-- Informações do Autor -->
+  <PropertyGroup>
+    <Company>Samuel Zedec</Company>
+    <Copyright>Copyright © $([System.DateTime]::Now.Year)</Copyright>
+    <Description>Sistema de gestão financeira para um lanchonete local</Description>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+
+  <!-- Repositório e Documentação -->
+  <PropertyGroup>
+    <RepositoryUrl>https://github.com/acme/financial</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+  <!-- Configurações básicas do projeto -->
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <!-- Configurações para análise de código do projeto -->
+  <PropertyGroup>
+    <!-- Converte todos os avisos do compilador em erros, impedindo builds com código que tenha problemas em potencial -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- Ativa o conjunto mais recente de analisadores de código do .NET, detectando problemas de segurança, performance e boas práticas -->
+    <AnalysisLevel>latest</AnalysisLevel>
+    <!-- Eleva as regras de estilo definidas no .editorconfig de sugestões para avisos/erros durante a compilação -->
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+</Project>
