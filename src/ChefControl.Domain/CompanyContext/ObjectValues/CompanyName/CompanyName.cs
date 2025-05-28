@@ -1,4 +1,5 @@
 using ChefControl.Domain.Companies.ObjectValues.CompanyName.Exceptions;
+using ChefControl.Domain.Shared.Exceptions;
 using ChefControl.Domain.Shared.ObjectValues;
 
 namespace ChefControl.Domain.Companies.ObjectValues.CompanyName;
@@ -46,10 +47,10 @@ public sealed record CompanyName : ObjectValue
     private static void CheckNameValidity(ref string name)
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new InvalidNameException("O nome não pode ser vazio.");
+            throw new InvalidNameException(ErrorMessage.Name.IsNullOrEmpty);
         
         if(name.Length is > NameMaxLength or < MinLength)
-            throw new InvalidLengthNameException($"O nome deve ter entre {MinLength} e {NameMaxLength} caracteres.");
+            throw new InvalidLengthNameException(ErrorMessage.Name.LengthIsInvalid);
         
         name = name.Trim();
     }
@@ -57,10 +58,10 @@ public sealed record CompanyName : ObjectValue
     private static void CheckTradingNameValidity(ref string tradingName)
     {
         if (string.IsNullOrWhiteSpace(tradingName))
-            throw new InvalidTradingNameException("O nome fantasia não pode ser vazio");
+            throw new InvalidTradingNameException(ErrorMessage.TradingName.IsNullOrEmpty);
 
         if (tradingName.Length is > TradingNameMaxLength or < MinLength)
-            throw new InvalidTradingLengthNameException($"O nome fantasia deve ter entre {MinLength} e {TradingNameMaxLength} caracteres.");
+            throw new InvalidTradingLengthNameException(ErrorMessage.TradingName.LengthIsInvalid);
         
         tradingName = tradingName.Trim();
     }

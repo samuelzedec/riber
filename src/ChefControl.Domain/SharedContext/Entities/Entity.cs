@@ -1,4 +1,4 @@
-namespace ChefControl.Domain.Shared.Entities;
+namespace ChefControl.Domain.SharedContext.Entities;
 
 public abstract class Entity(Guid id) : IEquatable<Guid>
 {

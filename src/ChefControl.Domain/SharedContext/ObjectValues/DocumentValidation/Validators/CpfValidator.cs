@@ -1,24 +1,27 @@
-using ChefControl.Domain.Shared.ObjectValues.DocumentValidation.Exceptions;
+using ChefControl.Domain.SharedContext.Constants;
+using ChefControl.Domain.SharedContext.ObjectValues.DocumentValidation.Exceptions;
 
-namespace ChefControl.Domain.Shared.ObjectValues.DocumentValidation.Validators;
+namespace ChefControl.Domain.SharedContext.ObjectValues.DocumentValidation.Validators;
 
-public sealed class CpfValidator : IDocumentValidator
+public sealed record CpfValidator : IDocumentValidator
 {
     #region Properties Private
 
     private const int Length = 11;
 
     #endregion
-    
+
+    #region Methods
+
     public void IsValid(string document)
     {
         string cpf = Sanitize(document);
-        
+
         if (cpf.Length != Length)
-            throw new InvalidLengthCpfException($"CPF deve ter {Length} dígitos para ser formatado.");
+            throw new InvalidLengthCpfException(ErrorMessage.Cpf.LengthIsInvalid);
             
         if (cpf.Distinct().Count() == 1)
-            throw new InvalidCpfException($"CPF não pode conter somente números iguais.");
+            throw new InvalidCpfException(ErrorMessage.Cpf.OnlyRepeatedDigits);
             
         int[] digits = cpf
             .Select(c => c - '0')
@@ -32,7 +35,7 @@ public sealed class CpfValidator : IDocumentValidator
         int digit1 = remainder < 2 ? 0 : 11 - remainder;
         
         if (digits[9] != digit1)
-            throw new InvalidCpfException("CPF Inválido.");
+            throw new InvalidCpfException(ErrorMessage.Cpf.IsInvalid);
             
         sum = 0;
         for (int i = 0; i < 10; i++)
@@ -40,16 +43,18 @@ public sealed class CpfValidator : IDocumentValidator
         
         remainder = sum % 11;
         int digit2 = remainder < 2 ? 0 : 11 - remainder;
-        
-        if(digits[10] != digit2)
-            throw new InvalidCpfException("CPF Inválido.");
+
+        if (digits[10] != digit2)
+            throw new InvalidCpfException(ErrorMessage.Cpf.IsInvalid);
     }
 
     public string Sanitize(string document)
         => string.IsNullOrWhiteSpace(document) 
-            ? throw new InvalidCpfException("O CPF não pode ser vazio.")
+            ? throw new InvalidCpfException(ErrorMessage.Cpf.IsNullOrEmpty)
             : new string([.. document.Where(char.IsDigit)]);
 
     public static string Format(string document)
         => $"{document.Substring(0, 3)}.{document.Substring(3, 3)}.{document.Substring(6, 3)}-{document.Substring(9, 2)}";
+
+    #endregion
 }
