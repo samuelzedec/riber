@@ -3,9 +3,5 @@
   <ItemGroup>
     <PackageReference Include="MediatR.Contracts" />
   </ItemGroup>
-  
-  <ItemGroup>
-    <Folder Include="Accounts\Entities\" />
-  </ItemGroup>
 
 </Project>

@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace ChefControl.Domain.Companies.Enums;
+namespace ChefControl.Domain.CompanyContext.Enums;
 
 public enum ECompanyType
 {

@@ -1,8 +1,9 @@
-using ChefControl.Domain.Companies.ObjectValues.CompanyName.Exceptions;
-using ChefControl.Domain.Shared.Exceptions;
-using ChefControl.Domain.Shared.ObjectValues;
+using ChefControl.Domain.CompanyContext.ObjectValues.CompanyName.Exceptions;
+using ChefControl.Domain.SharedContext.Constants;
+using ChefControl.Domain.SharedContext.Exceptions;
+using ChefControl.Domain.SharedContext.ObjectValues;
 
-namespace ChefControl.Domain.Companies.ObjectValues.CompanyName;
+namespace ChefControl.Domain.CompanyContext.ObjectValues.CompanyName;
 
 public sealed record CompanyName : ObjectValue
 {
@@ -50,7 +51,7 @@ public sealed record CompanyName : ObjectValue
             throw new InvalidNameException(ErrorMessage.Name.IsNullOrEmpty);
         
         if(name.Length is > NameMaxLength or < MinLength)
-            throw new InvalidLengthNameException(ErrorMessage.Name.LengthIsInvalid);
+            throw new InvalidLengthNameException(ErrorMessage.Name.LengthIsInvalid(MinLength, NameMaxLength));
         
         name = name.Trim();
     }
@@ -61,7 +62,7 @@ public sealed record CompanyName : ObjectValue
             throw new InvalidTradingNameException(ErrorMessage.TradingName.IsNullOrEmpty);
 
         if (tradingName.Length is > TradingNameMaxLength or < MinLength)
-            throw new InvalidTradingLengthNameException(ErrorMessage.TradingName.LengthIsInvalid);
+            throw new InvalidTradingLengthNameException(ErrorMessage.TradingName.LengthIsInvalid(MinLength, TradingNameMaxLength));
         
         tradingName = tradingName.Trim();
     }

@@ -1,10 +1,10 @@
-using ChefControl.Domain.Companies.Enums;
-using ChefControl.Domain.Companies.ObjectValues.CompanyName;
-using ChefControl.Domain.Companies.ObjectValues.TaxId;
-using ChefControl.Domain.Shared.Abstractions;
-using ChefControl.Domain.Shared.Entities;
+using ChefControl.Domain.CompanyContext.Enums;
+using ChefControl.Domain.CompanyContext.ObjectValues.CompanyName;
+using ChefControl.Domain.CompanyContext.ObjectValues.TaxId;
+using ChefControl.Domain.SharedContext.Abstractions;
+using ChefControl.Domain.SharedContext.Entities;
 
-namespace ChefControl.Domain.Companies.Entities;
+namespace ChefControl.Domain.CompanyContext.Entities;
 
 public sealed class Company : Entity, IAggregateRoot
 {
@@ -37,8 +37,7 @@ public sealed class Company : Entity, IAggregateRoot
         CompanyName name,
         CompanyTaxId taxId,
         string email,
-        string phone,
-        ECompanyType type) : base(Guid.CreateVersion7())
+        string phone) : base(Guid.CreateVersion7())
     {
         Name = name;
         TaxId = taxId;

@@ -1,10 +1,11 @@
-using ChefControl.Domain.Companies.Enums;
-using ChefControl.Domain.Shared.ObjectValues;
-using ChefControl.Domain.Shared.ObjectValues.DocumentValidation;
-using ChefControl.Domain.Shared.ObjectValues.DocumentValidation.Exceptions;
-using ChefControl.Domain.Shared.ObjectValues.DocumentValidation.Validators;
+using ChefControl.Domain.CompanyContext.Enums;
+using ChefControl.Domain.SharedContext.Constants;
+using ChefControl.Domain.SharedContext.ObjectValues;
+using ChefControl.Domain.SharedContext.ObjectValues.DocumentValidation;
+using ChefControl.Domain.SharedContext.ObjectValues.DocumentValidation.Exceptions;
+using ChefControl.Domain.SharedContext.ObjectValues.DocumentValidation.Validators;
 
-namespace ChefControl.Domain.Companies.ObjectValues.TaxId;
+namespace ChefControl.Domain.CompanyContext.ObjectValues.TaxId;
 
 public sealed record CompanyTaxId : ObjectValue
 {
@@ -67,7 +68,7 @@ public sealed record CompanyTaxId : ObjectValue
         {
             ECompanyType.IndividualWithCpf => CpfValidator.Format(Value),
             ECompanyType.LegalEntityWithCnpj => CnpjValidator.Format(Value),
-            _ => throw new UnsupportedCompanyTypeException("Não é possível formatar o tipo de documento.")
+            _ => throw new UnsupportedCompanyTypeException(ErrorMessage.Document.IsInvalid)
         };
 
     #endregion

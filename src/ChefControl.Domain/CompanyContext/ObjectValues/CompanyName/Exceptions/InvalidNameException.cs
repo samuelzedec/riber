@@ -1,6 +1,6 @@
-using ChefControl.Domain.Shared.Exceptions;
+using ChefControl.Domain.SharedContext.Exceptions;
 
-namespace ChefControl.Domain.Companies.ObjectValues.CompanyName.Exceptions;
+namespace ChefControl.Domain.CompanyContext.ObjectValues.CompanyName.Exceptions;
 
 public class InvalidNameException(string message) 
     : DomainException(message);
