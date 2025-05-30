@@ -1,3 +1,6 @@
 <Solution>
-  <Project Path="src/ChefControl.Domain/ChefControl.Domain.csproj" />
+    <Folder Name="/src/">
+        <Project Path="src/ChefControl.Application/ChefControl.Application.csproj"/>
+        <Project Path="src/ChefControl.Domain/ChefControl.Domain.csproj"/>
+    </Folder>
 </Solution>

@@ -1,11 +1,15 @@
 <Project>
-  <PropertyGroup>
-    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
-  </PropertyGroup>
-  
-  <!-- Pacotes para o domínio e aplicação -->
-  <ItemGroup>
-    <PackageVersion Include="MediatR.Contracts" Version="2.0.1"/>
-  </ItemGroup>
+    <PropertyGroup>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+        <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+    </PropertyGroup>
+    <!-- Pacotes para o domínio e aplicação -->
+    <ItemGroup>
+        <PackageVersion Include="MediatR.Contracts" Version="2.0.1"/>
+    </ItemGroup>
+    
+    <!-- Pacotes que contém somente abstrações -->
+    <ItemGroup>
+        <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.5" />
+    </ItemGroup>
 </Project>
