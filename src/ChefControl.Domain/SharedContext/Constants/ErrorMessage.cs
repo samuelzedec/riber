@@ -1,7 +1,7 @@
 namespace ChefControl.Domain.SharedContext.Constants;
 
 /// <summary>
-/// Centraliza as mensagens de erro em uma única classe.
+/// Contém mensagens de erro relacionadas a validações e restrições específicas do domínio.
 /// </summary>
 public static class ErrorMessage
 {
@@ -62,5 +62,11 @@ public static class ErrorMessage
     {
         public const string IsNullOrEmpty = "O email não pode ser vazio.";
         public const string FormatInvalid = "O email está com o formato inválido.";
+    }
+
+    public static class Phone
+    {
+        public const string IsNullOrEmpty = "O telefone não pode ser vazio.";
+        public const string FormatInvalid = "O telefone está com o formato inválido.";
     }
 }
