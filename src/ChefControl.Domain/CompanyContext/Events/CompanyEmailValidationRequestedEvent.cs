@@ -1,6 +1,5 @@
-﻿namespace ChefControl.Domain.CompanyContext.Events;
+﻿using ChefControl.Domain.SharedContext.Abstractions;
 
-public class CompanyEmailValidationRequestedEvent
-{
-    
-}
+namespace ChefControl.Domain.CompanyContext.Events;
+
+public class CompanyEmailValidationRequestedEvent : IDomainEvent;
