@@ -1,4 +1,6 @@
+using ChefControl.Domain.SharedContext.Exceptions;
+
 namespace ChefControl.Domain.SharedContext.ObjectValues.Email.Exceptions;
 
 public class EmailNullOrEmptyException(string message) 
-    : Exception(message);
+    : DomainException(message);

@@ -43,7 +43,7 @@ public sealed record CompanyName : ObjectValue
 
     #endregion
     
-    #region Validation Methods
+    #region Private Methods
 
     private static void CheckNameValidity(ref string name)
     {

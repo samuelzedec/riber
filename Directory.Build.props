@@ -9,7 +9,7 @@
 
   <!-- Repositório e Documentação -->
   <PropertyGroup>
-    <RepositoryUrl>https://github.com/acme/financial</RepositoryUrl>
+    <RepositoryUrl>https://github.com/samuelzedec/ChefControl</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
