@@ -1,5 +1,4 @@
 ﻿using ChefControl.Application.SharedContext.Exceptions;
-using ChefControl.Application.SharedContext.UseCases.Abstractions;
 using FluentValidation;
 using MediatR;
 using AppValidationException = ChefControl.Application.SharedContext.Exceptions.ValidationException;
@@ -7,7 +6,7 @@ using AppValidationException = ChefControl.Application.SharedContext.Exceptions.
 namespace ChefControl.Application.SharedContext.Behaviors;
 
 public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TRequest>> validators)
-    : IPipelineBehavior<TRequest, TResponse> where TRequest : ICommand
+    : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest
 {
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next,
         CancellationToken cancellationToken)
