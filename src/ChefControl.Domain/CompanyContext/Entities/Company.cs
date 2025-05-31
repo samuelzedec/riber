@@ -80,12 +80,16 @@ public sealed class Company : Entity, IAggregateRoot
         
         if(!string.IsNullOrWhiteSpace(phone))
             Phone = Phone.Create(phone);
+        
+        UpdateEntity();
     }
 
     public void UpdateTradingName(string? tradingName = null)
     {
         if(!string.IsNullOrWhiteSpace(tradingName))
             CompanyName = CompanyName.Create(CompanyName.Name, tradingName);
+        
+        UpdateEntity();
     }
     
     #endregion

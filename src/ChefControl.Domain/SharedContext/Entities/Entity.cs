@@ -17,6 +17,8 @@ public abstract class Entity(Guid id) : IEquatable<Guid>
     #region Properties
 
     public Guid Id { get; } = id;
+    public DateTime CreatedAt { get; protected set; } = DateTime.UtcNow;
+    public DateTime? ModifiedAt { get; protected set; }
 
     #endregion
 
@@ -44,6 +46,13 @@ public abstract class Entity(Guid id) : IEquatable<Guid>
     
     public void RaiseEvent(IDomainEvent @event)
         => _events.Add(@event);
+    
+    #endregion
+    
+    #region Protected Methods
+
+    protected void UpdateEntity()
+        => ModifiedAt = DateTime.UtcNow;
     
     #endregion
 }

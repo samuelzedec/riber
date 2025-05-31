@@ -64,6 +64,9 @@ public static class ErrorMessage
         public const string FormatInvalid = "O email está com o formato inválido.";
     }
 
+    /// <summary>
+    /// Contém as mensagens de erro relacionadas a propriedade Telefone
+    /// </summary>
     public static class Phone
     {
         public const string IsNullOrEmpty = "O telefone não pode ser vazio.";
