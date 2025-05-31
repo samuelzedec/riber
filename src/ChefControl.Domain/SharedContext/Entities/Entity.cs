@@ -3,13 +3,9 @@ using ChefControl.Domain.SharedContext.Abstractions;
 namespace ChefControl.Domain.SharedContext.Entities;
 
 /// <summary>
-/// Representa uma entidade base no domínio. Fornece um identificador único (Id)
-/// e lógica de comparação de igualdade para entidades de domínio.
+/// Representa uma entidade base abstrata que fornece funcionalidades comuns para entidades de domínio.
+/// Esta classe inclui um identificador, gerenciamento de eventos de domínio e mecanismos de comparação de igualdade.
 /// </summary>
-/// <remarks>
-/// Esta classe abstrata deve ser herdada pelas entidades de domínio
-/// para implementar comportamentos padrão como ter um identificador único.
-/// </remarks>
 public abstract class Entity(Guid id) : IEquatable<Guid>
 {
     #region Private Members
@@ -21,6 +17,8 @@ public abstract class Entity(Guid id) : IEquatable<Guid>
     #region Properties
 
     public Guid Id { get; } = id;
+    public DateTime CreatedAt { get; protected set; } = DateTime.UtcNow;
+    public DateTime? ModifiedAt { get; protected set; }
 
     #endregion
 
@@ -48,6 +46,13 @@ public abstract class Entity(Guid id) : IEquatable<Guid>
     
     public void RaiseEvent(IDomainEvent @event)
         => _events.Add(@event);
+    
+    #endregion
+    
+    #region Protected Methods
+
+    protected void UpdateEntity()
+        => ModifiedAt = DateTime.UtcNow;
     
     #endregion
 }

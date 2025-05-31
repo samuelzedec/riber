@@ -1,0 +1,6 @@
+@ChefControl.Api_HostAddress = http://localhost:5266
+
+GET {{ChefControl.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

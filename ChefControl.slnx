@@ -1,6 +1,8 @@
 <Solution>
-    <Folder Name="/src/">
-        <Project Path="src/ChefControl.Application/ChefControl.Application.csproj"/>
-        <Project Path="src/ChefControl.Domain/ChefControl.Domain.csproj"/>
-    </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/ChefControl.Api/ChefControl.Api.csproj" />
+    <Project Path="src/ChefControl.Application/ChefControl.Application.csproj" />
+    <Project Path="src/ChefControl.Domain/ChefControl.Domain.csproj" />
+    <Project Path="src/ChefControl.Infrastructure/ChefControl.Infrastructure.csproj" />
+  </Folder>
 </Solution>
