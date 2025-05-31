@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <ItemGroup>
+        <PackageReference Include="BCrypt.Net-Next" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\ChefControl.Application\ChefControl.Application.csproj" />
+        <ProjectReference Include="..\ChefControl.Application\ChefControl.Domain.csproj" />
+    </ItemGroup>
+</Project>
