@@ -4,6 +4,9 @@ using ChefControl.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Events;
 
 namespace ChefControl.Infrastructure;
 
@@ -18,6 +21,32 @@ public static class DependencyInjection
     {
         services.AddPersistence(configuration);
         services.AddServicesInfra();
+    }
+    
+    public static void AddLogging(this ILoggingBuilder logging)
+    {
+        const string output = "[{Timestamp:dd/MM/yyyy HH:mm:ss}] {Level:u3} | {SourceContext} | {Message:lj}{NewLine}{Exception}";
+        Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Information()
+            .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+            .MinimumLevel.Override("System", LogEventLevel.Warning)
+            .Enrich.FromLogContext()
+            .WriteTo.Console(outputTemplate: output)
+            .WriteTo.File(
+                path: "Common/Logs/app-.log",
+                outputTemplate: output,
+                rollingInterval: RollingInterval.Day,
+                restrictedToMinimumLevel: LogEventLevel.Information,
+                retainedFileCountLimit: 30)
+            .WriteTo.File(
+                path: "Common/Logs/errors-.log", 
+                outputTemplate: output,
+                rollingInterval: RollingInterval.Day,
+                restrictedToMinimumLevel: LogEventLevel.Error,
+                retainedFileCountLimit: 90)
+            .CreateLogger();
+        
+        logging.AddSerilog();
     }
 
     private static void AddPersistence(this IServiceCollection services, IConfiguration configuration)
