@@ -19,8 +19,7 @@ public static class BuilderExtension
     private static void AddDependencyInjection(this WebApplicationBuilder builder)
     {
         builder.Services.AddApplication();
-        builder.Services.AddInfrastructure(builder.Configuration);
-        builder.Logging.AddLogging();
+        builder.Services.AddInfrastructure(builder.Configuration, builder.Logging);
     }
 
     private static void AddConfigurations(this WebApplicationBuilder builder)
@@ -62,7 +61,7 @@ public static class BuilderExtension
                 options.DefaultAuthenticateScheme = accessToken.Key;
                 options.DefaultChallengeScheme = accessToken.Key;
             })
-            .AddJwtBearer(accessToken.Key,options =>
+            .AddJwtBearer(accessToken.Key, options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
