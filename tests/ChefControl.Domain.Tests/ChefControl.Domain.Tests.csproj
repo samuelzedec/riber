@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsTestProject>true</IsTestProject>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Bogus" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Moq" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\ChefControl.Api\ChefControl.Api.csproj" />
+    <ProjectReference Include="..\..\src\ChefControl.Application\ChefControl.Application.csproj" />
+    <ProjectReference Include="..\..\src\ChefControl.Domain\ChefControl.Domain.csproj" />
+    <ProjectReference Include="..\..\src\ChefControl.Infrastructure\ChefControl.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="CompanyContext\" />
+  </ItemGroup>
+
+</Project>

@@ -17,15 +17,18 @@ namespace ChefControl.Infrastructure;
 /// </summary>
 public static class DependencyInjection
 {
-    public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+    public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration,
+        ILoggingBuilder logging)
     {
+        logging.AddLogging();
         services.AddPersistence(configuration);
         services.AddServicesInfra();
     }
-    
-    public static void AddLogging(this ILoggingBuilder logging)
+
+    private static void AddLogging(this ILoggingBuilder logging)
     {
-        const string output = "[{Timestamp:dd/MM/yyyy HH:mm:ss}] {Level:u3} | {SourceContext} | {Message:lj}{NewLine}{Exception}";
+        const string output =
+            "[{Timestamp:dd/MM/yyyy HH:mm:ss}] {Level:u3} | {SourceContext} | {Message:lj}{NewLine}{Exception}";
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Information()
             .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
@@ -39,13 +42,13 @@ public static class DependencyInjection
                 restrictedToMinimumLevel: LogEventLevel.Information,
                 retainedFileCountLimit: 30)
             .WriteTo.File(
-                path: "Common/Logs/errors-.log", 
+                path: "Common/Logs/errors-.log",
                 outputTemplate: output,
                 rollingInterval: RollingInterval.Day,
                 restrictedToMinimumLevel: LogEventLevel.Error,
                 retainedFileCountLimit: 90)
             .CreateLogger();
-        
+
         logging.AddSerilog();
     }
 

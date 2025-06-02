@@ -1,10 +1,10 @@
 using ChefControl.Domain.CompanyContext.Enums;
-using ChefControl.Domain.CompanyContext.ObjectValues.CompanyName;
-using ChefControl.Domain.CompanyContext.ObjectValues.TaxId;
+using ChefControl.Domain.CompanyContext.ValueObjects.CompanyName;
+using ChefControl.Domain.CompanyContext.ValueObjects.TaxId;
 using ChefControl.Domain.SharedContext.Abstractions;
 using ChefControl.Domain.SharedContext.Entities;
-using ChefControl.Domain.SharedContext.ObjectValues.Email;
-using ChefControl.Domain.SharedContext.ObjectValues.Phone;
+using ChefControl.Domain.SharedContext.ValueObjects.Email;
+using ChefControl.Domain.SharedContext.ValueObjects.Phone;
 
 namespace ChefControl.Domain.CompanyContext.Entities;
 

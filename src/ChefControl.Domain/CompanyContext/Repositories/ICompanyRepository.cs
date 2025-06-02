@@ -1,3 +1,6 @@
-﻿namespace ChefControl.Domain.CompanyContext.Repositories;
+﻿using ChefControl.Domain.CompanyContext.Entities;
+using ChefControl.Domain.SharedContext.Persistence;
 
-public interface ICompanyRepository;
+namespace ChefControl.Domain.CompanyContext.Repositories;
+
+public interface ICompanyRepository : IRepository<Company>;

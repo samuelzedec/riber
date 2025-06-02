@@ -5,4 +5,7 @@
     <Project Path="src/ChefControl.Domain/ChefControl.Domain.csproj" />
     <Project Path="src/ChefControl.Infrastructure/ChefControl.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ChefControl.Domain.Tests/ChefControl.Domain.Tests.csproj" />
+  </Folder>
 </Solution>

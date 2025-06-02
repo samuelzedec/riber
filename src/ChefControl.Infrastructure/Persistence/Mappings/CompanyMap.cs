@@ -1,5 +1,5 @@
 ﻿using ChefControl.Domain.CompanyContext.Entities;
-using ChefControl.Domain.CompanyContext.ObjectValues.CompanyName;
+using ChefControl.Domain.CompanyContext.ValueObjects.CompanyName;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
