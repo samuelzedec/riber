@@ -8,6 +8,8 @@ namespace ChefControl.Domain.Tests.CompanyContext.ValueObjects;
 
 public class CompanyNameTests : BaseTest
 {
+    #region Valid Creation Scenarios
+
     [Fact(DisplayName = "Should create CompanyName with Name and TradingName")]
     public void ShouldCreateCompanyNameWithNameAndTradingName()
     {
@@ -80,6 +82,9 @@ public class CompanyNameTests : BaseTest
         result.TradingName.Should().NotEndWith(" ");
     }
 
+    #endregion
+
+    #region Null and Empty Tests
 
     [Theory(DisplayName = "Should throw InvalidTradingNameException for empty or null trading names")]
     [InlineData("")]
@@ -119,6 +124,9 @@ public class CompanyNameTests : BaseTest
         act.Should().ThrowExactly<InvalidNameException>().WithMessage(ErrorMessage.Name.IsNullOrEmpty);
     }
 
+    #endregion
+    
+    #region Name Property Tests
 
     [Fact(DisplayName = "Should throw exception when name exceeds maximum length")]
     public void ShouldThrowExceptionWhenNameExceedsMaximumLength()
@@ -166,6 +174,10 @@ public class CompanyNameTests : BaseTest
         result.Should().Throw<DomainException>();
         result.Should().ThrowExactly<InvalidNameException>().WithMessage(ErrorMessage.Name.IsNullOrEmpty);
     }
+
+    #endregion
+
+    #region TradingName Property Tests
 
     [Fact(DisplayName = "Should throw exception when trading name exceeds maximum length")]
     public void ShouldThrowExceptionWhenTradingNameExceedsMaximumLength()
@@ -228,4 +240,6 @@ public class CompanyNameTests : BaseTest
         // Assert
         result.Should().Be(tradingName);
     }
+
+    #endregion
 }

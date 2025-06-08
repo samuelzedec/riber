@@ -1,9 +1,9 @@
 using ChefControl.Domain.CompanyContext.Enums;
 using ChefControl.Domain.SharedContext.Constants;
+using ChefControl.Domain.SharedContext.DomainServices.DocumentValidation;
+using ChefControl.Domain.SharedContext.DomainServices.DocumentValidation.Exceptions;
+using ChefControl.Domain.SharedContext.DomainServices.DocumentValidation.Validators;
 using ChefControl.Domain.SharedContext.ValueObjects;
-using ChefControl.Domain.SharedContext.ValueObjects.DocumentValidation;
-using ChefControl.Domain.SharedContext.ValueObjects.DocumentValidation.Exceptions;
-using ChefControl.Domain.SharedContext.ValueObjects.DocumentValidation.Validators;
 
 namespace ChefControl.Domain.CompanyContext.ValueObjects.TaxId;
 
@@ -35,7 +35,7 @@ public sealed record CompanyTaxId : ValueObject
             : new CnpjValidator();
         
         validator.IsValid(value);
-        return new CompanyTaxId(value, type);
+        return new CompanyTaxId(validator.Sanitize(value), type);
     }
     
     public static CompanyTaxId CreateFromCpf(string cpf)
@@ -64,12 +64,9 @@ public sealed record CompanyTaxId : ValueObject
     #region Overrides
 
     public override string ToString()
-        => Type switch
-        {
-            ECompanyType.IndividualWithCpf => CpfValidator.Format(Value),
-            ECompanyType.LegalEntityWithCnpj => CnpjValidator.Format(Value),
-            _ => throw new UnsupportedCompanyTypeException(ErrorMessage.Document.IsInvalid)
-        };
+        => Type == ECompanyType.IndividualWithCpf
+            ? CpfValidator.Format(Value)
+            : CnpjValidator.Format(Value);
 
     #endregion
 }

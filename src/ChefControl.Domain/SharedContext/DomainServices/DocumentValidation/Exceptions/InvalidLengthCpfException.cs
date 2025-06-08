@@ -1,6 +1,6 @@
 using ChefControl.Domain.SharedContext.Exceptions;
 
-namespace ChefControl.Domain.SharedContext.ValueObjects.DocumentValidation.Exceptions;
+namespace ChefControl.Domain.SharedContext.DomainServices.DocumentValidation.Exceptions;
 
 public class InvalidLengthCpfException(string message) 
     : DomainException(message);

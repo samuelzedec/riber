@@ -1,4 +1,4 @@
-namespace ChefControl.Domain.SharedContext.ValueObjects.DocumentValidation;
+namespace ChefControl.Domain.SharedContext.DomainServices.DocumentValidation;
 
 public interface IDocumentValidator
 {
