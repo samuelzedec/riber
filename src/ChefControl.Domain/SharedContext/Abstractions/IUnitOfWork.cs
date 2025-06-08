@@ -1,6 +1,6 @@
 ﻿using ChefControl.Domain.CompanyContext.Repositories;
 
-namespace ChefControl.Domain.SharedContext.Persistence;
+namespace ChefControl.Domain.SharedContext.Abstractions;
 
 /// <summary>
 /// Representa uma unidade de trabalho que encapsula um conjunto de mudanças para persistência.

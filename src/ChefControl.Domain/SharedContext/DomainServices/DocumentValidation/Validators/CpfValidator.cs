@@ -1,7 +1,7 @@
 using ChefControl.Domain.SharedContext.Constants;
-using ChefControl.Domain.SharedContext.ValueObjects.DocumentValidation.Exceptions;
+using ChefControl.Domain.SharedContext.DomainServices.DocumentValidation.Exceptions;
 
-namespace ChefControl.Domain.SharedContext.ValueObjects.DocumentValidation.Validators;
+namespace ChefControl.Domain.SharedContext.DomainServices.DocumentValidation.Validators;
 
 public sealed record CpfValidator : IDocumentValidator
 {
@@ -16,9 +16,6 @@ public sealed record CpfValidator : IDocumentValidator
     public void IsValid(string document)
     {
         string cpf = Sanitize(document);
-
-        if (cpf.Length != Length)
-            throw new InvalidLengthCpfException(ErrorMessage.Cpf.LengthIsInvalid);
             
         if (cpf.Distinct().Count() == 1)
             throw new InvalidCpfException(ErrorMessage.Cpf.OnlyRepeatedDigits);
@@ -49,9 +46,15 @@ public sealed record CpfValidator : IDocumentValidator
     }
 
     public string Sanitize(string document)
-        => string.IsNullOrWhiteSpace(document) 
-            ? throw new InvalidCpfException(ErrorMessage.Cpf.IsNullOrEmpty)
-            : new string([.. document.Where(char.IsDigit)]);
+    {
+        if (string.IsNullOrWhiteSpace(document))
+            throw new InvalidCpfException(ErrorMessage.Cpf.IsNullOrEmpty);
+        
+        document = new string([.. document.Where(char.IsDigit)]);
+        return document.Length != Length
+           ? throw new InvalidLengthCpfException(ErrorMessage.Cpf.LengthIsInvalid)
+           : document;
+    }
 
     public static string Format(string document)
         => $"{document.Substring(0, 3)}.{document.Substring(3, 3)}.{document.Substring(6, 3)}-{document.Substring(9, 2)}";

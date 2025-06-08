@@ -1,5 +1,5 @@
 ﻿using ChefControl.Domain.CompanyContext.Entities;
-using ChefControl.Domain.SharedContext.Persistence;
+using ChefControl.Domain.SharedContext.Abstractions;
 
 namespace ChefControl.Domain.CompanyContext.Repositories;
 

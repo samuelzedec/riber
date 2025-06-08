@@ -1,7 +1,7 @@
 using ChefControl.Domain.SharedContext.Constants;
-using ChefControl.Domain.SharedContext.ValueObjects.DocumentValidation.Exceptions;
+using ChefControl.Domain.SharedContext.DomainServices.DocumentValidation.Exceptions;
 
-namespace ChefControl.Domain.SharedContext.ValueObjects.DocumentValidation.Validators;
+namespace ChefControl.Domain.SharedContext.DomainServices.DocumentValidation.Validators;
 
 public sealed record CnpjValidator : IDocumentValidator
 {
@@ -16,9 +16,6 @@ public sealed record CnpjValidator : IDocumentValidator
     public void IsValid(string document)
     {
         string cnpj = Sanitize(document);
-        
-        if (cnpj.Length != Length)
-            throw new InvalidLengthCnpjException(ErrorMessage.Cnpj.LengthIsInvalid);
             
         if (cnpj.Distinct().Count() == 1)
             throw new InvalidCnpjException(ErrorMessage.Cnpj.OnlyRepeatedDigits);
@@ -55,9 +52,15 @@ public sealed record CnpjValidator : IDocumentValidator
     }
 
     public string Sanitize(string document)
-        => string.IsNullOrWhiteSpace(document) 
-            ? throw new InvalidCnpjException(ErrorMessage.Cnpj.IsNullOrEmpty)
-            : new string([.. document.Where(char.IsDigit)]);
+    {
+        if (string.IsNullOrWhiteSpace(document))
+            throw new InvalidCnpjException(ErrorMessage.Cnpj.IsNullOrEmpty);
+        
+        document = new string([.. document.Where(char.IsDigit)]);
+        return document.Length != Length
+            ? throw new InvalidLengthCnpjException(ErrorMessage.Cnpj.LengthIsInvalid)
+            : document;
+    }
 
     public static string Format(string document)
         => $"{document.Substring(0, 2)}.{document.Substring(2, 3)}.{document.Substring(5, 3)}/{document.Substring(8, 4)}-{document.Substring(12, 2)}";
