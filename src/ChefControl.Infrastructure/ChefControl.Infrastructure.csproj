@@ -11,6 +11,6 @@
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\ChefControl.Application\ChefControl.Application.csproj" />
-        <ProjectReference Include="..\ChefControl.Application\ChefControl.Domain.csproj" />
+        <ProjectReference Include="..\ChefControl.Domain\ChefControl.Domain.csproj" />
     </ItemGroup>
 </Project>
