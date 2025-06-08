@@ -97,7 +97,6 @@ public class CompanyNameTests : BaseTest
 
         // Assert
         act.Should().Throw<DomainException>();
-        act.Should().ThrowExactly<InvalidTradingNameException>();
         act.Should().ThrowExactly<InvalidTradingNameException>().WithMessage(ErrorMessage.TradingName.IsNullOrEmpty);
     }
 
@@ -117,7 +116,6 @@ public class CompanyNameTests : BaseTest
 
         // Assert
         act.Should().Throw<DomainException>();
-        act.Should().ThrowExactly<InvalidNameException>();
         act.Should().ThrowExactly<InvalidNameException>().WithMessage(ErrorMessage.Name.IsNullOrEmpty);
     }
 
@@ -134,7 +132,6 @@ public class CompanyNameTests : BaseTest
 
         // Assert
         result.Should().Throw<DomainException>();
-        result.Should().ThrowExactly<InvalidLengthNameException>();
         result.Should().ThrowExactly<InvalidLengthNameException>()
             .WithMessage(ErrorMessage.Name.LengthIsInvalid(CompanyName.MinLength, CompanyName.NameMaxLength));
     }
@@ -151,7 +148,6 @@ public class CompanyNameTests : BaseTest
 
         // Assert
         result.Should().Throw<DomainException>();
-        result.Should().ThrowExactly<InvalidLengthNameException>();
         result.Should().ThrowExactly<InvalidLengthNameException>()
             .WithMessage(ErrorMessage.Name.LengthIsInvalid(CompanyName.MinLength, CompanyName.NameMaxLength));
     }
@@ -168,7 +164,6 @@ public class CompanyNameTests : BaseTest
 
         // Assert
         result.Should().Throw<DomainException>();
-        result.Should().ThrowExactly<InvalidNameException>();
         result.Should().ThrowExactly<InvalidNameException>().WithMessage(ErrorMessage.Name.IsNullOrEmpty);
     }
 
@@ -184,7 +179,6 @@ public class CompanyNameTests : BaseTest
 
         // Assert
         result.Should().Throw<DomainException>();
-        result.Should().ThrowExactly<InvalidTradingLengthNameException>();
         result.Should().ThrowExactly<InvalidTradingLengthNameException>().WithMessage(
             ErrorMessage.TradingName.LengthIsInvalid(CompanyName.MinLength, CompanyName.TradingNameMaxLength));
     }
@@ -201,7 +195,6 @@ public class CompanyNameTests : BaseTest
 
         // Assert
         result.Should().Throw<DomainException>();
-        result.Should().ThrowExactly<InvalidTradingLengthNameException>();
         result.Should().ThrowExactly<InvalidTradingLengthNameException>().WithMessage(
             ErrorMessage.TradingName.LengthIsInvalid(CompanyName.MinLength, CompanyName.TradingNameMaxLength));
     }
@@ -218,7 +211,6 @@ public class CompanyNameTests : BaseTest
 
         // Assert
         result.Should().Throw<DomainException>();
-        result.Should().ThrowExactly<InvalidTradingNameException>();
         result.Should().ThrowExactly<InvalidTradingNameException>().WithMessage(ErrorMessage.TradingName.IsNullOrEmpty);
     }
 
