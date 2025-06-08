@@ -25,8 +25,4 @@
     <ProjectReference Include="..\..\src\ChefControl.Infrastructure\ChefControl.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="CompanyContext\" />
-  </ItemGroup>
-
 </Project>
