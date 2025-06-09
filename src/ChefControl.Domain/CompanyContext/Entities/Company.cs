@@ -70,25 +70,22 @@ public sealed class Company : Entity, IAggregateRoot
     #endregion
 
     #region Methods
-
-    public void UpdateContactInfo(
-        string? email = null, 
-        string? phone = null)
+    
+    public void UpdateEmail(string email)
     {
-        if(!string.IsNullOrWhiteSpace(email))
-            Email = Email.Create(email);
-        
-        if(!string.IsNullOrWhiteSpace(phone))
-            Phone = Phone.Create(phone);
-        
+        Email = Email.Create(email);
         UpdateEntity();
     }
 
-    public void UpdateTradingName(string? tradingName = null)
+    public void UpdatePhone(string phone)
     {
-        if(!string.IsNullOrWhiteSpace(tradingName))
-            CompanyName = CompanyName.Create(CompanyName.Name, tradingName);
-        
+        Phone = Phone.Create(phone);
+        UpdateEntity();
+    }
+
+    public void UpdateTradingName(string tradingName)
+    {
+        CompanyName = CompanyName.Create(CompanyName.Name, tradingName);
         UpdateEntity();
     }
     

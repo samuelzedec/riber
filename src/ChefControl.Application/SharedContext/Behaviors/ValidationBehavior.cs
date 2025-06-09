@@ -14,6 +14,7 @@ public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TReq
         if (!validators.Any())
             return await next(cancellationToken);
         
+        // ValidationContext prepara a request para que fique em um formato aceitável pelo FluentValidation.
         var context = new ValidationContext<TRequest>(request);
         var validationErrors = validators
             .Select(x => x.Validate(context))

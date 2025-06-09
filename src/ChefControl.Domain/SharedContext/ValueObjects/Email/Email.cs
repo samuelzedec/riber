@@ -32,8 +32,9 @@ public sealed partial record Email : ValueObject
         if(string.IsNullOrWhiteSpace(value)) 
             throw new EmailNullOrEmptyException(ErrorMessage.Email.IsNullOrEmpty);
 
-        value = value.Trim(); 
-        value = value.ToLower();
+        value = value
+            .Trim()
+            .ToLower(); 
         
         return EmailRegex().IsMatch(value)
             ? new Email(value)

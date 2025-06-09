@@ -2,4 +2,4 @@
 
 namespace ChefControl.Domain.CompanyContext.Events;
 
-public class CompanyEmailValidationRequestedEvent : IDomainEvent;
+public record CompanyEmailValidationRequestedEvent : IDomainEvent;

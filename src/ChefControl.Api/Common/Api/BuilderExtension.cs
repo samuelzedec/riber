@@ -49,11 +49,11 @@ public static class BuilderExtension
     {
         var accessToken =
             builder.Configuration.GetSection("AccessToken").Get<AccessToken>()
-            ?? throw new InvalidOperationException("AccessToken configuration not found");
+            ?? throw new InvalidOperationException($"{nameof(AccessToken)} configuration not found");
 
         var refreshToken =
             builder.Configuration.GetSection("RefreshToken").Get<RefreshToken>()
-            ?? throw new InvalidOperationException("RefreshToken configuration not found");
+            ?? throw new InvalidOperationException($"{nameof(RefreshToken)} configuration not found");
 
         builder.Services
             .AddAuthentication(options =>
