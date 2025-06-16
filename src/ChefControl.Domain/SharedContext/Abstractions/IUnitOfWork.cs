@@ -10,16 +10,18 @@ public interface IUnitOfWork
 {
     #region Repositories
     
-    ICompanyRepository Company { get; }
+    ICompanyRepository Companies { get; }
     
     #endregion
 
     #region Default Methods
 
-    Task SaveAsync();
-    Task BeginTransactionAsync();
-    Task CommitTransactionAsync();
-    Task RollbackTransactionAsync();
+    Task SaveAsync(CancellationToken cancellationToken);
+    Task BeginTransactionAsync(CancellationToken cancellationToken);
+    Task CommitTransactionAsync(CancellationToken cancellationToken);
+    Task RollbackTransactionAsync(CancellationToken cancellationToken);
+    ValueTask DisposeAsync();
+    void Dispose();
 
     #endregion
 }

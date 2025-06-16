@@ -1,5 +1,9 @@
 ﻿using ChefControl.Application.SharedContext.Contracts;
+using ChefControl.Domain.CompanyContext.Repositories;
+using ChefControl.Domain.SharedContext.Abstractions;
 using ChefControl.Infrastructure.Persistence;
+using ChefControl.Infrastructure.Persistence.Interceptors;
+using ChefControl.Infrastructure.Persistence.Repositories;
 using ChefControl.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -56,15 +60,20 @@ public static class DependencyInjection
     {
         services.AddDbContext<AppDbContext>(options =>
         {
-            options.UseNpgsql(
-                configuration.GetConnectionString("DefaultConnection"),
-                b => b.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName)
-            );
+            options
+                .UseNpgsql(
+                    configuration.GetConnectionString("Postgres"),
+                    b => b.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName))
+                .AddInterceptors(
+                    new CaseInsensitiveInterceptor(),
+                    new AuditInterceptor());
         });
     }
 
     private static void AddServicesInfra(this IServiceCollection services)
     {
         services.AddTransient<IHashService, BCryptHashService>();
+        services.AddScoped<ICompanyRepository, CompanyRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
     }
 }

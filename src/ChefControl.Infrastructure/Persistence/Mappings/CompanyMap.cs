@@ -9,6 +9,8 @@ public class CompanyMap : IEntityTypeConfiguration<Company>
 {
     public void Configure(EntityTypeBuilder<Company> builder)
     {
+        #region Primitive Properties
+
         builder.ToTable("company");
         
         builder
@@ -20,7 +22,27 @@ public class CompanyMap : IEntityTypeConfiguration<Company>
             .HasColumnName("id")
             .HasColumnType("uuid")
             .IsRequired();
+        
+        builder
+            .Property(c => c.CreatedAt)
+            .HasColumnName("created_at")
+            .HasColumnType("timestamptz")
+            .IsRequired();
 
+        builder
+            .Property(c => c.ModifiedAt)
+            .HasColumnName("modified_at")
+            .HasColumnType("timestamptz");
+        
+        builder
+            .Property(c => c.DeletedAt)
+            .HasColumnName("Deleted_at")
+            .HasColumnType("timestamptz");
+
+        #endregion
+        
+        #region Value Objects
+        
         builder.OwnsOne(c => c.CompanyName, company =>
         {
             company
@@ -93,15 +115,12 @@ public class CompanyMap : IEntityTypeConfiguration<Company>
                 .IsUnique();
         });
         
-        builder
-            .Property(c => c.CreatedAt)
-            .HasColumnName("created_at")
-            .HasColumnType("timestamptz")
-            .IsRequired();
-
-        builder
-            .Property(c => c.ModifiedAt)
-            .HasColumnName("modified_at")
-            .HasColumnType("timestamptz");
+        #endregion
+        
+        #region Query Filter Global
+        
+        builder.HasQueryFilter(c => !c.DeletedAt.HasValue);
+        
+        #endregion
     }
 }

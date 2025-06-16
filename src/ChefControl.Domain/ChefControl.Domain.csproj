@@ -5,7 +5,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Folder Include="SharedContext\DomainServices\" />
+    <Folder Include="SharedContext\Services\" />
   </ItemGroup>
 
 </Project>

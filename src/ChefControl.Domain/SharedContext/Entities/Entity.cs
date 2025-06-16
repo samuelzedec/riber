@@ -17,8 +17,9 @@ public abstract class Entity(Guid id) : IEquatable<Guid>
     #region Properties
 
     public Guid Id { get; } = id;
-    public DateTime CreatedAt { get; protected set; } = DateTime.UtcNow;
-    public DateTime? ModifiedAt { get; protected set; }
+    public DateTime CreatedAt { get; } = DateTime.UtcNow;
+    public DateTime? ModifiedAt { get; private set; }
+    public DateTime? DeletedAt { get; private set; }
 
     #endregion
 
@@ -49,10 +50,13 @@ public abstract class Entity(Guid id) : IEquatable<Guid>
     
     #endregion
     
-    #region Protected Methods
+    #region Entity Methods
 
-    protected void UpdateEntity()
+    public void UpdateEntity()
         => ModifiedAt = DateTime.UtcNow;
+    
+    public void DeleteEntity()
+        => DeletedAt = DateTime.UtcNow;
     
     #endregion
 }

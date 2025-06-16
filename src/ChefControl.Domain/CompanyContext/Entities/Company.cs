@@ -20,7 +20,7 @@ public sealed class Company : Entity, IAggregateRoot
     #endregion
 
     #region Constructors
-
+    
     private Company(
         string name,
         string tradingName,
@@ -49,6 +49,18 @@ public sealed class Company : Entity, IAggregateRoot
 
     #endregion
 
+    #region  ORM Constructor
+
+    private Company() : base(Guid.Empty) 
+    {
+        CompanyName = null!;
+        TaxId = null!;
+        Email = null!;
+        Phone = null!;
+    }
+
+    #endregion
+
     #region Factories
 
     public static Company Create(
@@ -72,22 +84,13 @@ public sealed class Company : Entity, IAggregateRoot
     #region Methods
     
     public void UpdateEmail(string email)
-    {
-        Email = Email.Create(email);
-        UpdateEntity();
-    }
+        => Email = Email.Create(email);
 
     public void UpdatePhone(string phone)
-    {
-        Phone = Phone.Create(phone);
-        UpdateEntity();
-    }
+        => Phone = Phone.Create(phone);
 
     public void UpdateTradingName(string tradingName)
-    {
-        CompanyName = CompanyName.Create(CompanyName.Name, tradingName);
-        UpdateEntity();
-    }
+        => CompanyName = CompanyName.Create(CompanyName.Name, tradingName);
     
     #endregion
 }

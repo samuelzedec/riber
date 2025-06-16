@@ -8,4 +8,8 @@
     <ItemGroup>
       <ProjectReference Include="..\ChefControl.Domain\ChefControl.Domain.csproj" />
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="CompanyContext\UseCases\Commands\" />
+      <Folder Include="CompanyContext\UseCases\Queries\" />
+    </ItemGroup>
 </Project>

@@ -3,6 +3,5 @@ using ChefControl.Domain.CompanyContext.Repositories;
 
 namespace ChefControl.Infrastructure.Persistence.Repositories;
 
-public class CompanyRepository : ICompanyRepository
-{
-}
+public class CompanyRepository(AppDbContext context)
+    : BaseRepository<Company>(context), ICompanyRepository;

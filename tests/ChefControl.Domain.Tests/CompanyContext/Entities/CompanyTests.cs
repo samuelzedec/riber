@@ -11,6 +11,8 @@ namespace ChefControl.Domain.Tests.CompanyContext.Entities;
 
 public class CompanyTests : BaseTest
 {
+    #region Creation Tests
+
     [Fact(DisplayName = "Should create company successfully with valid primitive data")]
     public void ShouldCreateCompanySuccessfullyWithValidPrimitiveData()
     {
@@ -79,7 +81,11 @@ public class CompanyTests : BaseTest
         result.Phone.ToString().Should().Be(companyPhone.ToString());
     }
 
-    [Fact(DisplayName = "Should update email successfully")]
+    #endregion
+
+    #region Update Tests
+
+        [Fact(DisplayName = "Should update email successfully")]
     public void ShouldUpdateEmailSuccessfully()
     {
         // Arrange
@@ -169,4 +175,6 @@ public class CompanyTests : BaseTest
         company.CompanyName.Name.Should().Be(originalName);
         company.CompanyName.TradingName.Should().Be(newTradingName);
     }
+
+    #endregion
 }

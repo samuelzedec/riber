@@ -1,4 +1,4 @@
-namespace ChefControl.Domain.SharedContext.DomainServices.DocumentValidation;
+namespace ChefControl.Domain.SharedContext.Services.DocumentValidation;
 
 /// <summary>
 /// Fornece métodos para validar, sanitizar e formatar documentos identificadores como CPF e CNPJ.

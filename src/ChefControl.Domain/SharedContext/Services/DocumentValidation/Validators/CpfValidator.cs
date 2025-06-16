@@ -1,7 +1,7 @@
 using ChefControl.Domain.SharedContext.Constants;
-using ChefControl.Domain.SharedContext.DomainServices.DocumentValidation.Exceptions;
+using ChefControl.Domain.SharedContext.Services.DocumentValidation.Exceptions;
 
-namespace ChefControl.Domain.SharedContext.DomainServices.DocumentValidation.Validators;
+namespace ChefControl.Domain.SharedContext.Services.DocumentValidation.Validators;
 
 public sealed record CpfValidator : IDocumentValidator
 {
