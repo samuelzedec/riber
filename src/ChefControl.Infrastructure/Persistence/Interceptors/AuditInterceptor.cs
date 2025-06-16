@@ -5,6 +5,22 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace ChefControl.Infrastructure.Persistence.Interceptors;
 
+/// <summary>
+/// Representa um interceptador que aplica lógica de auditoria durante a execução de comandos do banco de dados.
+/// </summary>
+/// <remarks>
+/// O <c>AuditInterceptor</c> é utilizado para interceptar comandos do banco de dados e aplicar alterações
+/// relacionadas à auditoria nas entidades associadas. Isso é particularmente útil para operações que requerem
+/// rastreamento ou auditoria no contexto de uma aplicação Entity Framework Core.
+/// </remarks>
+/// <example>
+/// Tipicamente usado ao registrá-lo como um interceptador do contexto DB, o <c>AuditInterceptor</c> se integra
+/// perfeitamente com o Entity Framework Core através de injeção de dependência ou durante a configuração do contexto.
+/// </example>
+/// <threadsafety>
+/// Esta classe é thread-safe e pode ser usada em cenários com múltiplos contextos de banco de dados ou operações
+/// concorrentes.
+/// </threadsafety>
 public sealed class AuditInterceptor : DbCommandInterceptor
 {
     public override ValueTask<InterceptionResult<DbDataReader>> ReaderExecutingAsync(DbCommand command,
