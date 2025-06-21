@@ -1,5 +1,7 @@
 ﻿using ChefControl.Domain.CompanyContext.Repositories;
 using ChefControl.Domain.SharedContext.Abstractions;
+using ChefControl.Domain.SharedContext.Entities;
+using MediatR;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace ChefControl.Infrastructure.Persistence.Repositories;
@@ -8,7 +10,8 @@ namespace ChefControl.Infrastructure.Persistence.Repositories;
 /// Implementa o padrão unit of work, que gerencia conexões com o banco de dados 
 /// e garante consistência entre operações agrupando mudanças em transações.
 /// </summary>
-public class UnitOfWork(AppDbContext context) : IUnitOfWork
+public class UnitOfWork(AppDbContext context, IMediator mediator) 
+    : IUnitOfWork, IAsyncDisposable, IDisposable
 {
     #region Attributes
 
@@ -25,9 +28,12 @@ public class UnitOfWork(AppDbContext context) : IUnitOfWork
     #endregion
 
     #region Default Methods
-
+    
     public async Task SaveAsync(CancellationToken cancellationToken = default)
-        => await context.SaveChangesAsync(cancellationToken);
+        => await SaveChangesAndPublishEventsAsync(cancellationToken);
+    
+    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        => await SaveChangesAndPublishEventsAsync(cancellationToken);
 
     public async Task BeginTransactionAsync(CancellationToken cancellationToken = default)
         => _transaction ??= await context.Database.BeginTransactionAsync(cancellationToken);
@@ -36,7 +42,7 @@ public class UnitOfWork(AppDbContext context) : IUnitOfWork
     {
         if(_transaction is not null)
         {
-            await context.SaveChangesAsync(cancellationToken);
+            await SaveChangesAndPublishEventsAsync(cancellationToken);
             await _transaction.CommitAsync(cancellationToken);
             await _transaction.DisposeAsync();
             _transaction = null;
@@ -64,6 +70,30 @@ public class UnitOfWork(AppDbContext context) : IUnitOfWork
     {
         _transaction?.Dispose();
         context.Dispose();
+    }
+
+    #endregion
+
+    #region Private Methods
+
+    private async Task<int> SaveChangesAndPublishEventsAsync(CancellationToken cancellationToken = default)
+    {
+        var entitiesWithEvents = context.ChangeTracker
+            .Entries<Entity>()
+            .Where(e => e.Entity.Events().Count != 0)
+            .ToList();
+
+        var domainEvents = entitiesWithEvents
+            .SelectMany(e => e.Entity.Events())
+            .ToList();
+        
+        entitiesWithEvents.ForEach(e => e.Entity.ClearEvents());
+        var result = await context.SaveChangesAsync(cancellationToken);
+
+        foreach (var domainEvent in domainEvents)
+            await mediator.Publish(domainEvent, cancellationToken);
+
+        return result;
     }
 
     #endregion
