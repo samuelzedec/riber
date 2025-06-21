@@ -1,4 +1,4 @@
-﻿using ChefControl.Application.SharedContext.Exceptions;
+﻿using ChefControl.Application.SharedContext.Abstractions;
 using FluentValidation;
 using MediatR;
 using AppValidationException = ChefControl.Application.SharedContext.Exceptions.ValidationException;

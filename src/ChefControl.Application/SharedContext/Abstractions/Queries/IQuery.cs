@@ -1,7 +1,7 @@
 ﻿using ChefControl.Application.SharedContext.Results;
 using MediatR;
 
-namespace ChefControl.Application.SharedContext.UseCases.Abstractions;
+namespace ChefControl.Application.SharedContext.Abstractions.Queries;
 
 /// <summary>
 /// Representa uma consulta com um tipo de resposta específico.

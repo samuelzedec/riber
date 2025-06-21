@@ -1,7 +1,7 @@
 ﻿using ChefControl.Application.SharedContext.Results;
 using MediatR;
 
-namespace ChefControl.Application.SharedContext.UseCases.Abstractions;
+namespace ChefControl.Application.SharedContext.Abstractions.Commands;
 
 /// <summary>
 /// Representa a interface base para um comando na camada de aplicação,

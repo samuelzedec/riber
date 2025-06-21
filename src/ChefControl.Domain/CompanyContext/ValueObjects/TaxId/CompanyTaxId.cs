@@ -1,7 +1,7 @@
 using ChefControl.Domain.CompanyContext.Enums;
 using ChefControl.Domain.SharedContext.Constants;
-using ChefControl.Domain.SharedContext.Services.DocumentValidation;
-using ChefControl.Domain.SharedContext.Services.DocumentValidation.Validators;
+using ChefControl.Domain.SharedContext.Validators.DocumentValidator;
+using ChefControl.Domain.SharedContext.Validators.DocumentValidator.Validators;
 using ChefControl.Domain.SharedContext.ValueObjects;
 
 namespace ChefControl.Domain.CompanyContext.ValueObjects.TaxId;

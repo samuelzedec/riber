@@ -1,6 +1,6 @@
 ﻿using ChefControl.Domain.SharedContext.Constants;
-using ChefControl.Domain.SharedContext.Services.DocumentValidation.Exceptions;
-using ChefControl.Domain.SharedContext.Services.DocumentValidation.Validators;
+using ChefControl.Domain.SharedContext.Validators.DocumentValidator.Exceptions;
+using ChefControl.Domain.SharedContext.Validators.DocumentValidator.Validators;
 using FluentAssertions;
 
 namespace ChefControl.Domain.Tests.SharedContext.Services.DocumentValidation.Validators;

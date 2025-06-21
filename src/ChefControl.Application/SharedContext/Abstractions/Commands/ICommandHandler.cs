@@ -1,7 +1,7 @@
 ﻿using ChefControl.Application.SharedContext.Results;
 using MediatR;
 
-namespace ChefControl.Application.SharedContext.UseCases.Abstractions;
+namespace ChefControl.Application.SharedContext.Abstractions.Commands;
 
 /// <summary>
 /// Define um contrato para manipuladores de comando que processam comandos sem retorno de dados específicos.

@@ -1,7 +1,10 @@
-﻿namespace ChefControl.Application.SharedContext.Exceptions;
+﻿using System.Net;
+using ChefControl.Application.SharedContext.Abstractions;
 
-public class ValidationException(IEnumerable<ValidationError> errors) : Exception
+namespace ChefControl.Application.SharedContext.Exceptions;
+
+public class ValidationException(IEnumerable<ValidationError> errors) 
+    : ApplicationException("One or more validation errors occurred", (int)HttpStatusCode.BadRequest)
 {
-    public IEnumerable<ValidationError> Errors 
-        => errors;
+    public IEnumerable<ValidationError> Errors => errors;
 }

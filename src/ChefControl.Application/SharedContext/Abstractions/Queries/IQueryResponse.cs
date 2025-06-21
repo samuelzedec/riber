@@ -1,4 +1,4 @@
-﻿namespace ChefControl.Application.SharedContext.UseCases.Abstractions;
+﻿namespace ChefControl.Application.SharedContext.Abstractions.Queries;
 
 /// <summary>
 /// Interface marcadora usada para definir um tipo de resposta para consultas.

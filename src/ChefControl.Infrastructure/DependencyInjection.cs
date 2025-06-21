@@ -1,10 +1,8 @@
-﻿using ChefControl.Application.SharedContext.Contracts;
-using ChefControl.Domain.CompanyContext.Repositories;
+﻿using ChefControl.Domain.CompanyContext.Repositories;
 using ChefControl.Domain.SharedContext.Abstractions;
 using ChefControl.Infrastructure.Persistence;
 using ChefControl.Infrastructure.Persistence.Interceptors;
 using ChefControl.Infrastructure.Persistence.Repositories;
-using ChefControl.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -72,7 +70,6 @@ public static class DependencyInjection
 
     private static void AddServicesInfra(this IServiceCollection services)
     {
-        services.AddTransient<IHashService, BCryptHashService>();
         services.AddScoped<ICompanyRepository, CompanyRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
     }

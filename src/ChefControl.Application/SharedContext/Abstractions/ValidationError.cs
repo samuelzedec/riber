@@ -1,3 +1,3 @@
-﻿namespace ChefControl.Application.SharedContext.Exceptions;
+﻿namespace ChefControl.Application.SharedContext.Abstractions;
 
 public sealed record ValidationError(string PropertyName, string ErrorMessage);

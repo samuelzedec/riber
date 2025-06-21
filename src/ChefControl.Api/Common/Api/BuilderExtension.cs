@@ -2,6 +2,7 @@
 using ChefControl.Application;
 using ChefControl.Application.SharedContext.Common;
 using ChefControl.Infrastructure;
+using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
@@ -24,7 +25,10 @@ public static class BuilderExtension
 
     private static void AddConfigurations(this WebApplicationBuilder builder)
     {
+        builder.Services.AddControllers();
         builder.Configuration.AddEnvironmentVariables();
+        builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+        builder.Services.AddProblemDetails();
 
         builder.Services
             .AddOptions<AccessToken>()
@@ -43,6 +47,15 @@ public static class BuilderExtension
                 => options.SuppressModelStateInvalidFilter = true)
             .Configure<JsonOptions>(options
                 => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+
+        builder.Services.AddRequestTimeouts(options =>
+        {
+            options.DefaultPolicy = new RequestTimeoutPolicy { Timeout = TimeSpan.FromMinutes(1) };
+            options.AddPolicy("fast", TimeSpan.FromSeconds(15));
+            options.AddPolicy("standard", TimeSpan.FromSeconds(30)); 
+            options.AddPolicy("slow", TimeSpan.FromMinutes(1));
+            options.AddPolicy("upload", TimeSpan.FromMinutes(5));
+        });
     }
 
     private static void AddSecurity(this WebApplicationBuilder builder)

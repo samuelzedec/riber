@@ -1,4 +1,4 @@
-﻿namespace ChefControl.Application.SharedContext.UseCases.Abstractions;
+﻿namespace ChefControl.Application.SharedContext.Abstractions.Commands;
 
 /// <summary>
 /// Representa uma interface marcadora para respostas dentro de um framework de manipulação de comandos.

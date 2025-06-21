@@ -5,7 +5,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Folder Include="SharedContext\Services\" />
+    <Folder Include="SharedContext\Validators\" />
   </ItemGroup>
 
 </Project>

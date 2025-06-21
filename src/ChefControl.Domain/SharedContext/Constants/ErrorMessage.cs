@@ -53,6 +53,7 @@ public static class ErrorMessage
     public static class Document
     {
         public const string IsInvalid = "Não é possível formatar o tipo de documento.";
+        public const string IsNullOrEmpty = "O tipo do documento não pode ser nulo.";
     }
 
     /// <summary>

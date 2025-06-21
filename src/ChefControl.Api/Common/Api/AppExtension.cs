@@ -17,6 +17,8 @@ public static class AppExtension
 
     private static void UseConfigurations(this WebApplication app)
     {
+        app.UseExceptionHandler();
+        app.UseRequestTimeouts();
         app.UseHttpsRedirection();
         app.UseCors();
     }
