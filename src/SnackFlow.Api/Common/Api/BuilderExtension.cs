@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using SnackFlow.Application;
-using SnackFlow.Application.SharedContext.Common;
+using SnackFlow.Application.SharedContext.Configuration;
 using SnackFlow.Infrastructure;
 using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Mvc;

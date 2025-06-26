@@ -9,7 +9,7 @@
 
   <!-- Repositório e Documentação -->
   <PropertyGroup>
-    <RepositoryUrl>https://github.com/samuelzedec/ChefControl</RepositoryUrl>
+    <RepositoryUrl>https://github.com/samuelzedec/SnackFlow</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
