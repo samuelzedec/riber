@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsTestProject>true</IsTestProject>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Bogus" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Moq" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\SnackFlow.Api\SnackFlow.Api.csproj" />
+    <ProjectReference Include="..\..\src\SnackFlow.Application\SnackFlow.Application.csproj" />
+    <ProjectReference Include="..\..\src\SnackFlow.Domain\SnackFlow.Domain.csproj" />
+    <ProjectReference Include="..\..\src\SnackFlow.Infrastructure\SnackFlow.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

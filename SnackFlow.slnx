@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src\SnackFlow.Api\SnackFlow.Api.csproj" />
+    <Project Path="src\SnackFlow.Application\SnackFlow.Application.csproj" />
+    <Project Path="src\SnackFlow.Domain\SnackFlow.Domain.csproj" />
+    <Project Path="src\SnackFlow.Infrastructure\SnackFlow.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests\SnackFlow.Domain.Tests\SnackFlow.Domain.Tests.csproj" />
+  </Folder>
+</Solution>
