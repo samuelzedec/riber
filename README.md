@@ -1,4 +1,4 @@
-# 🍔 Chef Control
+# 🍔 Snack Flow
 Olá! Me chamo **Samuel Ribeiro** e este é o backend que estou desenvolvendo para a aplicação de gestão de uma
 **lanchonete local em Manaus-AM 🍔🍟**.
 
@@ -11,7 +11,7 @@ Pacotes que contém apenas contratos e interfaces, sem implementações concreta
 
 | Pacote | Versão | Descrição |
 |--------|--------|-----------|
-| `Microsoft.Extensions.Logging.Abstractions` | 9.0.5 | Abstrações para sistema de logging |
+| `Microsoft.Extensions.Logging.Abstractions` | 9.0.6 | Abstrações para sistema de logging |
 | `MediatR.Contracts` | 2.0.1 | Contratos do padrão Mediator |
 
 ### 🎯 Application Layer
@@ -29,19 +29,19 @@ Pacotes da camada de infraestrutura, responsável por persistência, logging e s
 | Pacote | Versão | Descrição |
 |--------|--------|-----------|
 | `Serilog.AspNetCore` | 9.0.0 | Framework de logging estruturado |
-| `Microsoft.AspNetCore.Identity.EntityFrameworkCore` | 9.0.5 | ASP.NET Core Identity com Entity Framework |
-| `Microsoft.EntityFrameworkCore` | 9.0.4 | ORM para acesso a dados |
-| `Microsoft.EntityFrameworkCore.Relational` | 9.0.4 | Funcionalidades relacionais do EF Core |
+| `Microsoft.AspNetCore.Identity.EntityFrameworkCore` | 9.0.6 | ASP.NET Core Identity com Entity Framework |
+| `Microsoft.EntityFrameworkCore` | 9.0.6 | ORM para acesso a dados |
+| `Microsoft.EntityFrameworkCore.Relational` | 9.0.6 | Funcionalidades relacionais do EF Core |
 | `Npgsql.EntityFrameworkCore.PostgreSQL` | 9.0.4 | Provider PostgreSQL para Entity Framework |
-| `Microsoft.EntityFrameworkCore.Design` | 9.0.4 | Ferramentas de design-time do EF Core |
+| `Microsoft.EntityFrameworkCore.Design` | 9.0.6 | Ferramentas de design-time do EF Core |
 
 ### 🌐 API Layer
 Pacotes específicos da camada de apresentação (API Web).
 
 | Pacote | Versão | Descrição |
 |--------|--------|-----------|
-| `Microsoft.AspNetCore.Authentication.JwtBearer` | 9.0.5 | Autenticação via JWT Bearer tokens |
-| `Microsoft.AspNetCore.OpenApi` | 9.0.5 | Suporte para documentação OpenAPI/Swagger |
+| `Microsoft.AspNetCore.Authentication.JwtBearer` | 9.0.6 | Autenticação via JWT Bearer tokens |
+| `Microsoft.AspNetCore.OpenApi` | 9.0.6 | Suporte para documentação OpenAPI/Swagger |
 
 ### 🧪 Testes
 Ferramentas e bibliotecas para testes automatizados.

@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <ItemGroup>
+        <PackageReference Include="FluentValidation" />
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+        <PackageReference Include="MediatR" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\SnackFlow.Domain\SnackFlow.Domain.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="CompanyContext\Commands\" />
+      <Folder Include="CompanyContext\Queries\" />
+    </ItemGroup>
+</Project>
