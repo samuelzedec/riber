@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using MediatR;
 using SnackFlow.Application.SharedContext.Abstractions;
-using AppValidationException = SnackFlow.Application.SharedContext.Exceptions.ValidationException;
+using ApplicationLayer = SnackFlow.Application.SharedContext.Exceptions;
 
 namespace SnackFlow.Application.SharedContext.Behaviors;
 
@@ -24,7 +24,7 @@ public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TReq
             .ToList();
         
         return validationErrors.Count > 0 
-            ? throw new AppValidationException(validationErrors)
+            ? throw new ApplicationLayer::ValidationException(validationErrors)
             : await next(cancellationToken);
     }
 }

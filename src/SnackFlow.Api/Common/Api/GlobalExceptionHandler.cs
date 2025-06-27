@@ -4,7 +4,7 @@ using SnackFlow.Application.SharedContext.Results;
 using SnackFlow.Domain.SharedContext.Abstractions;
 using SnackFlow.Domain.SharedContext.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
-using ApplicationException = SnackFlow.Application.SharedContext.Exceptions.ApplicationException;
+using ApplicationLayer = SnackFlow.Application.SharedContext.Exceptions;
 
 namespace SnackFlow.Api.Common.Api;
 
@@ -30,7 +30,7 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
                 validationEx.Code, 
                 validationEx.Errors.Select(e => e.ErrorMessage).ToList()
             ),
-            ApplicationException applicationEx => (applicationEx.Message, applicationEx.Code, null),
+            ApplicationLayer::ApplicationException applicationEx => (applicationEx.Message, applicationEx.Code, null),
             DomainException domainEx => (domainEx.Message, StatusCodes.Status422UnprocessableEntity, null),
             _ => ("An unexpected error occurred", StatusCodes.Status500InternalServerError, null)
         };
