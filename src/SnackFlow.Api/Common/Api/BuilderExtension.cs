@@ -32,13 +32,13 @@ public static class BuilderExtension
 
         builder.Services
             .AddOptions<AccessTokenSettings>()
-            .Bind(builder.Configuration.GetSection("AccessToken")) // <- Atribuí os valores
-            .ValidateDataAnnotations() // <- Pega as regras de validação
-            .ValidateOnStart(); // <- Faz as validação, se não tiver válido, cancela a execução do programa
+            .Bind(builder.Configuration.GetSection(nameof(AccessTokenSettings))) // <- Atribuí os valores
+            .ValidateDataAnnotations() // ⇽ Pega as regras de validação
+            .ValidateOnStart(); // ← Faz as validação, se não tiver válido, cancela a execução do programa
 
         builder.Services
             .AddOptions<RefreshTokenSettings>()
-            .Bind(builder.Configuration.GetSection("RefreshToken"))
+            .Bind(builder.Configuration.GetSection(nameof(RefreshTokenSettings)))
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
@@ -61,11 +61,11 @@ public static class BuilderExtension
     private static void AddSecurity(this WebApplicationBuilder builder)
     {
         var accessToken =
-            builder.Configuration.GetSection("AccessToken").Get<AccessTokenSettings>()
+            builder.Configuration.GetSection(nameof(AccessTokenSettings)).Get<AccessTokenSettings>()
             ?? throw new InvalidOperationException($"{nameof(AccessTokenSettings)} configuration not found");
 
         var refreshToken =
-            builder.Configuration.GetSection("RefreshToken").Get<RefreshTokenSettings>()
+            builder.Configuration.GetSection(nameof(RefreshTokenSettings)).Get<RefreshTokenSettings>()
             ?? throw new InvalidOperationException($"{nameof(RefreshTokenSettings)} configuration not found");
 
         builder.Services

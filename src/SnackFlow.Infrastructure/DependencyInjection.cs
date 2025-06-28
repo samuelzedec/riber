@@ -25,6 +25,7 @@ public static class DependencyInjection
         logging.AddLogging();
         services.AddPersistence(configuration);
         services.AddServicesInfra();
+        services.AddHealthChecksConfiguration(configuration);
     }
 
     private static void AddLogging(this ILoggingBuilder logging)
@@ -72,5 +73,24 @@ public static class DependencyInjection
     {
         services.AddScoped<ICompanyRepository, CompanyRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+    }
+
+    private static void AddHealthChecksConfiguration(this IServiceCollection services, IConfiguration configuration)
+    {
+        var connectionString =
+            configuration.GetConnectionString("DefaultConnection")
+            ?? throw new ArgumentNullException(nameof(configuration));
+
+        services
+            .AddHealthChecks()
+            .AddNpgSql(connectionString, name: "DefaultConnection");
+
+        services
+            .AddHealthChecksUI(options =>
+            {
+                options.SetEvaluationTimeInSeconds(30);
+                options.AddHealthCheckEndpoint("SnackFlow API", "/health");
+            })
+            .AddInMemoryStorage();
     }
 }
