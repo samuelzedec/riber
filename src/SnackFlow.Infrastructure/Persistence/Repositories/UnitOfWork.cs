@@ -1,8 +1,8 @@
-﻿using SnackFlow.Domain.CompanyContext.Repositories;
-using SnackFlow.Domain.SharedContext.Abstractions;
-using SnackFlow.Domain.SharedContext.Entities;
-using MediatR;
+﻿using MediatR;
 using Microsoft.EntityFrameworkCore.Storage;
+using SnackFlow.Domain.Abstractions;
+using SnackFlow.Domain.Entities;
+using SnackFlow.Domain.Repositories;
 
 namespace SnackFlow.Infrastructure.Persistence.Repositories;
 

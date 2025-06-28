@@ -1,10 +1,10 @@
 ﻿using System.Text.Json.Serialization;
 using SnackFlow.Application;
-using SnackFlow.Application.SharedContext.Configuration;
 using SnackFlow.Infrastructure;
 using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using SnackFlow.Application.Configuration;
 
 namespace SnackFlow.Api.Common.Api;
 
@@ -31,13 +31,13 @@ public static class BuilderExtension
         builder.Services.AddProblemDetails();
 
         builder.Services
-            .AddOptions<AccessToken>()
+            .AddOptions<AccessTokenSettings>()
             .Bind(builder.Configuration.GetSection("AccessToken")) // <- Atribuí os valores
             .ValidateDataAnnotations() // <- Pega as regras de validação
             .ValidateOnStart(); // <- Faz as validação, se não tiver válido, cancela a execução do programa
 
         builder.Services
-            .AddOptions<RefreshToken>()
+            .AddOptions<RefreshTokenSettings>()
             .Bind(builder.Configuration.GetSection("RefreshToken"))
             .ValidateDataAnnotations()
             .ValidateOnStart();
@@ -61,12 +61,12 @@ public static class BuilderExtension
     private static void AddSecurity(this WebApplicationBuilder builder)
     {
         var accessToken =
-            builder.Configuration.GetSection("AccessToken").Get<AccessToken>()
-            ?? throw new InvalidOperationException($"{nameof(AccessToken)} configuration not found");
+            builder.Configuration.GetSection("AccessToken").Get<AccessTokenSettings>()
+            ?? throw new InvalidOperationException($"{nameof(AccessTokenSettings)} configuration not found");
 
         var refreshToken =
-            builder.Configuration.GetSection("RefreshToken").Get<RefreshToken>()
-            ?? throw new InvalidOperationException($"{nameof(RefreshToken)} configuration not found");
+            builder.Configuration.GetSection("RefreshToken").Get<RefreshTokenSettings>()
+            ?? throw new InvalidOperationException($"{nameof(RefreshTokenSettings)} configuration not found");
 
         builder.Services
             .AddAuthentication(options =>

@@ -1,5 +1,5 @@
-﻿using SnackFlow.Domain.CompanyContext.Entities;
-using SnackFlow.Domain.CompanyContext.Repositories;
+﻿using SnackFlow.Domain.Entities;
+using SnackFlow.Domain.Repositories;
 
 namespace SnackFlow.Infrastructure.Persistence.Repositories;
 

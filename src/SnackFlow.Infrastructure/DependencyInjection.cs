@@ -1,6 +1,4 @@
-﻿using SnackFlow.Domain.CompanyContext.Repositories;
-using SnackFlow.Domain.SharedContext.Abstractions;
-using SnackFlow.Infrastructure.Persistence;
+﻿using SnackFlow.Infrastructure.Persistence;
 using SnackFlow.Infrastructure.Persistence.Interceptors;
 using SnackFlow.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
+using SnackFlow.Domain.Abstractions;
+using SnackFlow.Domain.Repositories;
 
 namespace SnackFlow.Infrastructure;
 

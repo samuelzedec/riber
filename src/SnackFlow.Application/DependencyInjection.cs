@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
-using SnackFlow.Application.SharedContext.Behaviors;
+using SnackFlow.Application.Behaviors;
 
 namespace SnackFlow.Application;
 
