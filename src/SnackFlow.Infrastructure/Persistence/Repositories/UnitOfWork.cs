@@ -79,7 +79,7 @@ public class UnitOfWork(AppDbContext context, IMediator mediator)
     private async Task<int> SaveChangesAndPublishEventsAsync(CancellationToken cancellationToken = default)
     {
         var entitiesWithEvents = context.ChangeTracker
-            .Entries<Entity>()
+            .Entries<BaseEntity>()
             .Where(e => e.Entity.Events().Count != 0)
             .ToList();
 

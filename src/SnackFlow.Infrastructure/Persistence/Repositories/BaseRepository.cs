@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using SnackFlow.Domain.Abstractions;
 
 namespace SnackFlow.Infrastructure.Persistence.Repositories;
 
@@ -15,14 +16,17 @@ public abstract class BaseRepository<T>(AppDbContext context)
 {
     protected DbSet<T> Table { get; } = context.Set<T>();
     
-    public void Create(T entity)
-        => Table.Add(entity);
+    public async Task CreateAsync(T entity)
+        => await Table.AddAsync(entity);
     
     public void Update(T entity)
         => Table.Update(entity);
     
     public void Delete(T entity)
         => Table.Remove(entity);
+
+    public async Task<bool> ExistsAsync(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default)
+        => await Table.AnyAsync(expression, cancellationToken);
 
     public IQueryable<T> Query(params Expression<Func<T, object>>[] includes)
         => GetQueryWithIncludes(null, includes);
