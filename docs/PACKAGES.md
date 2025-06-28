@@ -28,6 +28,10 @@ Pacotes da camada de infraestrutura, responsável por persistência, logging e s
 | `Microsoft.EntityFrameworkCore.Relational` | 9.0.6 | Funcionalidades relacionais do EF Core |
 | `Npgsql.EntityFrameworkCore.PostgreSQL` | 9.0.4 | Provider PostgreSQL para Entity Framework |
 | `Microsoft.EntityFrameworkCore.Design` | 9.0.6 | Ferramentas de design-time do EF Core |
+| `AspNetCore.HealthChecks.NpgSql` | 9.0.0 | Health check específico para PostgreSQL |
+| `AspNetCore.HealthChecks.UI` | 9.0.0 | Interface web visual para monitoramento de health checks |
+| `AspNetCore.HealthChecks.UI.Client` | 9.0.0 | Formatação rica de JSON para endpoints de health checks |
+| `AspNetCore.HealthChecks.UI.InMemory.Storage` | 9.0.0 | Armazenamento em memória para histórico de health checks |
 
 ## 🌐 API Layer
 Pacotes específicos da camada de apresentação (API Web).
