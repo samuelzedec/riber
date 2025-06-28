@@ -4,7 +4,7 @@ using SnackFlow.Domain.ValueObjects.Email.Exceptions;
 
 namespace SnackFlow.Domain.ValueObjects.Email;
 
-public sealed partial record Email : ValueObject
+public sealed partial record Email : BaseValueObject
 {
     #region Properties
 

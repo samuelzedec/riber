@@ -2,9 +2,13 @@
 using SnackFlow.Application;
 using SnackFlow.Infrastructure;
 using Microsoft.AspNetCore.Http.Timeouts;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using SnackFlow.Application.Configuration;
+using SnackFlow.Infrastructure.Persistence;
+using SnackFlow.Infrastructure.Persistence.Identity;
 
 namespace SnackFlow.Api.Common.Api;
 
@@ -12,6 +16,7 @@ public static class BuilderExtension
 {
     public static void AddPipeline(this WebApplicationBuilder builder)
     {
+        builder.AddDocumentationApi();
         builder.AddDependencyInjection();
         builder.AddConfigurations();
         builder.AddSecurity();
@@ -67,6 +72,10 @@ public static class BuilderExtension
         var refreshToken =
             builder.Configuration.GetSection(nameof(RefreshTokenSettings)).Get<RefreshTokenSettings>()
             ?? throw new InvalidOperationException($"{nameof(RefreshTokenSettings)} configuration not found");
+        
+        builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
+            .AddEntityFrameworkStores<AppDbContext>()
+            .AddDefaultTokenProviders();
 
         builder.Services
             .AddAuthentication(options =>
@@ -104,5 +113,29 @@ public static class BuilderExtension
                     RequireExpirationTime = true
                 };
             });
+        
+        builder.Services.AddAuthorization();
+    }
+
+    private static void AddDocumentationApi(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen(c =>
+        {
+            c.SwaggerDoc("v1", new OpenApiInfo 
+            { 
+                Title = "SnackFlow Documentation API", 
+                Version = "v1" 
+            });
+            
+            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                Description = "JWT Authorization header using the Bearer scheme", // ← Texto de ajuda
+                Name = "Authorization", // ← Nome do header HTTP
+                In = ParameterLocation.Header, // ← Onde vai: no header da requisição
+                Type = SecuritySchemeType.ApiKey, // ← Tipo: chave de API
+                Scheme = "Bearer" // ← Esquema: Bearer token
+            });
+        });
     }
 }

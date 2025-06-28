@@ -10,20 +10,28 @@ public static class AppExtension
         app.UseConfigurations();
         app.UseSecurity();
         app.UseHealthChecks();
+        app.MapControllers();
     }
 
     private static void UseSecurity(this WebApplication app)
     {
         app.UseAuthentication();
         app.UseAuthorization();
-        app.MapControllers();
     }
 
     private static void UseConfigurations(this WebApplication app)
     {
         app.UseExceptionHandler();
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
+        
+        if (app.Environment.IsProduction())
+            app.UseHttpsRedirection();
+        
         app.UseRequestTimeouts();
-        app.UseHttpsRedirection();
         app.UseCors();
     }
 

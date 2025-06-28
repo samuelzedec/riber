@@ -4,7 +4,7 @@ using SnackFlow.Domain.ValueObjects.Phone.Exceptions;
 
 namespace SnackFlow.Domain.ValueObjects.Phone;
 
-public sealed partial record Phone : ValueObject
+public sealed partial record Phone : BaseValueObject
 {
     #region Properties
 

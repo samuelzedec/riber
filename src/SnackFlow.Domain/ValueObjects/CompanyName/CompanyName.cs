@@ -3,7 +3,7 @@ using SnackFlow.Domain.ValueObjects.CompanyName.Exceptions;
 
 namespace SnackFlow.Domain.ValueObjects.CompanyName;
 
-public sealed record CompanyName : ValueObject
+public sealed record CompanyName : BaseValueObject
 {
     #region Constants
     
