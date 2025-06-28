@@ -1,6 +1,4 @@
-﻿using SnackFlow.Domain.Repositories;
-
-namespace SnackFlow.Domain.Abstractions;
+﻿namespace SnackFlow.Domain.Repositories;
 
 /// <summary>
 /// Representa uma unidade de trabalho que encapsula um conjunto de mudanças para persistência.

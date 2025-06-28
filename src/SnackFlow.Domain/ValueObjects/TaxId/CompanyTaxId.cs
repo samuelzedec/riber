@@ -4,7 +4,7 @@ using SnackFlow.Domain.Validators.DocumentValidator;
 
 namespace SnackFlow.Domain.ValueObjects.TaxId;
 
-public sealed record CompanyTaxId : ValueObject
+public sealed record CompanyTaxId : BaseValueObject
 {
     #region Properties
 

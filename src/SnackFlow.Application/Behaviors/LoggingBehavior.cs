@@ -6,7 +6,7 @@ using SnackFlow.Application.Exceptions;
 namespace SnackFlow.Application.Behaviors;
 
 public class LoggingBehavior<TRequest, TResponse>(ILogger<TRequest> logger)
-    : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest
+    : IPipelineBehavior<TRequest, TResponse> where TRequest : IBaseRequest
 {
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next,
         CancellationToken cancellationToken)

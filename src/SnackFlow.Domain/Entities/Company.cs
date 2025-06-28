@@ -7,7 +7,7 @@ using SnackFlow.Domain.ValueObjects.TaxId;
 
 namespace SnackFlow.Domain.Entities;
 
-public sealed class Company : Entity, IAggregateRoot
+public sealed class Company : BaseEntity, IAggregateRoot
 {
     #region Properties
 

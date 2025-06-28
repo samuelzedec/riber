@@ -38,8 +38,8 @@ Pacotes específicos da camada de apresentação (API Web).
 
 | Pacote | Versão | Descrição |
 |--------|--------|-----------|
-| `Microsoft.AspNetCore.Authentication.JwtBearer` | 9.0.6 | Autenticação via JWT Bearer tokens |
-| `Microsoft.AspNetCore.OpenApi` | 9.0.6 | Suporte para documentação OpenAPI/Swagger |
+| `Microsoft.AspNetCore.Authentication.JwtBearer` | 9.0.6  | Autenticação via JWT Bearer tokens |
+| `Swashbuckle.AspNetCore` | 9.0.1  | Suporte para documentação Swagger |
 
 ## 🧪 Testes
 Ferramentas e bibliotecas para testes automatizados.

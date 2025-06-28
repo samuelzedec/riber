@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
+using SnackFlow.Domain.Abstractions;
 
-namespace SnackFlow.Domain.Abstractions;
+namespace SnackFlow.Domain.Repositories;
 
 /// <summary>
 /// Define uma interface genérica de repositório para entidades que são raiz de agregado no DDD.
@@ -17,7 +18,7 @@ public interface IRepository<T> where T : IAggregateRoot
     /// <param name="entity">
     /// A instância da entidade a ser adicionada.
     /// </param>
-    void Create(T entity);
+    Task CreateAsync(T entity);
 
     /// <summary>
     /// Atualiza uma entidade existente do tipo <typeparamref name="T"/> no repositório.
@@ -34,6 +35,20 @@ public interface IRepository<T> where T : IAggregateRoot
     /// A instância da entidade a ser removida.
     /// </param>
     void Delete(T entity);
+
+    /// <summary>
+    /// Verifica se existe uma entidade que atende à condição especificada.
+    /// </summary>
+    /// <param name="expression">
+    /// Expressão lambda que define o critério da busca.
+    /// </param>
+    /// <param name="cancellationToken">
+    /// Token de cancelamento que pode ser usado para cancelar a operação.
+    /// </param>
+    /// <returns>
+    /// Retorna um valor booleano indicando se pelo menos uma entidade atende à condição especificada.
+    /// </returns>
+    Task<bool> ExistsAsync(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Recupera uma coleção consultável de entidades do tipo <typeparamref name="T"/> utilizando um predicado especificado e inclui as entidades relacionadas definidas.

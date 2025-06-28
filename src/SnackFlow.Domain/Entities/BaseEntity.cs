@@ -6,7 +6,7 @@ namespace SnackFlow.Domain.Entities;
 /// Representa uma entidade base abstrata que fornece funcionalidades comuns para entidades de domínio.
 /// Esta classe inclui um identificador, gerenciamento de eventos de domínio e mecanismos de comparação de igualdade.
 /// </summary>
-public abstract class Entity(Guid id) : IEquatable<Guid>
+public abstract class BaseEntity(Guid id) : IEquatable<Guid>
 {
     #region Private Members
 
@@ -50,7 +50,7 @@ public abstract class Entity(Guid id) : IEquatable<Guid>
     
     #endregion
     
-    #region Entity Methods
+    #region BaseEntity Methods
 
     public void UpdateEntity()
         => ModifiedAt = DateTime.UtcNow;

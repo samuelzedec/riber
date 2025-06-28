@@ -10,4 +10,4 @@ namespace SnackFlow.Domain.ValueObjects;
 /// Ela serve como uma base compartilhada para objetos de valor, garantindo a imutabilidade
 /// e oferecendo suporte a comportamentos específicos das propriedades do domínio.
 /// </remarks>
-public abstract record ValueObject;
+public abstract record BaseValueObject;

@@ -32,8 +32,8 @@
   </ItemGroup>
   <!-- Pacotes Pacotes específicos da camada Api -->
   <ItemGroup>
-    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.6" />
-    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.6" />
+      <PackageVersion Include="Swashbuckle.AspNetCore" Version="9.0.1" />
+      <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.6" />
   </ItemGroup>
   <!-- Pacotes para testes -->
   <ItemGroup>

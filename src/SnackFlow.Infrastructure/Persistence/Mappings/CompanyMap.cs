@@ -70,14 +70,14 @@ public class CompanyMap : IEntityTypeConfiguration<Company>
         {
             company
                 .Property(c => c.Type)
-                .HasColumnName("type")
+                .HasColumnName("tax_id_type")
                 .HasColumnType("text")
                 .HasConversion<string>()
                 .IsRequired();
             
             company
                 .Property(c => c.Value)
-                .HasColumnName("value")
+                .HasColumnName("tax_id_value")
                 .HasColumnType("text")
                 .HasMaxLength(14)
                 .IsRequired();
