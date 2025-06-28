@@ -1,10 +1,10 @@
 ﻿using System.Text.Json;
-using SnackFlow.Application.SharedContext.Exceptions;
-using SnackFlow.Application.SharedContext.Results;
-using SnackFlow.Domain.SharedContext.Abstractions;
-using SnackFlow.Domain.SharedContext.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
-using ApplicationLayer = SnackFlow.Application.SharedContext.Exceptions;
+using SnackFlow.Application.Common;
+using SnackFlow.Application.Exceptions;
+using SnackFlow.Domain.Abstractions;
+using SnackFlow.Domain.Exceptions;
+using ApplicationLayer = SnackFlow.Application.Exceptions;
 
 namespace SnackFlow.Api.Common.Api;
 

@@ -1,7 +1,7 @@
 ﻿using System.Data.Common;
-using SnackFlow.Domain.SharedContext.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using SnackFlow.Domain.Entities;
 
 namespace SnackFlow.Infrastructure.Persistence.Interceptors;
 

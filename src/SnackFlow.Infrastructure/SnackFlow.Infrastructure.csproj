@@ -1,5 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <ItemGroup>
+        <PackageReference Include="AspNetCore.HealthChecks.NpgSql" />
+        <PackageReference Include="AspNetCore.HealthChecks.UI" />
+        <PackageReference Include="AspNetCore.HealthChecks.UI.Client" />
+        <PackageReference Include="AspNetCore.HealthChecks.UI.InMemory.Storage" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

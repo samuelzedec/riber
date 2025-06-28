@@ -1,7 +1,7 @@
-﻿using SnackFlow.Domain.CompanyContext.Entities;
-using SnackFlow.Domain.CompanyContext.ValueObjects.CompanyName;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using SnackFlow.Domain.Entities;
+using SnackFlow.Domain.ValueObjects.CompanyName;
 
 namespace SnackFlow.Infrastructure.Persistence.Mappings;
 
