@@ -1,41 +1,43 @@
-﻿using System.Data.Common;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using SnackFlow.Domain.Abstractions;
 using SnackFlow.Domain.Entities;
 
 namespace SnackFlow.Infrastructure.Persistence.Interceptors;
 
 /// <summary>
-/// Representa um interceptador que aplica lógica de auditoria durante a execução de comandos do banco de dados.
+/// Interceptador responsável por manipular operações relacionadas à auditoria ao salvar alterações no Entity Framework Core.
 /// </summary>
 /// <remarks>
-/// O <c>AuditInterceptor</c> é utilizado para interceptar comandos do banco de dados e aplicar alterações
-/// relacionadas à auditoria nas entidades associadas. Isso é particularmente útil para operações que requerem
-/// rastreamento ou auditoria no contexto de uma aplicação BaseEntity Framework Core.
+/// Esta classe estende o <see cref="SaveChangesInterceptor"/> e sobrescreve os métodos
+/// <see cref="SavingChanges"/> e <see cref="SavingChangesAsync"/> para aplicar lógica de auditoria às entidades
+/// durante o processo de salvamento.
 /// </remarks>
-/// <example>
-/// Tipicamente usado ao registrá-lo como um interceptador do contexto DB, o <c>AuditInterceptor</c> se integra
-/// perfeitamente com o BaseEntity Framework Core através de injeção de dependência ou durante a configuração do contexto.
-/// </example>
 /// <threadsafety>
-/// Esta classe é thread-safe e pode ser usada em cenários com múltiplos contextos de banco de dados ou operações
-/// concorrentes.
+/// Esta classe é thread-safe e pode ser usada simultaneamente em aplicações onde múltiplas operações de salvamento
+/// são executadas em paralelo.
 /// </threadsafety>
-public sealed class AuditInterceptor : DbCommandInterceptor
+public sealed class AuditInterceptor : SaveChangesInterceptor
 {
-    public override ValueTask<InterceptionResult<DbDataReader>> ReaderExecutingAsync(DbCommand command,
-        CommandEventData eventData, InterceptionResult<DbDataReader> result,
+    public override InterceptionResult<int> SavingChanges(
+        DbContextEventData eventData,
+        InterceptionResult<int> result)
+    {
+        if (eventData.Context is not null)
+            ApplyAuditEntities(eventData.Context);
+
+        return base.SavingChanges(eventData, result);
+    }
+
+    public override ValueTask<InterceptionResult<int>> SavingChangesAsync(
+        DbContextEventData eventData,
+        InterceptionResult<int> result,
         CancellationToken cancellationToken = default)
     {
         if (eventData.Context is not null)
             ApplyAuditEntities(eventData.Context);
 
-        return base.ReaderExecutingAsync(
-            command,
-            eventData,
-            result,
-            cancellationToken
-        );
+        return base.SavingChangesAsync(eventData, result, cancellationToken);
     }
 
     private void ApplyAuditEntities(DbContext context)
