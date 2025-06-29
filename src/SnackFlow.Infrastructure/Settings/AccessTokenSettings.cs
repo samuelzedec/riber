@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography.X509Certificates;
 
-namespace SnackFlow.Application.Configuration;
+namespace SnackFlow.Infrastructure.Settings;
+
 public sealed class AccessTokenSettings
 {
     [Required] public string Source { get; set; } = string.Empty;
