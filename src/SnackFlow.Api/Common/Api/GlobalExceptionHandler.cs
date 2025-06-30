@@ -22,7 +22,7 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
         logger.LogError(exception, "Exception occurred: {ExceptionType} - {Message}", 
             exception.GetType().Name, exception.Message);
         
-        var (message, statusCode, errors) = exception switch
+        (string? message, int statusCode, List<string>? errors) = exception switch
         {
             RequestTimeoutException timeoutEx => (timeoutEx.Message, timeoutEx.Code, null),
             ValidationException validationEx => (
