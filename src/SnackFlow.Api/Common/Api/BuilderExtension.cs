@@ -30,8 +30,8 @@ public static class BuilderExtension
 
     private static void AddConfigurations(this WebApplicationBuilder builder)
     {
-        builder.Services.AddControllers();
         builder.Configuration.AddEnvironmentVariables();
+        builder.Services.AddControllers();
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddProblemDetails();
 
@@ -53,6 +53,7 @@ public static class BuilderExtension
             .Configure<JsonOptions>(options
                 => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
+        // Para uso das políticas, consulte: docs/REQUEST-TIMEOUT.md
         builder.Services.AddRequestTimeouts(options =>
         {
             options.DefaultPolicy = new RequestTimeoutPolicy { Timeout = TimeSpan.FromMinutes(1) };
