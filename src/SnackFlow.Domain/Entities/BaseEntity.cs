@@ -18,7 +18,7 @@ public abstract class BaseEntity(Guid id) : IEquatable<Guid>
 
     public Guid Id { get; } = id;
     public DateTime CreatedAt { get; } = DateTime.UtcNow;
-    public DateTime? ModifiedAt { get; private set; }
+    public DateTime? UpdatedAt { get; private set; }
     public DateTime? DeletedAt { get; private set; }
 
     #endregion
@@ -53,7 +53,7 @@ public abstract class BaseEntity(Guid id) : IEquatable<Guid>
     #region BaseEntity Methods
 
     public void UpdateEntity()
-        => ModifiedAt = DateTime.UtcNow;
+        => UpdatedAt = DateTime.UtcNow;
     
     public void DeleteEntity()
         => DeletedAt = DateTime.UtcNow;

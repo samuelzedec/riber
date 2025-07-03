@@ -30,7 +30,7 @@ public class CompanyMap : IEntityTypeConfiguration<Company>
             .IsRequired();
 
         builder
-            .Property(c => c.ModifiedAt)
+            .Property(c => c.UpdatedAt)
             .HasColumnName("modified_at")
             .HasColumnType("timestamptz");
         
