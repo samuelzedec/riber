@@ -5,14 +5,14 @@ using SnackFlow.Infrastructure.Persistence.Interceptors;
 
 namespace SnackFlow.Infrastructure.Tests.Persistence.Interceptors;
 
-public class AuditInterceptorTest : BaseTest
+public class AuditInterceptorIntegrationTests : BaseTest
 {
     #region Fields and Setup
 
     private readonly TestEntity _testEntity;
     private readonly DbContextOptions<TestDbContext> _options;
 
-    public AuditInterceptorTest()
+    public AuditInterceptorIntegrationTests()
     {
         _testEntity = CreateFaker<TestEntity>()
             .CustomInstantiator(f => new TestEntity(Guid.CreateVersion7()))

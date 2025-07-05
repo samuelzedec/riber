@@ -9,7 +9,7 @@ using SnackFlow.Domain.ValueObjects.TaxId;
 
 namespace SnackFlow.Domain.Tests.ValueObjects;
 
-public class TaxIdTests : BaseTest
+public class TaxIdUnitTests : BaseTest
 {
     #region Validators
 

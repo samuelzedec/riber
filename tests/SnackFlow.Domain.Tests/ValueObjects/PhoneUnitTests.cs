@@ -5,7 +5,7 @@ using SnackFlow.Domain.ValueObjects.Phone.Exceptions;
 
 namespace SnackFlow.Domain.Tests.ValueObjects;
 
-public class PhoneTest : BaseTest
+public class PhoneUnitTests : BaseTest
 {
     #region Valid Tests
 

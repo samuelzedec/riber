@@ -5,7 +5,7 @@ using SnackFlow.Domain.Validators.DocumentValidator.Exceptions;
 
 namespace SnackFlow.Domain.Tests.Validators;
 
-public class CnpjValidatorTests : BaseTest
+public class CnpjValidatorUnitTests : BaseTest
 {
     #region Private Properties
 
