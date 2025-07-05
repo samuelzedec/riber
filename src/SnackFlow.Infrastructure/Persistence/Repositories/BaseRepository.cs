@@ -1,6 +1,5 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using SnackFlow.Domain.Abstractions;
 
 namespace SnackFlow.Infrastructure.Persistence.Repositories;
 
