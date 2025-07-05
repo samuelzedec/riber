@@ -13,8 +13,13 @@ public class TestDbContext(DbContextOptions<TestDbContext> options) : DbContext(
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<TestEntity>()
+        modelBuilder
+            .Entity<TestEntity>()
             .HasKey(e => e.Id);
+
+        modelBuilder
+            .Entity<TestEntity>()
+            .HasQueryFilter(x => !x.DeletedAt.HasValue);
 
         base.OnModelCreating(modelBuilder);
     }
