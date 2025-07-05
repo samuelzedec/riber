@@ -1,5 +1,4 @@
-﻿using SnackFlow.Domain.Abstractions;
-using SnackFlow.Domain.Entities;
+﻿using SnackFlow.Domain.Entities;
 
 namespace SnackFlow.Domain.Repositories;
 

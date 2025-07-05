@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using SnackFlow.Domain.Abstractions;
 using SnackFlow.Domain.Entities;
 
 namespace SnackFlow.Infrastructure.Persistence.Interceptors;

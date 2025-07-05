@@ -7,30 +7,34 @@ namespace SnackFlow.Infrastructure.Tests.Persistence.Interceptors;
 
 public class AuditInterceptorTest : BaseTest
 {
-    private readonly AuditInterceptor _auditInterceptor;
+    #region Fields and Setup
+
     private readonly TestEntity _testEntity;
+    private readonly DbContextOptions<TestDbContext> _options;
 
     public AuditInterceptorTest()
     {
-        _auditInterceptor = new AuditInterceptor();
         _testEntity = CreateFaker<TestEntity>()
             .CustomInstantiator(f => new TestEntity(Guid.CreateVersion7()))
             .RuleFor(x => x.Name, f => f.Name.FirstName())
             .RuleFor(x => x.Age, f => f.Random.Int(10, 50))
             .Generate();
+        
+        _options = new DbContextOptionsBuilder<TestDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .AddInterceptors(new AuditInterceptor())
+            .Options;
     }
-    
+
+    #endregion
+
+    #region Update Tests
+
     [Fact(DisplayName = "Saving changes when entity is modified should call UpdateEntity")]
     public void SavingChanges_WhenEntityIsModified_ShouldCallUpdateEntity()
     {
         // Arrange
-        var options = new DbContextOptionsBuilder<TestDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .AddInterceptors(_auditInterceptor)
-            .Options;
-
-        using var context = new TestDbContext(options);
-        
+        using var context = new TestDbContext(_options);
         context.TestEntities.Add(_testEntity);
         context.SaveChanges();
 
@@ -45,4 +49,61 @@ public class AuditInterceptorTest : BaseTest
         _testEntity.UpdatedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(5));
     }
 
+    #endregion
+
+    #region Delete Tests
+
+    [Fact(DisplayName = "Saving changes when entity is deleted should set DeletedAt and keep entity")]
+    public void SavingChanges_WhenEntityIsDeleted_ShouldSetDeletedAtAndKeepEntity()
+    {
+        // Arrange
+        using var context = new TestDbContext(_options);
+        context.TestEntities.Add(_testEntity);
+        context.SaveChanges();
+        
+        // Act
+        context.TestEntities.Remove(_testEntity);
+        context.SaveChanges();
+        
+        // Assert
+        _testEntity.DeletedAt.Should().NotBeNull();
+        _testEntity.DeletedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(5));
+        
+        var entityInDatabase = context
+            .TestEntities
+            .IgnoreQueryFilters()
+            .FirstOrDefault(x => x.Id == _testEntity.Id);
+        
+        entityInDatabase.Should().NotBeNull();
+        entityInDatabase.Should().BeEquivalentTo(_testEntity);
+    }
+
+    #endregion
+
+    #region Query Tests
+
+    [Fact(DisplayName = "Querying entity when entity is deleted should not return entity")]
+    public void QueryingEntity_WhenEntityIsDeleted_ShouldNotReturnEntity()
+    {
+        // Arrange
+        using var context = new TestDbContext(_options);
+        context.TestEntities.Add(_testEntity);
+        context.SaveChanges();
+        
+        // Act
+        context.TestEntities.Remove(_testEntity);
+        context.SaveChanges();
+        
+        // Assert
+        _testEntity.DeletedAt.Should().NotBeNull();
+        _testEntity.DeletedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(5));
+        
+        var entityInDatabase = context
+            .TestEntities
+            .FirstOrDefault(x => x.Id == _testEntity.Id);
+        
+        entityInDatabase.Should().BeNull();
+    }
+
+    #endregion
 }

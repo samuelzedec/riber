@@ -13,6 +13,8 @@ public class CnpjValidatorTests : BaseTest
 
     #endregion
 
+    #region Valid CNPJ Tests
+
     [Theory(DisplayName = "Should return true for valid CNPJ")]
     [InlineData("11222333000181")]
     [InlineData("11.222.333/0001-81")]
@@ -26,6 +28,10 @@ public class CnpjValidatorTests : BaseTest
         exception.Should().BeNull();
     }
 
+    #endregion
+
+    #region Invalid CNPJ Tests
+
     [Fact(DisplayName = "Should throw InvalidCnpjException for invalid CNPJ")]
     public void ShouldThrowInvalidCnpjExceptionForInvalidCnpj()
     {
@@ -34,7 +40,11 @@ public class CnpjValidatorTests : BaseTest
         act.Should().Throw<InvalidCnpjException>()
             .WithMessage(ErrorMessage.Cnpj.IsInvalid);
     }
-    
+
+    #endregion
+
+    #region Length Validation Tests
+
     [Theory(DisplayName = "Should throw InvalidCnpjException for incorrect CNPJ length")]
     [InlineData("123")]
     [InlineData("12345678")]
@@ -49,7 +59,11 @@ public class CnpjValidatorTests : BaseTest
         Action act = () => _validator.IsValid(cnpj);
         act.Should().Throw<InvalidLengthCnpjException>(ErrorMessage.Cnpj.LengthIsInvalid);
     }
-    
+
+    #endregion
+
+    #region Null or Empty Tests
+
     [Theory(DisplayName = "Should throw InvalidCnpjException for null or empty CNPJ")]
     [InlineData("")]
     [InlineData("   ")]
@@ -63,6 +77,10 @@ public class CnpjValidatorTests : BaseTest
         act.Should().Throw<InvalidCnpjException>().WithMessage(ErrorMessage.Cnpj.IsNullOrEmpty);
     }
 
+    #endregion
+
+    #region Formatting Tests
+
     [Fact(DisplayName = "Should validate CNPJ successfully regardless of formatting")]
     public void ShouldValidateCnpjSuccessfullyRegardlessOfFormatting()
     {
@@ -72,8 +90,10 @@ public class CnpjValidatorTests : BaseTest
 
         // Act
         var result = CnpjValidator.Format(cnpjWithoutFormat);
-        
+
         // Assert
         result.Should().Be(expectedFormatting);
     }
+
+    #endregion
 }
