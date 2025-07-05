@@ -13,6 +13,8 @@ public class CpfValidatorTests : BaseTest
 
     #endregion
 
+    #region Valid CPF Tests
+
     [Theory(DisplayName = "Should return true for valid CPF")]
     [InlineData("11144477735")]
     [InlineData("111.444.777-35")]
@@ -24,6 +26,10 @@ public class CpfValidatorTests : BaseTest
         exception.Should().BeNull();
     }
 
+    #endregion
+
+    #region Invalid CPF Tests
+
     [Fact(DisplayName = "Should throw InvalidCpfException for invalid CPF")]
     public void ShouldThrowInvalidCpfExceptionForInvalidCpf()
     {
@@ -32,6 +38,10 @@ public class CpfValidatorTests : BaseTest
         act.Should().Throw<InvalidCpfException>()
             .WithMessage(ErrorMessage.Cpf.IsInvalid);
     }
+
+    #endregion
+
+    #region Length Validation Tests
 
     [Theory(DisplayName = "Should throw InvalidCpfException for incorrect CPF length")]
     [InlineData("123")]
@@ -48,6 +58,10 @@ public class CpfValidatorTests : BaseTest
         act.Should().Throw<InvalidLengthCpfException>(ErrorMessage.Cpf.LengthIsInvalid);
     }
 
+    #endregion
+
+    #region Null or Empty Tests
+
     [Theory(DisplayName = "Should throw InvalidCpfException for null or empty CPF")]
     [InlineData("")]
     [InlineData("   ")]
@@ -60,6 +74,10 @@ public class CpfValidatorTests : BaseTest
         Action act = () => _validator.IsValid(cpf);
         act.Should().Throw<InvalidCpfException>().WithMessage(ErrorMessage.Cpf.IsNullOrEmpty);
     }
+
+    #endregion
+
+    #region Repeated Digits Tests
 
     [Theory(DisplayName = "Should throw InvalidCpfException for CPF with all same digits")]
     [InlineData("11111111111")]
@@ -80,6 +98,10 @@ public class CpfValidatorTests : BaseTest
             .WithMessage(ErrorMessage.Cpf.OnlyRepeatedDigits);
     }
 
+    #endregion
+
+    #region Formatting Tests
+
     [Fact(DisplayName = "Should validate CPF successfully regardless of formatting")]
     public void ShouldValidateCpfSuccessfullyRegardlessOfFormatting()
     {
@@ -93,4 +115,6 @@ public class CpfValidatorTests : BaseTest
         // Assert
         result.Should().Be(expectedFormatting);
     }
+
+    #endregion
 }
