@@ -20,12 +20,22 @@ public class CreateCompanyHandlerUnitTests : BaseTest
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly Mock<ICompanyRepository> _mockCompanyRepository;
     private readonly CreateCompanyHandler _handler;
+    private readonly CreateCompanyCommand _command;
 
     public CreateCompanyHandlerUnitTests()
     {
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _mockCompanyRepository = new Mock<ICompanyRepository>();
         _handler = new CreateCompanyHandler(_mockUnitOfWork.Object);
+        
+        _command = new CreateCompanyCommand(
+            _faker.Person.FullName,
+            _faker.Company.CompanyName(),
+            _faker.Company.Cnpj(),
+            _faker.Person.Email,
+            _faker.Phone.PhoneNumber("(##) 9####-####"),
+            ECompanyType.LegalEntityWithCnpj
+        );
     }
 
     #endregion
@@ -36,15 +46,6 @@ public class CreateCompanyHandlerUnitTests : BaseTest
     public async Task ShouldCreateCompanySuccessfullyWhenAllDataIsValid()
     {
         // Arrange
-        var mockCommand = new CreateCompanyCommand(
-            _faker.Person.FullName,
-            _faker.Company.CompanyName(),
-            _faker.Company.Cnpj(),
-            _faker.Person.Email,
-            _faker.Phone.PhoneNumber("(##) 9####-####"),
-            ECompanyType.LegalEntityWithCnpj
-        );
-
         _mockCompanyRepository
             .SetupSequence(x => x.ExistsAsync(
                 It.IsAny<Expression<Func<Company, bool>>>(),
@@ -66,16 +67,16 @@ public class CreateCompanyHandlerUnitTests : BaseTest
             .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()));
 
         // Act
-        var result = await _handler.Handle(mockCommand, CancellationToken.None);
+        var result = await _handler.Handle(_command, CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
         result.IsFailure.Should().BeFalse();
         result.Value.Should().NotBeNull();
         result.Value.CompanyId.Should().NotBeEmpty();
-        result.Value.Email.Should().BeLowerCased(mockCommand.Email);
-        result.Value.TradingName.Should().Be(mockCommand.TradingName);
-        result.Value.Phone.Should().Be(mockCommand.Phone);
+        result.Value.Email.Should().BeLowerCased(_command.Email);
+        result.Value.TradingName.Should().Be(_command.TradingName);
+        result.Value.Phone.Should().Be(_command.Phone);
         result.Value.Type.Should().Be(ECompanyType.LegalEntityWithCnpj.GetDescription());
 
         _mockCompanyRepository.Verify(x => x.ExistsAsync(
@@ -96,15 +97,6 @@ public class CreateCompanyHandlerUnitTests : BaseTest
     public async Task ShouldThrowConflictExceptionWhenCompanyNameAlreadyExists()
     {
         // Arrange
-        var mockCommand = new CreateCompanyCommand(
-            _faker.Person.FullName,
-            _faker.Company.CompanyName(),
-            _faker.Company.Cnpj(),
-            _faker.Person.Email,
-            _faker.Phone.PhoneNumber("(##) 9####-####"),
-            ECompanyType.LegalEntityWithCnpj
-        );
-
         _mockCompanyRepository
             .SetupSequence(x => x.ExistsAsync(
                 It.IsAny<Expression<Func<Company, bool>>>(),
@@ -120,7 +112,7 @@ public class CreateCompanyHandlerUnitTests : BaseTest
             .Returns(_mockCompanyRepository.Object);
 
         // Act
-        var result = async () => await _handler.Handle(mockCommand, CancellationToken.None);
+        var result = async () => await _handler.Handle(_command, CancellationToken.None);
 
         // Assert
         await result.Should()
@@ -141,15 +133,6 @@ public class CreateCompanyHandlerUnitTests : BaseTest
     public async Task ShouldThrowConflictExceptionWhenTaxIdAlreadyExists()
     {
         // Arrange
-        var mockCommand = new CreateCompanyCommand(
-            _faker.Person.FullName,
-            _faker.Company.CompanyName(),
-            _faker.Company.Cnpj(),
-            _faker.Person.Email,
-            _faker.Phone.PhoneNumber("(##) 9####-####"),
-            ECompanyType.LegalEntityWithCnpj
-        );
-
         _mockCompanyRepository
             .SetupSequence(x => x.ExistsAsync(
                 It.IsAny<Expression<Func<Company, bool>>>(),
@@ -165,7 +148,7 @@ public class CreateCompanyHandlerUnitTests : BaseTest
             .Returns(_mockCompanyRepository.Object);
 
         // Act
-        var result = async () => await _handler.Handle(mockCommand, CancellationToken.None);
+        var result = async () => await _handler.Handle(_command, CancellationToken.None);
 
         // Assert
         await result.Should()
@@ -186,15 +169,6 @@ public class CreateCompanyHandlerUnitTests : BaseTest
     public async Task ShouldThrowConflictExceptionWhenEmailAlreadyExists()
     {
         // Arrange
-        var mockCommand = new CreateCompanyCommand(
-            _faker.Person.FullName,
-            _faker.Company.CompanyName(),
-            _faker.Company.Cnpj(),
-            _faker.Person.Email,
-            _faker.Phone.PhoneNumber("(##) 9####-####"),
-            ECompanyType.LegalEntityWithCnpj
-        );
-
         _mockCompanyRepository
             .SetupSequence(x => x.ExistsAsync(
                 It.IsAny<Expression<Func<Company, bool>>>(),
@@ -210,7 +184,7 @@ public class CreateCompanyHandlerUnitTests : BaseTest
             .Returns(_mockCompanyRepository.Object);
 
         // Act
-        var result = async () => await _handler.Handle(mockCommand, CancellationToken.None);
+        var result = async () => await _handler.Handle(_command, CancellationToken.None);
 
         // Assert
         await result.Should()
@@ -231,15 +205,6 @@ public class CreateCompanyHandlerUnitTests : BaseTest
     public async Task ShouldThrowConflictExceptionWhenPhoneAlreadyExists()
     {
         // Arrange
-        var mockCommand = new CreateCompanyCommand(
-            _faker.Person.FullName,
-            _faker.Company.CompanyName(),
-            _faker.Company.Cnpj(),
-            _faker.Person.Email,
-            _faker.Phone.PhoneNumber("(##) 9####-####"),
-            ECompanyType.LegalEntityWithCnpj
-        );
-
         _mockCompanyRepository
             .SetupSequence(x => x.ExistsAsync(
                 It.IsAny<Expression<Func<Company, bool>>>(),
@@ -255,7 +220,7 @@ public class CreateCompanyHandlerUnitTests : BaseTest
             .Returns(_mockCompanyRepository.Object);
 
         // Act
-        var result = async () => await _handler.Handle(mockCommand, CancellationToken.None);
+        var result = async () => await _handler.Handle(_command, CancellationToken.None);
 
         // Assert
         await result.Should()
@@ -280,15 +245,6 @@ public class CreateCompanyHandlerUnitTests : BaseTest
     public async Task ShouldRespectCancellationTokenDuringValidation()
     {
         // Arrange
-        var mockCommand = new CreateCompanyCommand(
-            _faker.Person.FullName,
-            _faker.Company.CompanyName(),
-            _faker.Company.Cnpj(),
-            _faker.Person.Email,
-            _faker.Phone.PhoneNumber("(##) 9####-####"),
-            ECompanyType.LegalEntityWithCnpj
-        );
-
         var mockCancellationToken = new CancellationToken(true);
 
         _mockCompanyRepository
@@ -302,7 +258,7 @@ public class CreateCompanyHandlerUnitTests : BaseTest
             .Returns(_mockCompanyRepository.Object);
 
         // Act
-        var result = async () => await _handler.Handle(mockCommand, mockCancellationToken);
+        var result = async () => await _handler.Handle(_command, mockCancellationToken);
 
         // Assert
         await result.Should()
@@ -324,15 +280,6 @@ public class CreateCompanyHandlerUnitTests : BaseTest
     public async Task ShouldRespectCancellationTokenDuringSaveChanges()
     {
         // Arrange
-        var mockCommand = new CreateCompanyCommand(
-            _faker.Person.FullName,
-            _faker.Company.CompanyName(),
-            _faker.Company.Cnpj(),
-            _faker.Person.Email,
-            _faker.Phone.PhoneNumber("(##) 9####-####"),
-            ECompanyType.LegalEntityWithCnpj
-        );
-
         var mockCancellationToken = new CancellationToken(true);
 
         _mockCompanyRepository
@@ -357,7 +304,7 @@ public class CreateCompanyHandlerUnitTests : BaseTest
             .ThrowsAsync(new OperationCanceledException());
 
         // Act
-        var result = async () => await _handler.Handle(mockCommand, mockCancellationToken);
+        var result = async () => await _handler.Handle(_command, mockCancellationToken);
 
         // Assert
         await result.Should()
