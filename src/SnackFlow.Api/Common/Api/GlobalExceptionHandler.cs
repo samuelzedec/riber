@@ -4,7 +4,7 @@ using SnackFlow.Application.Common;
 using SnackFlow.Application.Exceptions;
 using SnackFlow.Domain.Abstractions;
 using SnackFlow.Domain.Exceptions;
-using ApplicationLayer = SnackFlow.Application.Exceptions;
+using Layer = SnackFlow.Application.Exceptions;
 
 namespace SnackFlow.Api.Common.Api;
 
@@ -30,7 +30,7 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
                 validationEx.Code, 
                 validationEx.Errors.Select(e => e.ErrorMessage).ToList()
             ),
-            ApplicationLayer::ApplicationException applicationEx => (applicationEx.Message, applicationEx.Code, null),
+            Layer.ApplicationException applicationEx => (applicationEx.Message, applicationEx.Code, null),
             DomainException domainEx => (domainEx.Message, StatusCodes.Status422UnprocessableEntity, null),
             _ => ("An unexpected error occurred", StatusCodes.Status500InternalServerError, null)
         };
