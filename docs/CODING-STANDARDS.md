@@ -17,15 +17,15 @@ public record CreateCompanyCommand { } // deve ser sealed
 ```
 
 ### Command Handlers
-**Estrutura:** `internal sealed class {Command}Handler(...) : ICommandHandler<{Command}, {Response}>`
+**Estrutura:** `public sealed class {Command}Handler(...) : ICommandHandler<{Command}, {Response}>`
 
 ```csharp
 // ✅ Correto
-internal sealed class CreateCompanyHandler(IUnitOfWork unitOfWork)
+public sealed class CreateCompanyHandler(IUnitOfWork unitOfWork)
     : ICommandHandler<CreateCompanyCommand, CreateCompanyResponse>
 
 // ❌ Incorreto
-public class CreateCompanyHandler { } // deve ser internal sealed
+public class CreateCompanyHandler { } // deve ser public sealed
 ```
 
 ### Command Responses

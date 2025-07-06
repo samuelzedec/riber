@@ -85,7 +85,7 @@ public class CompanyUnitTests : BaseTest
 
     #region Update Tests
 
-        [Fact(DisplayName = "Should update email successfully")]
+    [Fact(DisplayName = "Should update email successfully")]
     public void ShouldUpdateEmailSuccessfully()
     {
         // Arrange
