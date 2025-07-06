@@ -33,7 +33,7 @@ public class CreateCompanyHandlerUnitTests : BaseTest
             _faker.Company.CompanyName(),
             _faker.Company.Cnpj(),
             _faker.Person.Email,
-            _faker.Phone.PhoneNumber("(##) 9####-####"),
+            _faker.Phone.PhoneNumber("(92) 9####-####"),
             ECompanyType.LegalEntityWithCnpj
         );
     }

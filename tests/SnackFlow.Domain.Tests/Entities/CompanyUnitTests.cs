@@ -21,7 +21,7 @@ public class CompanyUnitTests : BaseTest
         var tradingName = _faker.Company.CompanyName();
         var taxId = _faker.Company.Cnpj(false);
         var email = _faker.Person.Email;
-        var phone = _faker.Phone.PhoneNumber("(##) 9####-####");
+        var phone = _faker.Phone.PhoneNumber("(92) 9####-####");
         var companyType = ECompanyType.LegalEntityWithCnpj;
 
         // Act
@@ -60,7 +60,7 @@ public class CompanyUnitTests : BaseTest
         );
 
         var companyEmail = Email.Create(_faker.Person.Email);
-        var companyPhone = Phone.Create(_faker.Phone.PhoneNumber("(##) 9####-####"));
+        var companyPhone = Phone.Create(_faker.Phone.PhoneNumber("(11) 9####-####"));
 
         // Act
         var result = Company.Create(
@@ -94,7 +94,7 @@ public class CompanyUnitTests : BaseTest
             _faker.Company.CompanyName(),
             _faker.Company.Cnpj(false),
             _faker.Person.Email,
-            _faker.Phone.PhoneNumber("(##) 9####-####"),
+            _faker.Phone.PhoneNumber("(92) 9####-####"),
             ECompanyType.LegalEntityWithCnpj
         );
 
@@ -139,7 +139,7 @@ public class CompanyUnitTests : BaseTest
             _faker.Company.CompanyName(),
             _faker.Company.Cnpj(false),
             _faker.Person.Email,
-            _faker.Phone.PhoneNumber("(##) 9####-####"),
+            _faker.Phone.PhoneNumber("(92) 9####-####"),
             ECompanyType.LegalEntityWithCnpj
         );
 
@@ -162,7 +162,7 @@ public class CompanyUnitTests : BaseTest
             _faker.Company.CompanyName(),
             _faker.Company.Cnpj(false),
             _faker.Person.Email,
-            _faker.Phone.PhoneNumber("(##) 9####-####"),
+            _faker.Phone.PhoneNumber("(92) 9####-####"),
             ECompanyType.LegalEntityWithCnpj
         );
 
