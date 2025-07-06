@@ -31,7 +31,7 @@ public class AuditInterceptorIntegrationTests : BaseTest
     #region Update Tests
 
     [Fact(DisplayName = "Saving changes when entity is modified should call UpdateEntity")]
-    public void SavingChanges_WhenEntityIsModified_ShouldCallUpdateEntity()
+    public void SavingChangesWhenEntityIsModifiedShouldCallUpdateEntity()
     {
         // Arrange
         using var context = new TestDbContext(_options);
@@ -54,7 +54,7 @@ public class AuditInterceptorIntegrationTests : BaseTest
     #region Delete Tests
 
     [Fact(DisplayName = "Saving changes when entity is deleted should set DeletedAt and keep entity")]
-    public void SavingChanges_WhenEntityIsDeleted_ShouldSetDeletedAtAndKeepEntity()
+    public void SavingChangesWhenEntityIsDeletedShouldSetDeletedAtAndKeepEntity()
     {
         // Arrange
         using var context = new TestDbContext(_options);
@@ -83,7 +83,7 @@ public class AuditInterceptorIntegrationTests : BaseTest
     #region Query Tests
 
     [Fact(DisplayName = "Querying entity when entity is deleted should not return entity")]
-    public void QueryingEntity_WhenEntityIsDeleted_ShouldNotReturnEntity()
+    public void QueryingEntityWhenEntityIsDeletedShouldNotReturnEntity()
     {
         // Arrange
         using var context = new TestDbContext(_options);

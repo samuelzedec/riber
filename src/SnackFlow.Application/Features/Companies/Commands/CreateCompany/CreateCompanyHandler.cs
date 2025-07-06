@@ -10,7 +10,7 @@ using SnackFlow.Domain.ValueObjects.Phone;
 
 namespace SnackFlow.Application.Features.Companies.Commands.CreateCompany;
 
-internal sealed class CreateCompanyHandler(IUnitOfWork unitOfWork)
+public sealed class CreateCompanyHandler(IUnitOfWork unitOfWork)
     : ICommandHandler<CreateCompanyCommand, CreateCompanyResponse>
 {
     public async Task<Result<CreateCompanyResponse>> Handle(
