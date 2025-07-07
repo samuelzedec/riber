@@ -6,7 +6,6 @@
     <Project Path="src\SnackFlow.Infrastructure\SnackFlow.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="tests/SnackFlow.Api.Tests/SnackFlow.Api.Tests.csproj" />
     <Project Path="tests/SnackFlow.Application.Tests/SnackFlow.Application.Tests.csproj" />
     <Project Path="tests/SnackFlow.Infrastructure.Tests/SnackFlow.Infrastructure.Tests.csproj" />
     <Project Path="tests\SnackFlow.Domain.Tests\SnackFlow.Domain.Tests.csproj" />
