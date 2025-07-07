@@ -243,10 +243,8 @@ ClientBin/
 *.pfx
 *.publishsettings
 orleans.codegen.cs
-**/access-token/*
-**/refresh-token/*
-!**/access-token/.gitkeep
-!**/refresh-token/.gitkeep
+**/Certificates/*
+!**/Certificates/.gitkeep
 **/Logs/*
 !**/Logs/.gitkeep
 
