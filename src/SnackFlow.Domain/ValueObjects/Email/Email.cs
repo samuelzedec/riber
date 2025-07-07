@@ -32,9 +32,7 @@ public sealed partial record Email : BaseValueObject
         if(string.IsNullOrWhiteSpace(value)) 
             throw new EmailNullOrEmptyException(ErrorMessage.Email.IsNullOrEmpty);
 
-        value = value
-            .Trim()
-            .ToLower(); 
+        value = Standardization(value); 
         
         return EmailRegex().IsMatch(value)
             ? new Email(value)
@@ -62,5 +60,12 @@ public sealed partial record Email : BaseValueObject
     public override string ToString()
         => Value;
 
+    #endregion
+    
+    #region Public Methods
+    
+    public static string Standardization(string value)
+        => value.Trim().ToLower();
+    
     #endregion
 }

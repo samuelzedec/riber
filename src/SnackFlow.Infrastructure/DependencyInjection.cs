@@ -83,13 +83,5 @@ public static class DependencyInjection
         services
             .AddHealthChecks()
             .AddNpgSql(connectionString, name: "DefaultConnection");
-
-        services
-            .AddHealthChecksUI(options =>
-            {
-                options.SetEvaluationTimeInSeconds(30);
-                options.AddHealthCheckEndpoint("SnackFlow API", "/health");
-            })
-            .AddInMemoryStorage();
     }
 }

@@ -67,7 +67,7 @@ public sealed partial record Phone : BaseValueObject
 
     #endregion
 
-    #region Private Methods
+    #region Public Methods
 
     public static string RemoveFormatting(string value)
         => new([..value.Where(char.IsDigit)]);

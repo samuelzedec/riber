@@ -6,6 +6,7 @@ using SnackFlow.Application.Extensions;
 using SnackFlow.Domain.Constants;
 using SnackFlow.Domain.Entities;
 using SnackFlow.Domain.Repositories;
+using SnackFlow.Domain.ValueObjects.Email;
 using SnackFlow.Domain.ValueObjects.Phone;
 
 namespace SnackFlow.Application.Features.Companies.Commands.CreateCompany;
@@ -17,7 +18,7 @@ public sealed class CreateCompanyHandler(IUnitOfWork unitOfWork)
         CreateCompanyCommand request, CancellationToken cancellationToken)
     {
         var companyRepository = unitOfWork.Companies;
-        await ValidateFieldsRequestAsync(companyRepository, request, cancellationToken);
+        await ValidateFieldsRequestAsync(request, cancellationToken);
 
         var companyEntity = Company.Create(
             name: request.Name,
@@ -41,19 +42,19 @@ public sealed class CreateCompanyHandler(IUnitOfWork unitOfWork)
     }
 
     private async Task ValidateFieldsRequestAsync(
-        ICompanyRepository companyRepository,
         CreateCompanyCommand request,
         CancellationToken cancellationToken)
     {
+        var companyRepository = unitOfWork.Companies;
         var normalizedPhone = Phone.RemoveFormatting(request.Phone);
-        var normalizedEmail = request.Email.Trim().ToLowerInvariant();
+        var normalizedEmail = Email.Standardization(request.Email);
         
         var validations = new (Expression<Func<Company, bool>>, string message)[]
         {
-            (x => x.CompanyName.Name == request.Name, ErrorMessage.ConflictMessages.NameAlreadyExists),
-            (x => x.TaxId.Value == request.TaxId, ErrorMessage.ConflictMessages.TaxIdAlreadyExists),
-            (x => x.Email.Value == normalizedEmail, ErrorMessage.ConflictMessages.EmailAlreadyExists),
-            (x => x.Phone.Value == normalizedPhone, ErrorMessage.ConflictMessages.PhoneAlreadyExists)
+            (x => x.CompanyName.Name == request.Name, ErrorMessage.Conflict.NameAlreadyExists),
+            (x => x.TaxId.Value == request.TaxId, ErrorMessage.Conflict.TaxIdAlreadyExists),
+            (x => x.Email.Value == normalizedEmail, ErrorMessage.Conflict.EmailAlreadyExists),
+            (x => x.Phone.Value == normalizedPhone, ErrorMessage.Conflict.PhoneAlreadyExists)
         };
 
         foreach (var (expression, message) in validations)

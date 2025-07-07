@@ -37,6 +37,24 @@ public interface IRepository<T> where T : IAggregateRoot
     void Delete(T entity);
 
     /// <summary>
+    /// Recupera uma única entidade do tipo <typeparamref name="T"/> que corresponde à expressão fornecida.
+    /// </summary>
+    /// <param name="expression">
+    /// Expressão lambda utilizada para filtrar a entidade que deve ser recuperada.
+    /// </param>
+    /// <param name="cancellationToken">
+    /// Token de cancelamento que pode ser utilizado para cancelar a operação.
+    /// </param>
+    /// <param name="includes">
+    /// Expressões lambda que especificam propriedades relacionadas a serem carregadas juntamente com a entidade.
+    /// </param>
+    /// <returns>
+    /// Uma instância da entidade do tipo <typeparamref name="T"/> ou <c>null</c> se nenhuma correspondência for encontrada.
+    /// </returns>
+    Task<T?> GetSingleAsync(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default,
+        params Expression<Func<T, object>>[] includes);
+
+    /// <summary>
     /// Verifica se existe uma entidade que atende à condição especificada.
     /// </summary>
     /// <param name="expression">
@@ -63,15 +81,4 @@ public interface IRepository<T> where T : IAggregateRoot
     /// Uma coleção consultável de entidades do tipo <typeparamref name="T"/> que atendem ao predicado especificado.
     /// </returns>
     IQueryable<T> Query(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes);
-
-    /// <summary>
-    /// Recupera uma coleção consultável de entidades do tipo <typeparamref name="T"/> e inclui as entidades relacionadas especificadas.
-    /// </summary>
-    /// <param name="includes">
-    /// Um array de expressões representando as entidades relacionadas a serem incluídas na consulta.
-    /// </param>
-    /// <returns>
-    /// Uma coleção consultável de entidades do tipo <typeparamref name="T"/>.
-    /// </returns>
-    IQueryable<T> Query(params Expression<Func<T, object>>[] includes);
 }

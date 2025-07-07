@@ -117,7 +117,7 @@ public class CreateCompanyHandlerUnitTests : BaseTest
         // Assert
         await result.Should()
             .ThrowAsync<ConflictException>()
-            .WithMessage(ErrorMessage.ConflictMessages.NameAlreadyExists);
+            .WithMessage(ErrorMessage.Conflict.NameAlreadyExists);
 
         _mockCompanyRepository.Verify(x => x.ExistsAsync(
             It.IsAny<Expression<Func<Company, bool>>>(), It.IsAny<CancellationToken>()), Times.Once);
@@ -153,7 +153,7 @@ public class CreateCompanyHandlerUnitTests : BaseTest
         // Assert
         await result.Should()
             .ThrowAsync<ConflictException>()
-            .WithMessage(ErrorMessage.ConflictMessages.TaxIdAlreadyExists);
+            .WithMessage(ErrorMessage.Conflict.TaxIdAlreadyExists);
 
         _mockCompanyRepository.Verify(x => x.ExistsAsync(
             It.IsAny<Expression<Func<Company, bool>>>(), It.IsAny<CancellationToken>()), Times.Exactly(2));
@@ -189,7 +189,7 @@ public class CreateCompanyHandlerUnitTests : BaseTest
         // Assert
         await result.Should()
             .ThrowAsync<ConflictException>()
-            .WithMessage(ErrorMessage.ConflictMessages.EmailAlreadyExists);
+            .WithMessage(ErrorMessage.Conflict.EmailAlreadyExists);
 
         _mockCompanyRepository.Verify(x => x.ExistsAsync(
             It.IsAny<Expression<Func<Company, bool>>>(), It.IsAny<CancellationToken>()), Times.Exactly(3));
@@ -225,7 +225,7 @@ public class CreateCompanyHandlerUnitTests : BaseTest
         // Assert
         await result.Should()
             .ThrowAsync<ConflictException>()
-            .WithMessage(ErrorMessage.ConflictMessages.PhoneAlreadyExists);
+            .WithMessage(ErrorMessage.Conflict.PhoneAlreadyExists);
 
         _mockCompanyRepository.Verify(x => x.ExistsAsync(
             It.IsAny<Expression<Func<Company, bool>>>(), It.IsAny<CancellationToken>()), Times.Exactly(4));

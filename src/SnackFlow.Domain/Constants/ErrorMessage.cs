@@ -74,11 +74,16 @@ public static class ErrorMessage
         public const string FormatInvalid = "O telefone está com o formato inválido.";
     }
     
-    public static class ConflictMessages
+    public static class Conflict
     {
         public const string EmailAlreadyExists = "Email já cadastrado no sistema";
         public const string PhoneAlreadyExists = "Telefone já cadastrado no sistema";
         public const string TaxIdAlreadyExists = "CPF/CNPJ já cadastrado no sistema";
         public const string NameAlreadyExists = "Nome da empresa já cadastrado no sistema";
+    }
+
+    public static class NotFound
+    {
+        public const string CompanyNotFound = "Empresa não encontrada no sistema";
     }
 }
