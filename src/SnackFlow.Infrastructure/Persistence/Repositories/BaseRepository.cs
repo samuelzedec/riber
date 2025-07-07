@@ -23,12 +23,12 @@ public abstract class BaseRepository<T>(AppDbContext context)
     
     public void Delete(T entity)
         => Table.Remove(entity);
+    
+    public async Task<T?> GetSingleAsync(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default, params Expression<Func<T, object>>[] includes) 
+        => await GetQueryWithIncludes(expression, includes).FirstOrDefaultAsync(cancellationToken);
 
     public async Task<bool> ExistsAsync(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default)
         => await Table.AnyAsync(expression, cancellationToken);
-
-    public IQueryable<T> Query(params Expression<Func<T, object>>[] includes)
-        => GetQueryWithIncludes(null, includes);
     
     public IQueryable<T> Query(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes)
         => GetQueryWithIncludes(predicate, includes);

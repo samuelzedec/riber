@@ -41,6 +41,5 @@ public static class AppExtension
         {
             ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
         });
-        app.MapHealthChecksUI();
     }
 }
