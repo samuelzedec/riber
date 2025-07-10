@@ -28,7 +28,7 @@ public class LoggingBehaviorUnitTests : BaseTest
     }
 
     [Fact(DisplayName = "Should log request start and completion successfully")]
-    public async Task ShouldLogRequestStartAndCompletionSuccessfully()
+    public async Task Handle_WhenRequestCompletes_ShouldLogRequestStartAndCompletion()
     {
         // Act
         await _loggingBehavior.Handle(
@@ -56,7 +56,7 @@ public class LoggingBehaviorUnitTests : BaseTest
     }
     
     [Fact(DisplayName = "Should throw RequestTimeoutException when cancellation token is cancelled")]
-    public async Task ShouldThrowRequestTimeoutExceptionWhenCancellationTokenIsCancelled()
+    public async Task Handle_WhenCancellationTokenIsCancelled_ShouldThrowRequestTimeoutException()
     {
         // Arrange
         var cts = new CancellationTokenSource();
@@ -82,7 +82,7 @@ public class LoggingBehaviorUnitTests : BaseTest
     }
     
     [Fact(DisplayName = "Should log error and re-throw when handler throws exception")]
-    public async Task ShouldLogErrorAndReThrowWhenHandlerThrowsException()
+    public async Task Handle_WhenHandlerThrowsException_ShouldLogErrorAndReThrow()
     {
         // Arrange
         var expectedException = new InvalidOperationException("Test error");

@@ -10,7 +10,7 @@ public class EmailUnitTests : BaseTest
     #region Valid Tests
 
     [Fact(DisplayName = "Should return true for valid email")]
-    public void ShouldReturnTrueForValidEmail()
+    public void Create_WhenValidEmail_ShouldReturnTrue()
     {
         // Arrange
         var email = _faker.Person.Email;
@@ -33,14 +33,14 @@ public class EmailUnitTests : BaseTest
     [InlineData("\t")]
     [InlineData("\n")]
     [InlineData("  \t  \n  ")]
-    public void ShouldThrowInvalidEmailExceptionForNullOrEmptyEmail(string email)
+    public void Create_WhenNullOrEmptyEmail_ShouldThrowEmailNullOrEmptyException(string email)
     {
         var act = () => Email.Create(email);
         act.Should().Throw<EmailNullOrEmptyException>().WithMessage(ErrorMessage.Email.IsNullOrEmpty);
     }
 
     [Fact(DisplayName = "Should throw EmailFormatInvalidException for invalid email")]
-    public void ShouldThrowInvalidEmailExceptionForInvalidEmail()
+    public void Create_WhenInvalidEmail_ShouldThrowEmailFormatInvalidException()
     {
         // Arrange
         var invalidEmail = $"{_faker.Person.Email}invalid";
@@ -57,7 +57,7 @@ public class EmailUnitTests : BaseTest
     #region Operators Test
 
     [Fact(DisplayName = "Should convert Email to string using implicit operator")]
-    public void ShouldConvertEmailToStringUsingImplicitOperator()
+    public void ImplicitOperator_WhenConvertingToString_ShouldReturnEmailValue()
     {
         // Arrange
         var email = _faker.Person.Email;

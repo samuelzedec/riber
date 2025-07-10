@@ -11,7 +11,7 @@ public class CompanyNameUnitTests : BaseTest
     #region Valid Creation Scenarios
 
     [Fact(DisplayName = "Should create CompanyName with Name and TradingName")]
-    public void ShouldCreateCompanyNameWithNameAndTradingName()
+    public void Create_WhenNameAndTradingName_ShouldCreateCompanyName()
     {
         // Arrange
         var name = _faker.Company.CompanyName();
@@ -28,7 +28,7 @@ public class CompanyNameUnitTests : BaseTest
     }
 
     [Fact(DisplayName = "Should create CompanyName with minimum valid length")]
-    public void ShouldCreateCompanyNameWithMinimumValidLength()
+    public void Create_WhenMinimumValidLength_ShouldCreateCompanyName()
     {
         // Arrange
         var name = _faker.Random.String2(CompanyName.MinLength);
@@ -45,7 +45,7 @@ public class CompanyNameUnitTests : BaseTest
     }
 
     [Fact(DisplayName = "Should create CompanyName with maximum valid length")]
-    public void ShouldCreateCompanyNameWithMaximumValidLength()
+    public void Create_WhenMaximumValidLength_ShouldCreateCompanyName()
     {
         // Arrange
         var name = _faker.Random.String2(CompanyName.NameMaxLength);
@@ -62,7 +62,7 @@ public class CompanyNameUnitTests : BaseTest
     }
 
     [Fact(DisplayName = "Should trim whitespace from name and trading name")]
-    public void ShouldTrimWhitespaceFromNameAndTradingName()
+    public void Create_WhenWhitespaceInNames_ShouldTrimWhitespace()
     {
         // Arrange
         var nameCore = _faker.Random.String2(10);
@@ -92,7 +92,7 @@ public class CompanyNameUnitTests : BaseTest
     [InlineData("\t")]
     [InlineData("\n")]
     [InlineData("  \t  \n  ")]
-    public void ShouldThrowInvalidTradingNameExceptionForEmptyOrNullTradingNames(string invalidTradingName)
+    public void Create_WhenEmptyOrNullTradingName_ShouldThrowInvalidTradingNameException(string invalidTradingName)
     {
         // Arrange
         var name = _faker.Random.String2(10);
@@ -111,7 +111,7 @@ public class CompanyNameUnitTests : BaseTest
     [InlineData("\t")]
     [InlineData("\n")]
     [InlineData("  \t  \n  ")]
-    public void ShouldThrowInvalidNameExceptionForEmptyOrNullNames(string invalidName)
+    public void Create_WhenEmptyOrNullName_ShouldThrowInvalidNameException(string invalidName)
     {
         // Arrange
         var tradingName = _faker.Random.String2(10);
@@ -129,7 +129,7 @@ public class CompanyNameUnitTests : BaseTest
     #region Name Property Tests
 
     [Fact(DisplayName = "Should throw exception when name exceeds maximum length")]
-    public void ShouldThrowExceptionWhenNameExceedsMaximumLength()
+    public void Create_WhenNameExceedsMaximumLength_ShouldThrowException()
     {
         //Arrange
         var name = _faker.Random.String2(160);
@@ -145,7 +145,7 @@ public class CompanyNameUnitTests : BaseTest
     }
 
     [Fact(DisplayName = "Should throw exception when name exceeds minimum length")]
-    public void ShouldThrowExceptionWhenNameExceedsMinimumLength()
+    public void Create_WhenNameExceedsMinimumLength_ShouldThrowException()
     {
         // Arrange
         var name = _faker.Random.String2(2);
@@ -161,7 +161,7 @@ public class CompanyNameUnitTests : BaseTest
     }
 
     [Fact(DisplayName = "Should throw exception when name is empty")]
-    public void ShouldThrowExceptionWhenNameIsEmpty()
+    public void Create_WhenNameIsEmpty_ShouldThrowException()
     {
         // Arrange
         var name = string.Empty;
@@ -180,7 +180,7 @@ public class CompanyNameUnitTests : BaseTest
     #region TradingName Property Tests
 
     [Fact(DisplayName = "Should throw exception when trading name exceeds maximum length")]
-    public void ShouldThrowExceptionWhenTradingNameExceedsMaximumLength()
+    public void Create_WhenTradingNameExceedsMaximumLength_ShouldThrowException()
     {
         // Arrange
         var name = _faker.Company.CompanyName();
@@ -196,7 +196,7 @@ public class CompanyNameUnitTests : BaseTest
     }
 
     [Fact(DisplayName = "Should throw exception when trading name exceeds minimum length")]
-    public void ShouldThrowExceptionWhenTradingNameExceedsMinimumLength()
+    public void Create_WhenTradingNameExceedsMinimumLength_ShouldThrowException()
     {
         // Arrange
         var name = _faker.Company.CompanyName();
@@ -212,7 +212,7 @@ public class CompanyNameUnitTests : BaseTest
     }
 
     [Fact(DisplayName = "Should throw exception when trading name is empty")]
-    public void ShouldThrowExceptionWhenTradingNameIsEmpty()
+    public void Create_WhenTradingNameIsEmpty_ShouldThrowException()
     {
         // Arrange
         var name = _faker.Company.CompanyName();
@@ -227,7 +227,7 @@ public class CompanyNameUnitTests : BaseTest
     }
 
     [Fact(DisplayName = "Should return trading name value when implicitly converted to string")]
-    public void ShouldReturnTradingNameValueWhenImplicitlyConvertedToString()
+    public void ImplicitConversion_WhenConvertedToString_ShouldReturnTradingNameValue()
     {
         // Arrange
         var name = _faker.Company.CompanyName();

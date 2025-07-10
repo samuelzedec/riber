@@ -21,7 +21,7 @@ public class CnpjValidatorUnitTests : BaseTest
     [InlineData("11 222 333 0001 81")]
     [InlineData("34028316000103")]
     [InlineData("34.028.316/0001-03")]
-    public void ShouldReturnTrueForValidCnpj(string cnpj)
+    public void IsValid_WhenValidCnpj_ShouldReturnTrue(string cnpj)
     {
         // Act & Assert
         var exception = Record.Exception(() => _validator.IsValid(cnpj));
@@ -33,7 +33,7 @@ public class CnpjValidatorUnitTests : BaseTest
     #region Invalid CNPJ Tests
 
     [Fact(DisplayName = "Should throw InvalidCnpjException for invalid CNPJ")]
-    public void ShouldThrowInvalidCnpjExceptionForInvalidCnpj()
+    public void IsValid_WhenInvalidCnpj_ShouldThrowInvalidCnpjException()
     {
         // Act & Assert
         Action act = () => _validator.IsValid("98765432000180");
@@ -53,7 +53,7 @@ public class CnpjValidatorUnitTests : BaseTest
     [InlineData("123456789012345")]
     [InlineData("12345678901234567")]
     [InlineData("123456789012345678901")]
-    public void ShouldThrowInvalidCnpjExceptionForIncorrectLength(string cnpj)
+    public void IsValid_WhenIncorrectCnpjLength_ShouldThrowInvalidCnpjException(string cnpj)
     {
         // Act & Assert
         Action act = () => _validator.IsValid(cnpj);
@@ -70,7 +70,7 @@ public class CnpjValidatorUnitTests : BaseTest
     [InlineData("\t")]
     [InlineData("\n")]
     [InlineData("  \t  \n  ")]
-    public void ShouldThrowInvalidCnpjExceptionForNullOrEmptyCnpj(string cnpj)
+    public void IsValid_WhenNullOrEmptyCnpj_ShouldThrowInvalidCnpjException(string cnpj)
     {
         // Act & Assert
         Action act = () => _validator.IsValid(cnpj);
@@ -82,7 +82,7 @@ public class CnpjValidatorUnitTests : BaseTest
     #region Formatting Tests
 
     [Fact(DisplayName = "Should validate CNPJ successfully regardless of formatting")]
-    public void ShouldValidateCnpjSuccessfullyRegardlessOfFormatting()
+    public void Format_WhenCnpjWithoutFormat_ShouldReturnFormattedCnpj()
     {
         // Arrange 
         var cnpjWithoutFormat = "11222333000181";

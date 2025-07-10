@@ -19,7 +19,7 @@ public class CpfValidatorUnitTests : BaseTest
     [InlineData("11144477735")]
     [InlineData("111.444.777-35")]
     [InlineData("111 444 777 35")]
-    public void ShouldReturnTrueForValidCpf(string cpf)
+    public void IsValid_WhenValidCpf_ShouldReturnTrue(string cpf)
     {
         // Act & Assert
         var exception = Record.Exception(() => _validator.IsValid(cpf));
@@ -31,7 +31,7 @@ public class CpfValidatorUnitTests : BaseTest
     #region Invalid CPF Tests
 
     [Fact(DisplayName = "Should throw InvalidCpfException for invalid CPF")]
-    public void ShouldThrowInvalidCpfExceptionForInvalidCpf()
+    public void IsValid_WhenInvalidCpf_ShouldThrowInvalidCpfException()
     {
         // Act & Assert
         Action act = () => _validator.IsValid("12345678901");
@@ -51,7 +51,7 @@ public class CpfValidatorUnitTests : BaseTest
     [InlineData("123456789012")]
     [InlineData("12345678901234")]
     [InlineData("123456789012345")]
-    public void ShouldThrowInvalidCpfExceptionForIncorrectLength(string cpf)
+    public void IsValid_WhenIncorrectCpfLength_ShouldThrowInvalidCpfException(string cpf)
     {
         // Act & Assert
         Action act = () => _validator.IsValid(cpf);
@@ -68,7 +68,7 @@ public class CpfValidatorUnitTests : BaseTest
     [InlineData("\t")]
     [InlineData("\n")]
     [InlineData("  \t  \n  ")]
-    public void ShouldThrowInvalidCpfExceptionForNullOrEmptyCpf(string cpf)
+    public void IsValid_WhenNullOrEmptyCpf_ShouldThrowInvalidCpfException(string cpf)
     {
         // Act & Assert
         Action act = () => _validator.IsValid(cpf);
@@ -90,7 +90,7 @@ public class CpfValidatorUnitTests : BaseTest
     [InlineData("777.777.777-77")]
     [InlineData("888.888.888-88")]
     [InlineData("999.999.999-99")]
-    public void ShouldThrowInvalidCpfExceptionForCpfWithAllSameDigits(string cpf)
+    public void IsValid_WhenCpfWithAllSameDigits_ShouldThrowInvalidCpfException(string cpf)
     {
         // Act & Assert
         Action act = () => _validator.IsValid(cpf);
@@ -103,7 +103,7 @@ public class CpfValidatorUnitTests : BaseTest
     #region Formatting Tests
 
     [Fact(DisplayName = "Should validate CPF successfully regardless of formatting")]
-    public void ShouldValidateCpfSuccessfullyRegardlessOfFormatting()
+    public void Format_WhenCpfWithoutFormat_ShouldReturnFormattedCpf()
     {
         // Arrange 
         var cpfWithoutFormat = "11144477735";
