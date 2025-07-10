@@ -1,0 +1,67 @@
+# Builds e outputs
+**/bin/
+**/obj/
+**/out/
+**/publish/
+
+# IDEs e editores
+**/.vs/
+**/.vscode/
+**/.idea/
+*.user
+*.suo
+*.swp
+*.swo
+
+# Dependências
+**/node_modules/
+**/packages/
+
+# Logs e temporários
+**/*.log
+**/logs/
+**/tmp/
+**/temp/
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Docker
+.dockerignore
+**/Dockerfile*
+**/docker-compose*
+
+# CI/CD
+.github/
+**/.github/
+
+# Documentação
+README.md
+**/*.md
+docs/
+
+# Certificados locais
+**/Common/Certificates/
+**/*.pfx
+**/*.pem
+
+# Environment específicos
+.env
+.env.*
+
+# Testes de performance/carga
+**/BenchmarkDotNet.Artifacts/
+
+# Coverage reports
+**/coverage/
+**/TestResults/
+
+# OS específicos
+**/.DS_Store
+**/Thumbs.db
+
+# Pasta de scripts de infraestrutura
+infrastructure/
+!infrastructure/scripts

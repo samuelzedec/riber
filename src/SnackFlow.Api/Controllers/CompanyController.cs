@@ -13,7 +13,7 @@ namespace SnackFlow.Api.Controllers;
 public class CompanyController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
-    [Authorize]
+    // [Authorize]
     [RequestTimeout(("standard"))]
     [ProducesResponseType<Result<CreateCompanyResponse>>(StatusCodes.Status201Created)]
     [ProducesResponseType<Result<CreateCompanyResponse>>(StatusCodes.Status400BadRequest)]
@@ -26,7 +26,7 @@ public class CompanyController(IMediator mediator) : ControllerBase
     }
     
     [HttpPatch]
-    [Authorize]
+    // [Authorize]
     [RequestTimeout("standard")]
     [ProducesResponseType<Result<UpdateCompanyResponse>>(StatusCodes.Status200OK)]
     [ProducesResponseType<Result<CreateCompanyResponse>>(StatusCodes.Status400BadRequest)]

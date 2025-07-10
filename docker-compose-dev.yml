@@ -1,0 +1,57 @@
+name: snackflow
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres-dev
+    env_file:
+      - .env.dev
+    environment:
+      POSTGRES_DB: ${DB_NAME:-snackflow_db}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-root}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  migration:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/Dockerfile.dev
+      target: migration
+    container_name: migration-dev
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env.dev
+    command: ["/usr/local/bin/apply-migrations.sh"]
+
+  snackflow-api:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/Dockerfile.dev
+      target: runtime
+    container_name: api-dev
+    depends_on:
+      migration:
+        condition: service_completed_successfully
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env.dev
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+
+volumes:
+  postgres_dev_data:
+
+networks:
+  default:
+    name: snackflow-dev-network

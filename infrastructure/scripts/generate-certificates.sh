@@ -5,14 +5,30 @@ set -e
 
 echo "🔐 Gerando certificados JWT..."
 
-# Verifica se está na pasta correta
-if [[ ! -d "src/SnackFlow.Api/Common/Certificates" ]]; then
-    echo "❌ Execute da pasta raiz do projeto"
-    exit 1
+# Encontra a raiz do projeto automaticamente
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
+# Detecta ambiente e define caminho/senha
+if [[ "$ASPNETCORE_ENVIRONMENT" == "Development" ]] && [[ -n "$CONTAINER_ENV" ]]; then
+    # Docker container
+    CERT_PATH="/app/Common/Certificates"
+    PASSWORD="${CERT_PASSWORD:-root-container}"
+    echo "🐳 Ambiente: Docker Development"
+else
+    # Local development - calcula caminho automaticamente
+    CERT_PATH="$PROJECT_ROOT/src/SnackFlow.Api/Common/Certificates"
+    PASSWORD="root"
+    echo "💻 Ambiente: Local Development"
 fi
 
+echo "🔐 Gerando certificados em: $CERT_PATH com senha: $PASSWORD"
+
+# Cria pasta se não existir
+mkdir -p "$CERT_PATH"
+
 # Navega para a pasta de certificados
-cd src/SnackFlow.Api/Common/Certificates/
+cd "$CERT_PATH"
 
 # Limpa certificados antigos
 rm -f *.pem *.pfx
@@ -26,7 +42,7 @@ openssl req -new -x509 -key access-token-private-key.pem -out access-token-certi
 openssl pkcs12 -export -out access-token-jwt-key.pfx \
     -inkey access-token-private-key.pem \
     -in access-token-certificate.pem \
-    -passout pass:root 2>/dev/null
+    -passout pass:$PASSWORD 2>/dev/null
 
 echo "🔄 Gerando Refresh Token..."
 openssl genrsa -out refresh-token-private-key.pem 2048 2>/dev/null
@@ -36,13 +52,11 @@ openssl req -new -x509 -key refresh-token-private-key.pem -out refresh-token-cer
 openssl pkcs12 -export -out refresh-token-jwt-key.pfx \
     -inkey refresh-token-private-key.pem \
     -in refresh-token-certificate.pem \
-    -passout pass:root 2>/dev/null
+    -passout pass:$PASSWORD 2>/dev/null
 
 echo "🧹 Limpando arquivos temporários..."
 # Remove todos os .pem, mantém apenas os .pfx
 rm -f *.pem
 
-# Volta para a pasta raiz
-cd - > /dev/null
-
-echo "✅ Certificados gerados! Senha PFX: root"
+echo "✅ Certificados gerados em: $CERT_PATH"
+echo "✅ Senha PFX: $PASSWORD"
