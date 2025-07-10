@@ -1,0 +1,55 @@
+# Etapa 1 - Build
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+WORKDIR /build
+
+RUN apt-get update && apt-get install -y \
+    nano bash dos2unix tzdata openssl curl \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY Directory.Packages.props ./
+COPY Directory.Build.props ./
+COPY SnackFlow.slnx ./
+
+COPY src/SnackFlow.Api/SnackFlow.Api.csproj ./src/SnackFlow.Api/
+COPY src/SnackFlow.Application/SnackFlow.Application.csproj ./src/SnackFlow.Application/
+COPY src/SnackFlow.Domain/SnackFlow.Domain.csproj ./src/SnackFlow.Domain/
+COPY src/SnackFlow.Infrastructure/SnackFlow.Infrastructure.csproj ./src/SnackFlow.Infrastructure/
+COPY tests/SnackFlow.Application.Tests/SnackFlow.Application.Tests.csproj ./tests/SnackFlow.Application.Tests/
+COPY tests/SnackFlow.Domain.Tests/SnackFlow.Domain.Tests.csproj ./tests/SnackFlow.Domain.Tests/
+COPY tests/SnackFlow.Infrastructure.Tests/SnackFlow.Infrastructure.Tests.csproj ./tests/SnackFlow.Infrastructure.Tests/
+RUN dotnet restore SnackFlow.slnx
+
+COPY . .
+RUN dotnet build SnackFlow.slnx -c Debug --no-restore
+RUN dotnet test SnackFlow.slnx --no-build --no-restore
+RUN dotnet publish src/SnackFlow.Api/SnackFlow.Api.csproj -c Debug -o /app/publish --no-build --no-restore
+
+# Etapa 2 - Migration Stage
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS migration
+WORKDIR /src
+
+RUN apt-get update && apt-get install -y postgresql-client netcat-traditional \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN dotnet tool install --global dotnet-ef
+ENV PATH="$PATH:/root/.dotnet/tools"
+
+COPY --from=build /build .
+COPY infrastructure/scripts/apply-migrations.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/apply-migrations.sh
+
+# Etapa 3 - Runtime
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime
+COPY --from=build /app/publish .
+
+COPY infrastructure/scripts/generate-certificates.sh /usr/local/bin/
+COPY infrastructure/scripts/startup.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/*.sh
+
+ENTRYPOINT ["/usr/local/bin/startup.sh"]
