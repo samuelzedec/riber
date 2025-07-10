@@ -8,6 +8,8 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
 using SnackFlow.Domain.Repositories;
+using SnackFlow.Infrastructure.Services;
+using SnackFlow.Infrastructure.Services.Abstractions;
 
 namespace SnackFlow.Infrastructure;
 
@@ -23,7 +25,8 @@ public static class DependencyInjection
     {
         logging.AddLogging();
         services.AddPersistence(configuration);
-        services.AddServicesInfra();
+        services.AddRepositories();
+        services.AddServices();
         services.AddHealthChecksConfiguration(configuration);
     }
 
@@ -68,10 +71,16 @@ public static class DependencyInjection
         });
     }
 
-    private static void AddServicesInfra(this IServiceCollection services)
+    private static void AddRepositories(this IServiceCollection services)
     {
         services.AddScoped<ICompanyRepository, CompanyRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+    }
+
+    private static void AddServices(this IServiceCollection services)
+    {
+        services.AddTransient<ICertificateService, CertificateService>();
+        services.AddTransient<ISecretService, AwsSecretService>();
     }
 
     private static void AddHealthChecksConfiguration(this IServiceCollection services, IConfiguration configuration)
