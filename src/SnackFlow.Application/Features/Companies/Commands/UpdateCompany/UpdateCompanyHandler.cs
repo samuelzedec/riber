@@ -28,7 +28,7 @@ public sealed class UpdateCompanyHandler(
                 x => x.Id == request.CompanyId, cancellationToken);
 
             if (company is null)
-                throw new NotFoundException(ErrorMessage.NotFound.CompanyNotFound);
+                throw new NotFoundException(ErrorMessage.NotFound.Company);
 
             await UpdateEmailAsync(company, request.Email, cancellationToken);
             await UpdatePhoneAsync(company, request.Phone, cancellationToken);
