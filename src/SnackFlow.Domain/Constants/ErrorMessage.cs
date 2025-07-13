@@ -73,7 +73,10 @@ public static class ErrorMessage
         public const string IsNullOrEmpty = "O telefone não pode ser vazio.";
         public const string FormatInvalid = "O telefone está com o formato inválido.";
     }
-    
+
+    /// <summary>
+    /// Contém mensagens de erro relacionadas a conflitos no sistema, como duplicidade de registros.
+    /// </summary>
     public static class Conflict
     {
         public const string EmailAlreadyExists = "Email já cadastrado no sistema";
@@ -82,8 +85,16 @@ public static class ErrorMessage
         public const string NameAlreadyExists = "Nome da empresa já cadastrado no sistema";
     }
 
+    /// <summary>
+    /// Represents error messages related to entities not found in the system.
+    /// </summary>
     public static class NotFound
     {
         public const string Company = "Empresa não encontrada no sistema";
+    }
+
+    public static class Invalid
+    {
+        public const string IdIsNull = "O ID não pode ser nulo";
     }
 }
