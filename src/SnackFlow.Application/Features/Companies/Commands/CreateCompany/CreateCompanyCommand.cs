@@ -10,4 +10,4 @@ public sealed record CreateCompanyCommand(
     string Email,
     string Phone,
     ECompanyType Type
-) : ICommand<CreateCompanyResponse>;
+) : ICommand<CreateCompanyCommandResponse>;

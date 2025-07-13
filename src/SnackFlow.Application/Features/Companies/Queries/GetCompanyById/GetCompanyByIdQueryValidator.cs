@@ -3,9 +3,9 @@ using SnackFlow.Domain.Constants;
 
 namespace SnackFlow.Application.Features.Companies.Queries.GetCompanyById;
 
-public sealed class GetCompanyByIdValidator : AbstractValidator<GetCompanyByIdQuery>
+public sealed class GetCompanyByIdQueryValidator : AbstractValidator<GetCompanyByIdQuery>
 {
-    public GetCompanyByIdValidator()
+    public GetCompanyByIdQueryValidator()
     {
         RuleFor(x => x.CompanyId)
             .NotEmpty()

@@ -13,20 +13,20 @@ using SnackFlow.Domain.Tests;
 
 namespace SnackFlow.Application.Tests.Features.Companies.Commands;
 
-public class CreateCompanyHandlerUnitTests : BaseTest
+public class CreateCompanyCommandHandlerUnitTests : BaseTest
 {
     #region Setup
 
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly Mock<ICompanyRepository> _mockCompanyRepository;
-    private readonly CreateCompanyHandler _handler;
+    private readonly CreateCompanyCommandHandler _commandHandler;
     private readonly CreateCompanyCommand _command;
 
-    public CreateCompanyHandlerUnitTests()
+    public CreateCompanyCommandHandlerUnitTests()
     {
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _mockCompanyRepository = new Mock<ICompanyRepository>();
-        _handler = new CreateCompanyHandler(_mockUnitOfWork.Object);
+        _commandHandler = new CreateCompanyCommandHandler(_mockUnitOfWork.Object);
         
         _command = new CreateCompanyCommand(
             _faker.Person.FullName,
@@ -67,7 +67,7 @@ public class CreateCompanyHandlerUnitTests : BaseTest
             .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()));
 
         // Act
-        var result = await _handler.Handle(_command, CancellationToken.None);
+        var result = await _commandHandler.Handle(_command, CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -112,7 +112,7 @@ public class CreateCompanyHandlerUnitTests : BaseTest
             .Returns(_mockCompanyRepository.Object);
 
         // Act
-        var result = async () => await _handler.Handle(_command, CancellationToken.None);
+        var result = async () => await _commandHandler.Handle(_command, CancellationToken.None);
 
         // Assert
         await result.Should()
@@ -148,7 +148,7 @@ public class CreateCompanyHandlerUnitTests : BaseTest
             .Returns(_mockCompanyRepository.Object);
 
         // Act
-        var result = async () => await _handler.Handle(_command, CancellationToken.None);
+        var result = async () => await _commandHandler.Handle(_command, CancellationToken.None);
 
         // Assert
         await result.Should()
@@ -184,7 +184,7 @@ public class CreateCompanyHandlerUnitTests : BaseTest
             .Returns(_mockCompanyRepository.Object);
 
         // Act
-        var result = async () => await _handler.Handle(_command, CancellationToken.None);
+        var result = async () => await _commandHandler.Handle(_command, CancellationToken.None);
 
         // Assert
         await result.Should()
@@ -220,7 +220,7 @@ public class CreateCompanyHandlerUnitTests : BaseTest
             .Returns(_mockCompanyRepository.Object);
 
         // Act
-        var result = async () => await _handler.Handle(_command, CancellationToken.None);
+        var result = async () => await _commandHandler.Handle(_command, CancellationToken.None);
 
         // Assert
         await result.Should()
@@ -258,7 +258,7 @@ public class CreateCompanyHandlerUnitTests : BaseTest
             .Returns(_mockCompanyRepository.Object);
 
         // Act
-        var result = async () => await _handler.Handle(_command, mockCancellationToken);
+        var result = async () => await _commandHandler.Handle(_command, mockCancellationToken);
 
         // Assert
         await result.Should()
@@ -304,7 +304,7 @@ public class CreateCompanyHandlerUnitTests : BaseTest
             .ThrowsAsync(new OperationCanceledException());
 
         // Act
-        var result = async () => await _handler.Handle(_command, mockCancellationToken);
+        var result = async () => await _commandHandler.Handle(_command, mockCancellationToken);
 
         // Assert
         await result.Should()

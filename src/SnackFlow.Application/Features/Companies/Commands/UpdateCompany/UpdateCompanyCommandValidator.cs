@@ -6,9 +6,9 @@ using SnackFlow.Domain.ValueObjects.Phone;
 
 namespace SnackFlow.Application.Features.Companies.Commands.UpdateCompany;
 
-public sealed class UpdateCompanyValidator : AbstractValidator<UpdateCompanyCommand>
+public sealed class UpdateCompanyCommandValidator : AbstractValidator<UpdateCompanyCommand>
 {
-    public UpdateCompanyValidator()
+    public UpdateCompanyCommandValidator()
     {
         RuleFor(x => x.TradingName)
             .Length(CompanyName.MinLength, CompanyName.TradingNameMaxLength)

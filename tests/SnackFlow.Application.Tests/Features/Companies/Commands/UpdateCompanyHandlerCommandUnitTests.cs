@@ -14,23 +14,23 @@ using SnackFlow.Domain.ValueObjects.Email;
 
 namespace SnackFlow.Application.Tests.Features.Companies.Commands;
 
-public class UpdateCompanyHandlerUnitTests : BaseTest
+public class UpdateCompanyHandlerCommandUnitTests : BaseTest
 {
     #region Setup
 
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly Mock<ICompanyRepository> _mockCompanyRepository;
-    private readonly Mock<ILogger<UpdateCompanyHandler>> _mockLogger;
-    private readonly UpdateCompanyHandler _handler;
+    private readonly Mock<ILogger<UpdateCompanyCommandHandler>> _mockLogger;
+    private readonly UpdateCompanyCommandHandler _commandHandler;
     private readonly Company _baseCompany;
 
-    public UpdateCompanyHandlerUnitTests()
+    public UpdateCompanyHandlerCommandUnitTests()
     {
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _mockCompanyRepository = new Mock<ICompanyRepository>();
-        _mockLogger = new Mock<ILogger<UpdateCompanyHandler>>();
+        _mockLogger = new Mock<ILogger<UpdateCompanyCommandHandler>>();
 
-        _handler = new UpdateCompanyHandler(
+        _commandHandler = new UpdateCompanyCommandHandler(
             _mockUnitOfWork.Object,
             _mockLogger.Object
         );
@@ -80,7 +80,7 @@ public class UpdateCompanyHandlerUnitTests : BaseTest
             .Setup(x => x.CommitTransactionAsync(It.IsAny<CancellationToken>()));
 
         // Act
-        var result = await _handler.Handle(request, CancellationToken.None);
+        var result = await _commandHandler.Handle(request, CancellationToken.None);
 
         // Assert
         result.Value.Email.Should().Be(Email.Standardization(request.Email));
@@ -130,7 +130,7 @@ public class UpdateCompanyHandlerUnitTests : BaseTest
             .Setup(x => x.CommitTransactionAsync(It.IsAny<CancellationToken>()));
 
         // Act
-        var result = await _handler.Handle(request, CancellationToken.None);
+        var result = await _commandHandler.Handle(request, CancellationToken.None);
 
         // Assert
         result.Value.Email.Should().Be(Email.Standardization(request.Email));
@@ -180,7 +180,7 @@ public class UpdateCompanyHandlerUnitTests : BaseTest
             .Setup(x => x.CommitTransactionAsync(It.IsAny<CancellationToken>()));
 
         // Act
-        var result = await _handler.Handle(request, CancellationToken.None);
+        var result = await _commandHandler.Handle(request, CancellationToken.None);
 
         // Assert
         result.Value.Email.Should().Be(_baseCompany.Email);
@@ -230,7 +230,7 @@ public class UpdateCompanyHandlerUnitTests : BaseTest
             .Setup(x => x.CommitTransactionAsync(It.IsAny<CancellationToken>()));
 
         // Act
-        var result = await _handler.Handle(request, CancellationToken.None);
+        var result = await _commandHandler.Handle(request, CancellationToken.None);
 
         // Assert
         result.Value.Email.Should().Be(_baseCompany.Email);
@@ -282,7 +282,7 @@ public class UpdateCompanyHandlerUnitTests : BaseTest
             .Returns(Task.CompletedTask);
 
         // Act
-        var result = async () => await _handler.Handle(request, CancellationToken.None);
+        var result = async () => await _commandHandler.Handle(request, CancellationToken.None);
 
         await result.Should()
             .ThrowExactlyAsync<NotFoundException>()
@@ -341,7 +341,7 @@ public class UpdateCompanyHandlerUnitTests : BaseTest
             .Returns(Task.CompletedTask);
 
         // Act
-        var result = async () => await _handler.Handle(command, mockCancellationToken);
+        var result = async () => await _commandHandler.Handle(command, mockCancellationToken);
 
         // Assert
         await result.Should()
@@ -397,7 +397,7 @@ public class UpdateCompanyHandlerUnitTests : BaseTest
             .Returns(Task.CompletedTask);
 
         // Act
-        var result = async () => await _handler.Handle(command, mockCancellationToken);
+        var result = async () => await _commandHandler.Handle(command, mockCancellationToken);
 
         // Assert
         await result.Should()

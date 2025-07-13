@@ -7,4 +7,4 @@ public sealed record UpdateCompanyCommand(
     string Email,
     string Phone,
     string TradingName
-) : ICommand<UpdateCompanyResponse>;
+) : ICommand<UpdateCompanyCommandResponse>;

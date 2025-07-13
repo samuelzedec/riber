@@ -2,7 +2,7 @@
 
 namespace SnackFlow.Application.Features.Companies.Commands.CreateCompany;
 
-public sealed record CreateCompanyResponse(
+public sealed record CreateCompanyCommandResponse(
     Guid CompanyId,
     string TradingName,
     string Email,

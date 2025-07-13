@@ -11,10 +11,10 @@ using SnackFlow.Domain.ValueObjects.Phone;
 
 namespace SnackFlow.Application.Features.Companies.Commands.CreateCompany;
 
-public sealed class CreateCompanyHandler(IUnitOfWork unitOfWork)
-    : ICommandHandler<CreateCompanyCommand, CreateCompanyResponse>
+public sealed class CreateCompanyCommandHandler(IUnitOfWork unitOfWork)
+    : ICommandHandler<CreateCompanyCommand, CreateCompanyCommandResponse>
 {
-    public async Task<Result<CreateCompanyResponse>> Handle(
+    public async Task<Result<CreateCompanyCommandResponse>> Handle(
         CreateCompanyCommand request, CancellationToken cancellationToken)
     {
         var companyRepository = unitOfWork.Companies;
@@ -32,7 +32,7 @@ public sealed class CreateCompanyHandler(IUnitOfWork unitOfWork)
         await companyRepository.CreateAsync(companyEntity);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return new CreateCompanyResponse(
+        return new CreateCompanyCommandResponse(
             CompanyId: companyEntity.Id,
             TradingName: companyEntity.CompanyName,
             Email: companyEntity.Email,

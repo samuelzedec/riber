@@ -2,7 +2,7 @@ using SnackFlow.Application.Abstractions.Queries;
 
 namespace SnackFlow.Application.Features.Companies.Queries.GetCompanyById;
 
-public sealed record GetCompanyByIdResponse(
+public sealed record GetCompanyByIdQueryResponse(
     string Name,
     string TradingName,
     string Email,
