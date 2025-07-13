@@ -41,7 +41,7 @@ public class UpdateCompanyHandlerCommandUnitTests : BaseTest
             _faker.Person.Cpf(),
             _faker.Person.Email,
             _faker.Phone.PhoneNumber("(92) 9####-####"),
-            ECompanyType.IndividualWithCpf
+            ETaxIdType.IndividualWithCpf
         );
     }
 
@@ -57,7 +57,7 @@ public class UpdateCompanyHandlerCommandUnitTests : BaseTest
             CompanyId: Guid.CreateVersion7(),
             Email: _faker.Person.Email,
             Phone: _faker.Phone.PhoneNumber("(11) 9####-####"),
-            TradingName: _faker.Company.CompanyName()
+            FantasyName: _faker.Company.CompanyName()
         );
 
         _mockUnitOfWork
@@ -85,7 +85,7 @@ public class UpdateCompanyHandlerCommandUnitTests : BaseTest
         // Assert
         result.Value.Email.Should().Be(Email.Standardization(request.Email));
         result.Value.Phone.Should().Be(request.Phone);
-        result.Value.TradingName.Should().Be(request.TradingName);
+        result.Value.FantasyName.Should().Be(request.FantasyName);
 
         _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()), Times.Once);
 
@@ -107,7 +107,7 @@ public class UpdateCompanyHandlerCommandUnitTests : BaseTest
             CompanyId: Guid.CreateVersion7(),
             Email: _faker.Person.Email,
             Phone: string.Empty,
-            TradingName: string.Empty
+            FantasyName: string.Empty
         );
 
         _mockUnitOfWork
@@ -135,7 +135,7 @@ public class UpdateCompanyHandlerCommandUnitTests : BaseTest
         // Assert
         result.Value.Email.Should().Be(Email.Standardization(request.Email));
         result.Value.Phone.Should().Be(_baseCompany.Phone);
-        result.Value.TradingName.Should().Be(_baseCompany.Name);
+        result.Value.FantasyName.Should().Be(_baseCompany.Name);
 
         _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()), Times.Once);
 
@@ -157,7 +157,7 @@ public class UpdateCompanyHandlerCommandUnitTests : BaseTest
             CompanyId: Guid.CreateVersion7(),
             Email: string.Empty,
             Phone: _faker.Phone.PhoneNumber("(11) 9####-####"),
-            TradingName: string.Empty
+            FantasyName: string.Empty
         );
 
         _mockUnitOfWork
@@ -185,7 +185,7 @@ public class UpdateCompanyHandlerCommandUnitTests : BaseTest
         // Assert
         result.Value.Email.Should().Be(_baseCompany.Email);
         result.Value.Phone.Should().Be(request.Phone);
-        result.Value.TradingName.Should().Be(_baseCompany.Name);
+        result.Value.FantasyName.Should().Be(_baseCompany.Name);
 
         _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()), Times.Once);
 
@@ -199,15 +199,15 @@ public class UpdateCompanyHandlerCommandUnitTests : BaseTest
         _mockUnitOfWork.Verify(x => x.CommitTransactionAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
-    [Fact(DisplayName = "Should update only trade name when only trading name is provided")]
-    public async Task Handle_WhenOnlyTradingNameProvided_ShouldUpdateOnlyTradingName()
+    [Fact(DisplayName = "Should update only trade name when only fantasy name is provided")]
+    public async Task Handle_WhenOnlyFantasyNameProvided_ShouldUpdateOnlyFantasyName()
     {
         // Arrange
         var request = new UpdateCompanyCommand(
             CompanyId: Guid.CreateVersion7(),
             Email: string.Empty,
             Phone: string.Empty,
-            TradingName: _faker.Company.CompanyName()
+            FantasyName: _faker.Company.CompanyName()
         );
 
         _mockUnitOfWork
@@ -235,7 +235,7 @@ public class UpdateCompanyHandlerCommandUnitTests : BaseTest
         // Assert
         result.Value.Email.Should().Be(_baseCompany.Email);
         result.Value.Phone.Should().Be(_baseCompany.Phone);
-        result.Value.TradingName.Should().Be(request.TradingName);
+        result.Value.FantasyName.Should().Be(request.FantasyName);
 
         _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()), Times.Once);
 
@@ -261,7 +261,7 @@ public class UpdateCompanyHandlerCommandUnitTests : BaseTest
             CompanyId: Guid.CreateVersion7(),
             Email: _faker.Person.Email,
             Phone: _faker.Phone.PhoneNumber("(11) 9####-####"),
-            TradingName: _faker.Company.CompanyName()
+            FantasyName: _faker.Company.CompanyName()
         );
 
         _mockUnitOfWork

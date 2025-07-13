@@ -18,16 +18,16 @@ public class CompanyUnitTests : BaseTest
     {
         // Arrange
         var name = _faker.Name.FullName();
-        var tradingName = _faker.Company.CompanyName();
+        var fantasyName = _faker.Company.CompanyName();
         var taxId = _faker.Company.Cnpj(false);
         var email = _faker.Person.Email;
         var phone = _faker.Phone.PhoneNumber("(92) 9####-####");
-        var companyType = ECompanyType.LegalEntityWithCnpj;
+        var companyType = ETaxIdType.LegalEntityWithCnpj;
 
         // Act
         var result = Company.Create(
             name,
-            tradingName,
+            fantasyName,
             taxId,
             email,
             phone,
@@ -40,7 +40,7 @@ public class CompanyUnitTests : BaseTest
         result.Id.Should().NotBeEmpty();
         result.Email.Value.Should().Be(email.ToLower());
         result.Name.Corporate.Should().Be(name);
-        result.Name.Fantasy.Should().Be(tradingName);
+        result.Name.Fantasy.Should().Be(fantasyName);
         result.TaxId.Value.Should().Be(taxId);
         result.Phone.ToString().Should().Be(phone);
     }
@@ -56,7 +56,7 @@ public class CompanyUnitTests : BaseTest
 
         var companyTaxId = TaxId.Create(
             _faker.Company.Cnpj(false),
-            ECompanyType.LegalEntityWithCnpj
+            ETaxIdType.LegalEntityWithCnpj
         );
 
         var companyEmail = Email.Create(_faker.Person.Email);
@@ -95,7 +95,7 @@ public class CompanyUnitTests : BaseTest
             _faker.Company.Cnpj(false),
             _faker.Person.Email,
             _faker.Phone.PhoneNumber("(92) 9####-####"),
-            ECompanyType.LegalEntityWithCnpj
+            ETaxIdType.LegalEntityWithCnpj
         );
 
         var newEmail = _faker.Person.Email;
@@ -117,7 +117,7 @@ public class CompanyUnitTests : BaseTest
             _faker.Company.Cnpj(false),
             _faker.Person.Email,
             _faker.Phone.PhoneNumber("(11) 9####-####"),
-            ECompanyType.LegalEntityWithCnpj
+            ETaxIdType.LegalEntityWithCnpj
         );
 
         var newPhone = _faker.Phone.PhoneNumber("(11) 9####-####");
@@ -129,8 +129,8 @@ public class CompanyUnitTests : BaseTest
         company.Phone.ToString().Should().Be(newPhone);
     }
 
-    [Fact(DisplayName = "Should update trading name successfully")]
-    public void UpdateTradingName_WhenValidTradingName_ShouldUpdateSuccessfully()
+    [Fact(DisplayName = "Should update fantasy name successfully")]
+    public void UpdateFantasyName_WhenValidFantasyName_ShouldUpdateSuccessfully()
     {
         // Arrange
         var originalName = _faker.Name.FullName();
@@ -140,20 +140,20 @@ public class CompanyUnitTests : BaseTest
             _faker.Company.Cnpj(false),
             _faker.Person.Email,
             _faker.Phone.PhoneNumber("(92) 9####-####"),
-            ECompanyType.LegalEntityWithCnpj
+            ETaxIdType.LegalEntityWithCnpj
         );
 
-        var newTradingName = _faker.Company.CompanyName();
+        var newFantasyName = _faker.Company.CompanyName();
 
         // Act
-        company.UpdateTradingName(newTradingName);
+        company.UpdateFantasyName(newFantasyName);
 
         // Assert
-        company.Name.Fantasy.Should().Be(newTradingName);
+        company.Name.Fantasy.Should().Be(newFantasyName);
     }
 
-    [Fact(DisplayName = "Should preserve original name when updating trading name")]
-    public void UpdateTradingName_WhenUpdatingTradingName_ShouldPreserveOriginalName()
+    [Fact(DisplayName = "Should preserve original name when updating fantasy name")]
+    public void UpdateFantasyName_WhenUpdatingFantasyName_ShouldPreserveOriginalName()
     {
         // Arrange
         var originalName = _faker.Name.FullName();
@@ -163,17 +163,17 @@ public class CompanyUnitTests : BaseTest
             _faker.Company.Cnpj(false),
             _faker.Person.Email,
             _faker.Phone.PhoneNumber("(92) 9####-####"),
-            ECompanyType.LegalEntityWithCnpj
+            ETaxIdType.LegalEntityWithCnpj
         );
 
-        var newTradingName = _faker.Company.CompanyName();
+        var newFantasyName = _faker.Company.CompanyName();
 
         // Act
-        company.UpdateTradingName(newTradingName);
+        company.UpdateFantasyName(newFantasyName);
 
         // Assert
         company.Name.Corporate.Should().Be(originalName);
-        company.Name.Fantasy.Should().Be(newTradingName);
+        company.Name.Fantasy.Should().Be(newFantasyName);
     }
 
     #endregion

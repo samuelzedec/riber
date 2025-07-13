@@ -6,5 +6,5 @@ public sealed record UpdateCompanyCommand(
     Guid CompanyId,
     string Email,
     string Phone,
-    string TradingName
+    string FantasyName
 ) : ICommand<UpdateCompanyCommandResponse>;

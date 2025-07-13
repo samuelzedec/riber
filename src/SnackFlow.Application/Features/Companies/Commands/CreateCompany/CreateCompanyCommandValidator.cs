@@ -11,13 +11,13 @@ public sealed class CreateCompanyCommandValidator : AbstractValidator<CreateComp
 {
     public CreateCompanyCommandValidator()
     {
-        RuleFor(x => x.Name)
+        RuleFor(x => x.CorporateName)
             .NotEmpty()
             .WithMessage(ErrorMessage.Name.IsNullOrEmpty)
             .Length(CompanyName.MinLength, CompanyName.CorporateMaxLength)
             .WithMessage(ErrorMessage.Name.LengthIsInvalid(CompanyName.MinLength, CompanyName.CorporateMaxLength));
         
-        RuleFor(x => x.TradingName)
+        RuleFor(x => x.FantasyName)
             .NotEmpty()
             .WithMessage(ErrorMessage.FantasyName.IsNullOrEmpty)
             .Length(CompanyName.MinLength, CompanyName.FantasyMaxLength)
@@ -46,13 +46,13 @@ public sealed class CreateCompanyCommandValidator : AbstractValidator<CreateComp
             .WithMessage(ErrorMessage.Cpf.IsNullOrEmpty)
             .Matches(@"^\d{11}$")
             .WithMessage(ErrorMessage.Cpf.LengthIsInvalid)
-            .When(x => x.Type == ECompanyType.IndividualWithCpf);
+            .When(x => x.Type == ETaxIdType.IndividualWithCpf);
         
         RuleFor(x => x.TaxId)
             .NotEmpty()
             .WithMessage(ErrorMessage.Cnpj.IsNullOrEmpty)
             .Matches(@"^\d{14}$")
             .WithMessage(ErrorMessage.Cnpj.LengthIsInvalid)
-            .When(x => x.Type == ECompanyType.LegalEntityWithCnpj);
+            .When(x => x.Type == ETaxIdType.LegalEntityWithCnpj);
     }
 }

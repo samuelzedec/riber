@@ -15,16 +15,16 @@ public class CompanyNameUnitTests : BaseTest
     {
         // Arrange
         var name = _faker.Company.CompanyName();
-        var tradingName = _faker.Random.String2(5, 20);
+        var fantasyName = _faker.Random.String2(5, 20);
 
         // Act
-        var act = () => CompanyName.Create(name, tradingName);
+        var act = () => CompanyName.Create(name, fantasyName);
 
         // Assert
         act.Should().NotThrow();
         var result = act.Invoke();
         result.Corporate.Should().Be(name);
-        result.Fantasy.Should().Be(tradingName);
+        result.Fantasy.Should().Be(fantasyName);
     }
 
     [Fact(DisplayName = "Should create CompanyName with minimum valid length")]
@@ -32,10 +32,10 @@ public class CompanyNameUnitTests : BaseTest
     {
         // Arrange
         var name = _faker.Random.String2(CompanyName.MinLength);
-        var tradingName = _faker.Random.String2(CompanyName.MinLength);
+        var fantasyName = _faker.Random.String2(CompanyName.MinLength);
 
         // Act
-        var act = () => CompanyName.Create(name, tradingName);
+        var act = () => CompanyName.Create(name, fantasyName);
 
         // Assert
         act.Should().NotThrow();
@@ -49,10 +49,10 @@ public class CompanyNameUnitTests : BaseTest
     {
         // Arrange
         var name = _faker.Random.String2(CompanyName.CorporateMaxLength);
-        var tradingName = _faker.Random.String2(CompanyName.FantasyMaxLength);
+        var fantasyName = _faker.Random.String2(CompanyName.FantasyMaxLength);
 
         // Act
-        var act = () => CompanyName.Create(name, tradingName);
+        var act = () => CompanyName.Create(name, fantasyName);
 
         // Assert
         act.Should().NotThrow();
@@ -61,21 +61,21 @@ public class CompanyNameUnitTests : BaseTest
         result.Fantasy.Should().HaveLength(CompanyName.FantasyMaxLength);
     }
 
-    [Fact(DisplayName = "Should trim whitespace from name and trading name")]
+    [Fact(DisplayName = "Should trim whitespace from name and fantasy name")]
     public void Create_WhenWhitespaceInNames_ShouldTrimWhitespace()
     {
         // Arrange
         var nameCore = _faker.Random.String2(10);
-        var tradingNameCore = _faker.Random.String2(10);
+        var fantasyNameCore = _faker.Random.String2(10);
         var name = $"  {nameCore}  ";
-        var tradingName = $"  {tradingNameCore}  ";
+        var fantasyName = $"  {fantasyNameCore}  ";
 
         // Act
-        var result = CompanyName.Create(name, tradingName);
+        var result = CompanyName.Create(name, fantasyName);
 
         // Assert 
         result.Corporate.Should().Be(nameCore);
-        result.Fantasy.Should().Be(tradingNameCore);
+        result.Fantasy.Should().Be(fantasyNameCore);
         result.Corporate.Should().NotStartWith(" ");
         result.Corporate.Should().NotEndWith(" ");
         result.Fantasy.Should().NotStartWith(" ");
@@ -86,7 +86,7 @@ public class CompanyNameUnitTests : BaseTest
 
     #region Null and Empty Tests
 
-    [Theory(DisplayName = "Should throw InvalidFantasyNameException for empty or null trading names")]
+    [Theory(DisplayName = "Should throw InvalidFantasyNameException for empty or null fantasy names")]
     [InlineData("")]
     [InlineData("   ")]
     [InlineData("\t")]
@@ -179,7 +179,7 @@ public class CompanyNameUnitTests : BaseTest
 
     #region FantasyName Property Tests
 
-    [Fact(DisplayName = "Should throw exception when trading name exceeds maximum length")]
+    [Fact(DisplayName = "Should throw exception when fantasy name exceeds maximum length")]
     public void Create_WhenFantasyNameExceedsMaximumLength_ShouldThrowException()
     {
         // Arrange
@@ -191,11 +191,11 @@ public class CompanyNameUnitTests : BaseTest
 
         // Assert
         result.Should().Throw<DomainException>();
-        result.Should().ThrowExactly<InvalidTradingLengthNameException>().WithMessage(
+        result.Should().ThrowExactly<InvalidFantasyLengthNameException>().WithMessage(
             ErrorMessage.FantasyName.LengthIsInvalid(CompanyName.MinLength, CompanyName.FantasyMaxLength));
     }
 
-    [Fact(DisplayName = "Should throw exception when trading name exceeds minimum length")]
+    [Fact(DisplayName = "Should throw exception when fantasy name exceeds minimum length")]
     public void Create_WhenFantasyNameExceedsMinimumLength_ShouldThrowException()
     {
         // Arrange
@@ -207,11 +207,11 @@ public class CompanyNameUnitTests : BaseTest
 
         // Assert
         result.Should().Throw<DomainException>();
-        result.Should().ThrowExactly<InvalidTradingLengthNameException>().WithMessage(
+        result.Should().ThrowExactly<InvalidFantasyLengthNameException>().WithMessage(
             ErrorMessage.FantasyName.LengthIsInvalid(CompanyName.MinLength, CompanyName.FantasyMaxLength));
     }
 
-    [Fact(DisplayName = "Should throw exception when trading name is empty")]
+    [Fact(DisplayName = "Should throw exception when fantasy name is empty")]
     public void Create_WhenFantasyNameIsEmpty_ShouldThrowException()
     {
         // Arrange
@@ -226,7 +226,7 @@ public class CompanyNameUnitTests : BaseTest
         result.Should().ThrowExactly<InvalidFantasyNameException>().WithMessage(ErrorMessage.FantasyName.IsNullOrEmpty);
     }
 
-    [Fact(DisplayName = "Should return trading name value when implicitly converted to string")]
+    [Fact(DisplayName = "Should return fantasy name value when implicitly converted to string")]
     public void ImplicitConversion_WhenConvertedToString_ShouldReturnFantasyNameValue()
     {
         // Arrange

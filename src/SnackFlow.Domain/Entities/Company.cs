@@ -27,20 +27,6 @@ public sealed class Company : BaseEntity, IAggregateRoot
         Email = null!;
         Phone = null!;
     }
-    
-    private Company(
-        string name,
-        string tradingName,
-        string taxId,
-        string email,
-        string phone,
-        ECompanyType type) : base(Guid.CreateVersion7())
-    {
-        Name = CompanyName.Create(name, tradingName);
-        TaxId = TaxId.Create(taxId, type);
-        Email = Email.Create(email);
-        Phone = Phone.Create(phone);
-    }
 
     private Company(
         CompanyName name,
@@ -56,17 +42,21 @@ public sealed class Company : BaseEntity, IAggregateRoot
 
     #endregion
     
-
     #region Factories
 
     public static Company Create(
-        string name,
-        string tradingName,
+        string corporateName,
+        string fantasyName,
         string taxId,
         string email,
         string phone,
-        ECompanyType type
-    ) => new(name, tradingName, taxId, email, phone, type);
+        ETaxIdType type
+    ) => new(
+        CompanyName.Create(corporateName, fantasyName),
+        TaxId.Create(taxId, type),
+        Email.Create(email),
+        Phone.Create(phone)
+    );
 
     public static Company Create(
         CompanyName name,
@@ -85,8 +75,8 @@ public sealed class Company : BaseEntity, IAggregateRoot
     public void UpdatePhone(string phone)
         => Phone = Phone.Create(phone);
 
-    public void UpdateTradingName(string tradingName)
-        => Name = CompanyName.Create(Name.Corporate, tradingName);
+    public void UpdateFantasyName(string fantasyName)
+        => Name = CompanyName.Create(Name.Corporate, fantasyName);
     
     #endregion
 }

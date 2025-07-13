@@ -99,5 +99,6 @@ public static class ErrorMessage
     public static class Invalid
     {
         public const string IdIsNull = "O ID não pode ser nulo";
+        public const string CompanyIdIsNull = "O ID da empresa não pode ser nulo";
     }
 }
