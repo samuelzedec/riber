@@ -12,12 +12,12 @@ using SnackFlow.Domain.ValueObjects.Phone;
 
 namespace SnackFlow.Application.Features.Companies.Commands.UpdateCompany;
 
-public sealed class UpdateCompanyHandler(
+public sealed class UpdateCompanyCommandHandler(
     IUnitOfWork unitOfWork,
-    ILogger<UpdateCompanyHandler> logger)
-    : ICommandHandler<UpdateCompanyCommand, UpdateCompanyResponse>
+    ILogger<UpdateCompanyCommandHandler> logger)
+    : ICommandHandler<UpdateCompanyCommand, UpdateCompanyCommandResponse>
 {
-    public async Task<Result<UpdateCompanyResponse>> Handle(UpdateCompanyCommand request,
+    public async Task<Result<UpdateCompanyCommandResponse>> Handle(UpdateCompanyCommand request,
         CancellationToken cancellationToken)
     {
         var companyRepository = unitOfWork.Companies;
@@ -37,8 +37,8 @@ public sealed class UpdateCompanyHandler(
             companyRepository.Update(company);
             await unitOfWork.CommitTransactionAsync(cancellationToken);
             
-            return new UpdateCompanyResponse(
-                company.CompanyName,
+            return new UpdateCompanyCommandResponse(
+                company.Name,
                 company.Email,
                 company.Phone,
                 company.TaxId.Type.GetDescription()
@@ -84,7 +84,7 @@ public sealed class UpdateCompanyHandler(
 
     private void UpdateTradingName(Company company, string tradingName)
     {
-        if (string.IsNullOrWhiteSpace(tradingName) || company.CompanyName == tradingName) 
+        if (string.IsNullOrWhiteSpace(tradingName) || company.Name == tradingName) 
             return;
         
         company.UpdateTradingName(tradingName);

@@ -20,17 +20,17 @@ public class TaxIdUnitTests : BaseTest
 
     #region Valid Creation Scenarios
 
-    [Theory(DisplayName = "Should return CompanyTaxId instance when creating with CPF regardless of formatting")]
+    [Theory(DisplayName = "Should return TaxId instance when creating with CPF regardless of formatting")]
     [InlineData(true)]
     [InlineData(false)]
-    public void Create_WhenCpfRegardlessOfFormatting_ShouldReturnCompanyTaxIdInstance(bool formatted)
+    public void Create_WhenCpfRegardlessOfFormatting_ShouldReturnTaxIdInstance(bool formatted)
     {
         // Arrange
         var cpf = _faker.Person.Cpf(formatted);
         var taxIdType = ECompanyType.IndividualWithCpf;
 
         // Act
-        var result = CompanyTaxId.Create(cpf, taxIdType);
+        var result = TaxId.Create(cpf, taxIdType);
 
         // Assert
         result.Should().NotBeNull();
@@ -38,17 +38,17 @@ public class TaxIdUnitTests : BaseTest
         result.Type.Should().Be(taxIdType);
     }
 
-    [Theory(DisplayName = "Should return CompanyTaxId instance when creating with CNPJ regardless of formatting")]
+    [Theory(DisplayName = "Should return TaxId instance when creating with CNPJ regardless of formatting")]
     [InlineData(true)]
     [InlineData(false)]
-    public void Create_WhenCnpjRegardlessOfFormatting_ShouldReturnCompanyTaxIdInstance(bool formatted)
+    public void Create_WhenCnpjRegardlessOfFormatting_ShouldReturnTaxIdInstance(bool formatted)
     {
         // Arrange
         var cnpj = _faker.Company.Cnpj(formatted);
         var taxIdType = ECompanyType.LegalEntityWithCnpj;
 
         // Act
-        var result = CompanyTaxId.Create(cnpj, taxIdType);
+        var result = TaxId.Create(cnpj, taxIdType);
 
         // Assert
         result.Should().NotBeNull();
@@ -56,16 +56,16 @@ public class TaxIdUnitTests : BaseTest
         result.Type.Should().Be(taxIdType);
     }
 
-    [Theory(DisplayName = "Should return CompanyTaxId instance when creating with CPF only")]
+    [Theory(DisplayName = "Should return TaxId instance when creating with CPF only")]
     [InlineData(true)]
     [InlineData(false)]
-    public void CreateFromCpf_WhenCpfOnly_ShouldReturnCompanyTaxIdInstance(bool formatted)
+    public void CreateFromCpf_WhenCpfOnly_ShouldReturnTaxIdInstance(bool formatted)
     {
         // Arrange
         var cpf = _faker.Person.Cpf(formatted);
 
         // Act
-        var result = CompanyTaxId.CreateFromCpf(cpf);
+        var result = TaxId.CreateFromCpf(cpf);
 
         // Assert
         result.Should().NotBeNull();
@@ -73,16 +73,16 @@ public class TaxIdUnitTests : BaseTest
         result.Type.Should().Be(ECompanyType.IndividualWithCpf);
     }
 
-    [Theory(DisplayName = "Should return CompanyTaxId instance when creating with CNPJ only")]
+    [Theory(DisplayName = "Should return TaxId instance when creating with CNPJ only")]
     [InlineData(true)]
     [InlineData(false)]
-    public void CreateFromCnpj_WhenCnpjOnly_ShouldReturnCompanyTaxIdInstance(bool formatted)
+    public void CreateFromCnpj_WhenCnpjOnly_ShouldReturnTaxIdInstance(bool formatted)
     {
         // Arrange
         var cpnj = _faker.Company.Cnpj(formatted);
 
         // Act
-        var result = CompanyTaxId.CreateFromCnpj(cpnj);
+        var result = TaxId.CreateFromCnpj(cpnj);
 
         // Assert
         result.Should().NotBeNull();
@@ -104,7 +104,7 @@ public class TaxIdUnitTests : BaseTest
     public void CreateFromCpf_WhenInvalidCpf_ShouldThrowException(string invalidCpf)
     {
         // Act
-        var act = () => CompanyTaxId.CreateFromCpf(invalidCpf);
+        var act = () => TaxId.CreateFromCpf(invalidCpf);
 
         // Assert
         act.Should().Throw<DomainException>();
@@ -118,7 +118,7 @@ public class TaxIdUnitTests : BaseTest
     public void CreateFromCpf_WhenCpfHasInvalidVerificationDigits_ShouldThrowException(string invalidCpf)
     {
         // Act
-        var act = () => CompanyTaxId.CreateFromCpf(invalidCpf);
+        var act = () => TaxId.CreateFromCpf(invalidCpf);
 
         // Assert
         act.Should().Throw<DomainException>();
@@ -134,7 +134,7 @@ public class TaxIdUnitTests : BaseTest
     public void CreateFromCpf_WhenCpfHasInvalidLength_ShouldThrowException(string invalidCpf)
     {
         // Act
-        var act = () => CompanyTaxId.CreateFromCpf(invalidCpf);
+        var act = () => TaxId.CreateFromCpf(invalidCpf);
 
         // Assert
         act.Should().Throw<DomainException>();
@@ -151,7 +151,7 @@ public class TaxIdUnitTests : BaseTest
     public void CreateFromCpf_WhenEmptyOrWhitespaceCpf_ShouldThrowException(string invalidCpf)
     {
         // Act
-        var act = () => CompanyTaxId.CreateFromCpf(invalidCpf);
+        var act = () => TaxId.CreateFromCpf(invalidCpf);
 
         // Assert
         act.Should().Throw<DomainException>();
@@ -172,7 +172,7 @@ public class TaxIdUnitTests : BaseTest
     public void CreateFromCnpj_WhenInvalidCnpj_ShouldThrowException(string invalidCnpj)
     {
         // Act
-        var act = () => CompanyTaxId.CreateFromCnpj(invalidCnpj);
+        var act = () => TaxId.CreateFromCnpj(invalidCnpj);
 
         // Assert
         act.Should().Throw<DomainException>();
@@ -186,7 +186,7 @@ public class TaxIdUnitTests : BaseTest
     public void CreateFromCnpj_WhenCnpjHasInvalidVerificationDigits_ShouldThrowException(string invalidCnpj)
     {
         // Act
-        var act = () => CompanyTaxId.CreateFromCnpj(invalidCnpj);
+        var act = () => TaxId.CreateFromCnpj(invalidCnpj);
 
         // Assert
         act.Should().Throw<DomainException>();
@@ -202,7 +202,7 @@ public class TaxIdUnitTests : BaseTest
     public void CreateFromCnpj_WhenCnpjHasInvalidLength_ShouldThrowException(string invalidCnpj)
     {
         // Act
-        var act = () => CompanyTaxId.CreateFromCnpj(invalidCnpj);
+        var act = () => TaxId.CreateFromCnpj(invalidCnpj);
 
         // Assert
         act.Should().Throw<DomainException>();
@@ -219,7 +219,7 @@ public class TaxIdUnitTests : BaseTest
     public void CreateFromCnpj_WhenEmptyOrWhitespaceCnpj_ShouldThrowException(string invalidCnpj)
     {
         // Act
-        var act = () => CompanyTaxId.CreateFromCnpj(invalidCnpj);
+        var act = () => TaxId.CreateFromCnpj(invalidCnpj);
 
         // Assert
         act.Should().Throw<DomainException>();
@@ -236,7 +236,7 @@ public class TaxIdUnitTests : BaseTest
     public void ImplicitOperator_WhenFormattingDocuments_ShouldReturnProperPunctuation(string document, string expectedFormat, ECompanyType expectedType)
     {
         // Act
-        var result = CompanyTaxId.Create(document, expectedType);
+        var result = TaxId.Create(document, expectedType);
         string documentString = result;
         
         // Assert

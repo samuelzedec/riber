@@ -11,10 +11,10 @@ using SnackFlow.Domain.ValueObjects.Phone;
 
 namespace SnackFlow.Application.Features.Companies.Commands.CreateCompany;
 
-public sealed class CreateCompanyHandler(IUnitOfWork unitOfWork)
-    : ICommandHandler<CreateCompanyCommand, CreateCompanyResponse>
+public sealed class CreateCompanyCommandHandler(IUnitOfWork unitOfWork)
+    : ICommandHandler<CreateCompanyCommand, CreateCompanyCommandResponse>
 {
-    public async Task<Result<CreateCompanyResponse>> Handle(
+    public async Task<Result<CreateCompanyCommandResponse>> Handle(
         CreateCompanyCommand request, CancellationToken cancellationToken)
     {
         var companyRepository = unitOfWork.Companies;
@@ -32,9 +32,9 @@ public sealed class CreateCompanyHandler(IUnitOfWork unitOfWork)
         await companyRepository.CreateAsync(companyEntity);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return new CreateCompanyResponse(
+        return new CreateCompanyCommandResponse(
             CompanyId: companyEntity.Id,
-            TradingName: companyEntity.CompanyName,
+            TradingName: companyEntity.Name,
             Email: companyEntity.Email,
             Phone: companyEntity.Phone,
             Type: companyEntity.TaxId.Type.GetDescription()
@@ -51,7 +51,7 @@ public sealed class CreateCompanyHandler(IUnitOfWork unitOfWork)
         
         var validations = new (Expression<Func<Company, bool>>, string message)[]
         {
-            (x => x.CompanyName.Name == request.Name, ErrorMessage.Conflict.NameAlreadyExists),
+            (x => x.Name.Corporate == request.Name, ErrorMessage.Conflict.CorporateNameAlreadyExists),
             (x => x.TaxId.Value == request.TaxId, ErrorMessage.Conflict.TaxIdAlreadyExists),
             (x => x.Email.Value == normalizedEmail, ErrorMessage.Conflict.EmailAlreadyExists),
             (x => x.Phone.Value == normalizedPhone, ErrorMessage.Conflict.PhoneAlreadyExists)

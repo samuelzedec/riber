@@ -11,14 +11,22 @@ public sealed class Company : BaseEntity, IAggregateRoot
 {
     #region Properties
 
-    public CompanyName CompanyName { get; private set; }
-    public CompanyTaxId TaxId { get; private set; }
+    public CompanyName Name { get; private set; }
+    public TaxId TaxId { get; private set; }
     public Email Email { get; private set; }
     public Phone Phone { get; private set; }
 
     #endregion
 
     #region Constructors
+    
+    private Company() : base(Guid.Empty) 
+    {
+        Name = null!;
+        TaxId = null!;
+        Email = null!;
+        Phone = null!;
+    }
     
     private Company(
         string name,
@@ -28,37 +36,26 @@ public sealed class Company : BaseEntity, IAggregateRoot
         string phone,
         ECompanyType type) : base(Guid.CreateVersion7())
     {
-        CompanyName = CompanyName.Create(name, tradingName);
-        TaxId = CompanyTaxId.Create(taxId, type);
+        Name = CompanyName.Create(name, tradingName);
+        TaxId = TaxId.Create(taxId, type);
         Email = Email.Create(email);
         Phone = Phone.Create(phone);
     }
 
     private Company(
-        CompanyName companyName,
-        CompanyTaxId taxId,
+        CompanyName name,
+        TaxId taxId,
         Email email,
         Phone phone) : base(Guid.CreateVersion7())
     {
-        CompanyName = companyName;
+        Name = name;
         TaxId = taxId;
         Email = email;
         Phone = phone;
     }
 
     #endregion
-
-    #region  ORM Constructor
-
-    private Company() : base(Guid.Empty) 
-    {
-        CompanyName = null!;
-        TaxId = null!;
-        Email = null!;
-        Phone = null!;
-    }
-
-    #endregion
+    
 
     #region Factories
 
@@ -73,7 +70,7 @@ public sealed class Company : BaseEntity, IAggregateRoot
 
     public static Company Create(
         CompanyName name,
-        CompanyTaxId taxId,
+        TaxId taxId,
         Email email,
         Phone phone
     ) => new(name, taxId, email, phone);
@@ -89,7 +86,7 @@ public sealed class Company : BaseEntity, IAggregateRoot
         => Phone = Phone.Create(phone);
 
     public void UpdateTradingName(string tradingName)
-        => CompanyName = CompanyName.Create(CompanyName.Name, tradingName);
+        => Name = CompanyName.Create(Name.Corporate, tradingName);
     
     #endregion
 }

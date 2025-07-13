@@ -43,24 +43,24 @@ public class CompanyMap : IEntityTypeConfiguration<Company>
         
         #region Value Objects
         
-        builder.OwnsOne(c => c.CompanyName, company =>
+        builder.OwnsOne(c => c.Name, company =>
         {
             company
-                .Property(c => c.Name)
+                .Property(c => c.Corporate)
                 .HasColumnName("name")
                 .HasColumnType("text")
-                .HasMaxLength(CompanyName.NameMaxLength)
+                .HasMaxLength(CompanyName.CorporateMaxLength)
                 .HasAnnotation("MinLength", CompanyName.MinLength)
                 .IsRequired();
 
             company
-                .HasIndex(c => c.Name, "uq_company_name");
+                .HasIndex(c => c.Corporate, "uq_company_name");
             
             company
-                .Property(c => c.TradingName)
+                .Property(c => c.Fantasy)
                 .HasColumnName("trading_name")
                 .HasColumnType("text")
-                .HasMaxLength(CompanyName.TradingNameMaxLength)
+                .HasMaxLength(CompanyName.FantasyMaxLength)
                 .HasAnnotation("MinLength", CompanyName.MinLength)
                 .IsRequired();
             

@@ -7,10 +7,10 @@ using SnackFlow.Domain.Repositories;
 
 namespace SnackFlow.Application.Features.Companies.Queries.GetCompanyById;
 
-public sealed class GetCompanyByIdHandler(IUnitOfWork unitOfWork)
-    : IQueryHandler<GetCompanyByIdQuery, GetCompanyByIdResponse>
+public sealed class GetCompanyByIdQueryHandler(IUnitOfWork unitOfWork)
+    : IQueryHandler<GetCompanyByIdQuery, GetCompanyByIdQueryResponse>
 {
-    public async Task<Result<GetCompanyByIdResponse>> Handle(GetCompanyByIdQuery request, CancellationToken cancellationToken)
+    public async Task<Result<GetCompanyByIdQueryResponse>> Handle(GetCompanyByIdQuery request, CancellationToken cancellationToken)
     {
         var companyRespository = unitOfWork.Companies;
         var company = await companyRespository.GetSingleAsync(
@@ -21,9 +21,9 @@ public sealed class GetCompanyByIdHandler(IUnitOfWork unitOfWork)
         if (company is null)
             throw new NotFoundException(ErrorMessage.NotFound.Company);
 
-        return new GetCompanyByIdResponse(
-            Name: company.CompanyName.Name,
-            TradingName: company.CompanyName,
+        return new GetCompanyByIdQueryResponse(
+            Name: company.Name.Corporate,
+            TradingName: company.Name,
             Email: company.Email,
             Phone: company.Phone,
             TaxId: company.TaxId,
