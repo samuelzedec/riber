@@ -39,8 +39,8 @@ public class CompanyUnitTests : BaseTest
         result.CreatedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(5));
         result.Id.Should().NotBeEmpty();
         result.Email.Value.Should().Be(email.ToLower());
-        result.CompanyName.Name.Should().Be(name);
-        result.CompanyName.TradingName.Should().Be(tradingName);
+        result.Name.Corporate.Should().Be(name);
+        result.Name.Fantasy.Should().Be(tradingName);
         result.TaxId.Value.Should().Be(taxId);
         result.Phone.ToString().Should().Be(phone);
     }
@@ -54,7 +54,7 @@ public class CompanyUnitTests : BaseTest
             _faker.Company.CompanyName()
         );
 
-        var companyTaxId = CompanyTaxId.Create(
+        var companyTaxId = TaxId.Create(
             _faker.Company.Cnpj(false),
             ECompanyType.LegalEntityWithCnpj
         );
@@ -75,8 +75,8 @@ public class CompanyUnitTests : BaseTest
         result.CreatedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(5));
         result.Id.Should().NotBeEmpty();
         result.Email.Value.Should().Be(companyEmail.Value);
-        result.CompanyName.Name.Should().Be(companyName.Name);
-        result.CompanyName.TradingName.Should().Be(companyName.TradingName);
+        result.Name.Corporate.Should().Be(companyName.Corporate);
+        result.Name.Fantasy.Should().Be(companyName.Fantasy);
         result.TaxId.Value.Should().Be(companyTaxId.Value);
         result.Phone.ToString().Should().Be(companyPhone.ToString());
     }
@@ -149,7 +149,7 @@ public class CompanyUnitTests : BaseTest
         company.UpdateTradingName(newTradingName);
 
         // Assert
-        company.CompanyName.TradingName.Should().Be(newTradingName);
+        company.Name.Fantasy.Should().Be(newTradingName);
     }
 
     [Fact(DisplayName = "Should preserve original name when updating trading name")]
@@ -172,8 +172,8 @@ public class CompanyUnitTests : BaseTest
         company.UpdateTradingName(newTradingName);
 
         // Assert
-        company.CompanyName.Name.Should().Be(originalName);
-        company.CompanyName.TradingName.Should().Be(newTradingName);
+        company.Name.Corporate.Should().Be(originalName);
+        company.Name.Fantasy.Should().Be(newTradingName);
     }
 
     #endregion

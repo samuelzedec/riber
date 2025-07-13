@@ -117,7 +117,7 @@ public class CreateCompanyCommandHandlerUnitTests : BaseTest
         // Assert
         await result.Should()
             .ThrowAsync<ConflictException>()
-            .WithMessage(ErrorMessage.Conflict.NameAlreadyExists);
+            .WithMessage(ErrorMessage.Conflict.CorporateNameAlreadyExists);
 
         _mockCompanyRepository.Verify(x => x.ExistsAsync(
             It.IsAny<Expression<Func<Company, bool>>>(), It.IsAny<CancellationToken>()), Times.Once);

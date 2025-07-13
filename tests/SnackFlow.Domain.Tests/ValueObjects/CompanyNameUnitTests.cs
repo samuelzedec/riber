@@ -10,8 +10,8 @@ public class CompanyNameUnitTests : BaseTest
 {
     #region Valid Creation Scenarios
 
-    [Fact(DisplayName = "Should create CompanyName with Name and TradingName")]
-    public void Create_WhenNameAndTradingName_ShouldCreateCompanyName()
+    [Fact(DisplayName = "Should create CompanyName with Name and FantasyName")]
+    public void Create_WhenNameAndFantasyName_ShouldCreateCompanyName()
     {
         // Arrange
         var name = _faker.Company.CompanyName();
@@ -23,8 +23,8 @@ public class CompanyNameUnitTests : BaseTest
         // Assert
         act.Should().NotThrow();
         var result = act.Invoke();
-        result.Name.Should().Be(name);
-        result.TradingName.Should().Be(tradingName);
+        result.Corporate.Should().Be(name);
+        result.Fantasy.Should().Be(tradingName);
     }
 
     [Fact(DisplayName = "Should create CompanyName with minimum valid length")]
@@ -40,16 +40,16 @@ public class CompanyNameUnitTests : BaseTest
         // Assert
         act.Should().NotThrow();
         var result = act.Invoke();
-        result.Name.Should().HaveLength(CompanyName.MinLength);
-        result.TradingName.Should().HaveLength(CompanyName.MinLength);
+        result.Corporate.Should().HaveLength(CompanyName.MinLength);
+        result.Fantasy.Should().HaveLength(CompanyName.MinLength);
     }
 
     [Fact(DisplayName = "Should create CompanyName with maximum valid length")]
     public void Create_WhenMaximumValidLength_ShouldCreateCompanyName()
     {
         // Arrange
-        var name = _faker.Random.String2(CompanyName.NameMaxLength);
-        var tradingName = _faker.Random.String2(CompanyName.TradingNameMaxLength);
+        var name = _faker.Random.String2(CompanyName.CorporateMaxLength);
+        var tradingName = _faker.Random.String2(CompanyName.FantasyMaxLength);
 
         // Act
         var act = () => CompanyName.Create(name, tradingName);
@@ -57,8 +57,8 @@ public class CompanyNameUnitTests : BaseTest
         // Assert
         act.Should().NotThrow();
         var result = act.Invoke();
-        result.Name.Should().HaveLength(CompanyName.NameMaxLength);
-        result.TradingName.Should().HaveLength(CompanyName.TradingNameMaxLength);
+        result.Corporate.Should().HaveLength(CompanyName.CorporateMaxLength);
+        result.Fantasy.Should().HaveLength(CompanyName.FantasyMaxLength);
     }
 
     [Fact(DisplayName = "Should trim whitespace from name and trading name")]
@@ -74,35 +74,35 @@ public class CompanyNameUnitTests : BaseTest
         var result = CompanyName.Create(name, tradingName);
 
         // Assert 
-        result.Name.Should().Be(nameCore);
-        result.TradingName.Should().Be(tradingNameCore);
-        result.Name.Should().NotStartWith(" ");
-        result.Name.Should().NotEndWith(" ");
-        result.TradingName.Should().NotStartWith(" ");
-        result.TradingName.Should().NotEndWith(" ");
+        result.Corporate.Should().Be(nameCore);
+        result.Fantasy.Should().Be(tradingNameCore);
+        result.Corporate.Should().NotStartWith(" ");
+        result.Corporate.Should().NotEndWith(" ");
+        result.Fantasy.Should().NotStartWith(" ");
+        result.Fantasy.Should().NotEndWith(" ");
     }
 
     #endregion
 
     #region Null and Empty Tests
 
-    [Theory(DisplayName = "Should throw InvalidTradingNameException for empty or null trading names")]
+    [Theory(DisplayName = "Should throw InvalidFantasyNameException for empty or null trading names")]
     [InlineData("")]
     [InlineData("   ")]
     [InlineData("\t")]
     [InlineData("\n")]
     [InlineData("  \t  \n  ")]
-    public void Create_WhenEmptyOrNullTradingName_ShouldThrowInvalidTradingNameException(string invalidTradingName)
+    public void Create_WhenEmptyOrNullFantasyName_ShouldThrowInvalidFantasyNameException(string invalidFantasyName)
     {
         // Arrange
         var name = _faker.Random.String2(10);
 
         // Act
-        var act = () => CompanyName.Create(name, invalidTradingName);
+        var act = () => CompanyName.Create(name, invalidFantasyName);
 
         // Assert
         act.Should().Throw<DomainException>();
-        act.Should().ThrowExactly<InvalidTradingNameException>().WithMessage(ErrorMessage.TradingName.IsNullOrEmpty);
+        act.Should().ThrowExactly<InvalidFantasyNameException>().WithMessage(ErrorMessage.FantasyName.IsNullOrEmpty);
     }
 
     [Theory(DisplayName = "Should throw InvalidNameException for empty or null names")]
@@ -114,14 +114,14 @@ public class CompanyNameUnitTests : BaseTest
     public void Create_WhenEmptyOrNullName_ShouldThrowInvalidNameException(string invalidName)
     {
         // Arrange
-        var tradingName = _faker.Random.String2(10);
+        var fantasyName = _faker.Random.String2(10);
 
         // Act
-        var act = () => CompanyName.Create(invalidName, tradingName);
+        var act = () => CompanyName.Create(invalidName, fantasyName);
 
         // Assert
         act.Should().Throw<DomainException>();
-        act.Should().ThrowExactly<InvalidNameException>().WithMessage(ErrorMessage.Name.IsNullOrEmpty);
+        act.Should().ThrowExactly<InvalidNameCorporateException>().WithMessage(ErrorMessage.Name.IsNullOrEmpty);
     }
 
     #endregion
@@ -133,15 +133,15 @@ public class CompanyNameUnitTests : BaseTest
     {
         //Arrange
         var name = _faker.Random.String2(160);
-        var tradingName = _faker.Random.String2(5, 20);
+        var fantasyName = _faker.Random.String2(5, 20);
 
         // Act
-        var result = () => CompanyName.Create(name, tradingName);
+        var result = () => CompanyName.Create(name, fantasyName);
 
         // Assert
         result.Should().Throw<DomainException>();
-        result.Should().ThrowExactly<InvalidLengthNameException>()
-            .WithMessage(ErrorMessage.Name.LengthIsInvalid(CompanyName.MinLength, CompanyName.NameMaxLength));
+        result.Should().ThrowExactly<InvalidLengthCorporateNameException>()
+            .WithMessage(ErrorMessage.Name.LengthIsInvalid(CompanyName.MinLength, CompanyName.CorporateMaxLength));
     }
 
     [Fact(DisplayName = "Should throw exception when name exceeds minimum length")]
@@ -149,15 +149,15 @@ public class CompanyNameUnitTests : BaseTest
     {
         // Arrange
         var name = _faker.Random.String2(2);
-        var tradingName = _faker.Random.String2(5, 20);
+        var fantasyName = _faker.Random.String2(5, 20);
 
         // Act
-        var result = () => CompanyName.Create(name, tradingName);
+        var result = () => CompanyName.Create(name, fantasyName);
 
         // Assert
         result.Should().Throw<DomainException>();
-        result.Should().ThrowExactly<InvalidLengthNameException>()
-            .WithMessage(ErrorMessage.Name.LengthIsInvalid(CompanyName.MinLength, CompanyName.NameMaxLength));
+        result.Should().ThrowExactly<InvalidLengthCorporateNameException>()
+            .WithMessage(ErrorMessage.Name.LengthIsInvalid(CompanyName.MinLength, CompanyName.CorporateMaxLength));
     }
 
     [Fact(DisplayName = "Should throw exception when name is empty")]
@@ -165,80 +165,80 @@ public class CompanyNameUnitTests : BaseTest
     {
         // Arrange
         var name = string.Empty;
-        var tradingName = _faker.Random.String2(5, 20);
+        var fantasyName = _faker.Random.String2(5, 20);
 
         // Act
-        var result = () => CompanyName.Create(name, tradingName);
+        var result = () => CompanyName.Create(name, fantasyName);
 
         // Assert
         result.Should().Throw<DomainException>();
-        result.Should().ThrowExactly<InvalidNameException>().WithMessage(ErrorMessage.Name.IsNullOrEmpty);
+        result.Should().ThrowExactly<InvalidNameCorporateException>().WithMessage(ErrorMessage.Name.IsNullOrEmpty);
     }
 
     #endregion
 
-    #region TradingName Property Tests
+    #region FantasyName Property Tests
 
     [Fact(DisplayName = "Should throw exception when trading name exceeds maximum length")]
-    public void Create_WhenTradingNameExceedsMaximumLength_ShouldThrowException()
+    public void Create_WhenFantasyNameExceedsMaximumLength_ShouldThrowException()
     {
         // Arrange
         var name = _faker.Company.CompanyName();
-        var tradingName = _faker.Random.String2(160);
+        var fantasyName = _faker.Random.String2(160);
 
         // Act
-        var result = () => CompanyName.Create(name, tradingName);
+        var result = () => CompanyName.Create(name, fantasyName);
 
         // Assert
         result.Should().Throw<DomainException>();
         result.Should().ThrowExactly<InvalidTradingLengthNameException>().WithMessage(
-            ErrorMessage.TradingName.LengthIsInvalid(CompanyName.MinLength, CompanyName.TradingNameMaxLength));
+            ErrorMessage.FantasyName.LengthIsInvalid(CompanyName.MinLength, CompanyName.FantasyMaxLength));
     }
 
     [Fact(DisplayName = "Should throw exception when trading name exceeds minimum length")]
-    public void Create_WhenTradingNameExceedsMinimumLength_ShouldThrowException()
+    public void Create_WhenFantasyNameExceedsMinimumLength_ShouldThrowException()
     {
         // Arrange
         var name = _faker.Company.CompanyName();
-        var tradingName = _faker.Random.String2(2);
+        var fantasyName = _faker.Random.String2(2);
 
         // Act
-        var result = () => CompanyName.Create(name, tradingName);
+        var result = () => CompanyName.Create(name, fantasyName);
 
         // Assert
         result.Should().Throw<DomainException>();
         result.Should().ThrowExactly<InvalidTradingLengthNameException>().WithMessage(
-            ErrorMessage.TradingName.LengthIsInvalid(CompanyName.MinLength, CompanyName.TradingNameMaxLength));
+            ErrorMessage.FantasyName.LengthIsInvalid(CompanyName.MinLength, CompanyName.FantasyMaxLength));
     }
 
     [Fact(DisplayName = "Should throw exception when trading name is empty")]
-    public void Create_WhenTradingNameIsEmpty_ShouldThrowException()
+    public void Create_WhenFantasyNameIsEmpty_ShouldThrowException()
     {
         // Arrange
         var name = _faker.Company.CompanyName();
-        var tradingName = string.Empty;
+        var fantasyName = string.Empty;
 
         // Act
-        var result = () => CompanyName.Create(name, tradingName);
+        var result = () => CompanyName.Create(name, fantasyName);
 
         // Assert
         result.Should().Throw<DomainException>();
-        result.Should().ThrowExactly<InvalidTradingNameException>().WithMessage(ErrorMessage.TradingName.IsNullOrEmpty);
+        result.Should().ThrowExactly<InvalidFantasyNameException>().WithMessage(ErrorMessage.FantasyName.IsNullOrEmpty);
     }
 
     [Fact(DisplayName = "Should return trading name value when implicitly converted to string")]
-    public void ImplicitConversion_WhenConvertedToString_ShouldReturnTradingNameValue()
+    public void ImplicitConversion_WhenConvertedToString_ShouldReturnFantasyNameValue()
     {
         // Arrange
         var name = _faker.Company.CompanyName();
-        var tradingName = _faker.Random.String2(5, 20);
-        var companyName = CompanyName.Create(name, tradingName);
+        var fantasyName = _faker.Random.String2(5, 20);
+        var companyName = CompanyName.Create(name, fantasyName);
 
         // Act
         string result = companyName;
 
         // Assert
-        result.Should().Be(tradingName);
+        result.Should().Be(fantasyName);
     }
 
     #endregion

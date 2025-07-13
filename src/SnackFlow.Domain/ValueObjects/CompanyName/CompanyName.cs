@@ -7,25 +7,25 @@ public sealed record CompanyName : BaseValueObject
 {
     #region Constants
     
-    public const byte NameMaxLength = 150;
-    public const byte TradingNameMaxLength = 100;
+    public const byte CorporateMaxLength = 150;
+    public const byte FantasyMaxLength = 100;
     public const byte MinLength = 3;
     
     #endregion
     
     #region Properties
 
-    public string Name { get; private set; }
-    public string TradingName { get; private set; }
+    public string Corporate { get; private set; }
+    public string Fantasy { get; private set; }
 
     #endregion
     
     #region Constructors
 
-    private CompanyName(string name, string tradingName)
+    private CompanyName(string corporate, string fantasy)
     {
-        Name = name;
-        TradingName = tradingName;
+        Corporate = corporate;
+        Fantasy = fantasy;
     }
     
     #endregion
@@ -46,10 +46,10 @@ public sealed record CompanyName : BaseValueObject
     private static void CheckNameValidity(ref string name)
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new InvalidNameException(ErrorMessage.Name.IsNullOrEmpty);
+            throw new InvalidNameCorporateException(ErrorMessage.Name.IsNullOrEmpty);
         
-        if(name.Length is > NameMaxLength or < MinLength)
-            throw new InvalidLengthNameException(ErrorMessage.Name.LengthIsInvalid(MinLength, NameMaxLength));
+        if(name.Length is > CorporateMaxLength or < MinLength)
+            throw new InvalidLengthCorporateNameException(ErrorMessage.Name.LengthIsInvalid(MinLength, CorporateMaxLength));
         
         name = name.Trim();
     }
@@ -57,10 +57,10 @@ public sealed record CompanyName : BaseValueObject
     private static void CheckTradingNameValidity(ref string tradingName)
     {
         if (string.IsNullOrWhiteSpace(tradingName))
-            throw new InvalidTradingNameException(ErrorMessage.TradingName.IsNullOrEmpty);
+            throw new InvalidFantasyNameException(ErrorMessage.FantasyName.IsNullOrEmpty);
 
-        if (tradingName.Length is > TradingNameMaxLength or < MinLength)
-            throw new InvalidTradingLengthNameException(ErrorMessage.TradingName.LengthIsInvalid(MinLength, TradingNameMaxLength));
+        if (tradingName.Length is > FantasyMaxLength or < MinLength)
+            throw new InvalidTradingLengthNameException(ErrorMessage.FantasyName.LengthIsInvalid(MinLength, FantasyMaxLength));
         
         tradingName = tradingName.Trim();
     }
@@ -77,7 +77,7 @@ public sealed record CompanyName : BaseValueObject
     #region Overrides
 
     public override string ToString()
-        => TradingName;
+        => Fantasy;
 
     #endregion
 }

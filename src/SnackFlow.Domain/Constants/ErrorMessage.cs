@@ -16,9 +16,9 @@ public static class ErrorMessage
     }
 
     /// <summary>
-    /// Contém as mensagens de erro relacionadas a propriedade TradingName
+    /// Contém as mensagens de erro relacionadas a propriedade FantasyName
     /// </summary>
-    public static class TradingName
+    public static class FantasyName
     {
         public const string IsNullOrEmpty = "O nome fantasia não pode ser vazio.";
         public static string LengthIsInvalid(byte min, byte max) 
@@ -82,17 +82,20 @@ public static class ErrorMessage
         public const string EmailAlreadyExists = "Email já cadastrado no sistema";
         public const string PhoneAlreadyExists = "Telefone já cadastrado no sistema";
         public const string TaxIdAlreadyExists = "CPF/CNPJ já cadastrado no sistema";
-        public const string NameAlreadyExists = "Nome da empresa já cadastrado no sistema";
+        public const string CorporateNameAlreadyExists = "Nome da empresa já cadastrado no sistema";
     }
 
     /// <summary>
-    /// Represents error messages related to entities not found in the system.
+    /// Contém mensagens de erro pré-definidas para cenários onde entidades ou registros não são encontrados no sistema.
     /// </summary>
     public static class NotFound
     {
         public const string Company = "Empresa não encontrada no sistema";
     }
 
+    /// <summary>
+    /// Contém mensagens de erro relacionadas à invalidez de valores ou estados específicos do domínio.
+    /// </summary>
     public static class Invalid
     {
         public const string IdIsNull = "O ID não pode ser nulo";

@@ -34,7 +34,7 @@ public sealed class CreateCompanyCommandHandler(IUnitOfWork unitOfWork)
 
         return new CreateCompanyCommandResponse(
             CompanyId: companyEntity.Id,
-            TradingName: companyEntity.CompanyName,
+            TradingName: companyEntity.Name,
             Email: companyEntity.Email,
             Phone: companyEntity.Phone,
             Type: companyEntity.TaxId.Type.GetDescription()
@@ -51,7 +51,7 @@ public sealed class CreateCompanyCommandHandler(IUnitOfWork unitOfWork)
         
         var validations = new (Expression<Func<Company, bool>>, string message)[]
         {
-            (x => x.CompanyName.Name == request.Name, ErrorMessage.Conflict.NameAlreadyExists),
+            (x => x.Name.Corporate == request.Name, ErrorMessage.Conflict.CorporateNameAlreadyExists),
             (x => x.TaxId.Value == request.TaxId, ErrorMessage.Conflict.TaxIdAlreadyExists),
             (x => x.Email.Value == normalizedEmail, ErrorMessage.Conflict.EmailAlreadyExists),
             (x => x.Phone.Value == normalizedPhone, ErrorMessage.Conflict.PhoneAlreadyExists)

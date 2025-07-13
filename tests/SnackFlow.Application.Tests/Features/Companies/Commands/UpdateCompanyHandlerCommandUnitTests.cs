@@ -135,7 +135,7 @@ public class UpdateCompanyHandlerCommandUnitTests : BaseTest
         // Assert
         result.Value.Email.Should().Be(Email.Standardization(request.Email));
         result.Value.Phone.Should().Be(_baseCompany.Phone);
-        result.Value.TradingName.Should().Be(_baseCompany.CompanyName);
+        result.Value.TradingName.Should().Be(_baseCompany.Name);
 
         _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()), Times.Once);
 
@@ -185,7 +185,7 @@ public class UpdateCompanyHandlerCommandUnitTests : BaseTest
         // Assert
         result.Value.Email.Should().Be(_baseCompany.Email);
         result.Value.Phone.Should().Be(request.Phone);
-        result.Value.TradingName.Should().Be(_baseCompany.CompanyName);
+        result.Value.TradingName.Should().Be(_baseCompany.Name);
 
         _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()), Times.Once);
 

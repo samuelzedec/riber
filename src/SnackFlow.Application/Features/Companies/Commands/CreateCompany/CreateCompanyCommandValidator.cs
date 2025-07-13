@@ -14,14 +14,14 @@ public sealed class CreateCompanyCommandValidator : AbstractValidator<CreateComp
         RuleFor(x => x.Name)
             .NotEmpty()
             .WithMessage(ErrorMessage.Name.IsNullOrEmpty)
-            .Length(CompanyName.MinLength, CompanyName.NameMaxLength)
-            .WithMessage(ErrorMessage.Name.LengthIsInvalid(CompanyName.MinLength, CompanyName.NameMaxLength));
+            .Length(CompanyName.MinLength, CompanyName.CorporateMaxLength)
+            .WithMessage(ErrorMessage.Name.LengthIsInvalid(CompanyName.MinLength, CompanyName.CorporateMaxLength));
         
         RuleFor(x => x.TradingName)
             .NotEmpty()
-            .WithMessage(ErrorMessage.TradingName.IsNullOrEmpty)
-            .Length(CompanyName.MinLength, CompanyName.TradingNameMaxLength)
-            .WithMessage(ErrorMessage.Name.LengthIsInvalid(CompanyName.MinLength, CompanyName.TradingNameMaxLength));
+            .WithMessage(ErrorMessage.FantasyName.IsNullOrEmpty)
+            .Length(CompanyName.MinLength, CompanyName.FantasyMaxLength)
+            .WithMessage(ErrorMessage.Name.LengthIsInvalid(CompanyName.MinLength, CompanyName.FantasyMaxLength));
 
         RuleFor(x => x.Email)
             .NotEmpty()

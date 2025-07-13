@@ -22,8 +22,8 @@ public sealed class GetCompanyByIdQueryHandler(IUnitOfWork unitOfWork)
             throw new NotFoundException(ErrorMessage.NotFound.Company);
 
         return new GetCompanyByIdQueryResponse(
-            Name: company.CompanyName.Name,
-            TradingName: company.CompanyName,
+            Name: company.Name.Corporate,
+            TradingName: company.Name,
             Email: company.Email,
             Phone: company.Phone,
             TaxId: company.TaxId,

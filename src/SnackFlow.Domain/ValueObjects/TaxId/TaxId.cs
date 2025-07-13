@@ -4,7 +4,7 @@ using SnackFlow.Domain.Validators.DocumentValidator;
 
 namespace SnackFlow.Domain.ValueObjects.TaxId;
 
-public sealed record CompanyTaxId : BaseValueObject
+public sealed record TaxId : BaseValueObject
 {
     #region Properties
 
@@ -15,7 +15,7 @@ public sealed record CompanyTaxId : BaseValueObject
 
     #region Constructors
 
-    private CompanyTaxId(string value, ECompanyType type)
+    private TaxId(string value, ECompanyType type)
     {
         Value = value;
         Type = type;
@@ -25,36 +25,36 @@ public sealed record CompanyTaxId : BaseValueObject
 
     #region Factories
     
-    public static CompanyTaxId Create(string value, ECompanyType type)
+    public static TaxId Create(string value, ECompanyType type)
     {
         IDocumentValidator validator = type is ECompanyType.IndividualWithCpf
             ? new CpfValidator()
             : new CnpjValidator();
         
         validator.IsValid(value);
-        return new CompanyTaxId(validator.Sanitize(value), type);
+        return new TaxId(validator.Sanitize(value), type);
     }
     
-    public static CompanyTaxId CreateFromCpf(string cpf)
+    public static TaxId CreateFromCpf(string cpf)
     {
         var validator = new CpfValidator();
         validator.IsValid(cpf);
-        return new CompanyTaxId(validator.Sanitize(cpf), ECompanyType.IndividualWithCpf);
+        return new TaxId(validator.Sanitize(cpf), ECompanyType.IndividualWithCpf);
     }
 
-    public static CompanyTaxId CreateFromCnpj(string cnpj)
+    public static TaxId CreateFromCnpj(string cnpj)
     {
         var validator = new CnpjValidator();
         validator.IsValid(cnpj);
-        return new CompanyTaxId(validator.Sanitize(cnpj), ECompanyType.LegalEntityWithCnpj);
+        return new TaxId(validator.Sanitize(cnpj), ECompanyType.LegalEntityWithCnpj);
     }
 
     #endregion
     
     #region Operators
 
-    public static implicit operator string(CompanyTaxId companyTaxId) 
-        => companyTaxId.ToString();
+    public static implicit operator string(TaxId taxId) 
+        => taxId.ToString();
 
     #endregion
 

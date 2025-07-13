@@ -38,7 +38,7 @@ public sealed class UpdateCompanyCommandHandler(
             await unitOfWork.CommitTransactionAsync(cancellationToken);
             
             return new UpdateCompanyCommandResponse(
-                company.CompanyName,
+                company.Name,
                 company.Email,
                 company.Phone,
                 company.TaxId.Type.GetDescription()
@@ -84,7 +84,7 @@ public sealed class UpdateCompanyCommandHandler(
 
     private void UpdateTradingName(Company company, string tradingName)
     {
-        if (string.IsNullOrWhiteSpace(tradingName) || company.CompanyName == tradingName) 
+        if (string.IsNullOrWhiteSpace(tradingName) || company.Name == tradingName) 
             return;
         
         company.UpdateTradingName(tradingName);

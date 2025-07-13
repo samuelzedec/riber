@@ -11,8 +11,8 @@ public sealed class UpdateCompanyCommandValidator : AbstractValidator<UpdateComp
     public UpdateCompanyCommandValidator()
     {
         RuleFor(x => x.TradingName)
-            .Length(CompanyName.MinLength, CompanyName.TradingNameMaxLength)
-            .WithMessage(ErrorMessage.Name.LengthIsInvalid(CompanyName.MinLength, CompanyName.TradingNameMaxLength))
+            .Length(CompanyName.MinLength, CompanyName.FantasyMaxLength)
+            .WithMessage(ErrorMessage.Name.LengthIsInvalid(CompanyName.MinLength, CompanyName.FantasyMaxLength))
             .When(x => !string.IsNullOrEmpty(x.TradingName));
 
         RuleFor(x => x.Email)
