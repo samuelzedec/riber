@@ -14,7 +14,7 @@ public class CompanyUnitTests : BaseTest
     #region Creation Tests
 
     [Fact(DisplayName = "Should create company successfully with valid primitive data")]
-    public void ShouldCreateCompanySuccessfullyWithValidPrimitiveData()
+    public void Create_WhenValidPrimitiveData_ShouldCreateSuccessfully()
     {
         // Arrange
         var name = _faker.Name.FullName();
@@ -46,7 +46,7 @@ public class CompanyUnitTests : BaseTest
     }
 
     [Fact(DisplayName = "Should create company successfully with valid value objects")]
-    public void ShouldCreateCompanySuccessfullyWithValidValueObjects()
+    public void Create_WhenValidValueObjects_ShouldCreateSuccessfully()
     {
         // Arrange
         var companyName = CompanyName.Create(
@@ -86,7 +86,7 @@ public class CompanyUnitTests : BaseTest
     #region Update Tests
 
     [Fact(DisplayName = "Should update email successfully")]
-    public void ShouldUpdateEmailSuccessfully()
+    public void UpdateEmail_WhenValidEmail_ShouldUpdateSuccessfully()
     {
         // Arrange
         var company = Company.Create(
@@ -108,7 +108,7 @@ public class CompanyUnitTests : BaseTest
     }
 
     [Fact(DisplayName = "Should update phone successfully")]
-    public void ShouldUpdatePhoneSuccessfully()
+    public void UpdatePhone_WhenValidPhone_ShouldUpdateSuccessfully()
     {
         // Arrange
         var company = Company.Create(
@@ -130,7 +130,7 @@ public class CompanyUnitTests : BaseTest
     }
 
     [Fact(DisplayName = "Should update trading name successfully")]
-    public void ShouldUpdateTradingNameSuccessfully()
+    public void UpdateTradingName_WhenValidTradingName_ShouldUpdateSuccessfully()
     {
         // Arrange
         var originalName = _faker.Name.FullName();
@@ -153,7 +153,7 @@ public class CompanyUnitTests : BaseTest
     }
 
     [Fact(DisplayName = "Should preserve original name when updating trading name")]
-    public void ShouldPreserveOriginalNameWhenUpdatingTradingName()
+    public void UpdateTradingName_WhenUpdatingTradingName_ShouldPreserveOriginalName()
     {
         // Arrange
         var originalName = _faker.Name.FullName();

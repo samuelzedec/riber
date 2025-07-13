@@ -23,7 +23,7 @@ services:
   migration:
     build:
       context: .
-      dockerfile: infrastructure/docker/Dockerfile.dev
+      dockerfile: infra/docker/Dockerfile.dev
       target: migration
     container_name: migration-dev
     depends_on:
@@ -36,7 +36,7 @@ services:
   snackflow-api:
     build:
       context: .
-      dockerfile: infrastructure/docker/Dockerfile.dev
+      dockerfile: infra/docker/Dockerfile.dev
       target: runtime
     container_name: api-dev
     depends_on:

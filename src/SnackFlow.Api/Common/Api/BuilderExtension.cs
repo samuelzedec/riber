@@ -8,18 +8,19 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SnackFlow.Infrastructure.Persistence;
 using SnackFlow.Infrastructure.Persistence.Identity;
+using SnackFlow.Infrastructure.Services.Abstractions;
 using SnackFlow.Infrastructure.Settings;
 
 namespace SnackFlow.Api.Common.Api;
 
 public static class BuilderExtension
 {
-    public static void AddPipeline(this WebApplicationBuilder builder)
+    public static async Task AddPipeline(this WebApplicationBuilder builder)
     {
         builder.AddDocumentationApi();
         builder.AddDependencyInjection();
-        builder.AddConfigurations();
-        builder.AddSecurity();
+        builder.AddConfigurations(); 
+        await builder.AddSecurity();
     }
 
     private static void AddDependencyInjection(this WebApplicationBuilder builder)
@@ -34,6 +35,7 @@ public static class BuilderExtension
         builder.Services.AddControllers();
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddProblemDetails();
+        builder.Services.AddMemoryCache();
 
         builder.Services
             .AddOptions<AccessTokenSettings>()
@@ -64,7 +66,7 @@ public static class BuilderExtension
         });
     }
 
-    private static void AddSecurity(this WebApplicationBuilder builder)
+    private static async Task AddSecurity(this WebApplicationBuilder builder)
     {
         var accessToken =
             builder.Configuration.GetSection(nameof(AccessTokenSettings)).Get<AccessTokenSettings>()
@@ -74,6 +76,18 @@ public static class BuilderExtension
             builder.Configuration.GetSection(nameof(RefreshTokenSettings)).Get<RefreshTokenSettings>()
             ?? throw new InvalidOperationException($"{nameof(RefreshTokenSettings)} configuration not found");
         
+        await using var provider = builder.Services.BuildServiceProvider();
+        var certificateService = provider.GetRequiredService<ICertificateService>();
+        var accessCertificate = await certificateService.LoadCertificateAsync(
+            accessToken.Key,
+            accessToken.Password
+        );
+    
+        var refreshCertificate = await certificateService.LoadCertificateAsync(
+            refreshToken.Key,
+            refreshToken.Password
+        );
+        
         builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
@@ -81,15 +95,15 @@ public static class BuilderExtension
         builder.Services
             .AddAuthentication(options =>
             {
-                options.DefaultAuthenticateScheme = accessToken.Key;
-                options.DefaultChallengeScheme = accessToken.Key;
+                options.DefaultAuthenticateScheme = nameof(AccessTokenSettings);
+                options.DefaultChallengeScheme = nameof(AccessTokenSettings);
             })
-            .AddJwtBearer(accessToken.Key, options =>
+            .AddJwtBearer(nameof(AccessTokenSettings), options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new X509SecurityKey(accessToken.GenerateCertificate()),
+                    IssuerSigningKey = new X509SecurityKey(accessCertificate),
                     ValidateIssuer = true,
                     ValidIssuer = accessToken.Issuer,
                     ValidateAudience = true,
@@ -99,12 +113,12 @@ public static class BuilderExtension
                     RequireExpirationTime = true // ← Exige claim 'exp'
                 };
             })
-            .AddJwtBearer(refreshToken.Key, options =>
+            .AddJwtBearer(nameof(RefreshTokenSettings), options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new X509SecurityKey(refreshToken.GenerateCertificate()),
+                    IssuerSigningKey = new X509SecurityKey(refreshCertificate),
                     ValidateIssuer = true,
                     ValidIssuer = refreshToken.Issuer,
                     ValidateAudience = true,
