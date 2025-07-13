@@ -10,10 +10,10 @@ public sealed class UpdateCompanyCommandValidator : AbstractValidator<UpdateComp
 {
     public UpdateCompanyCommandValidator()
     {
-        RuleFor(x => x.TradingName)
+        RuleFor(x => x.FantasyName)
             .Length(CompanyName.MinLength, CompanyName.FantasyMaxLength)
             .WithMessage(ErrorMessage.Name.LengthIsInvalid(CompanyName.MinLength, CompanyName.FantasyMaxLength))
-            .When(x => !string.IsNullOrEmpty(x.TradingName));
+            .When(x => !string.IsNullOrEmpty(x.FantasyName));
 
         RuleFor(x => x.Email)
             .Matches(Email.EmailRegexPattern)

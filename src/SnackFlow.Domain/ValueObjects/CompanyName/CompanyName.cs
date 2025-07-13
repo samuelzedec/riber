@@ -32,37 +32,37 @@ public sealed record CompanyName : BaseValueObject
 
     #region Factories
 
-    public static CompanyName Create(string name, string tradingName)
+    public static CompanyName Create(string corporateName, string fantasyName)
     {
-        CheckNameValidity(ref name);
-        CheckTradingNameValidity(ref tradingName);
-        return new CompanyName(name, tradingName);
+        CheckCorporateNameValidity(ref corporateName);
+        CheckFantasyNameValidity(ref fantasyName);
+        return new CompanyName(corporateName, fantasyName);
     }
 
     #endregion
     
     #region Private Methods
 
-    private static void CheckNameValidity(ref string name)
+    private static void CheckCorporateNameValidity(ref string corporateName)
     {
-        if (string.IsNullOrWhiteSpace(name))
+        if (string.IsNullOrWhiteSpace(corporateName))
             throw new InvalidNameCorporateException(ErrorMessage.Name.IsNullOrEmpty);
         
-        if(name.Length is > CorporateMaxLength or < MinLength)
+        if(corporateName.Length is > CorporateMaxLength or < MinLength)
             throw new InvalidLengthCorporateNameException(ErrorMessage.Name.LengthIsInvalid(MinLength, CorporateMaxLength));
         
-        name = name.Trim();
+        corporateName = corporateName.Trim();
     }
 
-    private static void CheckTradingNameValidity(ref string tradingName)
+    private static void CheckFantasyNameValidity(ref string fantasyName)
     {
-        if (string.IsNullOrWhiteSpace(tradingName))
+        if (string.IsNullOrWhiteSpace(fantasyName))
             throw new InvalidFantasyNameException(ErrorMessage.FantasyName.IsNullOrEmpty);
 
-        if (tradingName.Length is > FantasyMaxLength or < MinLength)
-            throw new InvalidTradingLengthNameException(ErrorMessage.FantasyName.LengthIsInvalid(MinLength, FantasyMaxLength));
+        if (fantasyName.Length is > FantasyMaxLength or < MinLength)
+            throw new InvalidFantasyLengthNameException(ErrorMessage.FantasyName.LengthIsInvalid(MinLength, FantasyMaxLength));
         
-        tradingName = tradingName.Trim();
+        fantasyName = fantasyName.Trim();
     }
 
     #endregion

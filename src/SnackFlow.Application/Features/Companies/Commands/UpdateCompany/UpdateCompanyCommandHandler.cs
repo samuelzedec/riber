@@ -32,7 +32,7 @@ public sealed class UpdateCompanyCommandHandler(
 
             await UpdateEmailAsync(company, request.Email, cancellationToken);
             await UpdatePhoneAsync(company, request.Phone, cancellationToken);
-            UpdateTradingName(company, request.TradingName);
+            UpdateFantasyName(company, request.FantasyName);
 
             companyRepository.Update(company);
             await unitOfWork.CommitTransactionAsync(cancellationToken);
@@ -82,12 +82,12 @@ public sealed class UpdateCompanyCommandHandler(
         company.UpdatePhone(phone);
     }
 
-    private void UpdateTradingName(Company company, string tradingName)
+    private void UpdateFantasyName(Company company, string fantasyName)
     {
-        if (string.IsNullOrWhiteSpace(tradingName) || company.Name == tradingName) 
+        if (string.IsNullOrWhiteSpace(fantasyName) || company.Name == fantasyName) 
             return;
         
-        company.UpdateTradingName(tradingName);
+        company.UpdateFantasyName(fantasyName);
     }
 
     private async Task CheckForConflictAsync(

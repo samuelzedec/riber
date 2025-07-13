@@ -27,7 +27,7 @@ public class TaxIdUnitTests : BaseTest
     {
         // Arrange
         var cpf = _faker.Person.Cpf(formatted);
-        var taxIdType = ECompanyType.IndividualWithCpf;
+        var taxIdType = ETaxIdType.IndividualWithCpf;
 
         // Act
         var result = TaxId.Create(cpf, taxIdType);
@@ -45,7 +45,7 @@ public class TaxIdUnitTests : BaseTest
     {
         // Arrange
         var cnpj = _faker.Company.Cnpj(formatted);
-        var taxIdType = ECompanyType.LegalEntityWithCnpj;
+        var taxIdType = ETaxIdType.LegalEntityWithCnpj;
 
         // Act
         var result = TaxId.Create(cnpj, taxIdType);
@@ -70,7 +70,7 @@ public class TaxIdUnitTests : BaseTest
         // Assert
         result.Should().NotBeNull();
         result.Value.Should().Be(_cpfValidator.Sanitize(cpf));
-        result.Type.Should().Be(ECompanyType.IndividualWithCpf);
+        result.Type.Should().Be(ETaxIdType.IndividualWithCpf);
     }
 
     [Theory(DisplayName = "Should return TaxId instance when creating with CNPJ only")]
@@ -87,7 +87,7 @@ public class TaxIdUnitTests : BaseTest
         // Assert
         result.Should().NotBeNull();
         result.Value.Should().Be(_cnpjValidator.Sanitize(cpnj));
-        result.Type.Should().Be(ECompanyType.LegalEntityWithCnpj);
+        result.Type.Should().Be(ETaxIdType.LegalEntityWithCnpj);
     }
 
     #endregion
@@ -231,9 +231,9 @@ public class TaxIdUnitTests : BaseTest
     #region Overrides Tests
 
     [Theory(DisplayName = "Should format documents correctly with proper punctuation")]
-    [InlineData("12345678909", "123.456.789-09", ECompanyType.IndividualWithCpf)]
-    [InlineData("11222333000181", "11.222.333/0001-81", ECompanyType.LegalEntityWithCnpj)]
-    public void ImplicitOperator_WhenFormattingDocuments_ShouldReturnProperPunctuation(string document, string expectedFormat, ECompanyType expectedType)
+    [InlineData("12345678909", "123.456.789-09", ETaxIdType.IndividualWithCpf)]
+    [InlineData("11222333000181", "11.222.333/0001-81", ETaxIdType.LegalEntityWithCnpj)]
+    public void ImplicitOperator_WhenFormattingDocuments_ShouldReturnProperPunctuation(string document, string expectedFormat, ETaxIdType expectedType)
     {
         // Act
         var result = TaxId.Create(document, expectedType);

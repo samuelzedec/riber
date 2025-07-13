@@ -12,8 +12,8 @@ public sealed class GetCompanyByIdQueryHandler(IUnitOfWork unitOfWork)
 {
     public async Task<Result<GetCompanyByIdQueryResponse>> Handle(GetCompanyByIdQuery request, CancellationToken cancellationToken)
     {
-        var companyRespository = unitOfWork.Companies;
-        var company = await companyRespository.GetSingleAsync(
+        var companyRepository = unitOfWork.Companies;
+        var company = await companyRepository.GetSingleAsync(
             x => x.Id == request.CompanyId,
             cancellationToken
         );
@@ -22,8 +22,8 @@ public sealed class GetCompanyByIdQueryHandler(IUnitOfWork unitOfWork)
             throw new NotFoundException(ErrorMessage.NotFound.Company);
 
         return new GetCompanyByIdQueryResponse(
-            Name: company.Name.Corporate,
-            TradingName: company.Name,
+            CorporateName: company.Name.Corporate,
+            FantasyName: company.Name,
             Email: company.Email,
             Phone: company.Phone,
             TaxId: company.TaxId,

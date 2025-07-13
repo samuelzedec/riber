@@ -34,7 +34,7 @@ public class CreateCompanyCommandHandlerUnitTests : BaseTest
             _faker.Company.Cnpj(),
             _faker.Person.Email,
             _faker.Phone.PhoneNumber("(92) 9####-####"),
-            ECompanyType.LegalEntityWithCnpj
+            ETaxIdType.LegalEntityWithCnpj
         );
     }
 
@@ -75,9 +75,9 @@ public class CreateCompanyCommandHandlerUnitTests : BaseTest
         result.Value.Should().NotBeNull();
         result.Value.CompanyId.Should().NotBeEmpty();
         result.Value.Email.Should().BeLowerCased(_command.Email);
-        result.Value.TradingName.Should().Be(_command.TradingName);
+        result.Value.FantasyName.Should().Be(_command.FantasyName);
         result.Value.Phone.Should().Be(_command.Phone);
-        result.Value.Type.Should().Be(ECompanyType.LegalEntityWithCnpj.GetDescription());
+        result.Value.Type.Should().Be(ETaxIdType.LegalEntityWithCnpj.GetDescription());
 
         _mockCompanyRepository.Verify(x => x.ExistsAsync(
             It.IsAny<Expression<Func<Company, bool>>>(), It.IsAny<CancellationToken>()), Times.Exactly(4));

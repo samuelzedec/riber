@@ -21,8 +21,8 @@ public sealed class CreateCompanyCommandHandler(IUnitOfWork unitOfWork)
         await ValidateFieldsRequestAsync(request, cancellationToken);
 
         var companyEntity = Company.Create(
-            name: request.Name,
-            tradingName: request.TradingName,
+            corporateName: request.CorporateName,
+            fantasyName: request.FantasyName,
             taxId: request.TaxId,
             email: request.Email,
             phone: request.Phone,
@@ -34,7 +34,7 @@ public sealed class CreateCompanyCommandHandler(IUnitOfWork unitOfWork)
 
         return new CreateCompanyCommandResponse(
             CompanyId: companyEntity.Id,
-            TradingName: companyEntity.Name,
+            FantasyName: companyEntity.Name,
             Email: companyEntity.Email,
             Phone: companyEntity.Phone,
             Type: companyEntity.TaxId.Type.GetDescription()
@@ -51,7 +51,7 @@ public sealed class CreateCompanyCommandHandler(IUnitOfWork unitOfWork)
         
         var validations = new (Expression<Func<Company, bool>>, string message)[]
         {
-            (x => x.Name.Corporate == request.Name, ErrorMessage.Conflict.CorporateNameAlreadyExists),
+            (x => x.Name.Corporate == request.CorporateName, ErrorMessage.Conflict.CorporateNameAlreadyExists),
             (x => x.TaxId.Value == request.TaxId, ErrorMessage.Conflict.TaxIdAlreadyExists),
             (x => x.Email.Value == normalizedEmail, ErrorMessage.Conflict.EmailAlreadyExists),
             (x => x.Phone.Value == normalizedPhone, ErrorMessage.Conflict.PhoneAlreadyExists)
