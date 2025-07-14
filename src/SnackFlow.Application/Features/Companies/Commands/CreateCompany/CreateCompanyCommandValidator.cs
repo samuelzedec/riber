@@ -26,13 +26,13 @@ public sealed class CreateCompanyCommandValidator : AbstractValidator<CreateComp
         RuleFor(x => x.Email)
             .NotEmpty()
             .WithMessage(ErrorMessage.Email.IsNullOrEmpty)
-            .Matches(Email.EmailRegexPattern)
+            .Matches(Email.RegexPattern)
             .WithMessage(ErrorMessage.Email.FormatInvalid);
         
         RuleFor(x => x.Phone)
             .NotEmpty()
             .WithMessage(ErrorMessage.Phone.IsNullOrEmpty)
-            .Matches(Phone.PhoneRegexPattern)
+            .Matches(Phone.RegexPattern)
             .WithMessage(ErrorMessage.Phone.FormatInvalid);
 
         RuleFor(x => x.Type)

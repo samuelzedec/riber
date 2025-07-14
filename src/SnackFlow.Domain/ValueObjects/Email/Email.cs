@@ -14,7 +14,7 @@ public sealed partial record Email : BaseValueObject
 
     #region Constants
 
-    public const string EmailRegexPattern = @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$";
+    public const string RegexPattern = @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$";
 
     #endregion
     
@@ -43,7 +43,7 @@ public sealed partial record Email : BaseValueObject
 
     #region Source Generator
 
-    [GeneratedRegex(EmailRegexPattern)]
+    [GeneratedRegex(RegexPattern)]
     public static partial Regex EmailRegex();
 
     #endregion

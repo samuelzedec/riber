@@ -8,7 +8,7 @@ using SnackFlow.Infrastructure.Persistence;
 
 #nullable disable
 
-namespace SnackFlow.Infrastructure.Migrations
+namespace SnackFlow.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     partial class AppDbContextModelSnapshot : ModelSnapshot
@@ -35,9 +35,9 @@ namespace SnackFlow.Infrastructure.Migrations
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamptz")
-                        .HasColumnName("Deleted_at");
+                        .HasColumnName("deleted_at");
 
-                    b.Property<DateTime?>("ModifiedAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamptz")
                         .HasColumnName("modified_at");
 
@@ -45,6 +45,46 @@ namespace SnackFlow.Infrastructure.Migrations
                         .HasName("pk_company_id");
 
                     b.ToTable("company", (string)null);
+                });
+
+            modelBuilder.Entity("SnackFlow.Domain.Entities.User", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid?>("CompanyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("company_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
+
+                    b.Property<string>("Position")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("position");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("modified_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_user_id");
+
+                    b.HasIndex(new[] { "CompanyId" }, "ix_user_company_id");
+
+                    b.ToTable("user", (string)null);
                 });
 
             modelBuilder.Entity("SnackFlow.Infrastructure.Persistence.Identity.ApplicationRole", b =>
@@ -137,6 +177,10 @@ namespace SnackFlow.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("email_confirmed");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean")
                         .HasColumnName("lockout_enabled");
@@ -182,6 +226,10 @@ namespace SnackFlow.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("two_factor_enabled");
 
+                    b.Property<Guid>("UserDomainId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_domain_id");
+
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("text")
@@ -196,6 +244,9 @@ namespace SnackFlow.Infrastructure.Migrations
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
                         .HasDatabaseName("ix_aspnet_user_normalized_user_name");
+
+                    b.HasIndex(new[] { "UserDomainId" }, "ix_aspnet_user_user_domain_id")
+                        .IsUnique();
 
                     b.ToTable("aspnet_user", (string)null);
                 });
@@ -304,28 +355,55 @@ namespace SnackFlow.Infrastructure.Migrations
 
             modelBuilder.Entity("SnackFlow.Domain.Entities.Company", b =>
                 {
-                    b.OwnsOne("SnackFlow.Domain.ValueObjects.CompanyName.CompanyName", "CompanyName", b1 =>
+                    b.OwnsOne("SnackFlow.Domain.ValueObjects.TaxId.TaxId", "TaxId", b1 =>
                         {
                             b1.Property<Guid>("CompanyId")
                                 .HasColumnType("uuid");
 
-                            b1.Property<string>("Name")
+                            b1.Property<string>("Type")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("tax_id_type");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(14)
+                                .HasColumnType("text")
+                                .HasColumnName("tax_id_value");
+
+                            b1.HasKey("CompanyId");
+
+                            b1.HasIndex(new[] { "Value" }, "uq_company_tax_id")
+                                .IsUnique();
+
+                            b1.ToTable("company");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CompanyId");
+                        });
+
+                    b.OwnsOne("SnackFlow.Domain.ValueObjects.CompanyName.CompanyName", "Name", b1 =>
+                        {
+                            b1.Property<Guid>("CompanyId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Corporate")
                                 .IsRequired()
                                 .HasMaxLength(150)
                                 .HasColumnType("text")
-                                .HasColumnName("name")
+                                .HasColumnName("corporate_name")
                                 .HasAnnotation("MinLength", (byte)3);
 
-                            b1.Property<string>("TradingName")
+                            b1.Property<string>("Fantasy")
                                 .IsRequired()
                                 .HasMaxLength(100)
                                 .HasColumnType("text")
-                                .HasColumnName("trading_name")
+                                .HasColumnName("fantasy_name")
                                 .HasAnnotation("MinLength", (byte)3);
 
                             b1.HasKey("CompanyId");
 
-                            b1.HasIndex(new[] { "Name" }, "uq_company_name");
+                            b1.HasIndex(new[] { "Corporate" }, "uq_company_corporate_name");
 
                             b1.ToTable("company");
 
@@ -377,9 +455,29 @@ namespace SnackFlow.Infrastructure.Migrations
                                 .HasForeignKey("CompanyId");
                         });
 
-                    b.OwnsOne("SnackFlow.Domain.ValueObjects.TaxId.CompanyTaxId", "TaxId", b1 =>
+                    b.Navigation("Email")
+                        .IsRequired();
+
+                    b.Navigation("Name")
+                        .IsRequired();
+
+                    b.Navigation("Phone")
+                        .IsRequired();
+
+                    b.Navigation("TaxId")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SnackFlow.Domain.Entities.User", b =>
+                {
+                    b.HasOne("SnackFlow.Domain.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.OwnsOne("SnackFlow.Domain.ValueObjects.TaxId.TaxId", "TaxId", b1 =>
                         {
-                            b1.Property<Guid>("CompanyId")
+                            b1.Property<Guid>("UserId")
                                 .HasColumnType("uuid");
 
                             b1.Property<string>("Type")
@@ -393,28 +491,54 @@ namespace SnackFlow.Infrastructure.Migrations
                                 .HasColumnType("text")
                                 .HasColumnName("tax_id_value");
 
-                            b1.HasKey("CompanyId");
+                            b1.HasKey("UserId");
 
-                            b1.HasIndex(new[] { "Value" }, "uq_company_tax_id")
+                            b1.HasIndex(new[] { "Value" }, "uq_user_tax_id")
                                 .IsUnique();
 
-                            b1.ToTable("company");
+                            b1.ToTable("user");
 
                             b1.WithOwner()
-                                .HasForeignKey("CompanyId");
+                                .HasForeignKey("UserId");
                         });
 
-                    b.Navigation("CompanyName")
-                        .IsRequired();
+                    b.OwnsOne("SnackFlow.Domain.ValueObjects.FullName.FullName", "FullName", b1 =>
+                        {
+                            b1.Property<Guid>("UserId")
+                                .HasColumnType("uuid");
 
-                    b.Navigation("Email")
-                        .IsRequired();
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(255)
+                                .HasColumnType("text")
+                                .HasColumnName("full_name");
 
-                    b.Navigation("Phone")
+                            b1.HasKey("UserId");
+
+                            b1.ToTable("user");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId");
+                        });
+
+                    b.Navigation("Company");
+
+                    b.Navigation("FullName")
                         .IsRequired();
 
                     b.Navigation("TaxId")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("SnackFlow.Infrastructure.Persistence.Identity.ApplicationUser", b =>
+                {
+                    b.HasOne("SnackFlow.Domain.Entities.User", "UserDomain")
+                        .WithOne()
+                        .HasForeignKey("SnackFlow.Infrastructure.Persistence.Identity.ApplicationUser", "UserDomainId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UserDomain");
                 });
 #pragma warning restore 612, 618
         }

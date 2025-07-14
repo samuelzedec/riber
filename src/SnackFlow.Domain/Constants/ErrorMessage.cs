@@ -11,6 +11,7 @@ public static class ErrorMessage
     public static class Name
     {
         public const string IsNullOrEmpty = "O nome não pode ser vazio.";
+        public const string IsInvalid = "O nome não tem um formato válido";
         public static string LengthIsInvalid(byte min, byte max) 
             => $"O nome deve ter entre {min} a {max} caracteres.";
     }
@@ -99,6 +100,5 @@ public static class ErrorMessage
     public static class Invalid
     {
         public const string IdIsNull = "O ID não pode ser nulo";
-        public const string CompanyIdIsNull = "O ID da empresa não pode ser nulo";
     }
 }

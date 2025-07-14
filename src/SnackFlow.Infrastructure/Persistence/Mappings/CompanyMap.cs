@@ -9,8 +9,6 @@ public class CompanyMap : IEntityTypeConfiguration<Company>
 {
     public void Configure(EntityTypeBuilder<Company> builder)
     {
-        #region Primitive Properties
-
         builder.ToTable("company");
         
         builder
@@ -36,29 +34,25 @@ public class CompanyMap : IEntityTypeConfiguration<Company>
         
         builder
             .Property(c => c.DeletedAt)
-            .HasColumnName("Deleted_at")
+            .HasColumnName("deleted_at")
             .HasColumnType("timestamptz");
-
-        #endregion
-        
-        #region Value Objects
         
         builder.OwnsOne(c => c.Name, company =>
         {
             company
                 .Property(c => c.Corporate)
-                .HasColumnName("name")
+                .HasColumnName("corporate_name")
                 .HasColumnType("text")
                 .HasMaxLength(CompanyName.CorporateMaxLength)
                 .HasAnnotation("MinLength", CompanyName.MinLength)
                 .IsRequired();
 
             company
-                .HasIndex(c => c.Corporate, "uq_company_name");
+                .HasIndex(c => c.Corporate, "uq_company_corporate_name");
             
             company
                 .Property(c => c.Fantasy)
-                .HasColumnName("trading_name")
+                .HasColumnName("fantasy_name")
                 .HasColumnType("text")
                 .HasMaxLength(CompanyName.FantasyMaxLength)
                 .HasAnnotation("MinLength", CompanyName.MinLength)
@@ -115,12 +109,6 @@ public class CompanyMap : IEntityTypeConfiguration<Company>
                 .IsUnique();
         });
         
-        #endregion
-        
-        #region Query Filter Global
-        
         builder.HasQueryFilter(c => !c.DeletedAt.HasValue);
-        
-        #endregion
     }
 }

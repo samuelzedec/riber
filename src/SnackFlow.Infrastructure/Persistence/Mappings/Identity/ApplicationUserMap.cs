@@ -113,5 +113,28 @@ public sealed class ApplicationUserMap : IEntityTypeConfiguration<Identity::Appl
             .HasColumnType("boolean")
             .HasColumnName("two_factor_enabled")
             .IsRequired();
+
+        builder
+            .Property(u => u.UserDomainId)
+            .HasColumnType("uuid")
+            .HasColumnName("user_domain_id")
+            .IsRequired();
+        
+        builder
+            .HasIndex(u => u.UserDomainId, "ix_aspnet_user_user_domain_id")
+            .IsUnique();
+        
+        builder
+            .HasOne(u => u.UserDomain)
+            .WithOne()
+            .HasForeignKey<Identity::ApplicationUser>(u => u.UserDomainId);
+        
+        builder
+            .Property(u => u.IsDeleted)
+            .HasColumnType("boolean")
+            .HasColumnName("is_deleted")
+            .IsRequired();
+        
+        builder.HasQueryFilter(u => !u.IsDeleted);
     }
 }
