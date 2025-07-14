@@ -1,21 +1,20 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using SnackFlow.Domain.Entities;
+using SnackFlow.Infrastructure.Persistence.Identity;
 
 namespace SnackFlow.Infrastructure.Persistence.Interceptors;
 
 /// <summary>
-/// Interceptador responsável por manipular operações relacionadas à auditoria ao salvar alterações no Entity Framework Core.
+/// Um interceptador para auditoria de mudanças de entidades durante uma operação de `SaveChanges` no banco de dados.
+/// Esta classe estende o `SaveChangesInterceptor` do Entity Framework Core para se conectar
+/// ao processo de salvamento para rastreamento ou modificação de entidades antes da persistência.
 /// </summary>
 /// <remarks>
-/// Esta classe estende o <see cref="SaveChangesInterceptor"/> e sobrescreve os métodos
-/// <see cref="SavingChanges"/> e <see cref="SavingChangesAsync"/> para aplicar lógica de auditoria às entidades
-/// durante o processo de salvamento.
+/// O AuditInterceptor foi projetado para capturar e aplicar lógica de auditoria, como
+/// rastreamento de timestamps de criação ou modificação, durante operações de salvamento. Ele intercepta
+/// fluxos de trabalho de salvamento síncronos e assíncronos no contexto do Entity Framework Core.
 /// </remarks>
-/// <threadsafety>
-/// Esta classe é thread-safe e pode ser usada simultaneamente em aplicações onde múltiplas operações de salvamento
-/// são executadas em paralelo.
-/// </threadsafety>
 public sealed class AuditInterceptor : SaveChangesInterceptor
 {
     public override InterceptionResult<int> SavingChanges(
@@ -39,22 +38,48 @@ public sealed class AuditInterceptor : SaveChangesInterceptor
         return base.SavingChangesAsync(eventData, result, cancellationToken);
     }
 
-    private void ApplyAuditEntities(DbContext context)
+    /// <summary>
+    /// Aplica lógica de auditoria às entidades rastreadas pelo contexto do Entity Framework Core.
+    /// Atualiza os timestamps de modificação ou realiza ações específicas para estados de entidade,
+    /// como exclusões suaves.
+    /// </summary>
+    /// <param name="context">O contexto do banco de dados que contém o rastreador de alterações para as entidades alvo.</param>
+    private static void ApplyAuditEntities(DbContext context)
     {
         var entries = context.ChangeTracker.Entries<BaseEntity>();
         foreach (var entry in entries)
         {
-            switch (entry.State)
+            if (entry.State is EntityState.Modified)
+                entry.Entity.UpdateEntity();
+
+            if (entry.State is EntityState.Deleted)
             {
-                case EntityState.Modified:
-                    entry.Entity.UpdateEntity();
-                    break;
-                    
-                case EntityState.Deleted:
-                    entry.State = EntityState.Modified;
-                    entry.Entity.DeleteEntity();
-                    break;
+                entry.State = EntityState.Modified;
+                entry.Entity.DeleteEntity();
+                
+                if (entry.Entity is User userDomain)
+                    DeactivateApplicationUser(context, userDomain.Id);
             }
         }
+    }
+
+    /// <summary>
+    /// Desativa um usuário da aplicação marcando-o como excluído e define
+    /// o estado da entidade como Modificado no contexto do banco de dados fornecido.
+    /// </summary>
+    /// <param name="context">O contexto do banco de dados usado para acessar e modificar a entidade do usuário da aplicação.</param>
+    /// <param name="userDomainId">O identificador único do usuário no domínio a ser desativado.</param>
+    private static void DeactivateApplicationUser(DbContext context, Guid userDomainId)
+    {
+        // Verifica primeiro se está no Change Tracker, se não irá fazer a consulta no banco
+        var applicationUser = context
+            .ChangeTracker.Entries<ApplicationUser>().FirstOrDefault(e => e.Entity.UserDomainId == userDomainId)?.Entity 
+            ?? context.Set<ApplicationUser>().FirstOrDefault(u => u.UserDomainId == userDomainId);
+
+        if (applicationUser is null)
+            return;
+
+        applicationUser.IsDeleted = true;
+        context.Entry(applicationUser).State = EntityState.Modified;
     }
 }

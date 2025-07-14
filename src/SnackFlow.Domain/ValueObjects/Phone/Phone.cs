@@ -14,7 +14,7 @@ public sealed partial record Phone : BaseValueObject
 
     #region Constants
 
-    public const string PhoneRegexPattern = @"^(?:\(?(?:11|[12-9][0-9])\)?\s?)?9[0-9]{4}[\s\-]?[0-9]{4}$";
+    public const string RegexPattern = @"^(?:\(?(?:11|[12-9][0-9])\)?\s?)?9[0-9]{4}[\s\-]?[0-9]{4}$";
 
     #endregion
 
@@ -43,7 +43,7 @@ public sealed partial record Phone : BaseValueObject
 
     #region Source Generator
 
-    [GeneratedRegex(PhoneRegexPattern)]
+    [GeneratedRegex(RegexPattern)]
     public static partial Regex PhoneRegex();
 
     #endregion

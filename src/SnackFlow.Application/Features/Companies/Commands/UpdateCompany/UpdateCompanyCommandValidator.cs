@@ -16,12 +16,12 @@ public sealed class UpdateCompanyCommandValidator : AbstractValidator<UpdateComp
             .When(x => !string.IsNullOrEmpty(x.FantasyName));
 
         RuleFor(x => x.Email)
-            .Matches(Email.EmailRegexPattern)
+            .Matches(Email.RegexPattern)
             .WithMessage(ErrorMessage.Email.FormatInvalid)
             .When(x => !string.IsNullOrEmpty(x.Email));
         
         RuleFor(x => x.Phone)
-            .Matches(Phone.PhoneRegexPattern)
+            .Matches(Phone.RegexPattern)
             .WithMessage(ErrorMessage.Phone.FormatInvalid)
             .When(x => !string.IsNullOrEmpty(x.Phone));
     }
