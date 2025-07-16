@@ -7,5 +7,5 @@ namespace SnackFlow.Infrastructure.Services.Abstractions;
 /// </summary>
 public interface ICertificateService
 {
-    Task<X509Certificate2> LoadCertificateAsync(string key, string password);
+    X509Certificate2 LoadCertificateAsync(string key, string password);
 }

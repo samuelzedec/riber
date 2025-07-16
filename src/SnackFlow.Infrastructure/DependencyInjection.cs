@@ -80,7 +80,6 @@ public static class DependencyInjection
     private static void AddServices(this IServiceCollection services)
     {
         services.AddTransient<ICertificateService, CertificateService>();
-        services.AddTransient<ISecretService, AwsSecretService>();
     }
 
     private static void AddHealthChecksConfiguration(this IServiceCollection services, IConfiguration configuration)
