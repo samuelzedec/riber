@@ -41,7 +41,7 @@ public class UpdateCompanyHandlerCommandUnitTests : BaseTest
             _faker.Person.Cpf(),
             _faker.Person.Email,
             _faker.Phone.PhoneNumber("(92) 9####-####"),
-            ETaxIdType.IndividualWithCpf
+            TaxIdType.IndividualWithCpf
         );
     }
 

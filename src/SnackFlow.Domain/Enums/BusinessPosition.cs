@@ -2,7 +2,7 @@ using System.ComponentModel;
 
 namespace SnackFlow.Domain.Enums;
 
-public enum EBusinessPosition
+public enum BusinessPosition
 {
     [Description("Funcionário")]
     Employee = 1,

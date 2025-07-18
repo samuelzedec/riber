@@ -2,7 +2,7 @@ using System.ComponentModel;
 
 namespace SnackFlow.Domain.Enums;
 
-public enum EEmailAddress
+public enum EmailAddress
 {
     [Description("noreply@snackflow.app")]
     NoReply = 1,

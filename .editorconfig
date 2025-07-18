@@ -23,23 +23,28 @@ dotnet_naming_symbols.interface_symbols.applicable_accessibilities = public, int
 dotnet_naming_style.prefix_interface_with_i.required_prefix = I
 dotnet_naming_style.prefix_interface_with_i.capitalization = pascal_case
 
-dotnet_naming_rule.enums_should_be_prefixed_with_e.severity = error
-dotnet_naming_rule.enums_should_be_prefixed_with_e.symbols = enum_symbols
-dotnet_naming_rule.enums_should_be_prefixed_with_e.style = prefix_enum_with_e
-
-dotnet_naming_symbols.enum_symbols.applicable_kinds = enum
-dotnet_naming_symbols.enum_symbols.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
-
-dotnet_naming_style.prefix_enum_with_e.required_prefix = E
-dotnet_naming_style.prefix_enum_with_e.capitalization = pascal_case
-
-
 # Indentation and spacing
 indent_size = 4
 tab_width = 4
 
 # New line preferences
 insert_final_newline = false
+
+[**/DTOs/**/*.cs]
+# Enforce DTO suffix naming convention
+dotnet_naming_rule.dto_classes_should_end_with_dto.severity = error
+dotnet_naming_rule.dto_classes_should_end_with_dto.symbols = dto_classes
+dotnet_naming_rule.dto_classes_should_end_with_dto.style = dto_suffix_style
+
+# Define what are DTO classes (public classes in DTOs folder)
+dotnet_naming_symbols.dto_classes.applicable_kinds = class
+dotnet_naming_symbols.dto_classes.applicable_accessibilities = public
+dotnet_naming_symbols.dto_classes.required_modifiers =
+
+# Define the naming style (must end with DTO)
+dotnet_naming_style.dto_suffix_style.required_suffix = DTO
+dotnet_naming_style.dto_suffix_style.capitalization = pascal_case
+
 
 #### .NET Coding Conventions ####
 [*.{cs,vb}]

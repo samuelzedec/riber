@@ -7,7 +7,7 @@ namespace SnackFlow.Infrastructure.Services.EmailTemplateService;
 public sealed class EmailTemplateService<T>
     : IEmailTemplateService<T> where T : class
 {
-    public async Task<string> GetTemplateAsync(EEmailAudience audience, EEmailTemplate template, T data)
+    public async Task<string> GetTemplateAsync(EmailAudience audience, EmailTemplate template, T data)
     {
         var path = $"./Templates/{audience.GetDescription()}/{template.GetDescription()}";
         if (!File.Exists(path))

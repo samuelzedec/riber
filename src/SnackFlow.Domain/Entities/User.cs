@@ -13,7 +13,7 @@ public class User : BaseEntity, IAggregateRoot
 
     public FullName FullName { get; private set; }
     public TaxId TaxId { get; private set; }
-    public EBusinessPosition Position { get; private set; }
+    public BusinessPosition Position { get; private set; }
     public bool IsActive { get; private set; }
     public Guid? CompanyId { get; private set; }
     public Company Company { get; private set; } = null!;
@@ -33,7 +33,7 @@ public class User : BaseEntity, IAggregateRoot
     private User(
         FullName fullName,
         TaxId taxId,
-        EBusinessPosition position,
+        BusinessPosition position,
         Guid? companyId) : base(Guid.CreateVersion7())
     {
         FullName = fullName;
@@ -50,9 +50,9 @@ public class User : BaseEntity, IAggregateRoot
     public static User Create(
         string fullName,
         string taxId,
-        EBusinessPosition position,
+        BusinessPosition position,
         Guid? companyId = null
-    ) => new(FullName.Create(fullName), TaxId.Create(taxId, ETaxIdType.IndividualWithCpf), position, companyId);
+    ) => new(FullName.Create(fullName), TaxId.Create(taxId, TaxIdType.IndividualWithCpf), position, companyId);
 
     #endregion
 

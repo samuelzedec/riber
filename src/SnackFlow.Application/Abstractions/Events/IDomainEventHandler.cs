@@ -1,4 +1,4 @@
-using MediatR;
+using Mediator;
 using SnackFlow.Domain.Abstractions;
 
 namespace SnackFlow.Application.Abstractions.Events;

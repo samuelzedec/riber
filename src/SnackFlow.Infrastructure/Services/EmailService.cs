@@ -12,7 +12,7 @@ public sealed class EmailService(
     ILogger<EmailService> logger)
     : IEmailService
 {
-    public async Task SendAsync(string to, string subject, string body, EEmailAddress emailAddress)
+    public async Task SendAsync(string to, string subject, string body, EmailAddress emailAddress)
     {
         try
         {

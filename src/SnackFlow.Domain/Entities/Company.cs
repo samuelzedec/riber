@@ -50,7 +50,7 @@ public sealed class Company : BaseEntity, IAggregateRoot
         string taxId,
         string email,
         string phone,
-        ETaxIdType type
+        TaxIdType type
     ) => new(
         CompanyName.Create(corporateName, fantasyName),
         TaxId.Create(taxId, type),

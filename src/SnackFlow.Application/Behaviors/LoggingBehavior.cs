@@ -1,14 +1,16 @@
 ﻿using System.Diagnostics;
-using MediatR;
+using Mediator;
 using Microsoft.Extensions.Logging;
 using SnackFlow.Application.Exceptions;
 
 namespace SnackFlow.Application.Behaviors;
 
 public class LoggingBehavior<TRequest, TResponse>(ILogger<TRequest> logger)
-    : IPipelineBehavior<TRequest, TResponse> where TRequest : IBaseRequest
+    : IPipelineBehavior<TRequest, TResponse> where TRequest : IMessage
 {
-    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next,
+    public async ValueTask<TResponse> Handle(
+        TRequest request, 
+        MessageHandlerDelegate<TRequest, TResponse> next,
         CancellationToken cancellationToken)
     {
         var requestFullName = request.GetType().FullName ?? request.GetType().Name;
@@ -16,10 +18,8 @@ public class LoggingBehavior<TRequest, TResponse>(ILogger<TRequest> logger)
 
         try
         {
-            logger.LogInformation("Handling request: {RequestFullName} in {ElapsedMs}ms.",
-                requestFullName, stopwatch.ElapsedMilliseconds);
-
-            var result = await next(cancellationToken);
+            logger.LogInformation("Handling request: {RequestFullName}", requestFullName);
+            var result = await next(request, cancellationToken);
 
             logger.LogInformation("Request {RequestFullName} processed in {ElapsedMs}ms.",
                 requestFullName, stopwatch.ElapsedMilliseconds);
@@ -29,15 +29,14 @@ public class LoggingBehavior<TRequest, TResponse>(ILogger<TRequest> logger)
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
             var elapsedTime = stopwatch.Elapsed;
-
-            logger.LogWarning("Request {RequestName} timed out after {ElapsedSeconds}s",
+            logger.LogWarning("Request {RequestFullName} timed out after {ElapsedSeconds}s",
                 requestFullName, elapsedTime.TotalSeconds);
 
             throw new RequestTimeoutException(requestFullName, elapsedTime);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error while handling request: {RequestName} after {ElapsedMs}ms",
+            logger.LogError(ex, "Error while handling request: {RequestFullName} after {ElapsedMs}ms",
                 requestFullName, stopwatch.ElapsedMilliseconds);
             throw;
         }

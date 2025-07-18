@@ -10,7 +10,7 @@ namespace SnackFlow.Application.Features.Companies.Queries.GetCompanyById;
 public sealed class GetCompanyByIdQueryHandler(IUnitOfWork unitOfWork)
     : IQueryHandler<GetCompanyByIdQuery, GetCompanyByIdQueryResponse>
 {
-    public async Task<Result<GetCompanyByIdQueryResponse>> Handle(GetCompanyByIdQuery request, CancellationToken cancellationToken)
+    public async ValueTask<Result<GetCompanyByIdQueryResponse>> Handle(GetCompanyByIdQuery request, CancellationToken cancellationToken)
     {
         var companyRepository = unitOfWork.Companies;
         var company = await companyRepository.GetSingleAsync(

@@ -2,7 +2,7 @@ using System.ComponentModel;
 
 namespace SnackFlow.Domain.Enums;
 
-public enum EEmailAudience
+public enum EmailAudience
 {
     [Description("company")]
     Company = 1,

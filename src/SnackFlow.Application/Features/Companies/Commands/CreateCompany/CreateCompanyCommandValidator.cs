@@ -46,13 +46,13 @@ public sealed class CreateCompanyCommandValidator : AbstractValidator<CreateComp
             .WithMessage(ErrorMessage.Cpf.IsNullOrEmpty)
             .Matches(@"^\d{11}$")
             .WithMessage(ErrorMessage.Cpf.LengthIsInvalid)
-            .When(x => x.Type == ETaxIdType.IndividualWithCpf);
+            .When(x => x.Type == TaxIdType.IndividualWithCpf);
         
         RuleFor(x => x.TaxId)
             .NotEmpty()
             .WithMessage(ErrorMessage.Cnpj.IsNullOrEmpty)
             .Matches(@"^\d{14}$")
             .WithMessage(ErrorMessage.Cnpj.LengthIsInvalid)
-            .When(x => x.Type == ETaxIdType.LegalEntityWithCnpj);
+            .When(x => x.Type == TaxIdType.LegalEntityWithCnpj);
     }
 }

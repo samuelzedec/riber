@@ -22,7 +22,7 @@ public class CompanyUnitTests : BaseTest
         var taxId = _faker.Company.Cnpj(false);
         var email = _faker.Person.Email;
         var phone = _faker.Phone.PhoneNumber("(92) 9####-####");
-        var companyType = ETaxIdType.LegalEntityWithCnpj;
+        var companyType = TaxIdType.LegalEntityWithCnpj;
 
         // Act
         var result = Company.Create(
@@ -56,7 +56,7 @@ public class CompanyUnitTests : BaseTest
 
         var companyTaxId = TaxId.Create(
             _faker.Company.Cnpj(false),
-            ETaxIdType.LegalEntityWithCnpj
+            TaxIdType.LegalEntityWithCnpj
         );
 
         var companyEmail = Email.Create(_faker.Person.Email);
@@ -95,7 +95,7 @@ public class CompanyUnitTests : BaseTest
             _faker.Company.Cnpj(false),
             _faker.Person.Email,
             _faker.Phone.PhoneNumber("(92) 9####-####"),
-            ETaxIdType.LegalEntityWithCnpj
+            TaxIdType.LegalEntityWithCnpj
         );
 
         var newEmail = _faker.Person.Email;
@@ -117,7 +117,7 @@ public class CompanyUnitTests : BaseTest
             _faker.Company.Cnpj(false),
             _faker.Person.Email,
             _faker.Phone.PhoneNumber("(11) 9####-####"),
-            ETaxIdType.LegalEntityWithCnpj
+            TaxIdType.LegalEntityWithCnpj
         );
 
         var newPhone = _faker.Phone.PhoneNumber("(11) 9####-####");
@@ -140,7 +140,7 @@ public class CompanyUnitTests : BaseTest
             _faker.Company.Cnpj(false),
             _faker.Person.Email,
             _faker.Phone.PhoneNumber("(92) 9####-####"),
-            ETaxIdType.LegalEntityWithCnpj
+            TaxIdType.LegalEntityWithCnpj
         );
 
         var newFantasyName = _faker.Company.CompanyName();
@@ -163,7 +163,7 @@ public class CompanyUnitTests : BaseTest
             _faker.Company.Cnpj(false),
             _faker.Person.Email,
             _faker.Phone.PhoneNumber("(92) 9####-####"),
-            ETaxIdType.LegalEntityWithCnpj
+            TaxIdType.LegalEntityWithCnpj
         );
 
         var newFantasyName = _faker.Company.CompanyName();

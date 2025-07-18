@@ -33,7 +33,7 @@ public class LoggingBehaviorUnitTests : BaseTest
         // Act
         await _loggingBehavior.Handle(
             _request,
-            _ => Task.FromResult(_response),
+            (_, _) => ValueTask.FromResult(_response),
             CancellationToken.None
         );
 
@@ -65,7 +65,7 @@ public class LoggingBehaviorUnitTests : BaseTest
         // Act
         var exception = async () => await _loggingBehavior.Handle(
             _request, 
-            _ => throw new OperationCanceledException(cts.Token), 
+            (_, _) => throw new OperationCanceledException(cts.Token), 
             cts.Token
         );
             
@@ -90,7 +90,7 @@ public class LoggingBehaviorUnitTests : BaseTest
         // Act
         var exception = async () => await _loggingBehavior.Handle(
             _request, 
-            _ => throw expectedException, 
+            (_, _) => throw expectedException, 
             CancellationToken.None
         );
             

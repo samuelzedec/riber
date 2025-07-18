@@ -9,5 +9,5 @@ public sealed record CreateCompanyCommand(
     string TaxId,
     string Email,
     string Phone,
-    ETaxIdType Type
+    TaxIdType Type
 ) : ICommand<CreateCompanyCommandResponse>;
