@@ -1,4 +1,5 @@
-﻿using SnackFlow.Infrastructure.Persistence;
+﻿using Amazon.SimpleEmail;
+using SnackFlow.Infrastructure.Persistence;
 using SnackFlow.Infrastructure.Persistence.Interceptors;
 using SnackFlow.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -7,9 +8,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
+using SnackFlow.Application.Abstractions.Services;
 using SnackFlow.Domain.Repositories;
 using SnackFlow.Infrastructure.Services;
-using SnackFlow.Infrastructure.Services.Abstractions;
+using SnackFlow.Infrastructure.Services.EmailTemplateService;
 
 namespace SnackFlow.Infrastructure;
 
@@ -27,6 +29,7 @@ public static class DependencyInjection
         services.AddPersistence(configuration);
         services.AddRepositories();
         services.AddServices();
+        services.AddAwsServices(configuration);
         services.AddHealthChecksConfiguration(configuration);
     }
 
@@ -80,7 +83,14 @@ public static class DependencyInjection
     private static void AddServices(this IServiceCollection services)
     {
         services.AddTransient<ICertificateService, CertificateService>();
-        services.AddTransient<ISecretService, AwsSecretService>();
+        services.AddTransient(typeof(IEmailTemplateService<>), typeof(EmailTemplateService<>));
+        services.AddTransient<IEmailService, EmailService>();
+    }
+
+    private static void AddAwsServices(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddDefaultAWSOptions(configuration.GetAWSOptions());
+        services.AddAWSService<IAmazonSimpleEmailService>();
     }
 
     private static void AddHealthChecksConfiguration(this IServiceCollection services, IConfiguration configuration)

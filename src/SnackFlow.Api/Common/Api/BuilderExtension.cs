@@ -6,21 +6,21 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using SnackFlow.Application.Abstractions.Services;
 using SnackFlow.Infrastructure.Persistence;
 using SnackFlow.Infrastructure.Persistence.Identity;
-using SnackFlow.Infrastructure.Services.Abstractions;
 using SnackFlow.Infrastructure.Settings;
 
 namespace SnackFlow.Api.Common.Api;
 
 public static class BuilderExtension
 {
-    public static async Task AddPipeline(this WebApplicationBuilder builder)
+    public static void AddPipeline(this WebApplicationBuilder builder)
     {
         builder.AddDocumentationApi();
         builder.AddDependencyInjection();
         builder.AddConfigurations(); 
-        await builder.AddSecurity();
+        builder.AddSecurity();
     }
 
     private static void AddDependencyInjection(this WebApplicationBuilder builder)
@@ -66,7 +66,7 @@ public static class BuilderExtension
         });
     }
 
-    private static async Task AddSecurity(this WebApplicationBuilder builder)
+    private static void AddSecurity(this WebApplicationBuilder builder)
     {
         var accessToken =
             builder.Configuration.GetSection(nameof(AccessTokenSettings)).Get<AccessTokenSettings>()
@@ -76,14 +76,14 @@ public static class BuilderExtension
             builder.Configuration.GetSection(nameof(RefreshTokenSettings)).Get<RefreshTokenSettings>()
             ?? throw new InvalidOperationException($"{nameof(RefreshTokenSettings)} configuration not found");
         
-        await using var provider = builder.Services.BuildServiceProvider();
+        using var provider = builder.Services.BuildServiceProvider();
         var certificateService = provider.GetRequiredService<ICertificateService>();
-        var accessCertificate = await certificateService.LoadCertificateAsync(
+        var accessCertificate = certificateService.LoadCertificateAsync(
             accessToken.Key,
             accessToken.Password
         );
     
-        var refreshCertificate = await certificateService.LoadCertificateAsync(
+        var refreshCertificate = certificateService.LoadCertificateAsync(
             refreshToken.Key,
             refreshToken.Password
         );

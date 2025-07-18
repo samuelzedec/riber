@@ -1,7 +1,7 @@
 using SnackFlow.Api.Common.Api;
 
 var builder = WebApplication.CreateBuilder(args);
-await builder.AddPipeline();
+builder.AddPipeline();
 
 var app = builder.Build();
 app.UsePipeline();
