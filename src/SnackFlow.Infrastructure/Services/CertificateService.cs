@@ -1,5 +1,5 @@
 using System.Security.Cryptography.X509Certificates;
-using SnackFlow.Infrastructure.Services.Abstractions;
+using SnackFlow.Application.Abstractions.Services;
 
 namespace SnackFlow.Infrastructure.Services;
 

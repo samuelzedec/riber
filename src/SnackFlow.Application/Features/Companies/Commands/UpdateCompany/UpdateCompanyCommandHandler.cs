@@ -46,7 +46,7 @@ public sealed class UpdateCompanyCommandHandler(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex.Message, ex.StackTrace);
+            logger.LogError(ex, $"error in class: {nameof(UpdateCompanyCommandHandler)}");
             await unitOfWork.RollbackTransactionAsync(cancellationToken);
             throw;
         }

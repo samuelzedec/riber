@@ -1,6 +1,6 @@
 using System.Security.Cryptography.X509Certificates;
 
-namespace SnackFlow.Infrastructure.Services.Abstractions;
+namespace SnackFlow.Application.Abstractions.Services;
 
 /// <summary>
 /// Define um serviço para carregamento de certificados X.509.

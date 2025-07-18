@@ -2,6 +2,8 @@
     <ItemGroup>
         <PackageReference Include="AspNetCore.HealthChecks.NpgSql" />
         <PackageReference Include="AspNetCore.HealthChecks.UI.Client" />
+        <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" />
+        <PackageReference Include="AWSSDK.SimpleEmail" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
