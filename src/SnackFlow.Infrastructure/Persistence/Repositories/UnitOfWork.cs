@@ -1,4 +1,4 @@
-﻿using MediatR;
+﻿using Mediator;
 using Microsoft.EntityFrameworkCore.Storage;
 using SnackFlow.Domain.Entities;
 using SnackFlow.Domain.Repositories;

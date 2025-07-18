@@ -1,17 +1,12 @@
-﻿using MediatR;
-using SnackFlow.Application.Common;
+﻿using SnackFlow.Application.Common;
 
 namespace SnackFlow.Application.Abstractions.Queries;
 
 /// <summary>
-/// Define um manipulador para processar uma consulta e produzir um resultado.
+/// Define um contrato para manipular consultas e retornar uma resposta encapsulada em um resultado.
 /// </summary>
-/// <typeparam name="TQuery">
-/// O tipo da consulta a ser manipulada. Deve implementar <see cref="IQuery{TResponse}"/>.
-/// </typeparam>
-/// <typeparam name="TResponse">
-/// O tipo da resposta que o manipulador de consulta produz. Deve implementar <see cref="IQueryResponse"/>.
-/// </typeparam>
-public interface IQueryHandler<in TQuery, TResponse> : IRequestHandler<TQuery, Result<TResponse>>
+/// <typeparam name="TQuery">O tipo da consulta que está sendo manipulada.</typeparam>
+/// <typeparam name="TResponse">O tipo da resposta retornada pelo manipulador da consulta.</typeparam>
+public interface IQueryHandler<in TQuery, TResponse> : Mediator.IQueryHandler<TQuery, Result<TResponse>>
     where TQuery : IQuery<TResponse>
     where TResponse : IQueryResponse;

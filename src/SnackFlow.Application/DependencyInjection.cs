@@ -13,11 +13,15 @@ public static class DependencyInjection
 {
     public static void AddApplication(this IServiceCollection services)
     {
-        services.AddMediatR(configure =>
+        services.AddMediator(options =>
         {
-            configure.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly);
-            configure.AddOpenBehavior(typeof(ValidationBehavior<,>));
-            configure.AddOpenBehavior(typeof(LoggingBehavior<,>));
+            options.ServiceLifetime = ServiceLifetime.Singleton;
+            
+            options.Assemblies = [typeof(DependencyInjection).Assembly];
+            options.PipelineBehaviors = [
+                typeof(ValidationBehavior<,>),
+                typeof(LoggingBehavior<,>),
+            ];
         });
         
         services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);

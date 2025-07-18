@@ -17,7 +17,7 @@ public sealed class UpdateCompanyCommandHandler(
     ILogger<UpdateCompanyCommandHandler> logger)
     : ICommandHandler<UpdateCompanyCommand, UpdateCompanyCommandResponse>
 {
-    public async Task<Result<UpdateCompanyCommandResponse>> Handle(UpdateCompanyCommand request,
+    public async ValueTask<Result<UpdateCompanyCommandResponse>> Handle(UpdateCompanyCommand request,
         CancellationToken cancellationToken)
     {
         var companyRepository = unitOfWork.Companies;

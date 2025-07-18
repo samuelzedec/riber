@@ -2,7 +2,7 @@ using System.ComponentModel;
 
 namespace SnackFlow.Domain.Enums;
 
-public enum ETaxIdType
+public enum TaxIdType
 {
     [Description("Pessoa Física")]
     IndividualWithCpf = 1,

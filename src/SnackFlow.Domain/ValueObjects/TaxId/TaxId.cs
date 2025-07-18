@@ -9,13 +9,13 @@ public sealed record TaxId : BaseValueObject
     #region Properties
 
     public string Value { get; private set; }
-    public ETaxIdType Type { get; private set; }
+    public TaxIdType Type { get; private set; }
 
     #endregion
 
     #region Constructors
 
-    private TaxId(string value, ETaxIdType type)
+    private TaxId(string value, TaxIdType type)
     {
         Value = value;
         Type = type;
@@ -25,9 +25,9 @@ public sealed record TaxId : BaseValueObject
 
     #region Factories
     
-    public static TaxId Create(string value, ETaxIdType type)
+    public static TaxId Create(string value, TaxIdType type)
     {
-        IDocumentValidator validator = type is ETaxIdType.IndividualWithCpf
+        IDocumentValidator validator = type is TaxIdType.IndividualWithCpf
             ? new CpfValidator()
             : new CnpjValidator();
         
@@ -39,14 +39,14 @@ public sealed record TaxId : BaseValueObject
     {
         var validator = new CpfValidator();
         validator.IsValid(cpf);
-        return new TaxId(validator.Sanitize(cpf), ETaxIdType.IndividualWithCpf);
+        return new TaxId(validator.Sanitize(cpf), TaxIdType.IndividualWithCpf);
     }
 
     public static TaxId CreateFromCnpj(string cnpj)
     {
         var validator = new CnpjValidator();
         validator.IsValid(cnpj);
-        return new TaxId(validator.Sanitize(cnpj), ETaxIdType.LegalEntityWithCnpj);
+        return new TaxId(validator.Sanitize(cnpj), TaxIdType.LegalEntityWithCnpj);
     }
 
     #endregion
@@ -61,7 +61,7 @@ public sealed record TaxId : BaseValueObject
     #region Overrides
 
     public override string ToString()
-        => Type == ETaxIdType.IndividualWithCpf
+        => Type == TaxIdType.IndividualWithCpf
             ? CpfValidator.Format(Value)
             : CnpjValidator.Format(Value);
 

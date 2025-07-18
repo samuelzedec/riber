@@ -2,10 +2,16 @@
     <ItemGroup>
         <PackageReference Include="FluentValidation" />
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
-        <PackageReference Include="MediatR" />
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+        <PackageReference Include="Mediator.SourceGenerator">
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+          <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\SnackFlow.Domain\SnackFlow.Domain.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="DTOs\" />
     </ItemGroup>
 </Project>

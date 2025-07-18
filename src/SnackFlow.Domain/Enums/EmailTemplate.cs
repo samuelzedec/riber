@@ -2,7 +2,7 @@ using System.ComponentModel;
 
 namespace SnackFlow.Domain.Enums;
 
-public enum EEmailTemplate
+public enum EmailTemplate
 {
     [Description("welcome.html")]
     Welcome = 1,

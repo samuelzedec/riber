@@ -14,7 +14,7 @@ namespace SnackFlow.Application.Features.Companies.Commands.CreateCompany;
 public sealed class CreateCompanyCommandHandler(IUnitOfWork unitOfWork)
     : ICommandHandler<CreateCompanyCommand, CreateCompanyCommandResponse>
 {
-    public async Task<Result<CreateCompanyCommandResponse>> Handle(
+    public async ValueTask<Result<CreateCompanyCommandResponse>> Handle(
         CreateCompanyCommand request, CancellationToken cancellationToken)
     {
         var companyRepository = unitOfWork.Companies;

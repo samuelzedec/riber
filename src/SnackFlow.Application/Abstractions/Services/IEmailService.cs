@@ -15,5 +15,5 @@ public interface IEmailService
     /// <param name="body">O conteúdo do corpo do e-mail.</param>
     /// <param name="emailAddress">O endereço de e-mail do remetente, representado como uma enumeração.</param>
     /// <returns>Uma tarefa que representa a operação assíncrona de envio do e-mail.</returns>
-    Task SendAsync(string to, string subject, string body, EEmailAddress emailAddress);
+    Task SendAsync(string to, string subject, string body, EmailAddress emailAddress);
 }

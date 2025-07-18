@@ -36,7 +36,7 @@ public class ValidationBehaviorUnitTests : BaseTest
         // Act
         var result = await behavior.Handle(
             _request,
-            _ => Task.FromResult(_response),
+            (_, _) => ValueTask.FromResult(_response),
             CancellationToken.None
         );
         
@@ -58,7 +58,7 @@ public class ValidationBehaviorUnitTests : BaseTest
         // Act
         var result = await behavior.Handle(
             _request,
-            _ => Task.FromResult(_response),
+            (_, _) => ValueTask.FromResult(_response),
             CancellationToken.None
         );
         
@@ -87,7 +87,7 @@ public class ValidationBehaviorUnitTests : BaseTest
         // Act
         var exception = async () => await behavior.Handle(
             _request,
-            _ => Task.FromResult(_response),
+            (_, _) => ValueTask.FromResult(_response),
             CancellationToken.None
         );
         
@@ -126,7 +126,7 @@ public class ValidationBehaviorUnitTests : BaseTest
         // Act
         var exception = async () => await behavior.Handle(
             _request,
-            _ => Task.FromResult(_response),
+            (_, _) => ValueTask.FromResult(_response),
             CancellationToken.None
         );
 
@@ -171,7 +171,7 @@ public class ValidationBehaviorUnitTests : BaseTest
         // Act
         var exception = async () => await behavior.Handle(
             _request,
-            _ => Task.FromResult(_response),
+            (_, _) => ValueTask.FromResult(_response),
             CancellationToken.None
         );
 
@@ -211,7 +211,7 @@ public class ValidationBehaviorUnitTests : BaseTest
         // Act
         var exception = async () => await behavior.Handle(
             _request,
-            _ => Task.FromResult(_response),
+            (_, _) => ValueTask.FromResult(_response),
             CancellationToken.None
         );
 
