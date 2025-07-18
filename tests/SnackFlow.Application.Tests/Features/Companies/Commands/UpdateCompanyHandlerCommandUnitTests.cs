@@ -303,7 +303,7 @@ public class UpdateCompanyHandlerCommandUnitTests : BaseTest
             x => x.Log(
                 LogLevel.Error,
                 It.IsAny<EventId>(),
-                It.IsAny<It.IsAnyType>(),
+                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains(ErrorMessage.NotFound.Company)),
                 It.IsAny<Exception>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);

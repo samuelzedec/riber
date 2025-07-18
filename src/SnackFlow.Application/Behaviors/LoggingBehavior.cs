@@ -39,7 +39,6 @@ public class LoggingBehavior<TRequest, TResponse>(ILogger<TRequest> logger)
         {
             logger.LogError(ex, "Error while handling request: {RequestName} after {ElapsedMs}ms",
                 requestFullName, stopwatch.ElapsedMilliseconds);
-            
             throw;
         }
         finally
