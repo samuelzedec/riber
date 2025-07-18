@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using SnackFlow.Application.Abstractions.Services;
 using SnackFlow.Infrastructure.Persistence;
 using SnackFlow.Infrastructure.Persistence.Identity;
-using SnackFlow.Infrastructure.Services.Abstractions;
 using SnackFlow.Infrastructure.Settings;
 
 namespace SnackFlow.Api.Common.Api;
