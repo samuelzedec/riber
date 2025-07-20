@@ -6,10 +6,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using Quartz;
 using Serilog;
 using Serilog.Events;
+using SnackFlow.Application.Abstractions.Schedulers;
 using SnackFlow.Application.Abstractions.Services;
 using SnackFlow.Domain.Repositories;
+using SnackFlow.Infrastructure.Jobs;
+using SnackFlow.Infrastructure.Schedulers;
 using SnackFlow.Infrastructure.Services;
 using SnackFlow.Infrastructure.Services.EmailTemplateService;
 
@@ -17,7 +23,7 @@ namespace SnackFlow.Infrastructure;
 
 /// <summary>
 /// Fornece métodos e configurações para configurar o container de injeção de dependência da camada de Infrastructure.
-/// Esta classe tem como objetivo simplificar o processo de registro de serviços
+/// Esta classe pretende simplificar o processo de registro de serviços
 /// e dependências necessárias para o funcionamento da aplicação.
 /// </summary>
 public static class DependencyInjection
@@ -30,7 +36,10 @@ public static class DependencyInjection
         services.AddRepositories();
         services.AddServices();
         services.AddAwsServices(configuration);
+        services.AddBackgroundJobs(configuration);
+        services.AddJsonConfiguration();
         services.AddHealthChecksConfiguration(configuration);
+        services.AddSchedulersAndJobs();
     }
 
     private static void AddLogging(this ILoggingBuilder logging)
@@ -83,7 +92,7 @@ public static class DependencyInjection
     private static void AddServices(this IServiceCollection services)
     {
         services.AddTransient<ICertificateService, CertificateService>();
-        services.AddTransient(typeof(IEmailTemplateService<>), typeof(EmailTemplateService<>));
+        services.AddTransient<IEmailTemplateService, EmailTemplateService>();
         services.AddTransient<IEmailService, EmailService>();
     }
 
@@ -91,6 +100,12 @@ public static class DependencyInjection
     {
         services.AddDefaultAWSOptions(configuration.GetAWSOptions());
         services.AddAWSService<IAmazonSimpleEmailService>();
+    }
+
+    private static void AddSchedulersAndJobs(this IServiceCollection services)
+    {
+        services.AddTransient<SendingEmailJob>();
+        services.AddScoped<IEmailScheduler, QuartzEmailScheduler>();
     }
 
     private static void AddHealthChecksConfiguration(this IServiceCollection services, IConfiguration configuration)
@@ -102,5 +117,52 @@ public static class DependencyInjection
         services
             .AddHealthChecks()
             .AddNpgSql(connectionString, name: "DefaultConnection");
+    }
+
+    private static void AddBackgroundJobs(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<QuartzOptions>(options =>
+        {
+            options.SchedulerName = "SnackFlowScheduler";
+            options.Scheduling.IgnoreDuplicates = true;
+            options.Scheduling.OverWriteExistingData = false;
+        });
+        
+        services.AddQuartz(q =>
+        {
+            q.UsePersistentStore(configure =>
+            {
+                configure.PerformSchemaValidation = false;
+                configure.UseProperties = true;
+                configure.RetryInterval = TimeSpan.FromSeconds(15);
+                configure.UseNewtonsoftJsonSerializer();
+                configure.UsePostgres(postgres =>
+                    postgres.ConnectionString =
+                        configuration.GetConnectionString("DefaultConnection")
+                        ?? throw new ArgumentNullException(nameof(configuration),
+                            "QUARTZ - Connection string is null"));
+            });
+
+            q.AddJob<SendingEmailJob>(options => options
+                .WithIdentity(new JobKey(nameof(SendingEmailJob)))
+                .WithDescription("Envia de e-mails para notificar o usuário")
+                .StoreDurably());
+        });
+        
+        services.AddQuartzHostedService(options =>
+            options.WaitForJobsToComplete = true);
+    }
+    
+    private static void AddJsonConfiguration(this IServiceCollection _)
+    {
+        JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+        {
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            Formatting = Formatting.Indented,
+            NullValueHandling = NullValueHandling.Ignore,
+            DefaultValueHandling = DefaultValueHandling.Ignore,
+            ContractResolver = new CamelCasePropertyNamesContractResolver(),
+            TypeNameHandling = TypeNameHandling.Auto
+        };
     }
 }

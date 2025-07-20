@@ -2,8 +2,6 @@ using Amazon.SimpleEmail;
 using Amazon.SimpleEmail.Model;
 using Microsoft.Extensions.Logging;
 using SnackFlow.Application.Abstractions.Services;
-using SnackFlow.Application.Extensions;
-using SnackFlow.Domain.Enums;
 
 namespace SnackFlow.Infrastructure.Services;
 
@@ -12,13 +10,13 @@ public sealed class EmailService(
     ILogger<EmailService> logger)
     : IEmailService
 {
-    public async Task SendAsync(string to, string subject, string body, EmailAddress emailAddress)
+    public async Task SendAsync(string to, string subject, string body, string emailAddress)
     {
         try
         {
             var request = new SendEmailRequest
             {
-                Source = emailAddress.GetDescription(),
+                Source = emailAddress,
                 Destination = new Destination { ToAddresses = [to] },
                 Message = new Message
                 {
