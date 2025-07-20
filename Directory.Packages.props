@@ -7,9 +7,6 @@
   <ItemGroup>
     <PackageVersion Include="Mediator.Abstractions" Version="3.0.0-preview.65" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.6" />
-    <PackageVersion Include="Quartz.AspNetCore" Version="3.14.0" />
-    <PackageVersion Include="Quartz.Jobs" Version="3.14.0" />
-    <PackageVersion Include="Quartz.Plugins" Version="3.14.0" />
   </ItemGroup>
   <!-- Pacotes específicos da camada Application -->
   <ItemGroup>
