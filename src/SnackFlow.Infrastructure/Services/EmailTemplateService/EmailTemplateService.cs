@@ -1,29 +1,44 @@
+using Newtonsoft.Json.Linq;
 using SnackFlow.Application.Abstractions.Services;
-using SnackFlow.Application.Extensions;
-using SnackFlow.Domain.Enums;
 
 namespace SnackFlow.Infrastructure.Services.EmailTemplateService;
 
-public sealed class EmailTemplateService<T>
-    : IEmailTemplateService<T> where T : class
+public sealed class EmailTemplateService : IEmailTemplateService
 {
-    public async Task<string> GetTemplateAsync(EmailAudience audience, EmailTemplate template, T data)
+    public async Task<string> GetTemplateAsync(JObject data)
     {
-        var path = $"./Templates/{audience.GetDescription()}/{template.GetDescription()}";
-        if (!File.Exists(path))
-            throw new FileNotFoundException($"Template não encontrado: {path}");
-        
-        var templateContent = await File.ReadAllTextAsync(path);
-        var properties = typeof(T).GetProperties();
-        
-        foreach (var property in properties)
-        {
-            var placeholder = $"{{{{{property.Name}}}}}";
-            var value = property.GetValue(data)?.ToString() ?? string.Empty;
-            templateContent = templateContent.Replace(placeholder, value);
-        }
-        
-        return templateContent;
+        var templatePath = GetTemplatePath(data);
+
+        if (!File.Exists(templatePath))
+            throw new FileNotFoundException($"Template não encontrado: {templatePath}");
+
+        var templateContent = await File.ReadAllTextAsync(templatePath);
+        return ReplaceTemplatePlaceholders(templateContent, data);
     }
 
+    private static string GetTemplatePath(JObject data)
+    {
+        var audience = data["audience"]?.ToString()!;
+        var template = data["template"]?.ToString()!;
+        
+        return Path.Combine(
+            AppDomain.CurrentDomain.BaseDirectory,
+            "Services", "EmailTemplateService", "Templates",
+            audience, template
+        );
+    }
+
+    private static string ReplaceTemplatePlaceholders(string templateContent, JObject data)
+    {
+        foreach (var property in data.Properties())
+        {
+            if (property.Name is "audience" or "template")
+                continue;
+
+            var placeholder = $"{{{{{property.Name}}}}}";
+            var value = property.Value.ToString();
+            templateContent = templateContent.Replace(placeholder, value);
+        }
+        return templateContent;
+    }
 }

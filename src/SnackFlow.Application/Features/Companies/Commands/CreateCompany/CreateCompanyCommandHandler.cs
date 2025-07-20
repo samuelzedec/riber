@@ -5,6 +5,7 @@ using SnackFlow.Application.Exceptions;
 using SnackFlow.Application.Extensions;
 using SnackFlow.Domain.Constants;
 using SnackFlow.Domain.Entities;
+using SnackFlow.Domain.Events;
 using SnackFlow.Domain.Repositories;
 using SnackFlow.Domain.ValueObjects.Email;
 using SnackFlow.Domain.ValueObjects.Phone;
@@ -29,6 +30,11 @@ public sealed class CreateCompanyCommandHandler(IUnitOfWork unitOfWork)
             type: request.Type
         );
 
+        companyEntity.RaiseEvent(new CompanyWelcomeEmailRequestedEvent(
+            companyEntity.Name,
+            companyEntity.Email
+        ));
+        
         await companyRepository.CreateAsync(companyEntity);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 

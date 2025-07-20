@@ -7,6 +7,9 @@
   <ItemGroup>
     <PackageVersion Include="Mediator.Abstractions" Version="3.0.0-preview.65" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.6" />
+    <PackageVersion Include="Quartz.AspNetCore" Version="3.14.0" />
+    <PackageVersion Include="Quartz.Jobs" Version="3.14.0" />
+    <PackageVersion Include="Quartz.Plugins" Version="3.14.0" />
   </ItemGroup>
   <!-- Pacotes específicos da camada Application -->
   <ItemGroup>
@@ -30,6 +33,10 @@
     </PackageVersion>
     <PackageVersion Include="AspNetCore.HealthChecks.NpgSql" Version="9.0.0" />
     <PackageVersion Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
+    <PackageVersion Include="Quartz.Extensions.DependencyInjection" Version="3.14.0" />
+    <PackageVersion Include="Quartz.Extensions.Hosting" Version="3.14.0" />
+    <PackageVersion Include="Quartz.Serialization.Json" Version="3.14.0" />
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
   <!-- Pacotes Pacotes específicos da camada Api -->
   <ItemGroup>

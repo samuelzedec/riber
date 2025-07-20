@@ -7,11 +7,13 @@
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
           <PrivateAssets>all</PrivateAssets>
         </PackageReference>
+        <PackageReference Include="Newtonsoft.Json" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\SnackFlow.Domain\SnackFlow.Domain.csproj" />
     </ItemGroup>
     <ItemGroup>
       <Folder Include="DTOs\" />
+      <Folder Include="Events\" />
     </ItemGroup>
 </Project>

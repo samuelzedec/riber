@@ -44,14 +44,14 @@ public sealed class CreateCompanyCommandValidator : AbstractValidator<CreateComp
         RuleFor(x => x.TaxId)
             .NotEmpty()
             .WithMessage(ErrorMessage.Cpf.IsNullOrEmpty)
-            .Matches(@"^\d{11}$")
+            .Matches(@"^(?!^(\d)\1{10}$)(\d{3}\.?\d{3}\.?\d{3}-?\d{2})$")
             .WithMessage(ErrorMessage.Cpf.LengthIsInvalid)
             .When(x => x.Type == TaxIdType.IndividualWithCpf);
         
         RuleFor(x => x.TaxId)
             .NotEmpty()
             .WithMessage(ErrorMessage.Cnpj.IsNullOrEmpty)
-            .Matches(@"^\d{14}$")
+            .Matches(@"^(?!^(\d)\1{13}$)(\d{2}\.?\d{3}\.?\d{3}/?\d{4}-?\d{2})$")
             .WithMessage(ErrorMessage.Cnpj.LengthIsInvalid)
             .When(x => x.Type == TaxIdType.LegalEntityWithCnpj);
     }

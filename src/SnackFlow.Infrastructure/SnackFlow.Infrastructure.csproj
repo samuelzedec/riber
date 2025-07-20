@@ -10,11 +10,20 @@
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+        <PackageReference Include="Newtonsoft.Json" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+        <PackageReference Include="Quartz.Extensions.DependencyInjection" />
+        <PackageReference Include="Quartz.Extensions.Hosting" />
+        <PackageReference Include="Quartz.Serialization.Json" />
         <PackageReference Include="Serilog.AspNetCore" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\SnackFlow.Application\SnackFlow.Application.csproj" />
         <ProjectReference Include="..\SnackFlow.Domain\SnackFlow.Domain.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <Content Include="Services\EmailTemplateService\Templates\**\*.html">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 </Project>

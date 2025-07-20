@@ -95,10 +95,11 @@ public static class ErrorMessage
     }
 
     /// <summary>
-    /// Contém mensagens de erro relacionadas à invalidez de valores ou estados específicos do domínio.
+    /// Contém mensagens de erro relacionadas à invalidez de valores ou estados específicos.
     /// </summary>
     public static class Invalid
     {
         public const string IdIsNull = "O ID não pode ser nulo";
+        public const string Casting = "Não foi possível fazer o conversão";
     }
 }
