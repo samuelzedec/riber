@@ -29,7 +29,7 @@ O projeto segue os princípios de **Clean Architecture**, organizando as depend�
 
 Para informações detalhadas sobre desenvolvimento e padrões do projeto, consulte:
 
-- **[Padrões de Codificação](docs/CODING-STANDARDS.md)** - Convenções de código, CQRS, testes e organização
-- **[Padrões Arquiteturais](docs/PATTERN.md)** - Repository, UnitOfWork, DDD e outros padrões utilizados
-- **[Pacotes e Dependências](docs/PACKAGES.md)** - Lista completa de bibliotecas e suas finalidades
-- **[Configuração de Timeout](docs/REQUEST-TIMEOUT.md)** - Configurações de timeout para requisições
+- **[Padrões de Codificação](docs/coding-standards.md)** - Convenções de código, CQRS, testes e organização
+- **[Padrões Arquiteturais](docs/design-patterns.md)** - Repository, UnitOfWork, DDD e outros padrões utilizados
+- **[Pacotes e Dependências](docs/packages.md)** - Lista completa de bibliotecas e suas finalidades
+- **[Configuração de Timeout](docs/request-timeout.md)** - Configurações de timeout para requisições

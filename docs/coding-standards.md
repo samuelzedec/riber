@@ -17,15 +17,16 @@ public record CreateCompanyCommand { } // deve ser sealed
 ```
 
 ### Command Handlers
-**Estrutura:** `public sealed class {Command}Handler(...) : ICommandHandler<{Command}, {Response}>`
+**Estrutura:** `internal sealed class {Command}Handler(...) : ICommandHandler<{Command}, {Response}>`
 
 ```csharp
 // ✅ Correto
-public sealed class CreateCompanyHandler(IUnitOfWork unitOfWork)
+internal sealed class CreateCompanyHandler(IUnitOfWork unitOfWork)
     : ICommandHandler<CreateCompanyCommand, CreateCompanyResponse>
 
 // ❌ Incorreto
-public class CreateCompanyHandler { } // deve ser public sealed
+public sealed class CreateCompanyHandler { } // deve ser internal
+public class CreateCompanyHandler { } // deve ser internal sealed
 ```
 
 ### Command Responses
@@ -51,19 +52,28 @@ public sealed record GetAllCompaniesQuery() : IQuery<List<GetCompanyResponse>>;
 ### Query Handlers
 **Estrutura:** `internal sealed class {Query}Handler(...) : IQueryHandler<{Query}, {Response}>`
 
+```csharp
+// ✅ Correto
+internal sealed class GetCompanyByIdHandler(ICompanyRepository repository)
+    : IQueryHandler<GetCompanyByIdQuery, GetCompanyResponse>
+
+// ❌ Incorreto
+public sealed class GetCompanyByIdHandler { } // deve ser internal
+```
+
 ### Query Responses
 **Estrutura:** `public sealed record {Descrição}Response(...) : IQueryResponse;`
 
 ### Validators
-**Estrutura:** `public sealed class {Command/Query}Validator : AbstractValidator<{Command/Query}>`
+**Estrutura:** `internal sealed class {Command/Query}Validator : AbstractValidator<{Command/Query}>`
 
 ```csharp
 // ✅ Correto
-public sealed class CreateCompanyValidator : AbstractValidator<CreateCompanyCommand>
+internal sealed class CreateCompanyValidator : AbstractValidator<CreateCompanyCommand>
 
 // ❌ Incorreto
-public class CreateCompanyValidator { } // deve ser sealed
-internal sealed class CreateCompanyValidator { } // deve ser public
+public sealed class CreateCompanyValidator { } // deve ser internal
+public class CreateCompanyValidator { } // deve ser internal sealed
 ```
 
 ## Testes
@@ -127,6 +137,32 @@ public class CompanyValidatorUnitTest
     #region Edge Cases Tests
     // Testes de casos extremos
     #endregion
+}
+```
+
+### Acesso a Classes Internas para Testes
+Para testar handlers e validators internos, configure `InternalsVisibleTo`:
+
+```xml
+<!-- No .csproj da Application -->
+<ItemGroup>
+    <InternalsVisibleTo Include="SnackFlow.Application.Tests" />
+    <InternalsVisibleTo Include="SnackFlow.IntegrationTests" />
+</ItemGroup>
+```
+
+```csharp
+// Exemplo de teste acessando classe interna
+public class CreateCompanyHandlerUnitTest
+{
+    [Fact]
+    public async Task Handle_WhenValidCommand_ShouldCreateCompany()
+    {
+        // ✅ Funciona com InternalsVisibleTo configurado
+        var handler = new CreateCompanyHandler(mockUnitOfWork);
+        
+        // teste...
+    }
 }
 ```
 
@@ -226,9 +262,15 @@ public sealed partial record Email : BaseValueObject
 ### Modificadores de Acesso
 - **Commands/Queries/Responses:** `public sealed record`
 - **Handlers:** `internal sealed class`
-- **Validators:** `public sealed class`
+- **Validators:** `internal sealed class`
 - **Entidades:** `public class`
 - **Value Objects:** `public sealed record` (ou `public record` se for estendido)
+
+### Justificativa para Handlers/Validators Internos
+- **Encapsulamento**: Implementações são detalhes internos da camada Application
+- **API Limpa**: Apenas contratos (Commands/Queries/Responses) são expostos
+- **Flexibilidade**: Mudanças internas não afetam consumidores externos
+- **Testabilidade**: Mantida através de `InternalsVisibleTo`
 
 ### Injeção de Dependências
 - Use **primary constructors** quando possível
@@ -259,15 +301,15 @@ internal sealed class Handler
 Application/
 ├── Commands/
 │   └── CreateCompany/
-│       ├── CreateCompanyCommand.cs
-│       ├── CreateCompanyHandler.cs
-│       ├── CreateCompanyResponse.cs
-│       └── CreateCompanyValidator.cs
+│       ├── CreateCompanyCommand.cs      # public sealed record
+│       ├── CreateCompanyHandler.cs      # internal sealed class
+│       ├── CreateCompanyResponse.cs     # public sealed record
+│       └── CreateCompanyValidator.cs    # internal sealed class
 └── Queries/
     └── GetCompanyById/
-        ├── GetCompanyByIdQuery.cs
-        ├── GetCompanyByIdHandler.cs
-        └── GetCompanyByIdResponse.cs
+        ├── GetCompanyByIdQuery.cs       # public sealed record
+        ├── GetCompanyByIdHandler.cs     # internal sealed class
+        └── GetCompanyByIdResponse.cs    # public sealed record
 ```
 
 ## Exceções
@@ -287,15 +329,33 @@ public sealed class CompanyNotFound // deve terminar com Exception
 ## Validações
 
 ### FluentValidation
-- Um validator por Command/Query
+- Um validator por Command/Query (`internal sealed class`)
 - Mensagens de erro em português
 - Usar `WithMessage()` para customizar mensagens
 
 ```csharp
 // ✅ Correto
-RuleFor(x => x.Name)
-    .NotEmpty()
-    .WithMessage("Nome da empresa é obrigatório")
-    .MaximumLength(100)
-    .WithMessage("Nome deve ter no máximo 100 caracteres");
+internal sealed class CreateCompanyValidator : AbstractValidator<CreateCompanyCommand>
+{
+    public CreateCompanyValidator()
+    {
+        RuleFor(x => x.Name)
+            .NotEmpty()
+            .WithMessage("Nome da empresa é obrigatório")
+            .MaximumLength(100)
+            .WithMessage("Nome deve ter no máximo 100 caracteres");
+    }
+}
 ```
+
+## Resumo de Modificadores
+
+| Tipo | Modificador | Justificativa |
+|------|-------------|---------------|
+| **Commands/Queries** | `public sealed record` | Contratos da API da camada |
+| **Responses** | `public sealed record` | Contratos da API da camada |
+| **Handlers** | `internal sealed class` | Detalhes de implementação |
+| **Validators** | `internal sealed class` | Detalhes de implementação |
+| **Entidades** | `public class` | Parte do modelo de domínio |
+| **Value Objects** | `public sealed record` | Parte do modelo de domínio |
+| **Interfaces** | `public interface` | Contratos públicos |

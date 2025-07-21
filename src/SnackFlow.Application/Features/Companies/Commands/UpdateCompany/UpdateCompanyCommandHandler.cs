@@ -12,7 +12,7 @@ using SnackFlow.Domain.ValueObjects.Phone;
 
 namespace SnackFlow.Application.Features.Companies.Commands.UpdateCompany;
 
-public sealed class UpdateCompanyCommandHandler(
+internal sealed class UpdateCompanyCommandHandler(
     IUnitOfWork unitOfWork,
     ILogger<UpdateCompanyCommandHandler> logger)
     : ICommandHandler<UpdateCompanyCommand, UpdateCompanyCommandResponse>
