@@ -6,7 +6,7 @@ using SnackFlow.Domain.ValueObjects.Phone;
 
 namespace SnackFlow.Application.Features.Companies.Commands.UpdateCompany;
 
-public sealed class UpdateCompanyCommandValidator : AbstractValidator<UpdateCompanyCommand>
+internal sealed class UpdateCompanyCommandValidator : AbstractValidator<UpdateCompanyCommand>
 {
     public UpdateCompanyCommandValidator()
     {

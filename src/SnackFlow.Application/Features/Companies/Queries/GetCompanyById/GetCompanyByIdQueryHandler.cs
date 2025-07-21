@@ -7,7 +7,7 @@ using SnackFlow.Domain.Repositories;
 
 namespace SnackFlow.Application.Features.Companies.Queries.GetCompanyById;
 
-public sealed class GetCompanyByIdQueryHandler(IUnitOfWork unitOfWork)
+internal sealed class GetCompanyByIdQueryHandler(IUnitOfWork unitOfWork)
     : IQueryHandler<GetCompanyByIdQuery, GetCompanyByIdQueryResponse>
 {
     public async ValueTask<Result<GetCompanyByIdQueryResponse>> Handle(GetCompanyByIdQuery request, CancellationToken cancellationToken)

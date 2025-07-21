@@ -7,7 +7,7 @@ using SnackFlow.Domain.ValueObjects.CompanyName;
 
 namespace SnackFlow.Application.Features.Companies.Commands.CreateCompany;
 
-public sealed class CreateCompanyCommandValidator : AbstractValidator<CreateCompanyCommand>
+internal sealed class CreateCompanyCommandValidator : AbstractValidator<CreateCompanyCommand>
 {
     public CreateCompanyCommandValidator()
     {
