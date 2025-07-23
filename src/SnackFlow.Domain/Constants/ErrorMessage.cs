@@ -92,6 +92,7 @@ public static class ErrorMessage
     public static class NotFound
     {
         public const string Company = "Empresa não encontrada no sistema";
+        public const string Permission = "Essa permissão não existe";
     }
 
     /// <summary>

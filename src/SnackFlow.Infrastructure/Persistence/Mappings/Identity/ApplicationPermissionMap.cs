@@ -27,6 +27,10 @@ public class ApplicationPermissionMap
             .HasColumnName("name")
             .HasMaxLength(256)
             .IsRequired();
+        
+        builder
+            .HasIndex(ap => ap.Name, "uq_application_permission_name")
+            .IsUnique();
 
         builder
             .Property(ap => ap.Category)
