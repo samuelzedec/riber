@@ -46,7 +46,7 @@ internal sealed class UpdateCompanyCommandHandler(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "exception occurred: {exType} - {Message}", ex.GetType().Name, ex.Message);
+            logger.LogError(ex, ErrorMessage.Exception.Unexpected(ex.GetType().Name, ex.Message));
             await unitOfWork.RollbackTransactionAsync(cancellationToken);
             throw;
         }

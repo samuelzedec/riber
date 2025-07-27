@@ -103,4 +103,10 @@ public static class ErrorMessage
         public const string IdIsNull = "O ID não pode ser nulo";
         public const string Casting = "Não foi possível fazer o conversão";
     }
+
+    public static class Exception
+    {
+        public static string Unexpected(string name, string message) 
+            => $"exception occurred: {name} - {message}";
+    }
 }
