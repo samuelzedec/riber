@@ -1,8 +1,8 @@
 namespace SnackFlow.Application.DTOs;
 
-public sealed class UserDTO
+public sealed class UserDetailsDTO
 {
-    public string Id { get; set; } = string.Empty;
+    public Guid Id { get; set; }
     public string UserName { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public bool EmailConfirmed { get; set; } = false;

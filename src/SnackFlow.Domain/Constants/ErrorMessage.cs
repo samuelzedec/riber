@@ -93,6 +93,7 @@ public static class ErrorMessage
     {
         public const string Company = "Empresa não encontrada no sistema";
         public const string Permission = "Essa permissão não existe";
+        public const string User = "O Usuário não foi encontrado";
     }
 
     /// <summary>
