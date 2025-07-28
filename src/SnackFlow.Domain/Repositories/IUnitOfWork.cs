@@ -10,6 +10,8 @@ public interface IUnitOfWork
     
     ICompanyRepository Companies { get; }
     
+    IUserRepository Users { get; }
+    
     #endregion
 
     #region Default Methods

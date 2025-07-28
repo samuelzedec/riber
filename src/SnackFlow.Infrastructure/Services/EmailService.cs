@@ -2,6 +2,7 @@ using Amazon.SimpleEmail;
 using Amazon.SimpleEmail.Model;
 using Microsoft.Extensions.Logging;
 using SnackFlow.Application.Abstractions.Services;
+using SnackFlow.Domain.Constants;
 
 namespace SnackFlow.Infrastructure.Services;
 
@@ -29,7 +30,7 @@ public sealed class EmailService(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "exception occurred: {exType} - {Message}", ex.GetType().Name, ex.Message);
+            logger.LogError(ex, ErrorMessage.Exception.Unexpected(ex.GetType().Name, ex.Message));
             throw;
         }
     }

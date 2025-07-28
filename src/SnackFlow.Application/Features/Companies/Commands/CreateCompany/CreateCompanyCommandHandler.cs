@@ -35,7 +35,7 @@ internal sealed class CreateCompanyCommandHandler(IUnitOfWork unitOfWork)
             companyEntity.Email
         ));
         
-        await companyRepository.CreateAsync(companyEntity);
+        await companyRepository.CreateAsync(companyEntity, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new CreateCompanyCommandResponse(

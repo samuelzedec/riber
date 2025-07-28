@@ -15,8 +15,8 @@ public abstract class BaseRepository<T>(AppDbContext context)
 {
     protected DbSet<T> Table { get; } = context.Set<T>();
     
-    public async Task CreateAsync(T entity)
-        => await Table.AddAsync(entity);
+    public async Task CreateAsync(T entity, CancellationToken cancellationToken = default)
+        => await Table.AddAsync(entity, cancellationToken);
     
     public void Update(T entity)
         => Table.Update(entity);

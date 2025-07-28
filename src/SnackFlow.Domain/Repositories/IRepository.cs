@@ -13,12 +13,18 @@ namespace SnackFlow.Domain.Repositories;
 public interface IRepository<T> where T : IAggregateRoot
 {
     /// <summary>
-    /// Adiciona uma nova entidade do tipo <typeparamref name="T"/> ao repositório.
+    /// Cria uma nova entidade do tipo <typeparamref name="T"/> de forma assíncrona e adiciona ao repositório.
     /// </summary>
     /// <param name="entity">
-    /// A instância da entidade a ser adicionada.
+    /// A instância da entidade a ser criada.
     /// </param>
-    Task CreateAsync(T entity);
+    /// <param name="cancellationToken">
+    /// Token para monitorar requisições de cancelamento.
+    /// </param>
+    /// <returns>
+    /// Uma tarefa que representa a operação assíncrona.
+    /// </returns>
+    Task CreateAsync(T entity, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Atualiza uma entidade existente do tipo <typeparamref name="T"/> no repositório.

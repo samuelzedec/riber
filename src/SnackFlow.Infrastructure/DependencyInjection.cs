@@ -1,4 +1,4 @@
-﻿using Amazon.SimpleEmail;
+using Amazon.SimpleEmail;
 using SnackFlow.Infrastructure.Persistence;
 using SnackFlow.Infrastructure.Persistence.Interceptors;
 using SnackFlow.Infrastructure.Persistence.Repositories;
@@ -86,6 +86,7 @@ public static class DependencyInjection
     private static void AddRepositories(this IServiceCollection services)
     {
         services.AddScoped<ICompanyRepository, CompanyRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
     }
 
@@ -94,7 +95,7 @@ public static class DependencyInjection
         services.AddTransient<ICertificateService, CertificateService>();
         services.AddTransient<IEmailTemplateService, EmailTemplateService>();
         services.AddTransient<IEmailService, EmailService>();
-        services.AddScoped<IPermissionDataService, PermissionDataService>();
+        services.AddTransient<IPermissionDataService, PermissionDataService>();
     }
 
     private static void AddAwsServices(this IServiceCollection services, IConfiguration configuration)

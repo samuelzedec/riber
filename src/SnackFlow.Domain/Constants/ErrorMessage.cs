@@ -93,6 +93,7 @@ public static class ErrorMessage
     {
         public const string Company = "Empresa não encontrada no sistema";
         public const string Permission = "Essa permissão não existe";
+        public const string User = "O Usuário não foi encontrado";
     }
 
     /// <summary>
@@ -102,5 +103,11 @@ public static class ErrorMessage
     {
         public const string IdIsNull = "O ID não pode ser nulo";
         public const string Casting = "Não foi possível fazer o conversão";
+    }
+
+    public static class Exception
+    {
+        public static string Unexpected(string name, string message) 
+            => $"exception occurred: {name} - {message}";
     }
 }

@@ -57,7 +57,8 @@ public class CreateCompanyCommandHandlerUnitTests : BaseTest
             .ReturnsAsync(false);
 
         _mockCompanyRepository
-            .Setup(x => x.CreateAsync(It.IsAny<Company>()));
+            .Setup(x => x.CreateAsync(It.IsAny<Company>(),
+                It.IsAny<CancellationToken>()));
 
         _mockUnitOfWork
             .Setup(x => x.Companies)
@@ -83,7 +84,7 @@ public class CreateCompanyCommandHandlerUnitTests : BaseTest
             It.IsAny<Expression<Func<Company, bool>>>(), It.IsAny<CancellationToken>()), Times.Exactly(4));
 
         _mockCompanyRepository.Verify(x => x.CreateAsync(
-            It.IsAny<Company>()), Times.Once);
+            It.IsAny<Company>(), CancellationToken.None), Times.Once);
 
         _mockUnitOfWork.Verify(x => x.SaveChangesAsync(
             It.IsAny<CancellationToken>()), Times.Once);
@@ -123,7 +124,7 @@ public class CreateCompanyCommandHandlerUnitTests : BaseTest
             It.IsAny<Expression<Func<Company, bool>>>(), It.IsAny<CancellationToken>()), Times.Once);
 
         _mockCompanyRepository.Verify(x => x.CreateAsync(
-            It.IsAny<Company>()), Times.Never);
+            It.IsAny<Company>(), CancellationToken.None), Times.Never);
 
         _mockUnitOfWork.Verify(x => x.SaveChangesAsync(
             It.IsAny<CancellationToken>()), Times.Never);
@@ -159,7 +160,7 @@ public class CreateCompanyCommandHandlerUnitTests : BaseTest
             It.IsAny<Expression<Func<Company, bool>>>(), It.IsAny<CancellationToken>()), Times.Exactly(2));
 
         _mockCompanyRepository.Verify(x => x.CreateAsync(
-            It.IsAny<Company>()), Times.Never);
+            It.IsAny<Company>(), CancellationToken.None), Times.Never);
 
         _mockUnitOfWork.Verify(x => x.SaveChangesAsync(
             It.IsAny<CancellationToken>()), Times.Never);
@@ -195,7 +196,7 @@ public class CreateCompanyCommandHandlerUnitTests : BaseTest
             It.IsAny<Expression<Func<Company, bool>>>(), It.IsAny<CancellationToken>()), Times.Exactly(3));
 
         _mockCompanyRepository.Verify(x => x.CreateAsync(
-            It.IsAny<Company>()), Times.Never);
+            It.IsAny<Company>(), CancellationToken.None), Times.Never);
 
         _mockUnitOfWork.Verify(x => x.SaveChangesAsync(
             It.IsAny<CancellationToken>()), Times.Never);
@@ -231,7 +232,7 @@ public class CreateCompanyCommandHandlerUnitTests : BaseTest
             It.IsAny<Expression<Func<Company, bool>>>(), It.IsAny<CancellationToken>()), Times.Exactly(4));
 
         _mockCompanyRepository.Verify(x => x.CreateAsync(
-            It.IsAny<Company>()), Times.Never);
+            It.IsAny<Company>(), CancellationToken.None), Times.Never);
 
         _mockUnitOfWork.Verify(x => x.SaveChangesAsync(
             It.IsAny<CancellationToken>()), Times.Never);
@@ -270,7 +271,7 @@ public class CreateCompanyCommandHandlerUnitTests : BaseTest
             Times.Once);
 
         _mockCompanyRepository.Verify(x => x.CreateAsync(
-            It.IsAny<Company>()), Times.Never);
+            It.IsAny<Company>(), CancellationToken.None), Times.Never);
 
         _mockUnitOfWork.Verify(x => x.SaveChangesAsync(
             It.IsAny<CancellationToken>()), Times.Never);
@@ -293,7 +294,7 @@ public class CreateCompanyCommandHandlerUnitTests : BaseTest
             .ReturnsAsync(false);
 
         _mockCompanyRepository
-            .Setup(x => x.CreateAsync(It.IsAny<Company>()));
+            .Setup(x => x.CreateAsync(It.IsAny<Company>(), CancellationToken.None));
 
         _mockUnitOfWork
             .Setup(x => x.Companies)
@@ -314,7 +315,7 @@ public class CreateCompanyCommandHandlerUnitTests : BaseTest
             It.IsAny<Expression<Func<Company, bool>>>(), It.IsAny<CancellationToken>()), Times.Exactly(4));
 
         _mockCompanyRepository.Verify(x => x.CreateAsync(
-            It.IsAny<Company>()), Times.Once);
+            It.IsAny<Company>(), CancellationToken.None), Times.Never);
 
         _mockUnitOfWork.Verify(x => x.SaveChangesAsync(
             It.Is<CancellationToken>(ct => ct.IsCancellationRequested)), Times.Once);

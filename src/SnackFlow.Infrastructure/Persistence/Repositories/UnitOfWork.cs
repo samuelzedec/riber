@@ -9,13 +9,14 @@ namespace SnackFlow.Infrastructure.Persistence.Repositories;
 /// Implementa o padrão unit of work, que gerencia conexões com o banco de dados 
 /// e garante consistência entre operações agrupando mudanças em transações.
 /// </summary>
-public class UnitOfWork(AppDbContext context, IMediator mediator) 
+public sealed class UnitOfWork(AppDbContext context, IMediator mediator) 
     : IUnitOfWork, IAsyncDisposable, IDisposable
 {
     #region Attributes
 
     private IDbContextTransaction? _transaction;
     private ICompanyRepository? _companyRepository;
+    private IUserRepository? _userRepository;
 
     #endregion
     
@@ -23,7 +24,9 @@ public class UnitOfWork(AppDbContext context, IMediator mediator)
 
     public ICompanyRepository Companies
         => _companyRepository ??= new CompanyRepository(context);
-
+    
+    public IUserRepository Users
+        => _userRepository ??= new UserRepository(context);
     #endregion
 
     #region Default Methods

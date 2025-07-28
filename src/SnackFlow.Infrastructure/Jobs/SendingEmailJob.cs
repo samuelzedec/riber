@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Quartz;
 using SnackFlow.Application.Abstractions.Services;
+using SnackFlow.Domain.Constants;
 
 namespace SnackFlow.Infrastructure.Jobs;
 
@@ -33,7 +34,7 @@ public sealed class SendingEmailJob(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "exception occurred: {exType} - {Message}", ex.GetType().Name, ex.Message);
+            logger.LogError(ex, ErrorMessage.Exception.Unexpected(ex.GetType().Name, ex.Message));
             throw;
         }
     }
