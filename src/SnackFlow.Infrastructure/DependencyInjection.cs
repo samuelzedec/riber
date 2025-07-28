@@ -1,4 +1,4 @@
-using Amazon.SimpleEmail;
+﻿using Amazon.SimpleEmail;
 using SnackFlow.Infrastructure.Persistence;
 using SnackFlow.Infrastructure.Persistence.Interceptors;
 using SnackFlow.Infrastructure.Persistence.Repositories;
@@ -96,6 +96,7 @@ public static class DependencyInjection
         services.AddTransient<IEmailTemplateService, EmailTemplateService>();
         services.AddTransient<IEmailService, EmailService>();
         services.AddTransient<IPermissionDataService, PermissionDataService>();
+        services.AddTransient<IAuthService, AuthService>();
     }
 
     private static void AddAwsServices(this IServiceCollection services, IConfiguration configuration)
