@@ -22,7 +22,7 @@ public class CertificateServiceUnitTests : BaseTest
         var password = "test-password";
         
         // Act
-        var act = () => _certificateService.LoadCertificateAsync(nonExistentFile, password);
+        var act = () => _certificateService.LoadCertificate(nonExistentFile, password);
         
         // Assert
         act.Should().Throw<Exception>();
@@ -35,34 +35,34 @@ public class CertificateServiceUnitTests : BaseTest
         var password = "test-password";
         
         // Act
-        var act = () => _certificateService.LoadCertificateAsync(string.Empty, password);
+        var act = () => _certificateService.LoadCertificate(string.Empty, password);
         
         // Assert
         act.Should().Throw<ArgumentException>();
     }
 
     [Fact(DisplayName = "Should throw exception when key parameter is empty")]
-    public void LoadCertificateAsync_WhenKeyIsEmpty_ShouldThrowException()
+    public void LoadCertificate_WhenKeyIsEmpty_ShouldThrowException()
     {
         // Arrange
         var emptyKey = string.Empty;
         var password = "test-password";
         
         // Act
-        var act = () => _certificateService.LoadCertificateAsync(emptyKey, password);
+        var act = () => _certificateService.LoadCertificate(emptyKey, password);
         
         // Assert
         act.Should().Throw<ArgumentException>();
     }
 
     [Fact(DisplayName = "Should throw exception when password is null")]
-    public void LoadCertificateAsync_WhenPasswordIsNull_ShouldThrowException()
+    public void LoadCertificate_WhenPasswordIsNull_ShouldThrowException()
     {
         // Arrange
         var key = "test-certificate.pfx";
         
         // Act
-        var act = () => _certificateService.LoadCertificateAsync(key, string.Empty);
+        var act = () => _certificateService.LoadCertificate(key, string.Empty);
         
         // Assert
         act.Should().Throw<Exception>();

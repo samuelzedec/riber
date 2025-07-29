@@ -7,7 +7,7 @@ public sealed class UserDetailsDTO
     public string Email { get; set; } = string.Empty;
     public bool EmailConfirmed { get; set; } = false;
     public string PhoneNumber { get; set; } = string.Empty;
-    
+    public string SecurityStamp { get; set; } = string.Empty;
     public Domain.Entities.User UserDomain { get; set; } = null!;
     
     public ICollection<string> Roles { get; set; } = [];

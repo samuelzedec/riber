@@ -124,6 +124,7 @@ public sealed class AuthService(
             Email = user.Email!,
             EmailConfirmed = user.EmailConfirmed,
             PhoneNumber = user.PhoneNumber!,
+            SecurityStamp = user.SecurityStamp!,
             Roles = roles,
             Claims = [.. claims.Select(x => new ClaimDTO { Type = x.Type, Value = x.Value })]
         };

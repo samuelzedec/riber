@@ -41,7 +41,7 @@ public static class BuilderExtension
             .AddOptions<AccessTokenSettings>()
             .Bind(builder.Configuration.GetSection(nameof(AccessTokenSettings))) // <- Atribuí os valores
             .ValidateDataAnnotations() // ⇽ Pega as regras de validação
-            .ValidateOnStart(); // ← Faz as validação, se não tiver válido, cancela a execução do programa
+            .ValidateOnStart(); // ← Faz a validação, se não tiver válido, cancela a execução do programa
 
         builder.Services
             .AddOptions<RefreshTokenSettings>()
@@ -78,12 +78,12 @@ public static class BuilderExtension
         
         using var provider = builder.Services.BuildServiceProvider();
         var certificateService = provider.GetRequiredService<ICertificateService>();
-        var accessCertificate = certificateService.LoadCertificateAsync(
+        var accessCertificate = certificateService.LoadCertificate(
             accessToken.Key,
             accessToken.Password
         );
     
-        var refreshCertificate = certificateService.LoadCertificateAsync(
+        var refreshCertificate = certificateService.LoadCertificate(
             refreshToken.Key,
             refreshToken.Password
         );
@@ -147,7 +147,7 @@ public static class BuilderExtension
             {
                 Description = "JWT Authorization header using the Bearer scheme", // ← Texto de ajuda
                 Name = "Authorization", // ← Nome do header HTTP
-                In = ParameterLocation.Header, // ← Onde vai: no header da requisição
+                In = ParameterLocation.Header, // ← Aonde vai: no header da requisição
                 Type = SecuritySchemeType.ApiKey, // ← Tipo: chave de API
                 Scheme = "Bearer" // ← Esquema: Bearer token
             });
