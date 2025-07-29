@@ -8,7 +8,7 @@ public sealed class CertificateService : ICertificateService
     private const X509KeyStorageFlags TagsForCertificates =
         X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet;
 
-    public X509Certificate2 LoadCertificateAsync(string key, string password)
+    public X509Certificate2 LoadCertificate(string key, string password)
         => X509CertificateLoader.LoadPkcs12FromFile(
             key,
             password,

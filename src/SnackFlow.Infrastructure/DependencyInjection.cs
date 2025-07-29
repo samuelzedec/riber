@@ -97,6 +97,7 @@ public static class DependencyInjection
         services.AddTransient<IEmailService, EmailService>();
         services.AddTransient<IPermissionDataService, PermissionDataService>();
         services.AddTransient<IAuthService, AuthService>();
+        services.AddTransient<ITokenService, JwtTokenService>();
     }
 
     private static void AddAwsServices(this IServiceCollection services, IConfiguration configuration)

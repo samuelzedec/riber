@@ -84,12 +84,14 @@ public sealed class ApplicationUserMap : IEntityTypeConfiguration<Identity::Appl
             .Property(u => u.ConcurrencyStamp)
             .HasColumnType("varchar(36)")
             .HasColumnName("concurrency_stamp")
-            .IsConcurrencyToken();
+            .IsConcurrencyToken()
+            .IsRequired();
 
         builder
             .Property(u => u.SecurityStamp)
             .HasColumnType("varchar(36)")
-            .HasColumnName("security_stamp");
+            .HasColumnName("security_stamp")
+            .IsRequired();
 
         builder
             .Property(u => u.LockoutEnd)
