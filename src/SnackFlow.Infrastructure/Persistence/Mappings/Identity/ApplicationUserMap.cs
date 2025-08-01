@@ -73,6 +73,10 @@ public sealed class ApplicationUserMap : IEntityTypeConfiguration<Identity::Appl
             .HasColumnType("varchar(15)")
             .HasColumnName("phone_number")
             .IsRequired(false);
+        
+        builder
+            .HasIndex(u => u.PhoneNumber, "UQ_aspnet_user_phone_number")
+            .IsUnique();
 
         builder
             .Property(u => u.PhoneNumberConfirmed)

@@ -19,7 +19,7 @@ O projeto segue os princípios de **Clean Architecture**, organizando as depend�
 - **PostgreSQL** - Banco de dados
 - **Entity Framework Core** - ORM
 - **ASP.NET Core Identity** - Autenticação e autorização
-- **MediatR** - Padrão Mediator/CQRS
+- **Mediator** - Padrão Mediator/CQRS
 - **FluentValidation** - Validações
 - **JWT** - Tokens de autenticação
 - **Serilog** - Logging estruturado

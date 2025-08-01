@@ -22,7 +22,7 @@ public sealed class AuthService(
             var applicationUser = new ApplicationUser
             {
                 Name = userDto.Name,
-                UserName = userDto.Email,
+                UserName = userDto.UserName,
                 Email = userDto.Email,
                 EmailConfirmed = false,
                 PhoneNumber = userDto.PhoneNumber,
