@@ -1,11 +1,11 @@
 #!/bin/bash
 set -e
 
-echo "🚀 Iniciando SnackFlow..."
+echo "Starting SnackFlow application..."
 
-# 1. Gera certificados
+# 1. Generate certificates
 /usr/local/bin/generate-certificates.sh
 
-# 3. Inicia aplicação
-echo "▶️ Iniciando API..."
+# 2. Start application
+echo "Starting API server..."
 exec dotnet SnackFlow.Api.dll
