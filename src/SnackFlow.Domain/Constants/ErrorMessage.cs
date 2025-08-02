@@ -84,6 +84,8 @@ public static class ErrorMessage
         public const string PhoneAlreadyExists = "Telefone já cadastrado no sistema";
         public const string TaxIdAlreadyExists = "CPF/CNPJ já cadastrado no sistema";
         public const string CorporateNameAlreadyExists = "Nome da empresa já cadastrado no sistema";
+        public const string UserNameAlreadyExists = "Nome de usuário já cadastrado no sistema";
+        public const string FullNameAlreadyExists = "Nome compleco já cadastrado no sistema";
     }
 
     /// <summary>

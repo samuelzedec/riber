@@ -40,6 +40,7 @@ public class UserMap : IEntityTypeConfiguration<User>
             .HasOne(u => u.Company)
             .WithMany()
             .HasForeignKey(u => u.CompanyId)
+            .HasConstraintName("fk_user_company_id")
             .OnDelete(DeleteBehavior.SetNull);
 
         builder
