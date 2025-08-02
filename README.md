@@ -33,3 +33,65 @@ Para informações detalhadas sobre desenvolvimento e padrões do projeto, consu
 - **[Padrões Arquiteturais](docs/design-patterns.md)** - Repository, UnitOfWork, DDD e outros padrões utilizados
 - **[Pacotes e Dependências](docs/packages.md)** - Lista completa de bibliotecas e suas finalidades
 - **[Configuração de Timeout](docs/request-timeout.md)** - Configurações de timeout para requisições
+
+## 🐋 Executando com Docker Compose
+
+### 1. Configuração do ambiente
+
+Primeiro, copie o arquivo de exemplo para criar seu ambiente de desenvolvimento:
+
+```bash
+cp .env.example .env.dev
+```
+
+### 2. Configuração das variáveis
+
+Edite o arquivo `.env.dev` e configure as seguintes variáveis:
+
+#### Senhas dos Certificados
+Configure a mesma senha para todos os certificados:
+```env
+CERT_PASSWORD=sua-senha-aqui
+AccessTokenSettings__Password=sua-senha-aqui
+RefreshTokenSettings__Password=sua-senha-aqui
+```
+
+#### Banco de Dados
+Configure a senha do PostgreSQL:
+```env
+DB_PASSWORD=sua-senha-db
+ConnectionStrings__DefaultConnection=Host=postgres;Database=snackflow_db;Username=postgres;Password=sua-senha-db;Port=5432
+```
+
+#### AWS (opcional)
+```env
+AWS_ACCESS_KEY_ID=sua-aws-key
+AWS_SECRET_ACCESS_KEY=sua-aws-secret
+AWS_DEFAULT_REGION=us-east-1
+```
+
+### 3. Executando os serviços
+
+```bash
+# Subir todos os serviços
+docker-compose -f docker-compose-dev.yml up -d
+
+# Ver logs em tempo real
+docker-compose -f docker-compose-dev.yml logs -f
+
+# Parar os serviços
+docker-compose -f docker-compose-dev.yml down
+```
+
+### 4. Comandos úteis
+
+```bash
+# Rebuildar e subir
+docker-compose -f docker-compose-dev.yml up --build
+
+# Subir apenas o banco
+docker-compose -f docker-compose-dev.yml up postgres
+
+# Ver status dos containers
+docker-compose -f docker-compose-dev.yml ps
+```
