@@ -41,6 +41,20 @@ public interface IAuthService
     Task<UserDetailsDTO?> FindByEmailAsync(string email);
 
     /// <summary>
+    /// Busca um usuário no sistema com base no nome de usuário fornecido.
+    /// </summary>
+    /// <param name="userName">O nome de usuário do usuário que está sendo pesquisado no sistema.</param>
+    /// <returns>Uma tarefa que, quando concluída, contém as informações detalhadas do usuário na forma de um <see cref="UserDetailsDTO"/>, ou null se o usuário não for encontrado.</returns>
+    Task<UserDetailsDTO?> FindByUserNameAsync(string userName);
+
+    /// <summary>
+    /// Busca e retorna os detalhes de um usuário com base no número de telefone fornecido.
+    /// </summary>
+    /// <param name="phoneNumber">O número de telefone do usuário a ser buscado.</param>
+    /// <returns>Uma tarefa que representa a operação assíncrona. O resultado contém os detalhes do usuário, ou null se nenhum usuário for encontrado.</returns>
+    Task<UserDetailsDTO?> FindByPhoneAsync(string phoneNumber);
+
+    /// <summary>
     /// Atribui uma função ao usuário com base na posição empresarial especificada.
     /// </summary>
     /// <param name="userId">O identificador único do usuário para atribuir a função.</param>

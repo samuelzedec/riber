@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SnackFlow.Application.Abstractions.Services;
 using SnackFlow.Application.DTOs;
@@ -59,6 +60,21 @@ public sealed class AuthService(
     public async Task<UserDetailsDTO?> FindByEmailAsync(string email)
     {
         var user = await userManager.FindByEmailAsync(email);
+        return user is null ? null : await MapUserDetailsAsync(user);
+    }
+    
+    public async Task<UserDetailsDTO?> FindByUserNameAsync(string userName)
+    {
+        var user = await userManager.FindByNameAsync(userName);
+        return user is null ? null : await MapUserDetailsAsync(user);
+    }
+
+    public async Task<UserDetailsDTO?> FindByPhoneAsync(string phoneNumber)
+    {
+        var user = await userManager
+            .Users
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.PhoneNumber == phoneNumber);
         return user is null ? null : await MapUserDetailsAsync(user);
     }
 

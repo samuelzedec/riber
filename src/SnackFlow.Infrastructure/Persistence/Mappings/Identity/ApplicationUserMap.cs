@@ -11,6 +11,10 @@ public sealed class ApplicationUserMap : IEntityTypeConfiguration<Identity::Appl
         builder.ToTable("aspnet_user");
 
         builder
+            .HasKey(u => u.Id)
+            .HasName("pk_aspnet_user_id");
+
+        builder
             .Property(u => u.Id)
             .HasColumnType("uuid")
             .HasColumnName("id")
@@ -28,6 +32,10 @@ public sealed class ApplicationUserMap : IEntityTypeConfiguration<Identity::Appl
             .HasColumnType("text")
             .HasColumnName("user_name")
             .IsRequired();
+        
+        builder
+            .HasIndex(u => u.UserName, "uq_aspnet_user_user_name")
+            .IsUnique();
 
         builder
             .Property(u => u.NormalizedUserName)
@@ -36,8 +44,7 @@ public sealed class ApplicationUserMap : IEntityTypeConfiguration<Identity::Appl
             .IsRequired();
 
         builder
-            .HasIndex(u => u.NormalizedUserName)
-            .HasDatabaseName("ix_aspnet_user_normalized_user_name")
+            .HasIndex(u => u.NormalizedUserName, "uq_aspnet_user_normalized_user_name")
             .IsUnique();
 
         builder
@@ -47,14 +54,17 @@ public sealed class ApplicationUserMap : IEntityTypeConfiguration<Identity::Appl
             .IsRequired();
 
         builder
-            .HasIndex(u => u.Email)
-            .HasDatabaseName("ix_asp_net_user_email")
+            .HasIndex(u => u.Email, "uq_asp_net_user_email")
             .IsUnique();
 
         builder
             .Property(u => u.NormalizedEmail)
             .HasColumnType("text")
             .HasColumnName("normalized_email");
+        
+        builder
+            .HasIndex(u => u.NormalizedEmail, "uq_asp_net_user_normalized_email")
+            .IsUnique();
 
         builder
             .Property(u => u.EmailConfirmed)
@@ -75,7 +85,7 @@ public sealed class ApplicationUserMap : IEntityTypeConfiguration<Identity::Appl
             .IsRequired(false);
         
         builder
-            .HasIndex(u => u.PhoneNumber, "UQ_aspnet_user_phone_number")
+            .HasIndex(u => u.PhoneNumber, "uq_aspnet_user_phone_number")
             .IsUnique();
 
         builder
@@ -127,13 +137,14 @@ public sealed class ApplicationUserMap : IEntityTypeConfiguration<Identity::Appl
             .IsRequired();
         
         builder
-            .HasIndex(u => u.UserDomainId, "ix_aspnet_user_user_domain_id")
+            .HasIndex(u => u.UserDomainId, "uq_aspnet_user_user_domain_id")
             .IsUnique();
         
         builder
             .HasOne(u => u.UserDomain)
             .WithOne()
-            .HasForeignKey<Identity::ApplicationUser>(u => u.UserDomainId);
+            .HasForeignKey<Identity::ApplicationUser>(u => u.UserDomainId)
+            .HasConstraintName("fk_aspnet_user_user_domain_id");
         
         builder
             .Property(u => u.IsDeleted)

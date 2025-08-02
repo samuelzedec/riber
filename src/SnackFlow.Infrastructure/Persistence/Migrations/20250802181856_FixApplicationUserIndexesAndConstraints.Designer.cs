@@ -12,8 +12,8 @@ using SnackFlow.Infrastructure.Persistence;
 namespace SnackFlow.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250801011017_MakePhoneNumberUniqueInAspNetUsers")]
-    partial class MakePhoneNumberUniqueInAspNetUsers
+    [Migration("20250802181856_FixApplicationUserIndexesAndConstraints")]
+    partial class FixApplicationUserIndexesAndConstraints
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -392,7 +392,8 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("normalized_name");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_aspnet_role_id");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
@@ -904,20 +905,25 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("user_name");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_aspnet_user_id");
 
-                    b.HasIndex("Email")
-                        .IsUnique()
-                        .HasDatabaseName("ix_asp_net_user_email");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("ix_aspnet_user_normalized_user_name");
-
-                    b.HasIndex(new[] { "PhoneNumber" }, "UQ_aspnet_user_phone_number")
+                    b.HasIndex(new[] { "Email" }, "uq_asp_net_user_email")
                         .IsUnique();
 
-                    b.HasIndex(new[] { "UserDomainId" }, "ix_aspnet_user_user_domain_id")
+                    b.HasIndex(new[] { "NormalizedEmail" }, "uq_asp_net_user_normalized_email")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "NormalizedUserName" }, "uq_aspnet_user_normalized_user_name")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "PhoneNumber" }, "uq_aspnet_user_phone_number")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "UserDomainId" }, "uq_aspnet_user_user_domain_id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "UserName" }, "uq_aspnet_user_user_name")
                         .IsUnique();
 
                     b.ToTable("aspnet_user", (string)null);
@@ -946,7 +952,8 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("user_id");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_aspnet_user_claim_id");
 
                     b.HasIndex("UserId")
                         .HasDatabaseName("ix_aspnet_user_claim_user_id");
@@ -1145,7 +1152,8 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                     b.HasOne("SnackFlow.Domain.Entities.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_user_company_id");
 
                     b.OwnsOne("SnackFlow.Domain.ValueObjects.TaxId.TaxId", "TaxId", b1 =>
                         {
@@ -1208,7 +1216,8 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                         .WithOne()
                         .HasForeignKey("SnackFlow.Infrastructure.Persistence.Identity.ApplicationUser", "UserDomainId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_aspnet_user_user_domain_id");
 
                     b.Navigation("UserDomain");
                 });

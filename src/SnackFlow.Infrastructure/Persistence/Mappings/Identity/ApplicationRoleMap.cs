@@ -9,6 +9,10 @@ public sealed class ApplicationRoleMap : IEntityTypeConfiguration<ApplicationRol
     public void Configure(EntityTypeBuilder<ApplicationRole> builder)
     {
         builder.ToTable("aspnet_role");
+        
+        builder
+            .HasKey(u => u.Id)
+            .HasName("pk_aspnet_role_id");
 
         builder
             .Property(r => r.Id)

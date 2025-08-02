@@ -9,6 +9,10 @@ public sealed class ApplicationUserClaimMap : IEntityTypeConfiguration<Applicati
     public void Configure(EntityTypeBuilder<ApplicationUserClaim> builder)
     {
         builder.ToTable("aspnet_user_claim");
+        
+        builder
+            .HasKey(u => u.Id)
+            .HasName("pk_aspnet_user_claim_id");
 
         builder
             .Property(uc => uc.Id)
