@@ -7,5 +7,6 @@ public sealed class CreateApplicationUserDTO
     public string Email { get; set; } = string.Empty;
     public string PhoneNumber { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
-    public Guid UserDomainId { get; set; }
+    public IEnumerable<string> Roles = [];
+    public IEnumerable<string> Permissions = [];
 }

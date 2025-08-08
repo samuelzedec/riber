@@ -22,8 +22,8 @@ public interface IPermissionDataService
     Task UpdatePermissionStatusAsync(string name);
 
     /// <summary>
-    /// Obtém todas as permissões juntamente com suas descrições.
+    /// Obtém todas as permissões com suas descrições correspondentes.
     /// </summary>
-    /// <returns>Uma tarefa que representa a operação assíncrona. O resultado da tarefa é uma coleção de objetos PermissionDTO contendo os dados das permissões.</returns>
-    Task<ICollection<PermissionDTO>> GetAllWithDescriptionsAsync();
+    /// <returns>Uma tarefa que representa a operação assíncrona. O resultado da tarefa contém uma coleção de objetos <see cref="PermissionDTO"/> com os dados das permissões.</returns>
+    Task<IEnumerable<PermissionDTO>> GetAllWithDescriptionsAsync();
 }

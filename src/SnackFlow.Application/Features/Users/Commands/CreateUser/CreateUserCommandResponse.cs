@@ -4,5 +4,6 @@ namespace SnackFlow.Application.Features.Users.Commands.CreateUser;
 
 public sealed record CreateUserCommandResponse(
     string UserName,
-    string Email
+    string Email,
+    string PublicToken
 ) : ICommandResponse;

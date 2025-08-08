@@ -20,6 +20,7 @@ public class CreateUserCommandHandlerUnitTests : BaseTest
     private readonly Mock<IUnitOfWork> _mockUnitOfOWork;
     private readonly Mock<IAuthService> _mockAuthService;
     private readonly Mock<IUserRepository> _mockUserRepository;
+    private readonly Mock<IPermissionDataService> _mockPermissionDataService;
     private readonly Mock<ILogger<CreateUserCommandHandler>> _mockLogger;
     private readonly CreateUserCommandHandler _handler;
     private readonly CreateUserCommand _command;
@@ -28,19 +29,21 @@ public class CreateUserCommandHandlerUnitTests : BaseTest
     {
         _mockUnitOfOWork = new Mock<IUnitOfWork>();
         _mockAuthService = new Mock<IAuthService>();
+        _mockPermissionDataService = new Mock<IPermissionDataService>();
         _mockUserRepository = new Mock<IUserRepository>();
         _mockLogger = new Mock<ILogger<CreateUserCommandHandler>>();
 
         _handler = new CreateUserCommandHandler(
             _mockUnitOfOWork.Object,
             _mockAuthService.Object,
+            _mockPermissionDataService.Object,
             _mockLogger.Object
         );
 
         _command = new CreateUserCommand(
             FullName: _faker.Person.FullName,
             TaxId: _faker.Person.Cpf(),
-            Position: _faker.PickRandom<BusinessPosition>(),
+            Position: BusinessPosition.Employee,
             CompanyId: null,
             UserName: _faker.Person.UserName,
             Password: _faker.Random.String2(10),
@@ -118,8 +121,8 @@ public class CreateUserCommandHandlerUnitTests : BaseTest
             .WithMessage(ErrorMessage.Conflict.EmailAlreadyExists);
 
         _mockAuthService.Verify(x => x.FindByEmailAsync(It.IsAny<string>()), Times.Once);
-        _mockAuthService.Verify(x => x.FindByUserNameAsync(It.IsAny<string>()), Times.Once);
-        _mockAuthService.Verify(x => x.FindByPhoneAsync(It.IsAny<string>()), Times.Once);
+        _mockAuthService.Verify(x => x.FindByUserNameAsync(It.IsAny<string>()), Times.Never);
+        _mockAuthService.Verify(x => x.FindByPhoneAsync(It.IsAny<string>()), Times.Never);
         _mockUnitOfOWork.Verify(x => x.Users, Times.Never);
         _mockUserRepository.Verify(
             x => x.ExistsAsync(It.IsAny<Expression<Func<User, bool>>>(), It.IsAny<CancellationToken>()), Times.Never);
@@ -158,7 +161,7 @@ public class CreateUserCommandHandlerUnitTests : BaseTest
 
         _mockAuthService.Verify(x => x.FindByEmailAsync(It.IsAny<string>()), Times.Once);
         _mockAuthService.Verify(x => x.FindByUserNameAsync(It.IsAny<string>()), Times.Once);
-        _mockAuthService.Verify(x => x.FindByPhoneAsync(It.IsAny<string>()), Times.Once);
+        _mockAuthService.Verify(x => x.FindByPhoneAsync(It.IsAny<string>()), Times.Never);
         _mockUnitOfOWork.Verify(x => x.Users, Times.Never);
         _mockUserRepository.Verify(
             x => x.ExistsAsync(It.IsAny<Expression<Func<User, bool>>>(), It.IsAny<CancellationToken>()), Times.Never);
@@ -414,7 +417,7 @@ public class CreateUserCommandHandlerUnitTests : BaseTest
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
 
-        _mockUserRepository.Verify(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()), Times.Once);
-        _mockUnitOfOWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+        _mockUserRepository.Verify(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()), Times.Never);
+        _mockUnitOfOWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
     }
 }

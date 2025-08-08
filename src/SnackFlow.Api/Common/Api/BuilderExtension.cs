@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using SnackFlow.Api.Middlewares;
 using SnackFlow.Application.Abstractions.Services;
 using SnackFlow.Infrastructure.Persistence;
 using SnackFlow.Infrastructure.Persistence.Identity;
@@ -19,7 +20,8 @@ public static class BuilderExtension
     {
         builder.AddDocumentationApi();
         builder.AddDependencyInjection();
-        builder.AddConfigurations(); 
+        builder.AddConfigurations();
+        builder.AddMiddleware();
         builder.AddSecurity();
     }
 
@@ -27,6 +29,12 @@ public static class BuilderExtension
     {
         builder.Services.AddApplication();
         builder.Services.AddInfrastructure(builder.Configuration, builder.Logging);
+    }
+
+    private static void AddMiddleware(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddScoped<CompanyRequiredMiddleware>();
+        builder.Services.AddScoped<SecurityStampMiddleware>();
     }
 
     private static void AddConfigurations(this WebApplicationBuilder builder)

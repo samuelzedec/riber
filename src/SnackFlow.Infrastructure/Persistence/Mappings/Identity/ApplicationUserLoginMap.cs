@@ -8,7 +8,7 @@ public sealed class ApplicationUserLoginMap : IEntityTypeConfiguration<Applicati
 {
     public void Configure(EntityTypeBuilder<ApplicationUserLogin> builder)
     {
-        builder.ToTable("aspnet_user_login");
+        builder.ToTable("aspnet_user_logins");
         
         builder
             .HasKey(ul => new { ul.UserId, ul.LoginProvider, ul.ProviderKey })

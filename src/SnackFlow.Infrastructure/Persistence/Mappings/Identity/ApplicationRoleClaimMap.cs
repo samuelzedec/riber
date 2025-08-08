@@ -8,7 +8,7 @@ public sealed class ApplicationRoleClaimMap : IEntityTypeConfiguration<Applicati
 {
     public void Configure(EntityTypeBuilder<ApplicationRoleClaim> builder)
     {
-        builder.ToTable("aspnet_role_claim");
+        builder.ToTable("aspnet_role_claims");
 
         builder
             .HasKey(rc => rc.Id)

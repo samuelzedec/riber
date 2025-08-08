@@ -1,14 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Identity = SnackFlow.Infrastructure.Persistence.Identity;
+using SnackFlow.Infrastructure.Persistence.Identity;
 
 namespace SnackFlow.Infrastructure.Persistence.Mappings.Identity;
 
-public sealed class ApplicationUserMap : IEntityTypeConfiguration<Identity::ApplicationUser>
+public sealed class ApplicationUserMap : IEntityTypeConfiguration<ApplicationUser>
 {
-    public void Configure(EntityTypeBuilder<Identity::ApplicationUser> builder)
+    public void Configure(EntityTypeBuilder<ApplicationUser> builder)
     {
-        builder.ToTable("aspnet_user");
+        builder.ToTable("aspnet_users");
 
         builder
             .HasKey(u => u.Id)
@@ -129,22 +129,6 @@ public sealed class ApplicationUserMap : IEntityTypeConfiguration<Identity::Appl
             .HasColumnType("boolean")
             .HasColumnName("two_factor_enabled")
             .IsRequired();
-
-        builder
-            .Property(u => u.UserDomainId)
-            .HasColumnType("uuid")
-            .HasColumnName("user_domain_id")
-            .IsRequired();
-        
-        builder
-            .HasIndex(u => u.UserDomainId, "uq_aspnet_user_user_domain_id")
-            .IsUnique();
-        
-        builder
-            .HasOne(u => u.UserDomain)
-            .WithOne()
-            .HasForeignKey<Identity::ApplicationUser>(u => u.UserDomainId)
-            .HasConstraintName("fk_aspnet_user_user_domain_id");
         
         builder
             .Property(u => u.IsDeleted)

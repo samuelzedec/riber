@@ -8,7 +8,7 @@ public sealed class ApplicationUserTokenMap : IEntityTypeConfiguration<Applicati
 {
     public void Configure(EntityTypeBuilder<ApplicationUserToken> builder)
     {
-        builder.ToTable("aspnet_user_token");
+        builder.ToTable("aspnet_user_tokens");
 
         builder
             .HasKey(ut => new { ut.UserId, ut.LoginProvider, ut.Name })

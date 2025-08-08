@@ -7,14 +7,16 @@ using SnackFlow.Domain.ValueObjects.TaxId;
 
 namespace SnackFlow.Domain.Entities;
 
-public class User : BaseEntity, IAggregateRoot
+public sealed class User : BaseEntity, IAggregateRoot
 {
     #region Properties
 
+    public Guid ApplicationUserId { get; private set; }
     public FullName FullName { get; private set; }
     public TaxId TaxId { get; private set; }
     public BusinessPosition Position { get; private set; }
     public bool IsActive { get; private set; }
+    public string PublicToken { get; private set; }
     public Guid? CompanyId { get; private set; }
     public Company Company { get; private set; } = null!;
 
@@ -27,20 +29,25 @@ public class User : BaseEntity, IAggregateRoot
         FullName = null!;
         TaxId = null!;
         CompanyId = null!;
+        ApplicationUserId = Guid.Empty;
         IsActive = false;
+        PublicToken = string.Empty;
     }
     
     private User(
         FullName fullName,
         TaxId taxId,
+        Guid applicationUserId,
         BusinessPosition position,
         Guid? companyId) : base(Guid.CreateVersion7())
     {
         FullName = fullName;
         TaxId = taxId;
         Position = position;
+        ApplicationUserId = applicationUserId;
         CompanyId = companyId;
         IsActive = false;
+        PublicToken = GeneratePublicCode();
     }
 
     #endregion
@@ -51,8 +58,15 @@ public class User : BaseEntity, IAggregateRoot
         string fullName,
         string taxId,
         BusinessPosition position,
+        Guid applicationUserId,
         Guid? companyId = null
-    ) => new(FullName.Create(fullName), TaxId.Create(taxId, TaxIdType.IndividualWithCpf), position, companyId);
+    ) => new(
+        FullName.Create(fullName),
+        TaxId.Create(taxId, TaxIdType.IndividualWithCpf),
+        applicationUserId,
+        position,
+        companyId
+    );
 
     #endregion
 
@@ -76,6 +90,20 @@ public class User : BaseEntity, IAggregateRoot
         CompanyId = null;
         Disable();
     }
+
+    #endregion
+
+    #region Operators
+
+    public static implicit operator string(User user)
+        => user.ToString();
+
+    #endregion
+
+    #region Overrides
+
+    public override string ToString()
+        => ApplicationUserId.ToString();
 
     #endregion
 }

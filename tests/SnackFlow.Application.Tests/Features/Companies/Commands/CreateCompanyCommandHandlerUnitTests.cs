@@ -74,7 +74,6 @@ public class CreateCompanyCommandHandlerUnitTests : BaseTest
         result.IsSuccess.Should().BeTrue();
         result.IsFailure.Should().BeFalse();
         result.Value.Should().NotBeNull();
-        result.Value.CompanyId.Should().NotBeEmpty();
         result.Value.Email.Should().BeLowerCased(_command.Email);
         result.Value.FantasyName.Should().Be(_command.FantasyName);
         result.Value.Phone.Should().Be(_command.Phone);

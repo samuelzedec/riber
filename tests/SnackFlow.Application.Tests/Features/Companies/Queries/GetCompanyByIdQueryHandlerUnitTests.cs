@@ -75,6 +75,7 @@ public class GetCompanyByIdQueryHandlerUnitTests : BaseTest
         result.Value.Phone.Should().Be(_company.Phone);
         result.Value.TaxId.Should().Be(_company.TaxId);
         result.Value.Type.Should().Be(_company.TaxId.Type.GetDescription());
+        result.Value.PublicToken.Should().NotBeNullOrWhiteSpace();
 
         _mockCompanyRepository.Verify(x => x.GetSingleAsync(
             It.IsAny<Expression<Func<Company, bool>>>(), 
@@ -193,7 +194,7 @@ public class GetCompanyByIdQueryHandlerUnitTests : BaseTest
                 It.IsAny<Expression<Func<Company, object>>[]>()
             ))
             .Callback<Expression<Func<Company, bool>>, CancellationToken, Expression<Func<Company, object>>[]>(
-                (expr, ct, includes) => 
+                (expr, _, _) => 
                 {
                     capturedExpression = expr;
                 })
@@ -239,7 +240,7 @@ public class GetCompanyByIdQueryHandlerUnitTests : BaseTest
                 It.IsAny<Expression<Func<Company, object>>[]>()
             ))
             .Callback<Expression<Func<Company, bool>>, CancellationToken, Expression<Func<Company, object>>[]>(
-                (expr, ct, includes) => 
+                (expr, _, _) => 
                 {
                     capturedExpression = expr;
                 })
@@ -299,13 +300,7 @@ public class GetCompanyByIdQueryHandlerUnitTests : BaseTest
         result.Value.Phone.Should().Be(_company.Phone);
         result.Value.TaxId.Should().Be(_company.TaxId);
         result.Value.Type.Should().Be(_company.TaxId.Type.GetDescription());
-        
-        result.Value.CorporateName.Should().NotBeNullOrEmpty();
-        result.Value.FantasyName.Should().NotBeNullOrEmpty();
-        result.Value.Email.Should().NotBeNullOrEmpty();
-        result.Value.Phone.Should().NotBeNullOrEmpty();
-        result.Value.TaxId.Should().NotBeNullOrEmpty();
-        result.Value.Type.Should().NotBeNullOrEmpty();
+        result.Value.PublicToken.Should().NotBeNullOrWhiteSpace();
     }
 
     #endregion

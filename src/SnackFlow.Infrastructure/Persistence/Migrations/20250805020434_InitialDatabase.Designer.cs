@@ -12,8 +12,8 @@ using SnackFlow.Infrastructure.Persistence;
 namespace SnackFlow.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250722022612_AddSeedersForRoleClaimAndRoles")]
-    partial class AddSeedersForRoleClaimAndRoles
+    [Migration("20250805020434_InitialDatabase")]
+    partial class InitialDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,6 +40,12 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamptz")
                         .HasColumnName("deleted_at");
 
+                    b.Property<string>("PublicToken")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("text")
+                        .HasColumnName("public_token");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamptz")
                         .HasColumnName("modified_at");
@@ -47,7 +53,79 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                     b.HasKey("Id")
                         .HasName("pk_company_id");
 
-                    b.ToTable("company", (string)null);
+                    b.HasIndex(new[] { "PublicToken" }, "uq_company_public_token")
+                        .IsUnique();
+
+                    b.ToTable("companies", (string)null);
+                });
+
+            modelBuilder.Entity("SnackFlow.Domain.Entities.Invitation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("company_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("CreatedByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by_user_id");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("expires_at");
+
+                    b.Property<string>("InviteToken")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("text")
+                        .HasColumnName("invite_token");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_used");
+
+                    b.Property<string>("Permissions")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("permissions");
+
+                    b.Property<string>("Position")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("text")
+                        .HasColumnName("position");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("text")
+                        .HasColumnName("role");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("modified_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_invitations_id");
+
+                    b.HasIndex(new[] { "CompanyId" }, "ix_invitations_company_id");
+
+                    b.HasIndex(new[] { "InviteToken" }, "uq_invitations_invite_token")
+                        .IsUnique();
+
+                    b.ToTable("invitations", (string)null);
                 });
 
             modelBuilder.Entity("SnackFlow.Domain.Entities.User", b =>
@@ -56,6 +134,9 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
+
+                    b.Property<Guid>("ApplicationUserId")
+                        .HasColumnType("uuid");
 
                     b.Property<Guid?>("CompanyId")
                         .HasColumnType("uuid")
@@ -78,6 +159,12 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("position");
 
+                    b.Property<string>("PublicToken")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("text")
+                        .HasColumnName("public_token");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamptz")
                         .HasColumnName("modified_at");
@@ -85,9 +172,15 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                     b.HasKey("Id")
                         .HasName("pk_user_id");
 
-                    b.HasIndex(new[] { "CompanyId" }, "ix_user_company_id");
+                    b.HasIndex("ApplicationUserId")
+                        .IsUnique();
 
-                    b.ToTable("user", (string)null);
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex(new[] { "PublicToken" }, "uq_user_public_token")
+                        .IsUnique();
+
+                    b.ToTable("users", (string)null);
                 });
 
             modelBuilder.Entity("SnackFlow.Infrastructure.Persistence.Identity.ApplicationPermission", b =>
@@ -120,6 +213,9 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_application_permissions_id");
+
+                    b.HasIndex(new[] { "Name" }, "uq_application_permission_name")
+                        .IsUnique();
 
                     b.ToTable("application_permissions", (string)null);
 
@@ -389,38 +485,27 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("normalized_name");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_aspnet_role_id");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
                         .HasDatabaseName("ix_aspnet_role_normalized_name");
 
-                    b.ToTable("aspnet_role", (string)null);
+                    b.ToTable("aspnet_roles", (string)null);
 
                     b.HasData(
                         new
                         {
-                            Id = new Guid("72bf32a9-69e8-4a57-936b-c6b23c47216d"),
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
-                        },
-                        new
-                        {
                             Id = new Guid("2a74bf8e-0be3-46cc-9310-fdd5f80bd878"),
-                            Name = "Manager",
-                            NormalizedName = "MANAGER"
+                            Name = "SuperAdmin",
+                            NormalizedName = "SUPERADMIN"
                         },
                         new
                         {
                             Id = new Guid("5b20150c-817c-4020-bb91-59d29f732a32"),
-                            Name = "Employee",
-                            NormalizedName = "EMPLOYEE"
-                        },
-                        new
-                        {
-                            Id = new Guid("f9bb36fe-9ac3-4cad-9a37-b90eab601cf5"),
-                            Name = "Viewer",
-                            NormalizedName = "VIEWER"
+                            Name = "User",
+                            NormalizedName = "USER"
                         });
                 });
 
@@ -453,366 +538,7 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                     b.HasIndex("RoleId")
                         .HasDatabaseName("ix_aspnet_role_claim_role_id");
 
-                    b.ToTable("aspnet_role_claim", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ClaimType = "permission",
-                            ClaimValue = "companies.create",
-                            RoleId = new Guid("72bf32a9-69e8-4a57-936b-c6b23c47216d")
-                        },
-                        new
-                        {
-                            Id = 2,
-                            ClaimType = "permission",
-                            ClaimValue = "companies.read",
-                            RoleId = new Guid("72bf32a9-69e8-4a57-936b-c6b23c47216d")
-                        },
-                        new
-                        {
-                            Id = 3,
-                            ClaimType = "permission",
-                            ClaimValue = "companies.update",
-                            RoleId = new Guid("72bf32a9-69e8-4a57-936b-c6b23c47216d")
-                        },
-                        new
-                        {
-                            Id = 4,
-                            ClaimType = "permission",
-                            ClaimValue = "companies.delete",
-                            RoleId = new Guid("72bf32a9-69e8-4a57-936b-c6b23c47216d")
-                        },
-                        new
-                        {
-                            Id = 5,
-                            ClaimType = "permission",
-                            ClaimValue = "companies.manage_users",
-                            RoleId = new Guid("72bf32a9-69e8-4a57-936b-c6b23c47216d")
-                        },
-                        new
-                        {
-                            Id = 6,
-                            ClaimType = "permission",
-                            ClaimValue = "orders.create",
-                            RoleId = new Guid("72bf32a9-69e8-4a57-936b-c6b23c47216d")
-                        },
-                        new
-                        {
-                            Id = 7,
-                            ClaimType = "permission",
-                            ClaimValue = "orders.read",
-                            RoleId = new Guid("72bf32a9-69e8-4a57-936b-c6b23c47216d")
-                        },
-                        new
-                        {
-                            Id = 8,
-                            ClaimType = "permission",
-                            ClaimValue = "orders.update",
-                            RoleId = new Guid("72bf32a9-69e8-4a57-936b-c6b23c47216d")
-                        },
-                        new
-                        {
-                            Id = 9,
-                            ClaimType = "permission",
-                            ClaimValue = "orders.delete",
-                            RoleId = new Guid("72bf32a9-69e8-4a57-936b-c6b23c47216d")
-                        },
-                        new
-                        {
-                            Id = 10,
-                            ClaimType = "permission",
-                            ClaimValue = "orders.approve",
-                            RoleId = new Guid("72bf32a9-69e8-4a57-936b-c6b23c47216d")
-                        },
-                        new
-                        {
-                            Id = 11,
-                            ClaimType = "permission",
-                            ClaimValue = "products.create",
-                            RoleId = new Guid("72bf32a9-69e8-4a57-936b-c6b23c47216d")
-                        },
-                        new
-                        {
-                            Id = 12,
-                            ClaimType = "permission",
-                            ClaimValue = "products.read",
-                            RoleId = new Guid("72bf32a9-69e8-4a57-936b-c6b23c47216d")
-                        },
-                        new
-                        {
-                            Id = 13,
-                            ClaimType = "permission",
-                            ClaimValue = "products.update",
-                            RoleId = new Guid("72bf32a9-69e8-4a57-936b-c6b23c47216d")
-                        },
-                        new
-                        {
-                            Id = 14,
-                            ClaimType = "permission",
-                            ClaimValue = "products.delete",
-                            RoleId = new Guid("72bf32a9-69e8-4a57-936b-c6b23c47216d")
-                        },
-                        new
-                        {
-                            Id = 15,
-                            ClaimType = "permission",
-                            ClaimValue = "products.import",
-                            RoleId = new Guid("72bf32a9-69e8-4a57-936b-c6b23c47216d")
-                        },
-                        new
-                        {
-                            Id = 16,
-                            ClaimType = "permission",
-                            ClaimValue = "users.create",
-                            RoleId = new Guid("72bf32a9-69e8-4a57-936b-c6b23c47216d")
-                        },
-                        new
-                        {
-                            Id = 17,
-                            ClaimType = "permission",
-                            ClaimValue = "users.read",
-                            RoleId = new Guid("72bf32a9-69e8-4a57-936b-c6b23c47216d")
-                        },
-                        new
-                        {
-                            Id = 18,
-                            ClaimType = "permission",
-                            ClaimValue = "users.update",
-                            RoleId = new Guid("72bf32a9-69e8-4a57-936b-c6b23c47216d")
-                        },
-                        new
-                        {
-                            Id = 19,
-                            ClaimType = "permission",
-                            ClaimValue = "users.delete",
-                            RoleId = new Guid("72bf32a9-69e8-4a57-936b-c6b23c47216d")
-                        },
-                        new
-                        {
-                            Id = 20,
-                            ClaimType = "permission",
-                            ClaimValue = "users.assign_roles",
-                            RoleId = new Guid("72bf32a9-69e8-4a57-936b-c6b23c47216d")
-                        },
-                        new
-                        {
-                            Id = 21,
-                            ClaimType = "permission",
-                            ClaimValue = "reports.view",
-                            RoleId = new Guid("72bf32a9-69e8-4a57-936b-c6b23c47216d")
-                        },
-                        new
-                        {
-                            Id = 22,
-                            ClaimType = "permission",
-                            ClaimValue = "reports.export",
-                            RoleId = new Guid("72bf32a9-69e8-4a57-936b-c6b23c47216d")
-                        },
-                        new
-                        {
-                            Id = 23,
-                            ClaimType = "permission",
-                            ClaimValue = "reports.schedule",
-                            RoleId = new Guid("72bf32a9-69e8-4a57-936b-c6b23c47216d")
-                        },
-                        new
-                        {
-                            Id = 24,
-                            ClaimType = "permission",
-                            ClaimValue = "settings.view",
-                            RoleId = new Guid("72bf32a9-69e8-4a57-936b-c6b23c47216d")
-                        },
-                        new
-                        {
-                            Id = 25,
-                            ClaimType = "permission",
-                            ClaimValue = "settings.update",
-                            RoleId = new Guid("72bf32a9-69e8-4a57-936b-c6b23c47216d")
-                        },
-                        new
-                        {
-                            Id = 26,
-                            ClaimType = "permission",
-                            ClaimValue = "roles.create",
-                            RoleId = new Guid("72bf32a9-69e8-4a57-936b-c6b23c47216d")
-                        },
-                        new
-                        {
-                            Id = 27,
-                            ClaimType = "permission",
-                            ClaimValue = "roles.read",
-                            RoleId = new Guid("72bf32a9-69e8-4a57-936b-c6b23c47216d")
-                        },
-                        new
-                        {
-                            Id = 28,
-                            ClaimType = "permission",
-                            ClaimValue = "roles.update",
-                            RoleId = new Guid("72bf32a9-69e8-4a57-936b-c6b23c47216d")
-                        },
-                        new
-                        {
-                            Id = 29,
-                            ClaimType = "permission",
-                            ClaimValue = "roles.delete",
-                            RoleId = new Guid("72bf32a9-69e8-4a57-936b-c6b23c47216d")
-                        },
-                        new
-                        {
-                            Id = 30,
-                            ClaimType = "permission",
-                            ClaimValue = "roles.assign_permissions",
-                            RoleId = new Guid("72bf32a9-69e8-4a57-936b-c6b23c47216d")
-                        },
-                        new
-                        {
-                            Id = 31,
-                            ClaimType = "permission",
-                            ClaimValue = "products.create",
-                            RoleId = new Guid("2a74bf8e-0be3-46cc-9310-fdd5f80bd878")
-                        },
-                        new
-                        {
-                            Id = 32,
-                            ClaimType = "permission",
-                            ClaimValue = "products.read",
-                            RoleId = new Guid("2a74bf8e-0be3-46cc-9310-fdd5f80bd878")
-                        },
-                        new
-                        {
-                            Id = 33,
-                            ClaimType = "permission",
-                            ClaimValue = "products.update",
-                            RoleId = new Guid("2a74bf8e-0be3-46cc-9310-fdd5f80bd878")
-                        },
-                        new
-                        {
-                            Id = 34,
-                            ClaimType = "permission",
-                            ClaimValue = "products.import",
-                            RoleId = new Guid("2a74bf8e-0be3-46cc-9310-fdd5f80bd878")
-                        },
-                        new
-                        {
-                            Id = 35,
-                            ClaimType = "permission",
-                            ClaimValue = "users.create",
-                            RoleId = new Guid("2a74bf8e-0be3-46cc-9310-fdd5f80bd878")
-                        },
-                        new
-                        {
-                            Id = 36,
-                            ClaimType = "permission",
-                            ClaimValue = "users.read",
-                            RoleId = new Guid("2a74bf8e-0be3-46cc-9310-fdd5f80bd878")
-                        },
-                        new
-                        {
-                            Id = 37,
-                            ClaimType = "permission",
-                            ClaimValue = "users.update",
-                            RoleId = new Guid("2a74bf8e-0be3-46cc-9310-fdd5f80bd878")
-                        },
-                        new
-                        {
-                            Id = 38,
-                            ClaimType = "permission",
-                            ClaimValue = "users.assign_roles",
-                            RoleId = new Guid("2a74bf8e-0be3-46cc-9310-fdd5f80bd878")
-                        },
-                        new
-                        {
-                            Id = 39,
-                            ClaimType = "permission",
-                            ClaimValue = "reports.view",
-                            RoleId = new Guid("2a74bf8e-0be3-46cc-9310-fdd5f80bd878")
-                        },
-                        new
-                        {
-                            Id = 40,
-                            ClaimType = "permission",
-                            ClaimValue = "reports.export",
-                            RoleId = new Guid("2a74bf8e-0be3-46cc-9310-fdd5f80bd878")
-                        },
-                        new
-                        {
-                            Id = 41,
-                            ClaimType = "permission",
-                            ClaimValue = "reports.schedule",
-                            RoleId = new Guid("2a74bf8e-0be3-46cc-9310-fdd5f80bd878")
-                        },
-                        new
-                        {
-                            Id = 42,
-                            ClaimType = "permission",
-                            ClaimValue = "roles.read",
-                            RoleId = new Guid("2a74bf8e-0be3-46cc-9310-fdd5f80bd878")
-                        },
-                        new
-                        {
-                            Id = 43,
-                            ClaimType = "permission",
-                            ClaimValue = "roles.update",
-                            RoleId = new Guid("2a74bf8e-0be3-46cc-9310-fdd5f80bd878")
-                        },
-                        new
-                        {
-                            Id = 44,
-                            ClaimType = "permission",
-                            ClaimValue = "roles.assign_permissions",
-                            RoleId = new Guid("2a74bf8e-0be3-46cc-9310-fdd5f80bd878")
-                        },
-                        new
-                        {
-                            Id = 45,
-                            ClaimType = "permission",
-                            ClaimValue = "orders.create",
-                            RoleId = new Guid("5b20150c-817c-4020-bb91-59d29f732a32")
-                        },
-                        new
-                        {
-                            Id = 46,
-                            ClaimType = "permission",
-                            ClaimValue = "orders.read",
-                            RoleId = new Guid("5b20150c-817c-4020-bb91-59d29f732a32")
-                        },
-                        new
-                        {
-                            Id = 47,
-                            ClaimType = "permission",
-                            ClaimValue = "orders.update",
-                            RoleId = new Guid("5b20150c-817c-4020-bb91-59d29f732a32")
-                        },
-                        new
-                        {
-                            Id = 48,
-                            ClaimType = "permission",
-                            ClaimValue = "products.read",
-                            RoleId = new Guid("5b20150c-817c-4020-bb91-59d29f732a32")
-                        },
-                        new
-                        {
-                            Id = 49,
-                            ClaimType = "permission",
-                            ClaimValue = "reports.view",
-                            RoleId = new Guid("5b20150c-817c-4020-bb91-59d29f732a32")
-                        },
-                        new
-                        {
-                            Id = 50,
-                            ClaimType = "permission",
-                            ClaimValue = "orders.read",
-                            RoleId = new Guid("f9bb36fe-9ac3-4cad-9a37-b90eab601cf5")
-                        },
-                        new
-                        {
-                            Id = 51,
-                            ClaimType = "permission",
-                            ClaimValue = "products.read",
-                            RoleId = new Guid("f9bb36fe-9ac3-4cad-9a37-b90eab601cf5")
-                        });
+                    b.ToTable("aspnet_role_claims", (string)null);
                 });
 
             modelBuilder.Entity("SnackFlow.Infrastructure.Persistence.Identity.ApplicationUser", b =>
@@ -829,6 +555,7 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .IsRequired()
                         .HasColumnType("varchar(36)")
                         .HasColumnName("concurrency_stamp");
 
@@ -883,6 +610,7 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                         .HasColumnName("phone_number_confirmed");
 
                     b.Property<string>("SecurityStamp")
+                        .IsRequired()
                         .HasColumnType("varchar(36)")
                         .HasColumnName("security_stamp");
 
@@ -890,29 +618,30 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("two_factor_enabled");
 
-                    b.Property<Guid>("UserDomainId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_domain_id");
-
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("user_name");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_aspnet_user_id");
 
-                    b.HasIndex("Email")
-                        .IsUnique()
-                        .HasDatabaseName("ix_asp_net_user_email");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("ix_aspnet_user_normalized_user_name");
-
-                    b.HasIndex(new[] { "UserDomainId" }, "ix_aspnet_user_user_domain_id")
+                    b.HasIndex(new[] { "Email" }, "uq_asp_net_user_email")
                         .IsUnique();
 
-                    b.ToTable("aspnet_user", (string)null);
+                    b.HasIndex(new[] { "NormalizedEmail" }, "uq_asp_net_user_normalized_email")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "NormalizedUserName" }, "uq_aspnet_user_normalized_user_name")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "PhoneNumber" }, "uq_aspnet_user_phone_number")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "UserName" }, "uq_aspnet_user_user_name")
+                        .IsUnique();
+
+                    b.ToTable("aspnet_users", (string)null);
                 });
 
             modelBuilder.Entity("SnackFlow.Infrastructure.Persistence.Identity.ApplicationUserClaim", b =>
@@ -938,12 +667,13 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("user_id");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_aspnet_user_claim_id");
 
                     b.HasIndex("UserId")
                         .HasDatabaseName("ix_aspnet_user_claim_user_id");
 
-                    b.ToTable("aspnet_user_claim", (string)null);
+                    b.ToTable("aspnet_user_claims", (string)null);
                 });
 
             modelBuilder.Entity("SnackFlow.Infrastructure.Persistence.Identity.ApplicationUserLogin", b =>
@@ -967,7 +697,7 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                     b.HasKey("UserId", "LoginProvider", "ProviderKey")
                         .HasName("pk_aspnet_user_login_user_id_login_provider_provider_key");
 
-                    b.ToTable("aspnet_user_login", (string)null);
+                    b.ToTable("aspnet_user_logins", (string)null);
                 });
 
             modelBuilder.Entity("SnackFlow.Infrastructure.Persistence.Identity.ApplicationUserRole", b =>
@@ -989,7 +719,7 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                     b.HasIndex("UserId")
                         .HasDatabaseName("ix_aspnet_user_role_user_id");
 
-                    b.ToTable("aspnet_user_role", (string)null);
+                    b.ToTable("aspnet_user_roles", (string)null);
                 });
 
             modelBuilder.Entity("SnackFlow.Infrastructure.Persistence.Identity.ApplicationUserToken", b =>
@@ -1014,11 +744,33 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name")
                         .HasName("pk_aspnet_user_token_user_id_login_provider_name");
 
-                    b.ToTable("aspnet_user_token", (string)null);
+                    b.ToTable("aspnet_user_tokens", (string)null);
                 });
 
             modelBuilder.Entity("SnackFlow.Domain.Entities.Company", b =>
                 {
+                    b.OwnsOne("SnackFlow.Domain.ValueObjects.Email.Email", "Email", b1 =>
+                        {
+                            b1.Property<Guid>("CompanyId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(255)
+                                .HasColumnType("text")
+                                .HasColumnName("email");
+
+                            b1.HasKey("CompanyId");
+
+                            b1.HasIndex(new[] { "Value" }, "uq_company_email")
+                                .IsUnique();
+
+                            b1.ToTable("companies");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CompanyId");
+                        });
+
                     b.OwnsOne("SnackFlow.Domain.ValueObjects.TaxId.TaxId", "TaxId", b1 =>
                         {
                             b1.Property<Guid>("CompanyId")
@@ -1040,7 +792,7 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                             b1.HasIndex(new[] { "Value" }, "uq_company_tax_id")
                                 .IsUnique();
 
-                            b1.ToTable("company");
+                            b1.ToTable("companies");
 
                             b1.WithOwner()
                                 .HasForeignKey("CompanyId");
@@ -1069,29 +821,7 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
 
                             b1.HasIndex(new[] { "Corporate" }, "uq_company_corporate_name");
 
-                            b1.ToTable("company");
-
-                            b1.WithOwner()
-                                .HasForeignKey("CompanyId");
-                        });
-
-                    b.OwnsOne("SnackFlow.Domain.ValueObjects.Email.Email", "Email", b1 =>
-                        {
-                            b1.Property<Guid>("CompanyId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasMaxLength(255)
-                                .HasColumnType("text")
-                                .HasColumnName("email");
-
-                            b1.HasKey("CompanyId");
-
-                            b1.HasIndex(new[] { "Value" }, "uq_company_email")
-                                .IsUnique();
-
-                            b1.ToTable("company");
+                            b1.ToTable("companies");
 
                             b1.WithOwner()
                                 .HasForeignKey("CompanyId");
@@ -1113,7 +843,7 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                             b1.HasIndex(new[] { "Value" }, "uq_company_phone")
                                 .IsUnique();
 
-                            b1.ToTable("company");
+                            b1.ToTable("companies");
 
                             b1.WithOwner()
                                 .HasForeignKey("CompanyId");
@@ -1132,12 +862,49 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("SnackFlow.Domain.Entities.Invitation", b =>
+                {
+                    b.OwnsOne("SnackFlow.Domain.ValueObjects.Email.Email", "Email", b1 =>
+                        {
+                            b1.Property<Guid>("InvitationId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(255)
+                                .HasColumnType("text")
+                                .HasColumnName("email");
+
+                            b1.HasKey("InvitationId");
+
+                            b1.HasIndex(new[] { "Value" }, "uq_company_email")
+                                .IsUnique()
+                                .HasDatabaseName("uq_company_email1");
+
+                            b1.ToTable("invitations");
+
+                            b1.WithOwner()
+                                .HasForeignKey("InvitationId");
+                        });
+
+                    b.Navigation("Email")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("SnackFlow.Domain.Entities.User", b =>
                 {
+                    b.HasOne("SnackFlow.Infrastructure.Persistence.Identity.ApplicationUser", null)
+                        .WithOne()
+                        .HasForeignKey("SnackFlow.Domain.Entities.User", "ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_application_user_id");
+
                     b.HasOne("SnackFlow.Domain.Entities.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_user_company_id");
 
                     b.OwnsOne("SnackFlow.Domain.ValueObjects.TaxId.TaxId", "TaxId", b1 =>
                         {
@@ -1160,7 +927,7 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                             b1.HasIndex(new[] { "Value" }, "uq_user_tax_id")
                                 .IsUnique();
 
-                            b1.ToTable("user");
+                            b1.ToTable("users");
 
                             b1.WithOwner()
                                 .HasForeignKey("UserId");
@@ -1179,7 +946,7 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
 
                             b1.HasKey("UserId");
 
-                            b1.ToTable("user");
+                            b1.ToTable("users");
 
                             b1.WithOwner()
                                 .HasForeignKey("UserId");
@@ -1192,17 +959,6 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
 
                     b.Navigation("TaxId")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("SnackFlow.Infrastructure.Persistence.Identity.ApplicationUser", b =>
-                {
-                    b.HasOne("SnackFlow.Domain.Entities.User", "UserDomain")
-                        .WithOne()
-                        .HasForeignKey("SnackFlow.Infrastructure.Persistence.Identity.ApplicationUser", "UserDomainId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("UserDomain");
                 });
 #pragma warning restore 612, 618
         }

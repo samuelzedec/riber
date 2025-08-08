@@ -8,7 +8,7 @@ public sealed class ApplicationUserRoleMap : IEntityTypeConfiguration<Applicatio
 {
     public void Configure(EntityTypeBuilder<ApplicationUserRole> builder)
     {
-        builder.ToTable("aspnet_user_role");
+        builder.ToTable("aspnet_user_roles");
 
         builder
             .HasKey(ur => new { ur.UserId, ur.RoleId })

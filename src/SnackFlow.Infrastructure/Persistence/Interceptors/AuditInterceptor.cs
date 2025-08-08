@@ -58,27 +58,28 @@ public sealed class AuditInterceptor : SaveChangesInterceptor
                 entry.Entity.DeleteEntity();
                 
                 if (entry.Entity is User userDomain)
-                    DeactivateApplicationUser(context, userDomain.Id);
+                    DeactivateApplicationUser(context, userDomain.ApplicationUserId);
             }
         }
     }
 
-    /// <summary>
-    /// Desativa um usuário da aplicação marcando-o como excluído e define
-    /// o estado da entidade como Modificado no contexto do banco de dados fornecido.
-    /// </summary>
-    /// <param name="context">O contexto do banco de dados usado para acessar e modificar a entidade do usuário da aplicação.</param>
-    /// <param name="userDomainId">O identificador único do usuário no domínio a ser desativado.</param>
-    private static void DeactivateApplicationUser(DbContext context, Guid userDomainId)
-    {
-        // Verifica primeiro se está no Change Tracker, se não irá fazer a consulta no banco
-        var applicationUser = context
-            .ChangeTracker.Entries<ApplicationUser>().FirstOrDefault(e => e.Entity.UserDomainId == userDomainId)?.Entity 
-            ?? context.Set<ApplicationUser>().FirstOrDefault(u => u.UserDomainId == userDomainId);
 
+    /// <summary>
+    /// Marca o usuário do sistema (ApplicationUser) como excluído definindo sua propriedade IsDeleted como verdadeira e
+    /// atualiza seu estado no rastreador de mudanças do Entity Framework Core para Modified.
+    /// </summary>
+    /// <param name="context">O contexto do banco de dados usado para rastrear e acessar a entidade ApplicationUser.</param>
+    /// <param name="userApplicationId">O identificador único da entidade ApplicationUser a ser desativada.</param>
+    private static void DeactivateApplicationUser(DbContext context, Guid userApplicationId)
+    {
+        var applicationUser = context
+            .ChangeTracker.Entries<ApplicationUser>()
+            .FirstOrDefault(e => e.Entity.Id == userApplicationId)?.Entity 
+            ?? context.Set<ApplicationUser>().FirstOrDefault(u => u.Id == userApplicationId);
+    
         if (applicationUser is null)
             return;
-
+    
         applicationUser.IsDeleted = true;
         context.Entry(applicationUser).State = EntityState.Modified;
     }

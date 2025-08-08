@@ -22,11 +22,11 @@ public sealed class JwtTokenService(
             new(ClaimTypes.Email, user.Email),
             new(ClaimTypes.Name, user.UserName),
             new("securityStamp", user.SecurityStamp),
+            new("user_domain_id", user.UserDomainId.ToString()),
+            new(ClaimTypes.Role, user.Role),
         };
 
-        claims.AddRange(user.Roles.Select(role => new Claim(ClaimTypes.Role, role)));
         claims.AddRange(user.Claims.Select(claim => new Claim(claim.Type, claim.Value)));
-
         return CreateJwtToken(
             claims,
             DateTime.UtcNow.AddMinutes(accessTokenSettings.Value.ExpirationInMinutes),

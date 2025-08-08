@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using SnackFlow.Application.Abstractions.Commands;
 using SnackFlow.Application.Common;
 using SnackFlow.Application.Exceptions;
-using SnackFlow.Application.Extensions;
 using SnackFlow.Domain.Constants;
 using SnackFlow.Domain.Entities;
 using SnackFlow.Domain.Repositories;
@@ -36,13 +35,8 @@ internal sealed class UpdateCompanyCommandHandler(
 
             companyRepository.Update(company);
             await unitOfWork.CommitTransactionAsync(cancellationToken);
-            
-            return new UpdateCompanyCommandResponse(
-                company.Name,
-                company.Email,
-                company.Phone,
-                company.TaxId.Type.GetDescription()
-            );
+
+            return UpdateCompanyCommandResponse.FromCompany(company);
         }
         catch (Exception ex)
         {

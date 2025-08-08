@@ -12,6 +12,8 @@ public interface IUnitOfWork
     
     IUserRepository Users { get; }
     
+    IInvitationRepository Invitations { get; }
+    
     #endregion
 
     #region Default Methods

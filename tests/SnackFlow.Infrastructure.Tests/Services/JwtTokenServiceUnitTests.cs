@@ -45,12 +45,12 @@ public class JwtTokenServiceUnitTests : BaseTest
         };
 
         _userDetailsTest = CreateFaker<UserDetailsDTO>()
-            .CustomInstantiator(f => new UserDetailsDTO())
-            .RuleFor(x => x.Id, f => Guid.CreateVersion7())
+            .CustomInstantiator(_ => new UserDetailsDTO())
+            .RuleFor(x => x.Id, _ => Guid.CreateVersion7())
             .RuleFor(x => x.Email, f => f.Internet.Email())
             .RuleFor(x => x.UserName, f => f.Internet.UserName())
             .RuleFor(x => x.SecurityStamp, f => f.Random.AlphaNumeric(32))
-            .RuleFor(x => x.Roles, f => f.Make(2, () => f.Name.JobTitle()))
+            .RuleFor(x => x.Role, _ => "User")
             .RuleFor(x => x.Claims, f => f.Make(2, () => new ClaimDTO
             {
                 Type = f.Random.Word(),
@@ -104,11 +104,8 @@ public class JwtTokenServiceUnitTests : BaseTest
         jsonToken.Claims.Should().Contain(c => c.Type == "email" && c.Value == _userDetailsTest.Email);
         jsonToken.Claims.Should().Contain(c => c.Type == "unique_name" && c.Value == _userDetailsTest.UserName);
         jsonToken.Claims.Should().Contain(c => c.Type == "securityStamp" && c.Value == _userDetailsTest.SecurityStamp);
-        
-        foreach (var role in _userDetailsTest.Roles)
-        {
-            jsonToken.Claims.Should().Contain(c => c.Type == "role" && c.Value == role);
-        }
+        jsonToken.Claims.Should().Contain(c => c.Type == "role" && c.Value == _userDetailsTest.Role);
+
         
         foreach (var claim in _userDetailsTest.Claims)
         {
@@ -128,30 +125,6 @@ public class JwtTokenServiceUnitTests : BaseTest
             Times.Once);
     }
 
-    [Fact(DisplayName = "Generating access token with empty roles should not include role claims")]
-    public void GenerateToken_WhenUserHasNoRoles_ShouldNotIncludeRoleClaims()
-    {
-        // Arrange
-        var userWithoutRoles = new UserDetailsDTO
-        {
-            Id = _userDetailsTest.Id,
-            Email = _userDetailsTest.Email,
-            UserName = _userDetailsTest.UserName,
-            SecurityStamp = _userDetailsTest.SecurityStamp,
-            Roles = new List<string>(),
-            Claims = _userDetailsTest.Claims
-        };
-
-        // Act
-        var token = _tokenService.GenerateToken(userWithoutRoles);
-
-        // Assert
-        var handler = new JwtSecurityTokenHandler();
-        var jsonToken = handler.ReadJwtToken(token);
-        
-        jsonToken.Claims.Should().NotContain(c => c.Type == "role");
-    }
-
     [Fact(DisplayName = "Generating access token with empty claims should not include custom claims")]
     public void GenerateToken_WhenUserHasNoClaims_ShouldNotIncludeCustomClaims()
     {
@@ -162,7 +135,7 @@ public class JwtTokenServiceUnitTests : BaseTest
             Email = _userDetailsTest.Email,
             UserName = _userDetailsTest.UserName,
             SecurityStamp = _userDetailsTest.SecurityStamp,
-            Roles = _userDetailsTest.Roles,
+            Role = _userDetailsTest.Role,
             Claims = new List<ClaimDTO>()
         };
 
@@ -173,7 +146,7 @@ public class JwtTokenServiceUnitTests : BaseTest
         var handler = new JwtSecurityTokenHandler();
         var jsonToken = handler.ReadJwtToken(token);
    
-        jsonToken.Claims.Count().Should().Be(9 + userWithoutClaims.Roles.Count);
+        jsonToken.Claims.Should().Contain(c => c.Type == "role" && c.Value == _userDetailsTest.Role);
     }
 
     #endregion

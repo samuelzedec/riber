@@ -43,6 +43,7 @@ public class CompanyUnitTests : BaseTest
         result.Name.Fantasy.Should().Be(fantasyName);
         result.TaxId.Value.Should().Be(taxId);
         result.Phone.ToString().Should().Be(phone);
+        result.PublicToken.Should().NotBeNullOrWhiteSpace();
     }
 
     [Fact(DisplayName = "Should create company successfully with valid value objects")]
@@ -79,6 +80,7 @@ public class CompanyUnitTests : BaseTest
         result.Name.Fantasy.Should().Be(companyName.Fantasy);
         result.TaxId.Value.Should().Be(companyTaxId.Value);
         result.Phone.ToString().Should().Be(companyPhone.ToString());
+        result.PublicToken.Should().NotBeNullOrWhiteSpace();
     }
 
     #endregion
