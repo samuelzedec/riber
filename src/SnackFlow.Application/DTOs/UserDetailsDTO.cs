@@ -8,8 +8,9 @@ public sealed class UserDetailsDTO
     public bool EmailConfirmed { get; set; } = false;
     public string PhoneNumber { get; set; } = string.Empty;
     public string SecurityStamp { get; set; } = string.Empty;
+    public Guid UserDomainId { get; set; }
     public Domain.Entities.User UserDomain { get; set; } = null!;
     
-    public ICollection<string> Roles { get; set; } = [];
+    public string Role { get; set; } = string.Empty;
     public ICollection<ClaimDTO> Claims { get; set; } = [];
 }

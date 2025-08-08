@@ -14,6 +14,7 @@ namespace SnackFlow.Api.Controllers;
 public class CompanyController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
+    [Authorize()]
     [RequestTimeout(("standard"))]
     [ProducesResponseType<Result<CreateCompanyCommandResponse>>(StatusCodes.Status201Created)]
     [ProducesResponseType<Result<CreateCompanyCommandResponse>>(StatusCodes.Status400BadRequest)]
@@ -22,7 +23,7 @@ public class CompanyController(IMediator mediator) : ControllerBase
         CancellationToken cancellationToken)
     {
         var response = await mediator.Send(command, cancellationToken);
-        return Created($"/api/company/{response.Value.CompanyId}", response);
+        return Created($"/api/company/{response.Value.PublicToken}", response);
     }
     
     [HttpPut]

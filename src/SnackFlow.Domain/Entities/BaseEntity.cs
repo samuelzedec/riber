@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using SnackFlow.Domain.Abstractions;
 
 namespace SnackFlow.Domain.Entities;
@@ -57,6 +58,13 @@ public abstract class BaseEntity(Guid id) : IEquatable<Guid>
     
     public void DeleteEntity()
         => DeletedAt = DateTime.UtcNow;
+    
+    protected static string GeneratePublicCode()
+    {
+        var bytes = new byte[32];
+        RandomNumberGenerator.Fill(bytes);
+        return Convert.ToBase64String(bytes);
+    }
     
     #endregion
 }

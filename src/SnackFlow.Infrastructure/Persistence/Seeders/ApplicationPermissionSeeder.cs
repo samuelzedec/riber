@@ -3,6 +3,9 @@ using SnackFlow.Infrastructure.Persistence.Identity;
 
 namespace SnackFlow.Infrastructure.Persistence.Seeders;
 
+/// <summary>
+/// Fornece funcionalidade para semear dados de permissões do aplicativo no construtor do modelo.
+/// </summary>
 public static class ApplicationPermissionSeeder
 {
     public static void ApplyPermissionsSeed(this ModelBuilder builder)

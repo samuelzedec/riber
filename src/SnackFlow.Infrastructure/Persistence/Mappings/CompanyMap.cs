@@ -5,11 +5,11 @@ using SnackFlow.Domain.ValueObjects.CompanyName;
 
 namespace SnackFlow.Infrastructure.Persistence.Mappings;
 
-public class CompanyMap : IEntityTypeConfiguration<Company>
+public sealed class CompanyMap : IEntityTypeConfiguration<Company>
 {
     public void Configure(EntityTypeBuilder<Company> builder)
     {
-        builder.ToTable("company");
+        builder.ToTable("companies");
         
         builder
             .HasKey(c => c.Id)
@@ -108,6 +108,17 @@ public class CompanyMap : IEntityTypeConfiguration<Company>
                 .HasIndex(c => c.Value, "uq_company_phone")
                 .IsUnique();
         });
+        
+        builder
+            .Property(i => i.PublicToken)
+            .HasColumnName("public_token")
+            .HasColumnType("text")
+            .HasMaxLength(64)
+            .IsRequired();
+        
+        builder
+            .HasIndex(i => i.PublicToken, "uq_company_public_token")
+            .IsUnique();
         
         builder.HasQueryFilter(c => !c.DeletedAt.HasValue);
     }

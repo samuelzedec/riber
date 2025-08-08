@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using SnackFlow.Application.Abstractions.Services;
 using SnackFlow.Application.DTOs;
 using SnackFlow.Domain.Constants;
-using SnackFlow.Domain.Enums;
 using SnackFlow.Infrastructure.Persistence.Identity;
 
 namespace SnackFlow.Infrastructure.Services;
@@ -16,7 +15,7 @@ public sealed class AuthService(
     ILogger<AuthService> logger)
     : IAuthService
 {
-    public async Task CreateAsync(CreateApplicationUserDTO userDto, CancellationToken cancellationToken)
+    public async Task<Guid> CreateAsync(CreateApplicationUserDTO userDto, CancellationToken cancellationToken)
     {
         try
         {
@@ -27,7 +26,6 @@ public sealed class AuthService(
                 Email = userDto.Email,
                 EmailConfirmed = false,
                 PhoneNumber = userDto.PhoneNumber,
-                UserDomainId = userDto.UserDomainId
             };
             var result = await userManager.CreateAsync(applicationUser, userDto.Password);
             if (!result.Succeeded)
@@ -35,6 +33,18 @@ public sealed class AuthService(
                 var errors = string.Join(", ", result.Errors.Select(e => e.Description));
                 throw new InvalidOperationException($"Falha ao criar usuário no Identity: {errors}");
             }
+
+            await AssignRoleToUserAsync(
+                applicationUser.Id.ToString(),
+                userDto.Roles.FirstOrDefault()!
+            );
+
+            await userManager.AddClaimsAsync(
+                applicationUser,
+                userDto.Permissions.Select(p => new Claim("permission", p))
+            );
+            
+            return applicationUser.Id;
         }
         catch (Exception ex)
         {
@@ -46,7 +56,7 @@ public sealed class AuthService(
     public async Task<bool> LoginAsync(string email, string password)
     {
         var user = await userManager.FindByEmailAsync(email)
-                   ?? throw new InvalidOperationException(ErrorMessage.NotFound.User);
+            ?? throw new InvalidOperationException(ErrorMessage.NotFound.User);
 
         return await userManager.CheckPasswordAsync(user, password);
     }
@@ -72,39 +82,15 @@ public sealed class AuthService(
     public async Task<UserDetailsDTO?> FindByPhoneAsync(string phoneNumber)
     {
         var user = await userManager
-            .Users
-            .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.PhoneNumber == phoneNumber);
+            .Users.AsNoTracking().FirstOrDefaultAsync(x => x.PhoneNumber == phoneNumber);
         return user is null ? null : await MapUserDetailsAsync(user);
     }
 
-    public async Task AssignRoleToUserAsync(string userId, BusinessPosition position)
+    public async Task AssignRoleToUserAsync(string userId, string role)
     {
         var user = await userManager.FindByIdAsync(userId)
-                   ?? throw new InvalidOperationException(ErrorMessage.NotFound.User);
-
-        var roleName = position.ToString().ToUpperInvariant();
-        await EnsureRoleExistsAsync(roleName);
-
-        var result = await userManager.AddToRoleAsync(user, roleName);
-        if (!result.Succeeded)
-        {
-            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-            throw new InvalidOperationException($"Falha ao adicionar role: {errors}");
-        }
-    }
-
-    public async Task UpdateUserRoleAsync(string userId, BusinessPosition newPosition)
-    {
-        var user = await userManager.FindByIdAsync(userId)
-                   ?? throw new InvalidOperationException(ErrorMessage.NotFound.User);
-
-        var currentRoles = await userManager.GetRolesAsync(user);
-        if (currentRoles.Any())
-            await userManager.RemoveFromRolesAsync(user, currentRoles);
-
-        await AssignRoleToUserAsync(userId, newPosition);
-        await userManager.UpdateSecurityStampAsync(user);
+            ?? throw new InvalidOperationException(ErrorMessage.NotFound.User);
+        await userManager.AddToRoleAsync(user, role);
     }
 
     public async Task EnsureRoleExistsAsync(string roleName)
@@ -141,7 +127,7 @@ public sealed class AuthService(
             EmailConfirmed = user.EmailConfirmed,
             PhoneNumber = user.PhoneNumber!,
             SecurityStamp = user.SecurityStamp!,
-            Roles = roles,
+            Role = roles.FirstOrDefault()!,
             Claims = [.. claims.Select(x => new ClaimDTO { Type = x.Type, Value = x.Value })]
         };
     }

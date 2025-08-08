@@ -1,6 +1,4 @@
-using System.Security.Claims;
 using SnackFlow.Application.DTOs;
-using SnackFlow.Domain.Enums;
 
 namespace SnackFlow.Application.Abstractions.Services;
 
@@ -11,12 +9,12 @@ namespace SnackFlow.Application.Abstractions.Services;
 public interface IAuthService
 {
     /// <summary>
-    /// Cria um novo usuário no sistema com base nos dados fornecidos.
+    /// Cria um novo usuário da aplicação com base nos detalhes fornecidos.
     /// </summary>
-    /// <param name="applicationUser">Os dados do usuário que será criado, incluindo nome, email, senha e outras informações.</param>
-    /// <param name="cancellationToken">O token de cancelamento que pode ser usado para interromper a operação.</param>
-    /// <returns>Uma tarefa que representa a operação assíncrona de criação do usuário.</returns>
-    Task CreateAsync(CreateApplicationUserDTO applicationUser, CancellationToken cancellationToken);
+    /// <param name="applicationUser">Os detalhes do usuário a ser criado.</param>
+    /// <param name="cancellationToken">Um token para observar a solicitação de cancelamento.</param>
+    /// <returns>Uma tarefa que retorna o identificador único do usuário criado.</returns>
+    Task<Guid> CreateAsync(CreateApplicationUserDTO applicationUser, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Realiza o login de um usuário no sistema com base nas credenciais fornecidas.
@@ -55,20 +53,12 @@ public interface IAuthService
     Task<UserDetailsDTO?> FindByPhoneAsync(string phoneNumber);
 
     /// <summary>
-    /// Atribui uma função ao usuário com base na posição empresarial especificada.
+    /// Atribui uma função específica a um usuário identificado pelo ID fornecido.
     /// </summary>
-    /// <param name="userId">O identificador único do usuário para atribuir a função.</param>
-    /// <param name="position">A posição empresarial que corresponde à função a ser atribuída.</param>
-    /// <returns>Uma tarefa representando a operação assíncrona.</returns>
-    Task AssignRoleToUserAsync(string userId, BusinessPosition position);
-
-    /// <summary>
-    /// Atualiza a função do usuário com base na nova posição empresarial especificada.
-    /// </summary>
-    /// <param name="userId">O identificador único do usuário cujo papel deve ser atualizado.</param>
-    /// <param name="newPosition">A nova posição empresarial que define a função a ser atribuída ao usuário.</param>
-    /// <returns>Uma tarefa representando a operação assíncrona.</returns>
-    Task UpdateUserRoleAsync(string userId, BusinessPosition newPosition);
+    /// <param name="userId">O identificador único do usuário ao qual a função será atribuída.</param>
+    /// <param name="role">O nome da função a ser atribuída ao usuário.</param>
+    /// <returns>Uma tarefa que representa a operação assíncrona de atribuição de função.</returns>
+    Task AssignRoleToUserAsync(string userId, string role);
 
     /// <summary>
     /// Verifica a existência de uma função com o nome especificado e lança uma exceção se ela não existir.
@@ -76,11 +66,4 @@ public interface IAuthService
     /// <param name="roleName">O nome da função a ser verificada.</param>
     /// <returns>Uma tarefa que representa a operação assíncrona.</returns>
     Task EnsureRoleExistsAsync(string roleName);
-
-    /// <summary>
-    /// Retorna uma lista de declarações de direitos (claims) associadas a um determinado nome de função.
-    /// </summary>
-    /// <param name="roleName">O nome da função para a qual as declarações de direitos devem ser obtidas.</param>
-    /// <returns>Uma tarefa que retorna uma lista de objetos <see cref="Claim"/> associados à função especificada.</returns>
-    Task<IList<Claim>> GetClaimsByRoleName(string roleName);
 }

@@ -15,6 +15,7 @@ public sealed class Company : BaseEntity, IAggregateRoot
     public TaxId TaxId { get; private set; }
     public Email Email { get; private set; }
     public Phone Phone { get; private set; }
+    public string PublicToken { get; private set; }
 
     #endregion
 
@@ -26,6 +27,7 @@ public sealed class Company : BaseEntity, IAggregateRoot
         TaxId = null!;
         Email = null!;
         Phone = null!;
+        PublicToken = string.Empty;
     }
 
     private Company(
@@ -38,6 +40,7 @@ public sealed class Company : BaseEntity, IAggregateRoot
         TaxId = taxId;
         Email = email;
         Phone = phone;
+        PublicToken = GeneratePublicCode();
     }
 
     #endregion

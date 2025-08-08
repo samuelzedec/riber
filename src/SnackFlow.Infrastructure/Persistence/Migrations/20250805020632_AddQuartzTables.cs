@@ -11,6 +11,12 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql(@"
+                -- This script is for PostgreSQL
+
+                -- This initializes the database to pristine for Quartz, by first removing any existing Quartz tables
+                -- and then recreating them from scratch.
+                -- Should you only require it to create the tables, set DropDb to 0.
+
                 DO $$
                   DECLARE DropDb INT := 1; -- Set this to 0 to skip DROP statements, 1 to include them
                 BEGIN
@@ -190,8 +196,8 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                 CREATE INDEX idx_qrtz_ft_trig_inst_name ON qrtz_fired_triggers (instance_name);
                 CREATE INDEX idx_qrtz_ft_job_name ON qrtz_fired_triggers (job_name);
                 CREATE INDEX idx_qrtz_ft_job_group ON qrtz_fired_triggers (job_group);
-                CREATE INDEX idx_qrtz_ft_job_req_recovery ON qrtz_fired_triggers (requests_recovery);"
-            );
+                CREATE INDEX idx_qrtz_ft_job_req_recovery ON qrtz_fired_triggers (requests_recovery);
+            ");
         }
 
         /// <inheritdoc />

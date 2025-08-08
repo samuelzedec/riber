@@ -5,7 +5,7 @@ using SnackFlow.Infrastructure.Persistence.Identity;
 
 namespace SnackFlow.Infrastructure.Persistence;
 
-public class AppDbContext(DbContextOptions<AppDbContext> options)
+public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
     : IdentityDbContext<
         ApplicationUser,
         ApplicationRole,
@@ -28,6 +28,5 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
         modelBuilder.ApplyPermissionsSeed();
         modelBuilder.ApplyRoleSeeder();
-        modelBuilder.ApplyRoleClaimSeeder();
     }
 }

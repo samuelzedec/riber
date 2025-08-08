@@ -2,14 +2,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SnackFlow.Domain.Entities;
 using SnackFlow.Domain.ValueObjects.FullName;
+using SnackFlow.Infrastructure.Persistence.Identity;
 
 namespace SnackFlow.Infrastructure.Persistence.Mappings;
 
-public class UserMap : IEntityTypeConfiguration<User>
+public sealed class UserMap : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        builder.ToTable("user");
+        builder.ToTable("users");
 
         builder
             .HasKey(u => u.Id)
@@ -20,6 +21,13 @@ public class UserMap : IEntityTypeConfiguration<User>
             .HasColumnType("uuid")
             .HasColumnName("id")
             .IsRequired();
+        
+        builder
+            .HasOne<ApplicationUser>()
+            .WithOne()
+            .HasForeignKey<User>(x => x.ApplicationUserId)
+            .HasConstraintName("fk_user_application_user_id")
+            .HasPrincipalKey<ApplicationUser>(x => x.Id);
 
         builder
             .Property(u => u.CompanyId)
@@ -32,10 +40,7 @@ public class UserMap : IEntityTypeConfiguration<User>
             .HasColumnName("position")
             .HasConversion<string>()
             .IsRequired();
-
-        builder
-            .HasIndex(u => u.CompanyId, "ix_user_company_id");
-
+        
         builder
             .HasOne(u => u.Company)
             .WithMany()
@@ -94,5 +99,16 @@ public class UserMap : IEntityTypeConfiguration<User>
                 .HasMaxLength(FullName.MaxLength)
                 .IsRequired();
         });
+        
+        builder
+            .Property(i => i.PublicToken)
+            .HasColumnName("public_token")
+            .HasColumnType("text")
+            .HasMaxLength(64)
+            .IsRequired();
+        
+        builder
+            .HasIndex(i => i.PublicToken, "uq_user_public_token")
+            .IsUnique();
     }
 }

@@ -17,6 +17,7 @@ public sealed class UnitOfWork(AppDbContext context, IMediator mediator)
     private IDbContextTransaction? _transaction;
     private ICompanyRepository? _companyRepository;
     private IUserRepository? _userRepository;
+    private IInvitationRepository? _invitationRepository;
 
     #endregion
     
@@ -27,6 +28,10 @@ public sealed class UnitOfWork(AppDbContext context, IMediator mediator)
     
     public IUserRepository Users
         => _userRepository ??= new UserRepository(context);
+    
+    public IInvitationRepository Invitations
+        => _invitationRepository ??= new InvitationRepository(context);
+    
     #endregion
 
     #region Default Methods

@@ -2,7 +2,6 @@
 using SnackFlow.Application.Abstractions.Commands;
 using SnackFlow.Application.Common;
 using SnackFlow.Application.Exceptions;
-using SnackFlow.Application.Extensions;
 using SnackFlow.Domain.Constants;
 using SnackFlow.Domain.Entities;
 using SnackFlow.Domain.Events;
@@ -21,15 +20,7 @@ internal sealed class CreateCompanyCommandHandler(IUnitOfWork unitOfWork)
         var companyRepository = unitOfWork.Companies;
         await ValidateFieldsRequestAsync(request, cancellationToken);
 
-        var companyEntity = Company.Create(
-            corporateName: request.CorporateName,
-            fantasyName: request.FantasyName,
-            taxId: request.TaxId,
-            email: request.Email,
-            phone: request.Phone,
-            type: request.Type
-        );
-
+        var companyEntity = CreateCompanyCommand.ToCompany(request);
         companyEntity.RaiseEvent(new CompanyWelcomeEmailRequestedEvent(
             companyEntity.Name,
             companyEntity.Email
@@ -38,13 +29,7 @@ internal sealed class CreateCompanyCommandHandler(IUnitOfWork unitOfWork)
         await companyRepository.CreateAsync(companyEntity, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return new CreateCompanyCommandResponse(
-            CompanyId: companyEntity.Id,
-            FantasyName: companyEntity.Name,
-            Email: companyEntity.Email,
-            Phone: companyEntity.Phone,
-            Type: companyEntity.TaxId.Type.GetDescription()
-        );
+        return CreateCompanyCommandResponse.FromCompany(companyEntity);
     }
 
     private async Task ValidateFieldsRequestAsync(

@@ -1,7 +1,6 @@
 using SnackFlow.Application.Abstractions.Queries;
 using SnackFlow.Application.Common;
 using SnackFlow.Application.Exceptions;
-using SnackFlow.Application.Extensions;
 using SnackFlow.Domain.Constants;
 using SnackFlow.Domain.Repositories;
 
@@ -18,16 +17,8 @@ internal sealed class GetCompanyByIdQueryHandler(IUnitOfWork unitOfWork)
             cancellationToken
         );
 
-        if (company is null)
-            throw new NotFoundException(ErrorMessage.NotFound.Company);
-
-        return new GetCompanyByIdQueryResponse(
-            CorporateName: company.Name.Corporate,
-            FantasyName: company.Name,
-            Email: company.Email,
-            Phone: company.Phone,
-            TaxId: company.TaxId,
-            Type: company.TaxId.Type.GetDescription()
-        );
+        return company is null
+            ? throw new NotFoundException(ErrorMessage.NotFound.Company)
+            : GetCompanyByIdQueryResponse.FromCompany(company);
     }
 }

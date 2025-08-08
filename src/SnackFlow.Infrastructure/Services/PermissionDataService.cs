@@ -61,7 +61,7 @@ public sealed class PermissionDataService(
         }
     }
 
-    public async Task<ICollection<PermissionDTO>> GetAllWithDescriptionsAsync()
+    public async Task<IEnumerable<PermissionDTO>> GetAllWithDescriptionsAsync()
     {
         try
         {
