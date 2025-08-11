@@ -1,10 +1,13 @@
 using System.Linq.Expressions;
 using Bogus.Extensions.Brazil;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
+using SnackFlow.Application.Abstractions.Services;
+using SnackFlow.Application.DTOs;
 using SnackFlow.Application.Exceptions;
 using SnackFlow.Application.Extensions;
-using SnackFlow.Application.Features.Companies.Commands.CreateCompany;
+using SnackFlow.Application.Features.Companies.Commands.CreateCompanyWithAdmin;
 using SnackFlow.Domain.Constants;
 using SnackFlow.Domain.Entities;
 using SnackFlow.Domain.Enums;
@@ -13,28 +16,41 @@ using SnackFlow.Domain.Tests;
 
 namespace SnackFlow.Application.Tests.Features.Companies.Commands;
 
-public class CreateCompanyCommandHandlerUnitTests : BaseTest
+public class CreateCompanyWithAdminCommandHandlerUnitTests : BaseTest
 {
     #region Setup
 
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly Mock<ICompanyRepository> _mockCompanyRepository;
-    private readonly CreateCompanyCommandHandler _commandHandler;
-    private readonly CreateCompanyCommand _command;
+    private readonly Mock<IUserCreationService> _mockUserCreationService;
+    private readonly Mock<ILogger<CreateCompanyWithAdminCommandHandler>> _mockLogger;
+    private readonly CreateCompanyWithAdminCommandHandler _commandHandler;
+    private readonly CreateCompanyWithAdminCommand _command;
 
-    public CreateCompanyCommandHandlerUnitTests()
+    public CreateCompanyWithAdminCommandHandlerUnitTests()
     {
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _mockCompanyRepository = new Mock<ICompanyRepository>();
-        _commandHandler = new CreateCompanyCommandHandler(_mockUnitOfWork.Object);
+        _mockUserCreationService = new Mock<IUserCreationService>();
+        _mockLogger = new Mock<ILogger<CreateCompanyWithAdminCommandHandler>>();
+        _commandHandler = new CreateCompanyWithAdminCommandHandler(
+            _mockUnitOfWork.Object, 
+            _mockUserCreationService.Object,
+            _mockLogger.Object);
         
-        _command = new CreateCompanyCommand(
-            _faker.Person.FullName,
-            _faker.Company.CompanyName(),
-            _faker.Company.Cnpj(),
-            _faker.Person.Email,
-            _faker.Phone.PhoneNumber("(92) 9####-####"),
-            TaxIdType.LegalEntityWithCnpj
+        _command = new CreateCompanyWithAdminCommand(
+            CorporateName: _faker.Company.CompanyName(),
+            FantasyName: _faker.Company.CompanyName(),
+            TaxId: _faker.Company.Cnpj(),
+            Email: _faker.Person.Email,
+            Phone: _faker.Phone.PhoneNumber("(92) 9####-####"),
+            Type: TaxIdType.LegalEntityWithCnpj,
+            AdminFullName: _faker.Person.FullName,
+            AdminUserName: _faker.Internet.UserName(),
+            AdminEmail: _faker.Person.Email,
+            AdminPassword: _faker.Internet.Password(),
+            AdminPhoneNumber: _faker.Phone.PhoneNumber("(92) 9####-####"),
+            AdminTaxId: _faker.Person.Cpf()
         );
     }
 
@@ -42,8 +58,8 @@ public class CreateCompanyCommandHandlerUnitTests : BaseTest
 
     #region Success Tests
 
-    [Fact(DisplayName = "Should create company successfully when all data is valid")]
-    public async Task Handle_WhenAllDataIsValid_ShouldCreateCompanySuccessfully()
+    [Fact(DisplayName = "Should create company with admin successfully when all data is valid")]
+    public async Task Handle_WhenAllDataIsValid_ShouldCreateCompanyWithAdminSuccessfully()
     {
         // Arrange
         _mockCompanyRepository
@@ -60,12 +76,20 @@ public class CreateCompanyCommandHandlerUnitTests : BaseTest
             .Setup(x => x.CreateAsync(It.IsAny<Company>(),
                 It.IsAny<CancellationToken>()));
 
+        _mockUserCreationService
+            .Setup(x => x.CreateCompleteUserAsync(
+                It.IsAny<CreateUserCompleteDTO>(),
+                It.IsAny<CancellationToken>()));
+
         _mockUnitOfWork
             .Setup(x => x.Companies)
             .Returns(_mockCompanyRepository.Object);
 
         _mockUnitOfWork
-            .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()));
+            .Setup(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()));
+
+        _mockUnitOfWork
+            .Setup(x => x.CommitTransactionAsync(It.IsAny<CancellationToken>()));
 
         // Act
         var result = await _commandHandler.Handle(_command, CancellationToken.None);
@@ -79,6 +103,8 @@ public class CreateCompanyCommandHandlerUnitTests : BaseTest
         result.Value.FantasyName.Should().Be(_command.FantasyName);
         result.Value.Phone.Should().Be(_command.Phone);
         result.Value.Type.Should().Be(TaxIdType.LegalEntityWithCnpj.GetDescription());
+        result.Value.AdminUserEmail.Should().Be(_command.AdminEmail);
+        result.Value.AdminUserName.Should().Be(_command.AdminUserName);
 
         _mockCompanyRepository.Verify(x => x.ExistsAsync(
             It.IsAny<Expression<Func<Company, bool>>>(), It.IsAny<CancellationToken>()), Times.Exactly(4));
@@ -86,7 +112,13 @@ public class CreateCompanyCommandHandlerUnitTests : BaseTest
         _mockCompanyRepository.Verify(x => x.CreateAsync(
             It.IsAny<Company>(), CancellationToken.None), Times.Once);
 
-        _mockUnitOfWork.Verify(x => x.SaveChangesAsync(
+        _mockUserCreationService.Verify(x => x.CreateCompleteUserAsync(
+            It.IsAny<CreateUserCompleteDTO>(), CancellationToken.None), Times.Once);
+
+        _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(
+            It.IsAny<CancellationToken>()), Times.Once);
+
+        _mockUnitOfWork.Verify(x => x.CommitTransactionAsync(
             It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -112,6 +144,12 @@ public class CreateCompanyCommandHandlerUnitTests : BaseTest
             .Setup(x => x.Companies)
             .Returns(_mockCompanyRepository.Object);
 
+        _mockUnitOfWork
+            .Setup(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()));
+
+        _mockUnitOfWork
+            .Setup(x => x.RollbackTransactionAsync(It.IsAny<CancellationToken>()));
+
         // Act
         var result = async () => await _commandHandler.Handle(_command, CancellationToken.None);
 
@@ -126,7 +164,16 @@ public class CreateCompanyCommandHandlerUnitTests : BaseTest
         _mockCompanyRepository.Verify(x => x.CreateAsync(
             It.IsAny<Company>(), CancellationToken.None), Times.Never);
 
-        _mockUnitOfWork.Verify(x => x.SaveChangesAsync(
+        _mockUserCreationService.Verify(x => x.CreateCompleteUserAsync(
+            It.IsAny<CreateUserCompleteDTO>(), It.IsAny<CancellationToken>()), Times.Never);
+
+        _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(
+            It.IsAny<CancellationToken>()), Times.Once);
+
+        _mockUnitOfWork.Verify(x => x.RollbackTransactionAsync(
+            It.IsAny<CancellationToken>()), Times.Once);
+
+        _mockUnitOfWork.Verify(x => x.CommitTransactionAsync(
             It.IsAny<CancellationToken>()), Times.Never);
     }
 
@@ -148,6 +195,12 @@ public class CreateCompanyCommandHandlerUnitTests : BaseTest
             .Setup(x => x.Companies)
             .Returns(_mockCompanyRepository.Object);
 
+        _mockUnitOfWork
+            .Setup(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()));
+
+        _mockUnitOfWork
+            .Setup(x => x.RollbackTransactionAsync(It.IsAny<CancellationToken>()));
+
         // Act
         var result = async () => await _commandHandler.Handle(_command, CancellationToken.None);
 
@@ -162,7 +215,16 @@ public class CreateCompanyCommandHandlerUnitTests : BaseTest
         _mockCompanyRepository.Verify(x => x.CreateAsync(
             It.IsAny<Company>(), CancellationToken.None), Times.Never);
 
-        _mockUnitOfWork.Verify(x => x.SaveChangesAsync(
+        _mockUserCreationService.Verify(x => x.CreateCompleteUserAsync(
+            It.IsAny<CreateUserCompleteDTO>(), It.IsAny<CancellationToken>()), Times.Never);
+
+        _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(
+            It.IsAny<CancellationToken>()), Times.Once);
+
+        _mockUnitOfWork.Verify(x => x.RollbackTransactionAsync(
+            It.IsAny<CancellationToken>()), Times.Once);
+
+        _mockUnitOfWork.Verify(x => x.CommitTransactionAsync(
             It.IsAny<CancellationToken>()), Times.Never);
     }
 
@@ -184,6 +246,12 @@ public class CreateCompanyCommandHandlerUnitTests : BaseTest
             .Setup(x => x.Companies)
             .Returns(_mockCompanyRepository.Object);
 
+        _mockUnitOfWork
+            .Setup(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()));
+
+        _mockUnitOfWork
+            .Setup(x => x.RollbackTransactionAsync(It.IsAny<CancellationToken>()));
+
         // Act
         var result = async () => await _commandHandler.Handle(_command, CancellationToken.None);
 
@@ -198,7 +266,16 @@ public class CreateCompanyCommandHandlerUnitTests : BaseTest
         _mockCompanyRepository.Verify(x => x.CreateAsync(
             It.IsAny<Company>(), CancellationToken.None), Times.Never);
 
-        _mockUnitOfWork.Verify(x => x.SaveChangesAsync(
+        _mockUserCreationService.Verify(x => x.CreateCompleteUserAsync(
+            It.IsAny<CreateUserCompleteDTO>(), It.IsAny<CancellationToken>()), Times.Never);
+
+        _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(
+            It.IsAny<CancellationToken>()), Times.Once);
+
+        _mockUnitOfWork.Verify(x => x.RollbackTransactionAsync(
+            It.IsAny<CancellationToken>()), Times.Once);
+
+        _mockUnitOfWork.Verify(x => x.CommitTransactionAsync(
             It.IsAny<CancellationToken>()), Times.Never);
     }
 
@@ -220,6 +297,12 @@ public class CreateCompanyCommandHandlerUnitTests : BaseTest
             .Setup(x => x.Companies)
             .Returns(_mockCompanyRepository.Object);
 
+        _mockUnitOfWork
+            .Setup(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()));
+
+        _mockUnitOfWork
+            .Setup(x => x.RollbackTransactionAsync(It.IsAny<CancellationToken>()));
+
         // Act
         var result = async () => await _commandHandler.Handle(_command, CancellationToken.None);
 
@@ -234,8 +317,78 @@ public class CreateCompanyCommandHandlerUnitTests : BaseTest
         _mockCompanyRepository.Verify(x => x.CreateAsync(
             It.IsAny<Company>(), CancellationToken.None), Times.Never);
 
-        _mockUnitOfWork.Verify(x => x.SaveChangesAsync(
+        _mockUserCreationService.Verify(x => x.CreateCompleteUserAsync(
+            It.IsAny<CreateUserCompleteDTO>(), It.IsAny<CancellationToken>()), Times.Never);
+
+        _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(
+            It.IsAny<CancellationToken>()), Times.Once);
+
+        _mockUnitOfWork.Verify(x => x.RollbackTransactionAsync(
+            It.IsAny<CancellationToken>()), Times.Once);
+
+        _mockUnitOfWork.Verify(x => x.CommitTransactionAsync(
             It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    #endregion
+
+    #region Exception Tests
+
+    [Fact(DisplayName = "Should rollback transaction and log error when unexpected exception occurs")]
+    public async Task Handle_WhenUnexpectedExceptionOccurs_ShouldRollbackTransactionAndLogError()
+    {
+        // Arrange
+        var expectedException = new InvalidOperationException("Test exception");
+
+        _mockCompanyRepository
+            .SetupSequence(x => x.ExistsAsync(
+                It.IsAny<Expression<Func<Company, bool>>>(),
+                It.IsAny<CancellationToken>()
+            ))
+            .ReturnsAsync(false)
+            .ReturnsAsync(false)
+            .ReturnsAsync(false)
+            .ReturnsAsync(false);
+
+        _mockCompanyRepository
+            .Setup(x => x.CreateAsync(It.IsAny<Company>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(expectedException);
+
+        _mockUnitOfWork
+            .Setup(x => x.Companies)
+            .Returns(_mockCompanyRepository.Object);
+
+        _mockUnitOfWork
+            .Setup(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()));
+
+        _mockUnitOfWork
+            .Setup(x => x.RollbackTransactionAsync(It.IsAny<CancellationToken>()));
+
+        // Act
+        var result = async () => await _commandHandler.Handle(_command, CancellationToken.None);
+
+        // Assert
+        await result.Should()
+            .ThrowAsync<InvalidOperationException>()
+            .WithMessage("Test exception");
+
+        _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(
+            It.IsAny<CancellationToken>()), Times.Once);
+
+        _mockUnitOfWork.Verify(x => x.RollbackTransactionAsync(
+            It.IsAny<CancellationToken>()), Times.Once);
+
+        _mockUnitOfWork.Verify(x => x.CommitTransactionAsync(
+            It.IsAny<CancellationToken>()), Times.Never);
+
+        _mockLogger.Verify(
+            x => x.Log(
+                LogLevel.Error,
+                It.IsAny<EventId>(),
+                It.IsAny<It.IsAnyType>(),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
     }
 
     #endregion
@@ -258,6 +411,12 @@ public class CreateCompanyCommandHandlerUnitTests : BaseTest
             .Setup(x => x.Companies)
             .Returns(_mockCompanyRepository.Object);
 
+        _mockUnitOfWork
+            .Setup(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()));
+
+        _mockUnitOfWork
+            .Setup(x => x.RollbackTransactionAsync(It.IsAny<CancellationToken>()));
+
         // Act
         var result = async () => await _commandHandler.Handle(_command, mockCancellationToken);
 
@@ -273,12 +432,21 @@ public class CreateCompanyCommandHandlerUnitTests : BaseTest
         _mockCompanyRepository.Verify(x => x.CreateAsync(
             It.IsAny<Company>(), CancellationToken.None), Times.Never);
 
-        _mockUnitOfWork.Verify(x => x.SaveChangesAsync(
+        _mockUserCreationService.Verify(x => x.CreateCompleteUserAsync(
+            It.IsAny<CreateUserCompleteDTO>(), It.IsAny<CancellationToken>()), Times.Never);
+
+        _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(
+            It.IsAny<CancellationToken>()), Times.Once);
+
+        _mockUnitOfWork.Verify(x => x.RollbackTransactionAsync(
+            It.IsAny<CancellationToken>()), Times.Once);
+
+        _mockUnitOfWork.Verify(x => x.CommitTransactionAsync(
             It.IsAny<CancellationToken>()), Times.Never);
     }
 
-    [Fact(DisplayName = "Should respect cancellation token during save changes")]
-    public async Task Handle_WhenCancellationTokenDuringSaveChanges_ShouldRespectCancellationToken()
+    [Fact(DisplayName = "Should respect cancellation token during commit transaction")]
+    public async Task Handle_WhenCancellationTokenDuringCommitTransaction_ShouldRespectCancellationToken()
     {
         // Arrange
         var mockCancellationToken = new CancellationToken(true);
@@ -296,13 +464,24 @@ public class CreateCompanyCommandHandlerUnitTests : BaseTest
         _mockCompanyRepository
             .Setup(x => x.CreateAsync(It.IsAny<Company>(), CancellationToken.None));
 
+        _mockUserCreationService
+            .Setup(x => x.CreateCompleteUserAsync(
+                It.IsAny<CreateUserCompleteDTO>(),
+                It.IsAny<CancellationToken>()));
+
         _mockUnitOfWork
             .Setup(x => x.Companies)
             .Returns(_mockCompanyRepository.Object);
 
         _mockUnitOfWork
-            .Setup(x => x.SaveChangesAsync(It.Is<CancellationToken>(ct => ct.IsCancellationRequested)))
+            .Setup(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()));
+
+        _mockUnitOfWork
+            .Setup(x => x.CommitTransactionAsync(It.Is<CancellationToken>(ct => ct.IsCancellationRequested)))
             .ThrowsAsync(new OperationCanceledException());
+
+        _mockUnitOfWork
+            .Setup(x => x.RollbackTransactionAsync(It.IsAny<CancellationToken>()));
 
         // Act
         var result = async () => await _commandHandler.Handle(_command, mockCancellationToken);
@@ -317,8 +496,17 @@ public class CreateCompanyCommandHandlerUnitTests : BaseTest
         _mockCompanyRepository.Verify(x => x.CreateAsync(
             It.IsAny<Company>(), CancellationToken.None), Times.Never);
 
-        _mockUnitOfWork.Verify(x => x.SaveChangesAsync(
+        _mockUserCreationService.Verify(x => x.CreateCompleteUserAsync(
+            It.IsAny<CreateUserCompleteDTO>(), CancellationToken.None), Times.Never);
+
+        _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(
+            It.IsAny<CancellationToken>()), Times.Once);
+
+        _mockUnitOfWork.Verify(x => x.CommitTransactionAsync(
             It.Is<CancellationToken>(ct => ct.IsCancellationRequested)), Times.Once);
+
+        _mockUnitOfWork.Verify(x => x.RollbackTransactionAsync(
+            It.IsAny<CancellationToken>()), Times.Once);
     }
 
     #endregion

@@ -1,4 +1,3 @@
-using System.Transactions;
 using Microsoft.Extensions.Logging;
 using SnackFlow.Application.Abstractions.Commands;
 using SnackFlow.Application.Abstractions.Services;
@@ -6,54 +5,39 @@ using SnackFlow.Application.Common;
 using SnackFlow.Application.DTOs;
 using SnackFlow.Application.Exceptions;
 using SnackFlow.Domain.Constants;
-using SnackFlow.Domain.Entities;
 using SnackFlow.Domain.Repositories;
-using SnackFlow.Domain.ValueObjects.Email;
-using SnackFlow.Domain.ValueObjects.Phone;
 
 namespace SnackFlow.Application.Features.Users.Commands.CreateUser;
 
 internal sealed class CreateUserCommandHandler(
     IUnitOfWork unitOfWork,
-    IAuthService  authService,
+    IUserCreationService userCreationService,
     ILogger<CreateUserCommandHandler> logger)
     : ICommandHandler<CreateUserCommand, CreateUserCommandResponse>
 {
-    public async ValueTask<Result<CreateUserCommandResponse>> Handle(CreateUserCommand command,
+    public async ValueTask<Result<CreateUserCommandResponse>> Handle(
+        CreateUserCommand command,
         CancellationToken cancellationToken)
     {
-        using var transaction = new TransactionScope(
-            TransactionScopeOption.Required,
-            new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted, Timeout = TimeSpan.FromMinutes(1) },
-            TransactionScopeAsyncFlowOption.Enabled
-        );
-
+        await unitOfWork.BeginTransactionAsync(cancellationToken);
         try
         {
-            await VerifyIfUserExists(command);
-
-            var domainUser = User.Create(
-                fullName: command.FullName,
-                taxId: command.TaxId,
-                position: command.Position,
-                companyId: command.CompanyId
+            await userCreationService.CreateCompleteUserAsync(
+                new CreateUserCompleteDTO(
+                    FullName: command.FullName,
+                    UserName: command.UserName,
+                    Email: command.Email,
+                    Password: command.Password,
+                    PhoneNumber: command.PhoneNumber,
+                    TaxId: command.TaxId,
+                    Position: command.Position,
+                    Roles: ["Viewer"],
+                    CompanyId: command.CompanyId
+                ),
+                cancellationToken
             );
 
-            var applicationUser = new CreateApplicationUserDTO
-            {
-                UserName = command.UserName,
-                Email = Email.Create(command.Email).Value,
-                Name = command.FullName.Split(' ')[0],
-                Password = command.Password,
-                PhoneNumber = Phone.Create(command.PhoneNumber).Value,
-                UserDomainId = domainUser.Id
-            };
-
-            await unitOfWork.Users.CreateAsync(domainUser, cancellationToken);
-            await unitOfWork.SaveChangesAsync(cancellationToken);
-            await authService.CreateAsync(applicationUser, cancellationToken);
-            transaction.Complete();
-
+            await unitOfWork.CommitTransactionAsync(cancellationToken);
             return new CreateUserCommandResponse(
                 command.UserName,
                 command.Email
@@ -61,36 +45,14 @@ internal sealed class CreateUserCommandHandler(
         }
         catch (ConflictException)
         {
+            await unitOfWork.RollbackTransactionAsync(cancellationToken);
             throw;
         }
         catch (Exception ex)
         {
+            await unitOfWork.RollbackTransactionAsync(cancellationToken);
             logger.LogError(ex, ErrorMessage.Exception.Unexpected(ex.GetType().Name, ex.Message));
             throw;
         }
-    }
-
-    private async Task VerifyIfUserExists(CreateUserCommand command)
-    {
-        Task<UserDetailsDTO?>[] userTasks =
-        [
-            authService.FindByEmailAsync(command.Email),
-            authService.FindByUserNameAsync(command.UserName),
-            authService.FindByPhoneAsync(command.PhoneNumber)
-        ];
-
-        var results = await Task.WhenAll(userTasks);
-        
-        if (results[0] is not null) 
-            throw new ConflictException(ErrorMessage.Conflict.EmailAlreadyExists);
-        
-        if (results[1] is not null) 
-            throw new ConflictException(ErrorMessage.Conflict.UserNameAlreadyExists);
-        
-        if (results[2] is not null) 
-            throw new ConflictException(ErrorMessage.Conflict.PhoneAlreadyExists);
-        
-        if (await unitOfWork.Users.ExistsAsync(x => x.TaxId.Value == command.TaxId)) 
-            throw new ConflictException(ErrorMessage.Conflict.TaxIdAlreadyExists);
     }
 }

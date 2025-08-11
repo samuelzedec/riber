@@ -8,11 +8,178 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SnackFlow.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class AddSeedersForRoleClaimAndRoles : Migration
+    public partial class AddInvitationEntityAndPermissionSeeders : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_aspnet_user_user_user_domain_id",
+                table: "aspnet_user");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_user_company_company_id",
+                table: "user");
+
+            migrationBuilder.DropPrimaryKey(
+                name: "PK_aspnet_user_claim",
+                table: "aspnet_user_claim");
+
+            migrationBuilder.DropPrimaryKey(
+                name: "PK_aspnet_user",
+                table: "aspnet_user");
+
+            migrationBuilder.DropPrimaryKey(
+                name: "PK_aspnet_role",
+                table: "aspnet_role");
+
+            migrationBuilder.DeleteData(
+                table: "application_permissions",
+                keyColumn: "id",
+                keyValue: 105);
+
+            migrationBuilder.DeleteData(
+                table: "application_permissions",
+                keyColumn: "id",
+                keyValue: 205);
+
+            migrationBuilder.DeleteData(
+                table: "application_permissions",
+                keyColumn: "id",
+                keyValue: 703);
+
+            migrationBuilder.DeleteData(
+                table: "application_permissions",
+                keyColumn: "id",
+                keyValue: 704);
+
+            migrationBuilder.DeleteData(
+                table: "application_permissions",
+                keyColumn: "id",
+                keyValue: 705);
+
+            migrationBuilder.RenameIndex(
+                name: "ix_aspnet_user_user_domain_id",
+                table: "aspnet_user",
+                newName: "uq_aspnet_user_user_domain_id");
+
+            migrationBuilder.RenameIndex(
+                name: "ix_aspnet_user_normalized_user_name",
+                table: "aspnet_user",
+                newName: "uq_aspnet_user_normalized_user_name");
+
+            migrationBuilder.RenameIndex(
+                name: "ix_asp_net_user_email",
+                table: "aspnet_user",
+                newName: "uq_asp_net_user_email");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "security_stamp",
+                table: "aspnet_user",
+                type: "varchar(36)",
+                nullable: false,
+                defaultValue: "",
+                oldClrType: typeof(string),
+                oldType: "varchar(36)",
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "concurrency_stamp",
+                table: "aspnet_user",
+                type: "varchar(36)",
+                nullable: false,
+                defaultValue: "",
+                oldClrType: typeof(string),
+                oldType: "varchar(36)",
+                oldNullable: true);
+
+            migrationBuilder.AddPrimaryKey(
+                name: "pk_aspnet_user_claim_id",
+                table: "aspnet_user_claim",
+                column: "id");
+
+            migrationBuilder.AddPrimaryKey(
+                name: "pk_aspnet_user_id",
+                table: "aspnet_user",
+                column: "id");
+
+            migrationBuilder.AddPrimaryKey(
+                name: "pk_aspnet_role_id",
+                table: "aspnet_role",
+                column: "id");
+
+            migrationBuilder.CreateTable(
+                name: "invitations",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    email = table.Column<string>(type: "text", maxLength: 255, nullable: false),
+                    company_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    position = table.Column<string>(type: "text", maxLength: 50, nullable: false),
+                    role = table.Column<string>(type: "text", maxLength: 30, nullable: false),
+                    permissions = table.Column<string>(type: "text", nullable: false),
+                    created_by_user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    is_used = table.Column<bool>(type: "boolean", nullable: false),
+                    expires_at = table.Column<DateTime>(type: "timestamptz", nullable: false),
+                    invite_token = table.Column<string>(type: "text", maxLength: 64, nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamptz", nullable: false),
+                    modified_at = table.Column<DateTime>(type: "timestamptz", nullable: true),
+                    deleted_at = table.Column<DateTime>(type: "timestamptz", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_invitations_id", x => x.id);
+                });
+
+            migrationBuilder.UpdateData(
+                table: "application_permissions",
+                keyColumn: "id",
+                keyValue: 101,
+                columns: new[] { "Description", "name" },
+                values: new object[] { "Ver empresa", "companies.read" });
+
+            migrationBuilder.UpdateData(
+                table: "application_permissions",
+                keyColumn: "id",
+                keyValue: 102,
+                columns: new[] { "Description", "name" },
+                values: new object[] { "Editar empresas", "companies.update" });
+
+            migrationBuilder.UpdateData(
+                table: "application_permissions",
+                keyColumn: "id",
+                keyValue: 103,
+                columns: new[] { "Description", "name" },
+                values: new object[] { "Excluir empresas", "companies.delete" });
+
+            migrationBuilder.UpdateData(
+                table: "application_permissions",
+                keyColumn: "id",
+                keyValue: 104,
+                columns: new[] { "Description", "name" },
+                values: new object[] { "Gerenciar usuários da empresa", "companies.manage_users" });
+
+            migrationBuilder.UpdateData(
+                table: "application_permissions",
+                keyColumn: "id",
+                keyValue: 602,
+                column: "Description",
+                value: "Editar configurações");
+
+            migrationBuilder.UpdateData(
+                table: "application_permissions",
+                keyColumn: "id",
+                keyValue: 701,
+                columns: new[] { "Description", "name" },
+                values: new object[] { "Visualizar funções", "roles.read" });
+
+            migrationBuilder.UpdateData(
+                table: "application_permissions",
+                keyColumn: "id",
+                keyValue: 702,
+                columns: new[] { "Description", "name" },
+                values: new object[] { "Editar funções", "roles.update" });
+
             migrationBuilder.InsertData(
                 table: "aspnet_role",
                 columns: new[] { "id", "concurrency_stamp", "name", "normalized_name" },
@@ -81,11 +248,107 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                     { 50, "permission", "orders.read", new Guid("f9bb36fe-9ac3-4cad-9a37-b90eab601cf5") },
                     { 51, "permission", "products.read", new Guid("f9bb36fe-9ac3-4cad-9a37-b90eab601cf5") }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "uq_asp_net_user_normalized_email",
+                table: "aspnet_user",
+                column: "normalized_email",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "uq_aspnet_user_phone_number",
+                table: "aspnet_user",
+                column: "phone_number",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "uq_aspnet_user_user_name",
+                table: "aspnet_user",
+                column: "user_name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "uq_application_permission_name",
+                table: "application_permissions",
+                column: "name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_invitations_company_id",
+                table: "invitations",
+                column: "company_id");
+
+            migrationBuilder.CreateIndex(
+                name: "uq_company_email1",
+                table: "invitations",
+                column: "email",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "uq_invitations_invite_token",
+                table: "invitations",
+                column: "invite_token",
+                unique: true);
+
+            migrationBuilder.AddForeignKey(
+                name: "fk_aspnet_user_user_domain_id",
+                table: "aspnet_user",
+                column: "user_domain_id",
+                principalTable: "user",
+                principalColumn: "id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "fk_user_company_id",
+                table: "user",
+                column: "company_id",
+                principalTable: "company",
+                principalColumn: "id",
+                onDelete: ReferentialAction.SetNull);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "fk_aspnet_user_user_domain_id",
+                table: "aspnet_user");
+
+            migrationBuilder.DropForeignKey(
+                name: "fk_user_company_id",
+                table: "user");
+
+            migrationBuilder.DropTable(
+                name: "invitations");
+
+            migrationBuilder.DropPrimaryKey(
+                name: "pk_aspnet_user_claim_id",
+                table: "aspnet_user_claim");
+
+            migrationBuilder.DropPrimaryKey(
+                name: "pk_aspnet_user_id",
+                table: "aspnet_user");
+
+            migrationBuilder.DropIndex(
+                name: "uq_asp_net_user_normalized_email",
+                table: "aspnet_user");
+
+            migrationBuilder.DropIndex(
+                name: "uq_aspnet_user_phone_number",
+                table: "aspnet_user");
+
+            migrationBuilder.DropIndex(
+                name: "uq_aspnet_user_user_name",
+                table: "aspnet_user");
+
+            migrationBuilder.DropPrimaryKey(
+                name: "pk_aspnet_role_id",
+                table: "aspnet_role");
+
+            migrationBuilder.DropIndex(
+                name: "uq_application_permission_name",
+                table: "application_permissions");
+
             migrationBuilder.DeleteData(
                 table: "aspnet_role",
                 keyColumn: "id",
@@ -360,6 +623,129 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                 table: "aspnet_role_claim",
                 keyColumn: "id",
                 keyValue: 51);
+
+            migrationBuilder.RenameIndex(
+                name: "uq_aspnet_user_user_domain_id",
+                table: "aspnet_user",
+                newName: "ix_aspnet_user_user_domain_id");
+
+            migrationBuilder.RenameIndex(
+                name: "uq_aspnet_user_normalized_user_name",
+                table: "aspnet_user",
+                newName: "ix_aspnet_user_normalized_user_name");
+
+            migrationBuilder.RenameIndex(
+                name: "uq_asp_net_user_email",
+                table: "aspnet_user",
+                newName: "ix_asp_net_user_email");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "security_stamp",
+                table: "aspnet_user",
+                type: "varchar(36)",
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "varchar(36)");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "concurrency_stamp",
+                table: "aspnet_user",
+                type: "varchar(36)",
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "varchar(36)");
+
+            migrationBuilder.AddPrimaryKey(
+                name: "PK_aspnet_user_claim",
+                table: "aspnet_user_claim",
+                column: "id");
+
+            migrationBuilder.AddPrimaryKey(
+                name: "PK_aspnet_user",
+                table: "aspnet_user",
+                column: "id");
+
+            migrationBuilder.AddPrimaryKey(
+                name: "PK_aspnet_role",
+                table: "aspnet_role",
+                column: "id");
+
+            migrationBuilder.UpdateData(
+                table: "application_permissions",
+                keyColumn: "id",
+                keyValue: 101,
+                columns: new[] { "Description", "name" },
+                values: new object[] { "Criar empresas", "companies.create" });
+
+            migrationBuilder.UpdateData(
+                table: "application_permissions",
+                keyColumn: "id",
+                keyValue: 102,
+                columns: new[] { "Description", "name" },
+                values: new object[] { "Ver empresas", "companies.read" });
+
+            migrationBuilder.UpdateData(
+                table: "application_permissions",
+                keyColumn: "id",
+                keyValue: 103,
+                columns: new[] { "Description", "name" },
+                values: new object[] { "Editar empresas", "companies.update" });
+
+            migrationBuilder.UpdateData(
+                table: "application_permissions",
+                keyColumn: "id",
+                keyValue: 104,
+                columns: new[] { "Description", "name" },
+                values: new object[] { "Excluir empresas", "companies.delete" });
+
+            migrationBuilder.UpdateData(
+                table: "application_permissions",
+                keyColumn: "id",
+                keyValue: 602,
+                column: "Description",
+                value: "Alterar configurações");
+
+            migrationBuilder.UpdateData(
+                table: "application_permissions",
+                keyColumn: "id",
+                keyValue: 701,
+                columns: new[] { "Description", "name" },
+                values: new object[] { "Criar perfis de acesso", "roles.create" });
+
+            migrationBuilder.UpdateData(
+                table: "application_permissions",
+                keyColumn: "id",
+                keyValue: 702,
+                columns: new[] { "Description", "name" },
+                values: new object[] { "Visualizar perfis de acesso", "roles.read" });
+
+            migrationBuilder.InsertData(
+                table: "application_permissions",
+                columns: new[] { "id", "category", "Description", "name" },
+                values: new object[,]
+                {
+                    { 105, "Companies", "Gerenciar usuários da empresa", "companies.manage_users" },
+                    { 205, "Orders", "Aprovar pedidos", "orders.approve" },
+                    { 703, "Roles", "Editar perfis de acesso", "roles.update" },
+                    { 704, "Roles", "Excluir perfis de acesso", "roles.delete" },
+                    { 705, "Roles", "Atribuir permissões aos perfis", "roles.assign_permissions" }
+                });
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_aspnet_user_user_user_domain_id",
+                table: "aspnet_user",
+                column: "user_domain_id",
+                principalTable: "user",
+                principalColumn: "id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_user_company_company_id",
+                table: "user",
+                column: "company_id",
+                principalTable: "company",
+                principalColumn: "id",
+                onDelete: ReferentialAction.SetNull);
         }
     }
 }

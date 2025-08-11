@@ -5,7 +5,7 @@ using SnackFlow.Domain.ValueObjects.CompanyName;
 
 namespace SnackFlow.Infrastructure.Persistence.Mappings;
 
-public class CompanyMap : IEntityTypeConfiguration<Company>
+public sealed class CompanyMap : IEntityTypeConfiguration<Company>
 {
     public void Configure(EntityTypeBuilder<Company> builder)
     {

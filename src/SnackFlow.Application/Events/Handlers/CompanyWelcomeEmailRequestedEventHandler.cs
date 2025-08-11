@@ -14,14 +14,13 @@ public sealed class CompanyWelcomeEmailRequestedEventHandler(
     public async ValueTask Handle(CompanyWelcomeEmailRequestedEvent notification, CancellationToken cancellationToken)
         => await emailScheduler.ScheduleEmailAsync(
             EmailAddress.NoReply,
-            new WelcomeBaseEmailDTO
-            {
-                Audience = EmailAudience.Company.GetDescription(),
-                Template = EmailTemplate.Welcome.GetDescription(),
-                Name = notification.Name,
-                Subject = "Seja bem-vindo ao SnackFlow!",
-                To = "contact@samuelzedec.tech"
-            },
+            new WelcomeBaseEmailDTO(
+                Audience: EmailAudience.Company.GetDescription(),
+                Template: EmailTemplate.Welcome.GetDescription(),
+                Name: notification.Name,
+                Subject: "Seja bem-vindo ao SnackFlow!",
+                To: "contact@samuelzedec.tech"
+            ),
             cancellationToken
         );
 }

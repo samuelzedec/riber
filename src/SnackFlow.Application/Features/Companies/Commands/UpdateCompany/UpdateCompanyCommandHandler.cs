@@ -25,11 +25,9 @@ internal sealed class UpdateCompanyCommandHandler(
         {
             await unitOfWork.BeginTransactionAsync(cancellationToken);
             var company = await companyRepository.GetSingleAsync(
-                x => x.Id == request.CompanyId, cancellationToken);
-
-            if (company is null)
-                throw new NotFoundException(ErrorMessage.NotFound.Company);
-
+                x => x.Id == request.CompanyId, cancellationToken) 
+                ?? throw new NotFoundException(ErrorMessage.NotFound.Company);
+            
             await UpdateEmailAsync(company, request.Email, cancellationToken);
             await UpdatePhoneAsync(company, request.Phone, cancellationToken);
             UpdateFantasyName(company, request.FantasyName);

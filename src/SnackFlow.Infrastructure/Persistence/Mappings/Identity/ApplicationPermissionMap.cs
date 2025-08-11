@@ -4,7 +4,7 @@ using SnackFlow.Infrastructure.Persistence.Identity;
 
 namespace SnackFlow.Infrastructure.Persistence.Mappings.Identity;
 
-public class ApplicationPermissionMap
+public sealed class ApplicationPermissionMap
     : IEntityTypeConfiguration<ApplicationPermission>
 {
     public void Configure(EntityTypeBuilder<ApplicationPermission> builder)

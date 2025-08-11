@@ -1,6 +1,9 @@
 namespace SnackFlow.Application.DTOs.Email;
 
-public sealed class WelcomeBaseEmailDTO : BaseEmailDTO
-{
-    public required string Name { get; set; } = string.Empty;
-}
+public sealed record WelcomeBaseEmailDTO(
+    string Name,
+    string To,
+    string Subject,
+    string Audience,
+    string Template
+) : BaseEmailDTO(To, Subject, Audience, Template);

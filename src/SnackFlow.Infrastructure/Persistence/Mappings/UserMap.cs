@@ -5,7 +5,7 @@ using SnackFlow.Domain.ValueObjects.FullName;
 
 namespace SnackFlow.Infrastructure.Persistence.Mappings;
 
-public class UserMap : IEntityTypeConfiguration<User>
+public sealed class UserMap : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {

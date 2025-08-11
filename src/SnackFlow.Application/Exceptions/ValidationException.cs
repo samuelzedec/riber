@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using SnackFlow.Application.Abstractions;
 using SnackFlow.Application.Common;
 
 namespace SnackFlow.Application.Exceptions;

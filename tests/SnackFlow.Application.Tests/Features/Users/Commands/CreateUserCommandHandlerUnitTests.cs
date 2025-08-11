@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using Bogus.Extensions.Brazil;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -8,7 +7,6 @@ using SnackFlow.Application.DTOs;
 using SnackFlow.Application.Exceptions;
 using SnackFlow.Application.Features.Users.Commands.CreateUser;
 using SnackFlow.Domain.Constants;
-using SnackFlow.Domain.Entities;
 using SnackFlow.Domain.Enums;
 using SnackFlow.Domain.Repositories;
 using SnackFlow.Domain.Tests;
@@ -17,23 +15,23 @@ namespace SnackFlow.Application.Tests.Features.Users.Commands;
 
 public class CreateUserCommandHandlerUnitTests : BaseTest
 {
-    private readonly Mock<IUnitOfWork> _mockUnitOfOWork;
-    private readonly Mock<IAuthService> _mockAuthService;
-    private readonly Mock<IUserRepository> _mockUserRepository;
+    #region Setup
+
+    private readonly Mock<IUnitOfWork> _mockUnitOfWork;
+    private readonly Mock<IUserCreationService> _mockUserCreationService;
     private readonly Mock<ILogger<CreateUserCommandHandler>> _mockLogger;
     private readonly CreateUserCommandHandler _handler;
     private readonly CreateUserCommand _command;
 
     public CreateUserCommandHandlerUnitTests()
     {
-        _mockUnitOfOWork = new Mock<IUnitOfWork>();
-        _mockAuthService = new Mock<IAuthService>();
-        _mockUserRepository = new Mock<IUserRepository>();
+        _mockUnitOfWork = new Mock<IUnitOfWork>();
+        _mockUserCreationService = new Mock<IUserCreationService>();
         _mockLogger = new Mock<ILogger<CreateUserCommandHandler>>();
 
         _handler = new CreateUserCommandHandler(
-            _mockUnitOfOWork.Object,
-            _mockAuthService.Object,
+            _mockUnitOfWork.Object,
+            _mockUserCreationService.Object,
             _mockLogger.Object
         );
 
@@ -49,66 +47,78 @@ public class CreateUserCommandHandlerUnitTests : BaseTest
         );
     }
 
+    #endregion
+
+    #region Success Tests
+
     [Fact(DisplayName = "Creating user with valid data should return success response")]
     public async Task Handle_WhenValidData_ShouldReturnSuccessResponse()
     {
         // Arrange
-        _mockAuthService
-            .Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
-            .ReturnsAsync((UserDetailsDTO?)null);
+        _mockUserCreationService
+            .Setup(x => x.CreateCompleteUserAsync(
+                It.IsAny<CreateUserCompleteDTO>(),
+                It.IsAny<CancellationToken>()));
 
-        _mockAuthService
-            .Setup(x => x.FindByUserNameAsync(It.IsAny<string>()))
-            .ReturnsAsync((UserDetailsDTO?)null);
+        _mockUnitOfWork
+            .Setup(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()));
 
-        _mockAuthService
-            .Setup(x => x.FindByPhoneAsync(It.IsAny<string>()))
-            .ReturnsAsync((UserDetailsDTO?)null);
-
-        _mockUnitOfOWork
-            .Setup(x => x.Users)
-            .Returns(_mockUserRepository.Object);
-
-        _mockUserRepository
-            .Setup(x => x.ExistsAsync(It.IsAny<Expression<Func<User, bool>>>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(false);
-
-        _mockUserRepository
-            .Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()));
-
-        _mockUnitOfOWork
-            .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()));
-
-        _mockAuthService
-            .Setup(x => x.CreateAsync(It.IsAny<CreateApplicationUserDTO>(), It.IsAny<CancellationToken>()));
+        _mockUnitOfWork
+            .Setup(x => x.CommitTransactionAsync(It.IsAny<CancellationToken>()));
 
         // Act
         var result = await _handler.Handle(_command, CancellationToken.None);
 
         // Assert
         result.Should().NotBeNull();
+        result.IsSuccess.Should().BeTrue();
+        result.IsFailure.Should().BeFalse();
+        result.Value.Should().NotBeNull();
         result.Value.Email.Should().Be(_command.Email);
         result.Value.UserName.Should().Be(_command.UserName);
 
-        _mockAuthService.Verify(x => x.FindByEmailAsync(It.IsAny<string>()), Times.Once);
-        _mockAuthService.Verify(x => x.FindByUserNameAsync(It.IsAny<string>()), Times.Once);
-        _mockAuthService.Verify(x => x.FindByPhoneAsync(It.IsAny<string>()), Times.Once);
-        _mockUnitOfOWork.Verify(x => x.Users, Times.Exactly(2));
-        _mockUserRepository.Verify(
-            x => x.ExistsAsync(It.IsAny<Expression<Func<User, bool>>>(), It.IsAny<CancellationToken>()), Times.Once);
-        _mockUserRepository.Verify(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()), Times.Once);
-        _mockUnitOfOWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
-        _mockAuthService.Verify(x => x.CreateAsync(It.IsAny<CreateApplicationUserDTO>(), It.IsAny<CancellationToken>()),
-            Times.Once);
+        _mockUserCreationService.Verify(x => x.CreateCompleteUserAsync(
+            It.Is<CreateUserCompleteDTO>(dto => 
+                dto.FullName == _command.FullName &&
+                dto.UserName == _command.UserName &&
+                dto.Email == _command.Email &&
+                dto.Password == _command.Password &&
+                dto.PhoneNumber == _command.PhoneNumber &&
+                dto.TaxId == _command.TaxId &&
+                dto.Position == _command.Position &&
+                dto.CompanyId == _command.CompanyId &&
+                dto.Roles.Contains("Viewer")),
+            It.IsAny<CancellationToken>()), Times.Once);
+
+        _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(
+            It.IsAny<CancellationToken>()), Times.Once);
+
+        _mockUnitOfWork.Verify(x => x.CommitTransactionAsync(
+            It.IsAny<CancellationToken>()), Times.Once);
+
+        _mockUnitOfWork.Verify(x => x.RollbackTransactionAsync(
+            It.IsAny<CancellationToken>()), Times.Never);
     }
 
-    [Fact(DisplayName = "Creating user when email already exists should throw ConflictException")]
-    public async Task Handle_WhenEmailAlreadyExists_ShouldThrowConflictException()
+    #endregion
+
+    #region Conflict Tests
+
+    [Fact(DisplayName = "Creating user when user creation service throws ConflictException should rollback and rethrow")]
+    public async Task Handle_WhenUserCreationServiceThrowsConflictException_ShouldRollbackAndRethrow()
     {
         // Arrange
-        _mockAuthService
-            .Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
-            .ReturnsAsync(new UserDetailsDTO());
+        _mockUserCreationService
+            .Setup(x => x.CreateCompleteUserAsync(
+                It.IsAny<CreateUserCompleteDTO>(),
+                It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new ConflictException(ErrorMessage.Conflict.EmailAlreadyExists));
+
+        _mockUnitOfWork
+            .Setup(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()));
+
+        _mockUnitOfWork
+            .Setup(x => x.RollbackTransactionAsync(It.IsAny<CancellationToken>()));
 
         // Act
         var result = async () => await _handler.Handle(_command, CancellationToken.None);
@@ -117,16 +127,18 @@ public class CreateUserCommandHandlerUnitTests : BaseTest
         await result.Should().ThrowExactlyAsync<ConflictException>()
             .WithMessage(ErrorMessage.Conflict.EmailAlreadyExists);
 
-        _mockAuthService.Verify(x => x.FindByEmailAsync(It.IsAny<string>()), Times.Once);
-        _mockAuthService.Verify(x => x.FindByUserNameAsync(It.IsAny<string>()), Times.Once);
-        _mockAuthService.Verify(x => x.FindByPhoneAsync(It.IsAny<string>()), Times.Once);
-        _mockUnitOfOWork.Verify(x => x.Users, Times.Never);
-        _mockUserRepository.Verify(
-            x => x.ExistsAsync(It.IsAny<Expression<Func<User, bool>>>(), It.IsAny<CancellationToken>()), Times.Never);
-        _mockUserRepository.Verify(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()), Times.Never);
-        _mockUnitOfOWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
-        _mockAuthService.Verify(x => x.CreateAsync(It.IsAny<CreateApplicationUserDTO>(), It.IsAny<CancellationToken>()),
-            Times.Never);
+        _mockUserCreationService.Verify(x => x.CreateCompleteUserAsync(
+            It.IsAny<CreateUserCompleteDTO>(), It.IsAny<CancellationToken>()), Times.Once);
+
+        _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(
+            It.IsAny<CancellationToken>()), Times.Once);
+
+        _mockUnitOfWork.Verify(x => x.RollbackTransactionAsync(
+            It.IsAny<CancellationToken>()), Times.Once);
+
+        _mockUnitOfWork.Verify(x => x.CommitTransactionAsync(
+            It.IsAny<CancellationToken>()), Times.Never);
+
         _mockLogger.Verify(
             x => x.Log(
                 LogLevel.Error,
@@ -137,173 +149,46 @@ public class CreateUserCommandHandlerUnitTests : BaseTest
             Times.Never);
     }
 
-    [Fact(DisplayName = "Creating user when username already exists should throw ConflictException")]
-    public async Task Handle_WhenUserNameAlreadyExists_ShouldThrowConflictException()
+    #endregion
+
+    #region Exception Tests
+
+    [Fact(DisplayName = "Creating user when user creation service fails should log error and rethrow")]
+    public async Task Handle_WhenUserCreationServiceFails_ShouldLogErrorAndRethrow()
     {
         // Arrange
-        _mockAuthService
-            .Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
-            .ReturnsAsync((UserDetailsDTO?)null);
+        var expectedException = new InvalidOperationException("User creation service error");
 
-        _mockAuthService
-            .Setup(x => x.FindByUserNameAsync(It.IsAny<string>()))
-            .ReturnsAsync(new UserDetailsDTO());
+        _mockUserCreationService
+            .Setup(x => x.CreateCompleteUserAsync(
+                It.IsAny<CreateUserCompleteDTO>(),
+                It.IsAny<CancellationToken>()))
+            .ThrowsAsync(expectedException);
 
-        // Act
-        var result = async () => await _handler.Handle(_command, CancellationToken.None);
+        _mockUnitOfWork
+            .Setup(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()));
 
-        // Assert
-        await result.Should().ThrowExactlyAsync<ConflictException>()
-            .WithMessage(ErrorMessage.Conflict.UserNameAlreadyExists);
-
-        _mockAuthService.Verify(x => x.FindByEmailAsync(It.IsAny<string>()), Times.Once);
-        _mockAuthService.Verify(x => x.FindByUserNameAsync(It.IsAny<string>()), Times.Once);
-        _mockAuthService.Verify(x => x.FindByPhoneAsync(It.IsAny<string>()), Times.Once);
-        _mockUnitOfOWork.Verify(x => x.Users, Times.Never);
-        _mockUserRepository.Verify(
-            x => x.ExistsAsync(It.IsAny<Expression<Func<User, bool>>>(), It.IsAny<CancellationToken>()), Times.Never);
-        _mockUserRepository.Verify(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()), Times.Never);
-        _mockUnitOfOWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
-        _mockAuthService.Verify(x => x.CreateAsync(It.IsAny<CreateApplicationUserDTO>(), It.IsAny<CancellationToken>()),
-            Times.Never);
-        _mockLogger.Verify(
-            x => x.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => true),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.Never);
-    }
-
-    [Fact(DisplayName = "Creating user when phone already exists should throw ConflictException")]
-    public async Task Handle_WhenPhoneAlreadyExists_ShouldThrowConflictException()
-    {
-        // Arrange
-        _mockAuthService
-            .Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
-            .ReturnsAsync((UserDetailsDTO?)null);
-
-        _mockAuthService
-            .Setup(x => x.FindByUserNameAsync(It.IsAny<string>()))
-            .ReturnsAsync((UserDetailsDTO?)null);
-
-        _mockAuthService
-            .Setup(x => x.FindByPhoneAsync(It.IsAny<string>()))
-            .ReturnsAsync(new UserDetailsDTO());
-
-        // Act
-        var result = async () => await _handler.Handle(_command, CancellationToken.None);
-
-        // Assert
-        await result.Should().ThrowExactlyAsync<ConflictException>()
-            .WithMessage(ErrorMessage.Conflict.PhoneAlreadyExists);
-
-        _mockAuthService.Verify(x => x.FindByEmailAsync(It.IsAny<string>()), Times.Once);
-        _mockAuthService.Verify(x => x.FindByUserNameAsync(It.IsAny<string>()), Times.Once);
-        _mockAuthService.Verify(x => x.FindByPhoneAsync(It.IsAny<string>()), Times.Once);
-        _mockUnitOfOWork.Verify(x => x.Users, Times.Never);
-        _mockUserRepository.Verify(
-            x => x.ExistsAsync(It.IsAny<Expression<Func<User, bool>>>(), It.IsAny<CancellationToken>()), Times.Never);
-        _mockUserRepository.Verify(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()), Times.Never);
-        _mockUnitOfOWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
-        _mockAuthService.Verify(x => x.CreateAsync(It.IsAny<CreateApplicationUserDTO>(), It.IsAny<CancellationToken>()),
-            Times.Never);
-        _mockLogger.Verify(
-            x => x.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => true),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.Never);
-    }
-
-    [Fact(DisplayName = "Creating user when tax ID already exists should throw ConflictException")]
-    public async Task Handle_WhenTaxIdAlreadyExists_ShouldThrowConflictException()
-    {
-        // Arrange
-        _mockAuthService
-            .Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
-            .ReturnsAsync((UserDetailsDTO?)null);
-
-        _mockAuthService
-            .Setup(x => x.FindByUserNameAsync(It.IsAny<string>()))
-            .ReturnsAsync((UserDetailsDTO?)null);
-
-        _mockAuthService
-            .Setup(x => x.FindByPhoneAsync(It.IsAny<string>()))
-            .ReturnsAsync((UserDetailsDTO?)null);
-
-        _mockUnitOfOWork
-            .Setup(x => x.Users)
-            .Returns(_mockUserRepository.Object);
-
-        _mockUserRepository
-            .Setup(x => x.ExistsAsync(It.IsAny<Expression<Func<User, bool>>>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(true);
-
-        // Act
-        var result = async () => await _handler.Handle(_command, CancellationToken.None);
-
-        // Assert
-        await result.Should().ThrowExactlyAsync<ConflictException>()
-            .WithMessage(ErrorMessage.Conflict.TaxIdAlreadyExists);
-
-        _mockAuthService.Verify(x => x.FindByEmailAsync(It.IsAny<string>()), Times.Once);
-        _mockAuthService.Verify(x => x.FindByUserNameAsync(It.IsAny<string>()), Times.Once);
-        _mockAuthService.Verify(x => x.FindByPhoneAsync(It.IsAny<string>()), Times.Once);
-        _mockUnitOfOWork.Verify(x => x.Users, Times.Once);
-        _mockUserRepository.Verify(
-            x => x.ExistsAsync(It.IsAny<Expression<Func<User, bool>>>(), It.IsAny<CancellationToken>()), Times.Once);
-        _mockUserRepository.Verify(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()), Times.Never);
-        _mockUnitOfOWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
-        _mockAuthService.Verify(x => x.CreateAsync(It.IsAny<CreateApplicationUserDTO>(), It.IsAny<CancellationToken>()),
-            Times.Never);
-        _mockLogger.Verify(
-            x => x.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => true),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.Never);
-    }
-
-    [Fact(DisplayName = "Creating user when domain creation fails should log error and rethrow")]
-    public async Task Handle_WhenDomainCreationFails_ShouldLogErrorAndRethrow()
-    {
-        // Arrange
-        _mockAuthService
-            .Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
-            .ReturnsAsync((UserDetailsDTO?)null);
-
-        _mockAuthService
-            .Setup(x => x.FindByUserNameAsync(It.IsAny<string>()))
-            .ReturnsAsync((UserDetailsDTO?)null);
-
-        _mockAuthService
-            .Setup(x => x.FindByPhoneAsync(It.IsAny<string>()))
-            .ReturnsAsync((UserDetailsDTO?)null);
-
-        _mockUnitOfOWork
-            .Setup(x => x.Users)
-            .Returns(_mockUserRepository.Object);
-
-        _mockUserRepository
-            .Setup(x => x.ExistsAsync(It.IsAny<Expression<Func<User, bool>>>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(false);
-
-        _mockUserRepository
-            .Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()))
-            .ThrowsAsync(new InvalidOperationException("Database error"));
+        _mockUnitOfWork
+            .Setup(x => x.RollbackTransactionAsync(It.IsAny<CancellationToken>()));
 
         // Act
         var result = async () => await _handler.Handle(_command, CancellationToken.None);
 
         // Assert
         await result.Should().ThrowExactlyAsync<InvalidOperationException>()
-            .WithMessage("Database error");
+            .WithMessage("User creation service error");
+
+        _mockUserCreationService.Verify(x => x.CreateCompleteUserAsync(
+            It.IsAny<CreateUserCompleteDTO>(), It.IsAny<CancellationToken>()), Times.Once);
+
+        _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(
+            It.IsAny<CancellationToken>()), Times.Once);
+
+        _mockUnitOfWork.Verify(x => x.RollbackTransactionAsync(
+            It.IsAny<CancellationToken>()), Times.Once);
+
+        _mockUnitOfWork.Verify(x => x.CommitTransactionAsync(
+            It.IsAny<CancellationToken>()), Times.Never);
 
         _mockLogger.Verify(
             x => x.Log(
@@ -315,44 +200,45 @@ public class CreateUserCommandHandlerUnitTests : BaseTest
             Times.Once);
     }
 
-    [Fact(DisplayName = "Creating user when save changes fails should log error and rethrow")]
-    public async Task Handle_WhenSaveChangesFails_ShouldLogErrorAndRethrow()
+    [Fact(DisplayName = "Creating user when commit transaction fails should log error and rethrow")]
+    public async Task Handle_WhenCommitTransactionFails_ShouldLogErrorAndRethrow()
     {
         // Arrange
-        _mockAuthService
-            .Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
-            .ReturnsAsync((UserDetailsDTO?)null);
+        var expectedException = new InvalidOperationException("Commit transaction error");
 
-        _mockAuthService
-            .Setup(x => x.FindByUserNameAsync(It.IsAny<string>()))
-            .ReturnsAsync((UserDetailsDTO?)null);
+        _mockUserCreationService
+            .Setup(x => x.CreateCompleteUserAsync(
+                It.IsAny<CreateUserCompleteDTO>(),
+                It.IsAny<CancellationToken>()));
 
-        _mockAuthService
-            .Setup(x => x.FindByPhoneAsync(It.IsAny<string>()))
-            .ReturnsAsync((UserDetailsDTO?)null);
+        _mockUnitOfWork
+            .Setup(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()));
 
-        _mockUnitOfOWork
-            .Setup(x => x.Users)
-            .Returns(_mockUserRepository.Object);
+        _mockUnitOfWork
+            .Setup(x => x.CommitTransactionAsync(It.IsAny<CancellationToken>()))
+            .ThrowsAsync(expectedException);
 
-        _mockUserRepository
-            .Setup(x => x.ExistsAsync(It.IsAny<Expression<Func<User, bool>>>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(false);
-
-        _mockUserRepository
-            .Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()))
-            .Returns(Task.CompletedTask);
-
-        _mockUnitOfOWork
-            .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
-            .ThrowsAsync(new InvalidOperationException("Database save error"));
+        _mockUnitOfWork
+            .Setup(x => x.RollbackTransactionAsync(It.IsAny<CancellationToken>()));
 
         // Act
         var result = async () => await _handler.Handle(_command, CancellationToken.None);
 
         // Assert
         await result.Should().ThrowExactlyAsync<InvalidOperationException>()
-            .WithMessage("Database save error");
+            .WithMessage("Commit transaction error");
+
+        _mockUserCreationService.Verify(x => x.CreateCompleteUserAsync(
+            It.IsAny<CreateUserCompleteDTO>(), It.IsAny<CancellationToken>()), Times.Once);
+
+        _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(
+            It.IsAny<CancellationToken>()), Times.Once);
+
+        _mockUnitOfWork.Verify(x => x.CommitTransactionAsync(
+            It.IsAny<CancellationToken>()), Times.Once);
+
+        _mockUnitOfWork.Verify(x => x.RollbackTransactionAsync(
+            It.IsAny<CancellationToken>()), Times.Once);
 
         _mockLogger.Verify(
             x => x.Log(
@@ -364,57 +250,87 @@ public class CreateUserCommandHandlerUnitTests : BaseTest
             Times.Once);
     }
 
-    [Fact(DisplayName = "Creating user when auth service fails should log error and rethrow")]
-    public async Task Handle_WhenAuthServiceFails_ShouldLogErrorAndRethrow()
+    #endregion
+
+    #region Cancellation Tests
+
+    [Fact(DisplayName = "Should respect cancellation token during user creation")]
+    public async Task Handle_WhenCancellationTokenDuringUserCreation_ShouldRespectCancellationToken()
     {
         // Arrange
-        _mockAuthService
-            .Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
-            .ReturnsAsync((UserDetailsDTO?)null);
+        var mockCancellationToken = new CancellationToken(true);
 
-        _mockAuthService
-            .Setup(x => x.FindByUserNameAsync(It.IsAny<string>()))
-            .ReturnsAsync((UserDetailsDTO?)null);
+        _mockUserCreationService
+            .Setup(x => x.CreateCompleteUserAsync(
+                It.IsAny<CreateUserCompleteDTO>(),
+                It.Is<CancellationToken>(ct => ct.IsCancellationRequested)))
+            .ThrowsAsync(new OperationCanceledException());
 
-        _mockAuthService
-            .Setup(x => x.FindByPhoneAsync(It.IsAny<string>()))
-            .ReturnsAsync((UserDetailsDTO?)null);
+        _mockUnitOfWork
+            .Setup(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()));
 
-        _mockUnitOfOWork
-            .Setup(x => x.Users)
-            .Returns(_mockUserRepository.Object);
+        _mockUnitOfWork
+            .Setup(x => x.RollbackTransactionAsync(It.IsAny<CancellationToken>()));
 
-        _mockUserRepository
-            .Setup(x => x.ExistsAsync(It.IsAny<Expression<Func<User, bool>>>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(false);
+        // Act
+        var result = async () => await _handler.Handle(_command, mockCancellationToken);
 
-        _mockUserRepository
-            .Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()));
+        // Assert
+        await result.Should()
+            .ThrowAsync<OperationCanceledException>();
 
-        _mockUnitOfOWork
-            .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()));
+        _mockUserCreationService.Verify(x => x.CreateCompleteUserAsync(
+            It.IsAny<CreateUserCompleteDTO>(), 
+            It.Is<CancellationToken>(ct => ct.IsCancellationRequested)), Times.Once);
 
-        _mockAuthService
-            .Setup(x => x.CreateAsync(It.IsAny<CreateApplicationUserDTO>(), It.IsAny<CancellationToken>()))
-            .ThrowsAsync(new InvalidOperationException("Identity service error"));
+        _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(
+            It.IsAny<CancellationToken>()), Times.Once);
+
+        _mockUnitOfWork.Verify(x => x.RollbackTransactionAsync(
+            It.IsAny<CancellationToken>()), Times.Once);
+
+        _mockUnitOfWork.Verify(x => x.CommitTransactionAsync(
+            It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact(DisplayName = "Should respect cancellation token during commit transaction")]
+    public async Task Handle_WhenCancellationTokenDuringCommitTransaction_ShouldRespectCancellationToken()
+    {
+        // Arrange
+        _mockUserCreationService
+            .Setup(x => x.CreateCompleteUserAsync(
+                It.IsAny<CreateUserCompleteDTO>(),
+                It.IsAny<CancellationToken>()));
+
+        _mockUnitOfWork
+            .Setup(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()));
+
+        _mockUnitOfWork
+            .Setup(x => x.CommitTransactionAsync(It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new OperationCanceledException());
+
+        _mockUnitOfWork
+            .Setup(x => x.RollbackTransactionAsync(It.IsAny<CancellationToken>()));
 
         // Act
         var result = async () => await _handler.Handle(_command, CancellationToken.None);
 
         // Assert
-        await result.Should().ThrowExactlyAsync<InvalidOperationException>()
-            .WithMessage("Identity service error");
+        await result.Should()
+            .ThrowAsync<OperationCanceledException>();
 
-        _mockLogger.Verify(
-            x => x.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => true),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.Once);
+        _mockUserCreationService.Verify(x => x.CreateCompleteUserAsync(
+            It.IsAny<CreateUserCompleteDTO>(), It.IsAny<CancellationToken>()), Times.Once);
 
-        _mockUserRepository.Verify(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()), Times.Once);
-        _mockUnitOfOWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+        _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(
+            It.IsAny<CancellationToken>()), Times.Once);
+
+        _mockUnitOfWork.Verify(x => x.CommitTransactionAsync(
+            It.IsAny<CancellationToken>()), Times.Once);
+
+        _mockUnitOfWork.Verify(x => x.RollbackTransactionAsync(
+            It.IsAny<CancellationToken>()), Times.Once);
     }
+
+    #endregion
 }

@@ -43,20 +43,25 @@ public class JwtTokenServiceUnitTests : BaseTest
             Issuer = "test-issuer",
             Audience = "test-audience"
         };
-
+        
         _userDetailsTest = CreateFaker<UserDetailsDTO>()
-            .CustomInstantiator(f => new UserDetailsDTO())
-            .RuleFor(x => x.Id, f => Guid.CreateVersion7())
-            .RuleFor(x => x.Email, f => f.Internet.Email())
-            .RuleFor(x => x.UserName, f => f.Internet.UserName())
-            .RuleFor(x => x.SecurityStamp, f => f.Random.AlphaNumeric(32))
-            .RuleFor(x => x.Roles, f => f.Make(2, () => f.Name.JobTitle()))
-            .RuleFor(x => x.Claims, f => f.Make(2, () => new ClaimDTO
-            {
-                Type = f.Random.Word(),
-                Value = f.Random.Word()
-            }))
+            .CustomInstantiator(f => new UserDetailsDTO(
+                Id: Guid.CreateVersion7(),
+                UserName: f.Internet.UserName(),
+                Email: f.Internet.Email(),
+                EmailConfirmed: false,
+                PhoneNumber: string.Empty,
+                SecurityStamp: f.Random.AlphaNumeric(32),
+                UserDomainId: Guid.Empty,
+                UserDomain: null!,
+                Roles: f.Make(2, () => f.Name.JobTitle()).ToList(),
+                Claims: [.. f.Make(2, () => new ClaimDTO(
+                    Type: f.Random.Word(),
+                    Value: f.Random.Word()
+                ))]
+            ))
             .Generate();
+
 
         _certificateServiceMock = new Mock<ICertificateService>();
         Mock<IOptions<AccessTokenSettings>> accessTokenSettingsMock = new();
@@ -132,16 +137,8 @@ public class JwtTokenServiceUnitTests : BaseTest
     public void GenerateToken_WhenUserHasNoRoles_ShouldNotIncludeRoleClaims()
     {
         // Arrange
-        var userWithoutRoles = new UserDetailsDTO
-        {
-            Id = _userDetailsTest.Id,
-            Email = _userDetailsTest.Email,
-            UserName = _userDetailsTest.UserName,
-            SecurityStamp = _userDetailsTest.SecurityStamp,
-            Roles = new List<string>(),
-            Claims = _userDetailsTest.Claims
-        };
-
+        var userWithoutRoles = _userDetailsTest with { Roles = [] };
+        
         // Act
         var token = _tokenService.GenerateToken(userWithoutRoles);
 
@@ -156,15 +153,7 @@ public class JwtTokenServiceUnitTests : BaseTest
     public void GenerateToken_WhenUserHasNoClaims_ShouldNotIncludeCustomClaims()
     {
         // Arrange
-        var userWithoutClaims = new UserDetailsDTO
-        {
-            Id = _userDetailsTest.Id,
-            Email = _userDetailsTest.Email,
-            UserName = _userDetailsTest.UserName,
-            SecurityStamp = _userDetailsTest.SecurityStamp,
-            Roles = _userDetailsTest.Roles,
-            Claims = new List<ClaimDTO>()
-        };
+        var userWithoutClaims = _userDetailsTest with { Claims = [] };
 
         // Act
         var token = _tokenService.GenerateToken(userWithoutClaims);
@@ -173,7 +162,7 @@ public class JwtTokenServiceUnitTests : BaseTest
         var handler = new JwtSecurityTokenHandler();
         var jsonToken = handler.ReadJwtToken(token);
    
-        jsonToken.Claims.Count().Should().Be(9 + userWithoutClaims.Roles.Count);
+        jsonToken.Claims.Count().Should().Be(10 + userWithoutClaims.Roles.Count);
     }
 
     #endregion

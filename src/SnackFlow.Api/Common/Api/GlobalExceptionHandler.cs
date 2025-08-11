@@ -1,8 +1,6 @@
-﻿using System.Text.Json;
-using Microsoft.AspNetCore.Diagnostics;
-using SnackFlow.Application.Common;
+﻿using Microsoft.AspNetCore.Diagnostics;
+using SnackFlow.Api.Extensions;
 using SnackFlow.Application.Exceptions;
-using SnackFlow.Domain.Abstractions;
 using SnackFlow.Domain.Exceptions;
 using Layer = SnackFlow.Application.Exceptions;
 
@@ -35,29 +33,12 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
             _ => ("An unexpected error occurred", StatusCodes.Status500InternalServerError, null)
         };
         
-        httpContext.Response.StatusCode = statusCode;
-        httpContext.Response.ContentType = "application/json";
-
-        var result = Result.Failure(new Error(GetErrorCode(statusCode), message));
-        var response = new
-        {
-            isSuccess = result.IsSuccess,
-            isFailure = result.IsFailure,
-            error = new
-            {
-                code = result.Error.Code,
-                message = result.Error.Message,
-                details = errors
-            }
-        };
-        
-        var jsonResponse = JsonSerializer.Serialize(response, new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
-        });
-        
-        await httpContext.Response.WriteAsync(jsonResponse, cancellationToken);
+        await httpContext.WriteUnauthorizedResponse(
+            title: GetErrorCode(statusCode),
+            message: message,
+            code: statusCode,
+            errors: errors?.ToArray() ?? []
+        );
         return true;
     }
     
