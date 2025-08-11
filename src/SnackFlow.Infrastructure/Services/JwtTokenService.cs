@@ -21,6 +21,7 @@ public sealed class JwtTokenService(
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new(ClaimTypes.Email, user.Email),
             new(ClaimTypes.Name, user.UserName),
+            new("userDomainId", user.UserDomainId.ToString()),
             new("securityStamp", user.SecurityStamp),
         };
 

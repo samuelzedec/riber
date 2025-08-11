@@ -20,7 +20,6 @@ public sealed class SendingEmailJob(
         {
             var emailAddress = jobDataMap.GetString("EmailAddress")!;
             var data = JsonConvert.DeserializeObject<JObject>(jobDataMap.GetString("DataEmail")!)!;
-            
             var to = data["to"]?.ToString()!;
             var subject = data["subject"]?.ToString()!;
             var templateProcessed = await templateEmailService.GetTemplateAsync(data);

@@ -1,11 +1,11 @@
 namespace SnackFlow.Application.DTOs;
 
-public sealed class CreateApplicationUserDTO
-{
-    public string UserName { get; set; } = string.Empty;
-    public string Name { get; set; } = string.Empty;
-    public string Email { get; set; } = string.Empty;
-    public string PhoneNumber { get; set; } = string.Empty;
-    public string Password { get; set; } = string.Empty;
-    public Guid UserDomainId { get; set; }
-}
+public sealed record CreateApplicationUserDTO(
+    string UserName,
+    string Name,
+    string Email,
+    string PhoneNumber,
+    string Password,
+    Guid UserDomainId,
+    ICollection<string> Roles
+);

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SnackFlow.Infrastructure.Persistence.Identity;
+using SnackFlow.Infrastructure.Settings;
 
 namespace SnackFlow.Infrastructure.Persistence.Seeders;
 
@@ -10,48 +11,43 @@ public static class ApplicationPermissionSeeder
         List<ApplicationPermission> permissions =
         [
             // Companies - 1xx
-            new() { Id = 101, Name = "companies.create", Description = "Criar empresas", Category = "Companies" },
-            new() { Id = 102, Name = "companies.read", Description = "Ver empresas", Category = "Companies" },
-            new() { Id = 103, Name = "companies.update", Description = "Editar empresas", Category = "Companies" },
-            new() { Id = 104, Name = "companies.delete", Description = "Excluir empresas", Category = "Companies" },
-            new() { Id = 105, Name = "companies.manage_users", Description = "Gerenciar usuários da empresa", Category = "Companies" },
+            new() { Id = 101, Name = PermissionsSettings.Companies.Read, Description = "Ver empresa", Category = "Companies" },
+            new() { Id = 102, Name = PermissionsSettings.Companies.Update, Description = "Editar empresas", Category = "Companies" },
+            new() { Id = 103, Name = PermissionsSettings.Companies.Delete, Description = "Excluir empresas", Category = "Companies" },
+            new() { Id = 104, Name = PermissionsSettings.Companies.ManageUsers, Description = "Gerenciar usuários da empresa", Category = "Companies" },
 
             // Orders - 2xx  
-            new() { Id = 201, Name = "orders.create", Description = "Criar pedidos", Category = "Orders" },
-            new() { Id = 202, Name = "orders.read", Description = "Ver pedidos", Category = "Orders" },
-            new() { Id = 203, Name = "orders.update", Description = "Editar pedidos", Category = "Orders" },
-            new() { Id = 204, Name = "orders.delete", Description = "Excluir pedidos", Category = "Orders" },
-            new() { Id = 205, Name = "orders.approve", Description = "Aprovar pedidos", Category = "Orders" },
+            new() { Id = 201, Name = PermissionsSettings.Orders.Create, Description = "Criar pedidos", Category = "Orders" },
+            new() { Id = 202, Name = PermissionsSettings.Orders.Read, Description = "Ver pedidos", Category = "Orders" },
+            new() { Id = 203, Name = PermissionsSettings.Orders.Update, Description = "Editar pedidos", Category = "Orders" },
+            new() { Id = 204, Name = PermissionsSettings.Orders.Delete, Description = "Excluir pedidos", Category = "Orders" },
 
             // Products - 3xx
-            new() { Id = 301, Name = "products.create", Description = "Cadastrar produtos", Category = "Products" },
-            new() { Id = 302, Name = "products.read", Description = "Visualizar produtos", Category = "Products" },
-            new() { Id = 303, Name = "products.update", Description = "Editar produtos", Category = "Products" },
-            new() { Id = 304, Name = "products.delete", Description = "Remover produtos", Category = "Products" },
-            new() { Id = 305, Name = "products.import", Description = "Importar produtos", Category = "Products" },
+            new() { Id = 301, Name = PermissionsSettings.Products.Create, Description = "Cadastrar produtos", Category = "Products" },
+            new() { Id = 302, Name = PermissionsSettings.Products.Read, Description = "Visualizar produtos", Category = "Products" },
+            new() { Id = 303, Name = PermissionsSettings.Products.Update, Description = "Editar produtos", Category = "Products" },
+            new() { Id = 304, Name = PermissionsSettings.Products.Delete, Description = "Remover produtos", Category = "Products" },
+            new() { Id = 305, Name = PermissionsSettings.Products.Import, Description = "Importar produtos", Category = "Products" },
 
             // Users - 4xx
-            new() { Id = 401, Name = "users.create", Description = "Criar usuários", Category = "Users" },
-            new() { Id = 402, Name = "users.read", Description = "Visualizar usuários", Category = "Users" },
-            new() { Id = 403, Name = "users.update", Description = "Editar usuários", Category = "Users" },
-            new() { Id = 404, Name = "users.delete", Description = "Remover usuários", Category = "Users" },
-            new() { Id = 405, Name = "users.assign_roles", Description = "Atribuir funções aos usuários", Category = "Users" },
+            new() { Id = 401, Name = PermissionsSettings.Users.Create, Description = "Criar usuários", Category = "Users" },
+            new() { Id = 402, Name = PermissionsSettings.Users.Read, Description = "Visualizar usuários", Category = "Users" },
+            new() { Id = 403, Name = PermissionsSettings.Users.Update, Description = "Editar usuários", Category = "Users" },
+            new() { Id = 404, Name = PermissionsSettings.Users.Delete, Description = "Remover usuários", Category = "Users" },
+            new() { Id = 405, Name = PermissionsSettings.Users.AssignRoles, Description = "Atribuir funções aos usuários", Category = "Users" },
 
             // Reports - 5xx
-            new() { Id = 501, Name = "reports.view", Description = "Visualizar relatórios", Category = "Reports" },
-            new() { Id = 502, Name = "reports.export", Description = "Exportar relatórios", Category = "Reports" },
-            new() { Id = 503, Name = "reports.schedule", Description = "Agendar relatórios", Category = "Reports" },
+            new() { Id = 501, Name = PermissionsSettings.Reports.View, Description = "Visualizar relatórios", Category = "Reports" },
+            new() { Id = 502, Name = PermissionsSettings.Reports.Export, Description = "Exportar relatórios", Category = "Reports" },
+            new() { Id = 503, Name = PermissionsSettings.Reports.Schedule, Description = "Agendar relatórios", Category = "Reports" },
 
             // Settings - 6xx
-            new() { Id = 601, Name = "settings.view", Description = "Visualizar configurações", Category = "Settings" },
-            new() { Id = 602, Name = "settings.update", Description = "Alterar configurações", Category = "Settings" },
+            new() { Id = 601, Name = PermissionsSettings.Settings.View, Description = "Visualizar configurações", Category = "Settings" },
+            new() { Id = 602, Name = PermissionsSettings.Settings.Update, Description = "Editar configurações", Category = "Settings" },
 
             // Roles - 7xx
-            new() { Id = 701, Name = "roles.create", Description = "Criar perfis de acesso", Category = "Roles" },
-            new() { Id = 702, Name = "roles.read", Description = "Visualizar perfis de acesso", Category = "Roles" },
-            new() { Id = 703, Name = "roles.update", Description = "Editar perfis de acesso", Category = "Roles" },
-            new() { Id = 704, Name = "roles.delete", Description = "Excluir perfis de acesso", Category = "Roles" },
-            new() { Id = 705, Name = "roles.assign_permissions", Description = "Atribuir permissões aos perfis", Category = "Roles" }
+            new() { Id = 701, Name = PermissionsSettings.Roles.Read, Description = "Visualizar funções", Category = "Roles" },
+            new() { Id = 702, Name = PermissionsSettings.Roles.Update, Description = "Editar funções", Category = "Roles" },
         ];
         
         builder

@@ -12,8 +12,8 @@ using SnackFlow.Infrastructure.Persistence;
 namespace SnackFlow.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250802181856_FixApplicationUserIndexesAndConstraints")]
-    partial class FixApplicationUserIndexesAndConstraints
+    [Migration("20250810212129_AddInvitationEntityAndPermissionSeeders")]
+    partial class AddInvitationEntityAndPermissionSeeders
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -48,6 +48,75 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                         .HasName("pk_company_id");
 
                     b.ToTable("company", (string)null);
+                });
+
+            modelBuilder.Entity("SnackFlow.Domain.Entities.Invitation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("company_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("CreatedByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by_user_id");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("expires_at");
+
+                    b.Property<string>("InviteToken")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("text")
+                        .HasColumnName("invite_token");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_used");
+
+                    b.Property<string>("Permissions")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("permissions");
+
+                    b.Property<string>("Position")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("text")
+                        .HasColumnName("position");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("text")
+                        .HasColumnName("role");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("modified_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_invitations_id");
+
+                    b.HasIndex(new[] { "CompanyId" }, "ix_invitations_company_id");
+
+                    b.HasIndex(new[] { "InviteToken" }, "uq_invitations_invite_token")
+                        .IsUnique();
+
+                    b.ToTable("invitations", (string)null);
                 });
 
             modelBuilder.Entity("SnackFlow.Domain.Entities.User", b =>
@@ -131,21 +200,13 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                         {
                             Id = 101,
                             Category = "Companies",
-                            Description = "Criar empresas",
-                            IsActive = false,
-                            Name = "companies.create"
-                        },
-                        new
-                        {
-                            Id = 102,
-                            Category = "Companies",
-                            Description = "Ver empresas",
+                            Description = "Ver empresa",
                             IsActive = false,
                             Name = "companies.read"
                         },
                         new
                         {
-                            Id = 103,
+                            Id = 102,
                             Category = "Companies",
                             Description = "Editar empresas",
                             IsActive = false,
@@ -153,7 +214,7 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = 104,
+                            Id = 103,
                             Category = "Companies",
                             Description = "Excluir empresas",
                             IsActive = false,
@@ -161,7 +222,7 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = 105,
+                            Id = 104,
                             Category = "Companies",
                             Description = "Gerenciar usuários da empresa",
                             IsActive = false,
@@ -198,14 +259,6 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                             Description = "Excluir pedidos",
                             IsActive = false,
                             Name = "orders.delete"
-                        },
-                        new
-                        {
-                            Id = 205,
-                            Category = "Orders",
-                            Description = "Aprovar pedidos",
-                            IsActive = false,
-                            Name = "orders.approve"
                         },
                         new
                         {
@@ -323,7 +376,7 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                         {
                             Id = 602,
                             Category = "Settings",
-                            Description = "Alterar configurações",
+                            Description = "Editar configurações",
                             IsActive = false,
                             Name = "settings.update"
                         },
@@ -331,41 +384,17 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                         {
                             Id = 701,
                             Category = "Roles",
-                            Description = "Criar perfis de acesso",
-                            IsActive = false,
-                            Name = "roles.create"
-                        },
-                        new
-                        {
-                            Id = 702,
-                            Category = "Roles",
-                            Description = "Visualizar perfis de acesso",
+                            Description = "Visualizar funções",
                             IsActive = false,
                             Name = "roles.read"
                         },
                         new
                         {
-                            Id = 703,
+                            Id = 702,
                             Category = "Roles",
-                            Description = "Editar perfis de acesso",
+                            Description = "Editar funções",
                             IsActive = false,
                             Name = "roles.update"
-                        },
-                        new
-                        {
-                            Id = 704,
-                            Category = "Roles",
-                            Description = "Excluir perfis de acesso",
-                            IsActive = false,
-                            Name = "roles.delete"
-                        },
-                        new
-                        {
-                            Id = 705,
-                            Category = "Roles",
-                            Description = "Atribuir permissões aos perfis",
-                            IsActive = false,
-                            Name = "roles.assign_permissions"
                         });
                 });
 
@@ -1034,6 +1063,28 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("SnackFlow.Domain.Entities.Company", b =>
                 {
+                    b.OwnsOne("SnackFlow.Domain.ValueObjects.Email.Email", "Email", b1 =>
+                        {
+                            b1.Property<Guid>("CompanyId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(255)
+                                .HasColumnType("text")
+                                .HasColumnName("email");
+
+                            b1.HasKey("CompanyId");
+
+                            b1.HasIndex(new[] { "Value" }, "uq_company_email")
+                                .IsUnique();
+
+                            b1.ToTable("company");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CompanyId");
+                        });
+
                     b.OwnsOne("SnackFlow.Domain.ValueObjects.TaxId.TaxId", "TaxId", b1 =>
                         {
                             b1.Property<Guid>("CompanyId")
@@ -1090,28 +1141,6 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                                 .HasForeignKey("CompanyId");
                         });
 
-                    b.OwnsOne("SnackFlow.Domain.ValueObjects.Email.Email", "Email", b1 =>
-                        {
-                            b1.Property<Guid>("CompanyId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasMaxLength(255)
-                                .HasColumnType("text")
-                                .HasColumnName("email");
-
-                            b1.HasKey("CompanyId");
-
-                            b1.HasIndex(new[] { "Value" }, "uq_company_email")
-                                .IsUnique();
-
-                            b1.ToTable("company");
-
-                            b1.WithOwner()
-                                .HasForeignKey("CompanyId");
-                        });
-
                     b.OwnsOne("SnackFlow.Domain.ValueObjects.Phone.Phone", "Phone", b1 =>
                         {
                             b1.Property<Guid>("CompanyId")
@@ -1144,6 +1173,35 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("TaxId")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SnackFlow.Domain.Entities.Invitation", b =>
+                {
+                    b.OwnsOne("SnackFlow.Domain.ValueObjects.Email.Email", "Email", b1 =>
+                        {
+                            b1.Property<Guid>("InvitationId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(255)
+                                .HasColumnType("text")
+                                .HasColumnName("email");
+
+                            b1.HasKey("InvitationId");
+
+                            b1.HasIndex(new[] { "Value" }, "uq_company_email")
+                                .IsUnique()
+                                .HasDatabaseName("uq_company_email1");
+
+                            b1.ToTable("invitations");
+
+                            b1.WithOwner()
+                                .HasForeignKey("InvitationId");
+                        });
+
+                    b.Navigation("Email")
                         .IsRequired();
                 });
 

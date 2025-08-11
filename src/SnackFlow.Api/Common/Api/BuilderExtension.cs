@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authorization;
 using SnackFlow.Application;
 using SnackFlow.Infrastructure;
 using Microsoft.AspNetCore.Http.Timeouts;
@@ -6,6 +7,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using SnackFlow.Api.Authorizations.Permissions;
+using SnackFlow.Api.Middlewares;
 using SnackFlow.Application.Abstractions.Services;
 using SnackFlow.Infrastructure.Persistence;
 using SnackFlow.Infrastructure.Persistence.Identity;
@@ -19,7 +22,8 @@ public static class BuilderExtension
     {
         builder.AddDocumentationApi();
         builder.AddDependencyInjection();
-        builder.AddConfigurations(); 
+        builder.AddConfigurations();
+        builder.AddMiddleware();
         builder.AddSecurity();
     }
 
@@ -27,6 +31,11 @@ public static class BuilderExtension
     {
         builder.Services.AddApplication();
         builder.Services.AddInfrastructure(builder.Configuration, builder.Logging);
+    }
+    
+    private static void AddMiddleware(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddScoped<SecurityStampMiddleware>();
     }
 
     private static void AddConfigurations(this WebApplicationBuilder builder)
@@ -129,6 +138,8 @@ public static class BuilderExtension
                 };
             });
         
+        builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+        builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
         builder.Services.AddAuthorization();
     }
 
@@ -142,14 +153,32 @@ public static class BuilderExtension
                 Title = "SnackFlow Documentation API", 
                 Version = "v1" 
             });
-            
+        
             c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
-                Description = "JWT Authorization header using the Bearer scheme", // ← Texto de ajuda
-                Name = "Authorization", // ← Nome do header HTTP
-                In = ParameterLocation.Header, // ← Aonde vai: no header da requisição
-                Type = SecuritySchemeType.ApiKey, // ← Tipo: chave de API
-                Scheme = "Bearer" // ← Esquema: Bearer token
+                Description = "JWT Authorization header usando o esquema Bearer. Exemplo: \"Bearer {token}\"",
+                Name = "Authorization",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.ApiKey,
+                Scheme = "Bearer"
+            });
+
+            c.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme 
+                    {
+                        Reference = new OpenApiReference 
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        },
+                        Scheme = "Bearer",
+                        Name = "Authorization",
+                        In = ParameterLocation.Header,
+                    },
+                    new List<string>()
+                }
             });
         });
     }

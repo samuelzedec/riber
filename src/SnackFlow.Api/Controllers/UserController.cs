@@ -13,13 +13,11 @@ public class UserController(IMediator mediator) : ControllerBase
     [HttpPost]
     [RequestTimeout("standard")]
     [ProducesResponseType<Result<CreateUserCommandResponse>>(StatusCodes.Status201Created)]
-    [ProducesResponseType<Result<CreateUserCommandResponse>>(StatusCodes.Status400BadRequest)]
-
     public async Task<IActionResult> CreateUser(
         [FromBody] CreateUserCommand command,
         CancellationToken cancellationToken)
     {
         var response = await mediator.Send(command, cancellationToken);
-        return Ok(response);
+        return Created($"/api/user/{response.Value.Email}", response);
     }
 }

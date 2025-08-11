@@ -67,12 +67,11 @@ public sealed class PermissionDataService(
         {
             var permissions = await GetPermissionsCacheAsync();
 
-            return [.. permissions.Select(p => new PermissionDTO
-            {
-                Name = p.Name,
-                Description = p.Description,
-                IsActive = p.IsActive
-            })];
+            return [.. permissions.Select(p => new PermissionDTO(
+                Name: p.Name,
+                Description: p.Description,
+                IsActive: p.IsActive
+            ))];
         }
         catch (Exception ex)
         {

@@ -1,5 +1,6 @@
 ﻿using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using SnackFlow.Api.Middlewares;
 
 namespace SnackFlow.Api.Common.Api;
 
@@ -9,6 +10,7 @@ public static class AppExtension
     {
         app.UseConfigurations();
         app.UseSecurity();
+        app.UseMiddlewares();
         app.UseHealthChecks();
         app.MapControllers();
     }
@@ -17,6 +19,11 @@ public static class AppExtension
     {
         app.UseAuthentication();
         app.UseAuthorization();
+    }
+    
+    private static void UseMiddlewares(this WebApplication app)
+    {
+        app.UseMiddleware<SecurityStampMiddleware>();
     }
 
     private static void UseConfigurations(this WebApplication app)
@@ -32,7 +39,6 @@ public static class AppExtension
             app.UseHttpsRedirection();
         
         app.UseRequestTimeouts();
-        app.UseCors();
     }
 
     private static void UseHealthChecks(this WebApplication app)

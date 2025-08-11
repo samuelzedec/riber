@@ -1,15 +1,15 @@
 ﻿using FluentValidation;
 using SnackFlow.Domain.Constants;
 using SnackFlow.Domain.Enums;
+using SnackFlow.Domain.ValueObjects.CompanyName;
 using SnackFlow.Domain.ValueObjects.Email;
 using SnackFlow.Domain.ValueObjects.Phone;
-using SnackFlow.Domain.ValueObjects.CompanyName;
 
-namespace SnackFlow.Application.Features.Companies.Commands.CreateCompany;
+namespace SnackFlow.Application.Features.Companies.Commands.CreateCompanyWithAdmin;
 
-internal sealed class CreateCompanyCommandValidator : AbstractValidator<CreateCompanyCommand>
+internal sealed class CreateCompanyWithAdminCommandValidator : AbstractValidator<CreateCompanyWithAdminCommand>
 {
-    public CreateCompanyCommandValidator()
+    public CreateCompanyWithAdminCommandValidator()
     {
         RuleFor(x => x.CorporateName)
             .NotEmpty()
@@ -54,5 +54,35 @@ internal sealed class CreateCompanyCommandValidator : AbstractValidator<CreateCo
             .Matches(@"^(?!^(\d)\1{13}$)(\d{2}\.?\d{3}\.?\d{3}/?\d{4}-?\d{2})$")
             .WithMessage(ErrorMessage.Cnpj.LengthIsInvalid)
             .When(x => x.Type == TaxIdType.LegalEntityWithCnpj);
+        
+        RuleFor(x => x.AdminFullName)
+            .NotEmpty()
+            .WithMessage(ErrorMessage.Name.IsNullOrEmpty);
+
+        RuleFor(x => x.TaxId)
+            .NotEmpty()
+            .WithMessage(ErrorMessage.Cpf.IsNullOrEmpty)
+            .Matches(@"^(?!^(\d)\1{10}$)(\d{3}\.?\d{3}\.?\d{3}-?\d{2})$")
+            .WithMessage(ErrorMessage.Cpf.LengthIsInvalid);
+        
+        RuleFor(x => x.AdminUserName)
+            .NotEmpty()
+            .WithMessage("O nome de usuário deve ser preenchido.");
+        
+        RuleFor(x => x.AdminPassword)
+            .NotEmpty()
+            .WithMessage("A senha deve ser preenchida.");
+        
+        RuleFor(x => x.Email)
+            .NotEmpty()
+            .WithMessage(ErrorMessage.Email.IsNullOrEmpty)
+            .Matches(Email.RegexPattern)
+            .WithMessage(ErrorMessage.Email.FormatInvalid);
+        
+        RuleFor(x => x.AdminPhoneNumber)
+            .NotEmpty()
+            .WithMessage(ErrorMessage.Phone.IsNullOrEmpty)
+            .Matches(Phone.RegexPattern)
+            .WithMessage(ErrorMessage.Phone.FormatInvalid);
     }
 }
