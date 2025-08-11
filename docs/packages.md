@@ -18,7 +18,7 @@ Pacotes específicos da camada de aplicação, responsável por orquestrar as re
 | `Mediator.SourceGenerator` | 3.0.0-preview.65 | Implementação high-performance do padrão Mediator usando Source Generators |
 
 ## 🏗️ Infrastructure Layer
-Pacotes da camada de infraestrutura, responsável por persistência, logging e segurança.
+Pacotes da camada de infraestrutura, responsável por persistência, logging, agendamento e segurança.
 
 | Pacote | Versão | Descrição |
 |--------|--------|-----------|
@@ -26,11 +26,15 @@ Pacotes da camada de infraestrutura, responsável por persistência, logging e s
 | `Microsoft.AspNetCore.Identity.EntityFrameworkCore` | 9.0.6 | ASP.NET Core Identity com Entity Framework |
 | `Microsoft.EntityFrameworkCore` | 9.0.6 | ORM para acesso a dados |
 | `Microsoft.EntityFrameworkCore.Relational` | 9.0.6 | Funcionalidades relacionais do EF Core |
-| `Npgsql.EntityFrameworkCore.PostgreSQL` | 9.0.4 | Provider PostgreSQL para Entity Framework |
 | `Microsoft.EntityFrameworkCore.Design` | 9.0.6 | Ferramentas de design-time do EF Core |
 | `Microsoft.EntityFrameworkCore.InMemory` | 9.0.6 | Provider in-memory do EF Core para testes |
+| `Npgsql.EntityFrameworkCore.PostgreSQL` | 9.0.4 | Provider PostgreSQL para Entity Framework |
 | `AspNetCore.HealthChecks.NpgSql` | 9.0.0 | Health check específico para PostgreSQL |
 | `AspNetCore.HealthChecks.UI.Client` | 9.0.0 | Formatação rica de JSON para endpoints de health checks |
+| `Quartz.Extensions.DependencyInjection` | 3.14.0 | Extensões para injeção de dependência do Quartz.NET |
+| `Quartz.Extensions.Hosting` | 3.14.0 | Integração do Quartz.NET com Hosting do .NET |
+| `Quartz.Serialization.Json` | 3.14.0 | Serialização JSON para jobs do Quartz.NET |
+| `Newtonsoft.Json` | 13.0.3 | Framework JSON.NET para serialização e deserialização |
 
 ## 🌐 API Layer
 Pacotes específicos da camada de apresentação (API Web).
