@@ -9,7 +9,7 @@ using SnackFlow.Domain.ValueObjects.Phone;
 
 namespace SnackFlow.Infrastructure.Services;
 
-public class UserCreationService(
+public sealed class UserCreationService(
     IUnitOfWork unitOfWork, 
     IAuthService authService) 
     : IUserCreationService

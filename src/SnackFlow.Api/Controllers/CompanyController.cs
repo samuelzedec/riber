@@ -14,7 +14,7 @@ namespace SnackFlow.Api.Controllers;
 [ApiController]
 [Produces("application/json")]
 [Route("api/company")]
-public class CompanyController(IMediator mediator) : ControllerBase
+public sealed class CompanyController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
     [RequestTimeout(("standard"))]

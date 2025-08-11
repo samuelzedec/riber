@@ -7,7 +7,7 @@ using SnackFlow.Domain.Constants;
 
 namespace SnackFlow.Application.Features.Auths.Commands.Login;
 
-public sealed class LoginCommandHandler(
+internal sealed class LoginCommandHandler(
     IAuthService authService,
     ITokenService tokenService,
     ILogger<LoginCommandHandler> logger)

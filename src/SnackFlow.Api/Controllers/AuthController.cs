@@ -7,6 +7,7 @@ using SnackFlow.Application.Features.Auths.Commands.Login;
 namespace SnackFlow.Api.Controllers;
 
 [ApiController]
+[Produces("application/json")]
 [Route("api/auth")]
 public sealed class AuthController(IMediator mediator) : ControllerBase
 {

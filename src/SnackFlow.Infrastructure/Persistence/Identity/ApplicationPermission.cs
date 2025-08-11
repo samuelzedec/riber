@@ -3,7 +3,7 @@ namespace SnackFlow.Infrastructure.Persistence.Identity;
 /// <summary>
 /// Representa as permissões associadas a uma aplicação.
 /// </summary>
-public class ApplicationPermission
+public sealed class ApplicationPermission
 {
     /// <summary>
     /// Obtém ou define o identificador único para a permissão do aplicativo.
