@@ -10,7 +10,7 @@ namespace SnackFlow.Api.Common.Api;
 /// Trata exceções globais na aplicação registrando erros e formatando
 /// uma resposta JSON padronizada para o cliente.
 /// </summary>
-public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IExceptionHandler
+public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IExceptionHandler
 {
     public async ValueTask<bool> TryHandleAsync(
         HttpContext httpContext, 

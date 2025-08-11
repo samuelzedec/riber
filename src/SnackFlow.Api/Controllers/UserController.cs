@@ -7,8 +7,9 @@ using SnackFlow.Application.Features.Users.Commands.CreateUser;
 namespace SnackFlow.Api.Controllers;
 
 [ApiController]
+[Produces("application/json")]
 [Route("api/user")]
-public class UserController(IMediator mediator) : ControllerBase
+public sealed class UserController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
     [RequestTimeout("standard")]

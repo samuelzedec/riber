@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace SnackFlow.Infrastructure.Persistence.Factories;
 
-public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
+public sealed class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
 {
     public AppDbContext CreateDbContext(string[] args)
     {
