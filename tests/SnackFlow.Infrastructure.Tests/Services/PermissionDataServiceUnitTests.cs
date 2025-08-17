@@ -12,7 +12,7 @@ using SnackFlow.Infrastructure.Services;
 
 namespace SnackFlow.Infrastructure.Tests.Services;
 
-public class PermissionDataServiceUnitTests : BaseTest
+public sealed class PermissionDataServiceUnitTests : BaseTest
 {
     #region Fields and Setup
 

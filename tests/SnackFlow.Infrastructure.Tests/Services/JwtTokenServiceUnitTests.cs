@@ -12,7 +12,7 @@ using SnackFlow.Infrastructure.Settings;
 
 namespace SnackFlow.Infrastructure.Tests.Services;
 
-public class JwtTokenServiceUnitTests : BaseTest
+public sealed class JwtTokenServiceUnitTests : BaseTest
 {
     #region Fields and Setup
 

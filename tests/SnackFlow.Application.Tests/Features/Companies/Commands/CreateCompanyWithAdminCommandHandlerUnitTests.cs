@@ -16,7 +16,7 @@ using SnackFlow.Domain.Tests;
 
 namespace SnackFlow.Application.Tests.Features.Companies.Commands;
 
-public class CreateCompanyWithAdminCommandHandlerUnitTests : BaseTest
+public sealed class CreateCompanyWithAdminCommandHandlerUnitTests : BaseTest
 {
     #region Setup
 

@@ -13,7 +13,7 @@ using SnackFlow.Domain.Tests;
 
 namespace SnackFlow.Application.Tests.Features.Users.Commands;
 
-public class CreateUserCommandHandlerUnitTests : BaseTest
+public sealed class CreateUserCommandHandlerUnitTests : BaseTest
 {
     #region Setup
 

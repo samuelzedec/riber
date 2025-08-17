@@ -6,7 +6,7 @@ using SnackFlow.Domain.ValueObjects.CompanyName.Exceptions;
 
 namespace SnackFlow.Domain.Tests.ValueObjects;
 
-public class CompanyNameUnitTests : BaseTest
+public sealed class CompanyNameUnitTests : BaseTest
 {
     #region Valid Creation Scenarios
 

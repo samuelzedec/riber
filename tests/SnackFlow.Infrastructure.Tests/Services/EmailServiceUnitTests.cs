@@ -8,7 +8,7 @@ using SnackFlow.Infrastructure.Services;
 
 namespace SnackFlow.Infrastructure.Tests.Services;
 
-public class EmailServiceUnitTests : BaseTest
+public sealed class EmailServiceUnitTests : BaseTest
 {
     private readonly Mock<IAmazonSimpleEmailService> _mockAmazonSimpleEmailService;
     private readonly Mock<ILogger<EmailService>> _mockLogger;

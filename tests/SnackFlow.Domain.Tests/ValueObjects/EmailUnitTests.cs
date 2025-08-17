@@ -5,7 +5,7 @@ using SnackFlow.Domain.ValueObjects.Email.Exceptions;
 
 namespace SnackFlow.Domain.Tests.ValueObjects;
 
-public class EmailUnitTests : BaseTest
+public sealed class EmailUnitTests : BaseTest
 {
     #region Valid Tests
 

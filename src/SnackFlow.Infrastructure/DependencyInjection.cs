@@ -98,7 +98,8 @@ public static class DependencyInjection
         services.AddTransient<IPermissionDataService, PermissionDataService>();
         services.AddTransient<IAuthService, AuthService>();
         services.AddTransient<ITokenService, JwtTokenService>();
-        services.AddTransient<IUserCreationService,  UserCreationService>();  
+        services.AddTransient<IUserCreationService,  UserCreationService>();
+        services.AddTransient<ICurrentUserService, CurrentUserService>();
     }
 
     private static void AddAwsServices(this IServiceCollection services, IConfiguration configuration)

@@ -17,7 +17,7 @@ using SnackFlow.Domain.ValueObjects.TaxId;
 
 namespace SnackFlow.Application.Tests.Features.Companies.Queries;
 
-public class GetCompanyByIdQueryHandlerUnitTests : BaseTest
+public sealed class GetCompanyByIdQueryHandlerUnitTests : BaseTest
 {
     #region Setup
 

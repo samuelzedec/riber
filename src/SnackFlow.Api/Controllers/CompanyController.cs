@@ -13,7 +13,8 @@ namespace SnackFlow.Api.Controllers;
 
 [ApiController]
 [Produces("application/json")]
-[Route("api/company")]
+[Route("api/v{version:apiVersion}/company")]
+[ApiVersion("1.0")]
 public sealed class CompanyController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
