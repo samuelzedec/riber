@@ -9,7 +9,7 @@ using ApplicationLayer = SnackFlow.Application.Exceptions;
 
 namespace SnackFlow.Application.Tests.Behaviors;
 
-public class ValidationBehaviorUnitTests : BaseTest
+public sealed class ValidationBehaviorUnitTests : BaseTest
 {
     private readonly Mock<IValidator<RequestTest>> _mockValidator;
     private readonly RequestTest _request;

@@ -2,6 +2,9 @@ using SnackFlow.Application.DTOs;
 
 namespace SnackFlow.Application.Abstractions.Services;
 
+/// <summary>
+/// Fornece funcionalidade para criar usuários de forma assíncrona.
+/// </summary>
 public interface IUserCreationService
 {
     /// <summary>

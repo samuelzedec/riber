@@ -5,6 +5,7 @@ using SnackFlow.Infrastructure;
 using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SnackFlow.Api.Authorizations.Permissions;
@@ -72,6 +73,20 @@ public static class BuilderExtension
             options.AddPolicy("standard", TimeSpan.FromSeconds(30)); 
             options.AddPolicy("slow", TimeSpan.FromMinutes(1));
             options.AddPolicy("upload", TimeSpan.FromMinutes(5));
+        });
+
+        builder.Services.AddApiVersioning(options =>
+        {
+            // Define a versão padrão da API (1.0)
+            options.DefaultApiVersion = new ApiVersion(1, 0);
+            // Se o cliente não especificar a versão, assume a versão padrão
+            options.AssumeDefaultVersionWhenUnspecified = true;
+            // Define COMO o cliente pode especificar a versão
+            options.ApiVersionReader = ApiVersionReader.Combine(
+                new UrlSegmentApiVersionReader(), // via URL: /api/v1/company
+                new QueryStringApiVersionReader("version"), // via query: ?version=1.0
+                new HeaderApiVersionReader("X-Version") // via header: X-Version: 1.0
+            );
         });
     }
 

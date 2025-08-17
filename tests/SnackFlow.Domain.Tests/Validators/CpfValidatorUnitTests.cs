@@ -5,7 +5,7 @@ using SnackFlow.Domain.Validators.DocumentValidator.Exceptions;
 
 namespace SnackFlow.Domain.Tests.Validators;
 
-public class CpfValidatorUnitTests : BaseTest
+public sealed class CpfValidatorUnitTests : BaseTest
 {
     #region Private Properties
 

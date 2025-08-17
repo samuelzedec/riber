@@ -9,7 +9,7 @@ using SnackFlow.Domain.ValueObjects.TaxId;
 
 namespace SnackFlow.Domain.Tests.Entities;
 
-public class CompanyUnitTests : BaseTest
+public sealed class CompanyUnitTests : BaseTest
 {
     #region Creation Tests
 

@@ -14,7 +14,7 @@ using SnackFlow.Domain.ValueObjects.Email;
 
 namespace SnackFlow.Application.Tests.Features.Companies.Commands;
 
-public class UpdateCompanyHandlerCommandUnitTests : BaseTest
+public sealed class UpdateCompanyHandlerCommandUnitTests : BaseTest
 {
     #region Setup
 

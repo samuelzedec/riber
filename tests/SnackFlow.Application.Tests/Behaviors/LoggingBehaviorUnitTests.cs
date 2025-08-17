@@ -8,7 +8,7 @@ using SnackFlow.Domain.Tests;
 
 namespace SnackFlow.Application.Tests.Behaviors;
 
-public class LoggingBehaviorUnitTests : BaseTest
+public sealed class LoggingBehaviorUnitTests : BaseTest
 {
     private readonly Mock<ILogger<RequestTest>> _mockLogger;
     private readonly LoggingBehavior<RequestTest, ResponseTest> _loggingBehavior;

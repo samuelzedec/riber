@@ -4,7 +4,7 @@ using SnackFlow.Infrastructure.Services;
 
 namespace SnackFlow.Infrastructure.Tests.Services;
 
-public class CertificateServiceUnitTests : BaseTest
+public sealed class CertificateServiceUnitTests : BaseTest
 {
     #region Setup
     

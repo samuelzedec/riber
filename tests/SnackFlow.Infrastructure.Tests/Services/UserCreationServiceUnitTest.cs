@@ -14,7 +14,7 @@ using SnackFlow.Domain.Tests;
 
 namespace SnackFlow.Infrastructure.Tests.Services;
 
-public class UserCreationServiceUnitTest : BaseTest
+public sealed class UserCreationServiceUnitTest : BaseTest
 {
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly Mock<IAuthService> _mockAuthService;

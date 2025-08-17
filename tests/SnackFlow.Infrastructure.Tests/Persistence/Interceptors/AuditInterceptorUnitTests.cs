@@ -6,7 +6,7 @@ using SnackFlow.Infrastructure.Tests.Persistence.Interceptors.TestModels;
 
 namespace SnackFlow.Infrastructure.Tests.Persistence.Interceptors;
 
-public class AuditInterceptorUnitTests : BaseTest
+public sealed class AuditInterceptorUnitTests : BaseTest
 {
     #region Fields and Setup
 
