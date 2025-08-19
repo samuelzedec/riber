@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Quartz;
 using SnackFlow.Application.Abstractions.Services;
+using SnackFlow.Application.Abstractions.Services.Concurrency;
 using SnackFlow.Domain.Constants;
 
 namespace SnackFlow.Infrastructure.Jobs;
@@ -10,11 +11,13 @@ namespace SnackFlow.Infrastructure.Jobs;
 public sealed class SendingEmailJob(
     IEmailService emailService,
     IEmailTemplateService templateEmailService,
+    IEmailConcurrencyService emailConcurrencyService,
     ILogger<SendingEmailJob> logger) 
     : IJob
 {
     public async Task Execute(IJobExecutionContext context)
     {
+        using var semaphoreRelease = await emailConcurrencyService.AcquireAsync();
         var jobDataMap = context.Trigger.JobDataMap;
         try
         {

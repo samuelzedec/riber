@@ -13,10 +13,12 @@ using Serilog;
 using Serilog.Events;
 using SnackFlow.Application.Abstractions.Schedulers;
 using SnackFlow.Application.Abstractions.Services;
+using SnackFlow.Application.Abstractions.Services.Concurrency;
 using SnackFlow.Domain.Repositories;
 using SnackFlow.Infrastructure.Jobs;
 using SnackFlow.Infrastructure.Schedulers;
 using SnackFlow.Infrastructure.Services;
+using SnackFlow.Infrastructure.Services.Concurrency;
 using SnackFlow.Infrastructure.Services.EmailTemplateService;
 
 namespace SnackFlow.Infrastructure;
@@ -92,6 +94,7 @@ public static class DependencyInjection
 
     private static void AddServices(this IServiceCollection services)
     {
+        // Transient
         services.AddTransient<ICertificateService, CertificateService>();
         services.AddTransient<IEmailTemplateService, EmailTemplateService>();
         services.AddTransient<IEmailService, EmailService>();
@@ -100,6 +103,9 @@ public static class DependencyInjection
         services.AddTransient<ITokenService, JwtTokenService>();
         services.AddTransient<IUserCreationService,  UserCreationService>();
         services.AddTransient<ICurrentUserService, CurrentUserService>();
+        
+        // Singleton
+        services.AddSingleton<IEmailConcurrencyService, EmailConcurrencyService>();
     }
 
     private static void AddAwsServices(this IServiceCollection services, IConfiguration configuration)
