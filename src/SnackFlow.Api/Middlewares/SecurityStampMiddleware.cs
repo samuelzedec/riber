@@ -22,7 +22,7 @@ public sealed class SecurityStampMiddleware(
         
         if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(tokenSecurityStamp))
         {
-            logger.LogError("Valores: userId = {}, securityStamp = {}", userId, tokenSecurityStamp);
+            logger.LogError("Valores: userId = {UserId}, securityStamp = {TokenSecurityStamp}", userId, tokenSecurityStamp);
             await context.WriteUnauthorizedResponse(
                 "Acesso não autorizado",
                 "Token do usuário inválido ou mal formado.",

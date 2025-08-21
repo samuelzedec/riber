@@ -115,6 +115,15 @@ public sealed class AuthService(
             throw new NotFoundException("Está função não existe.");
     }
 
+    
+    public async Task<UserDetailsDTO> UpdateSecurityStampAndGetUserAsync(string userid)
+    {
+        var user = await userManager.FindByIdAsync(userid)
+            ?? throw new NotFoundException(ErrorMessage.NotFound.User);
+        await userManager.UpdateSecurityStampAsync(user);
+        return await MapUserDetailsAsync(user);
+    }
+
     #region Helpers
 
     private async Task<UserDetailsDTO> MapUserDetailsAsync(ApplicationUser user)
