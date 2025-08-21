@@ -87,7 +87,11 @@ public static class BuilderExtension
                 new QueryStringApiVersionReader("version"), // via query: ?version=1.0
                 new HeaderApiVersionReader("X-Version") // via header: X-Version: 1.0
             );
-        });
+        }).AddVersionedApiExplorer(setup =>
+        {
+            setup.GroupNameFormat = "'v'VVV";
+            setup.SubstituteApiVersionInUrl = true;
+        });;
     }
 
     private static void AddSecurity(this WebApplicationBuilder builder)

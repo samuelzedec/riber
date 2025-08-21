@@ -18,6 +18,7 @@ namespace SnackFlow.Api.Controllers;
 public sealed class CompanyController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
+    [AllowAnonymous]
     [RequestTimeout(("standard"))]
     [ProducesResponseType<Result<CreateCompanyWithAdminCommandResponse>>(StatusCodes.Status201Created)]
     public async Task<IActionResult> CreateCompany(

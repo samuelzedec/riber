@@ -2,7 +2,7 @@ using SnackFlow.Application.Abstractions.Queries;
 using SnackFlow.Application.Abstractions.Services;
 using SnackFlow.Application.Common;
 
-namespace SnackFlow.Application.Features.Auths.Queries.GetAuthenticatedUserQuery;
+namespace SnackFlow.Application.Features.Auths.Queries.GetAuthenticatedUser;
 
 internal sealed class GetAuthenticatedUserQueryHandler(
     ICurrentUserService currentUserService) 

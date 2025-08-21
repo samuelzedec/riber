@@ -1,29 +1,31 @@
 using Microsoft.Extensions.Logging;
-using SnackFlow.Application.Abstractions.Commands;
+using SnackFlow.Application.Abstractions.Queries;
 using SnackFlow.Application.Abstractions.Services;
 using SnackFlow.Application.Common;
 using SnackFlow.Application.Exceptions;
 using SnackFlow.Domain.Constants;
 
-namespace SnackFlow.Application.Features.Auths.Commands.Login;
+namespace SnackFlow.Application.Features.Auths.Queries.GetRefreshToken;
 
-internal sealed class LoginCommandHandler(
+internal sealed class GetRefreshTokenQueryHandler(
+    ICurrentUserService currentUserService,
     IAuthService authService,
     ITokenService tokenService,
-    ILogger<LoginCommandHandler> logger)
-    : ICommandHandler<LoginCommand, LoginCommandResponse>
+    ILogger<GetRefreshTokenQueryHandler> logger)
+    : IQueryHandler<GetRefreshTokenQuery, GetRefreshTokenQueryResponse>
 {
-    public async ValueTask<Result<LoginCommandResponse>> Handle(LoginCommand command, CancellationToken cancellationToken)
+    public async ValueTask<Result<GetRefreshTokenQueryResponse>> Handle(GetRefreshTokenQuery query, CancellationToken cancellationToken)
     {
         try
         {
-            var user = await authService.LoginAsync(command.EmailOrUserName, command.Password)
-                ?? throw new UnauthorizedException(ErrorMessage.Invalid.Password);
-            
+            var userId = currentUserService.GetUserId()?.ToString()
+                ?? throw new UnauthorizedException(ErrorMessage.Invalid.Auth);
+
+            var user = await authService.UpdateSecurityStampAndGetUserAsync(userId);
             var token = tokenService.GenerateToken(user);
             var refreshToken = tokenService.GenerateRefreshToken(user.Id, user.SecurityStamp);
 
-            return new LoginCommandResponse(
+            return new GetRefreshTokenQueryResponse(
                 UserApplicationId: user.Id,
                 UserDomainId: user.UserDomainId,
                 Token: token,

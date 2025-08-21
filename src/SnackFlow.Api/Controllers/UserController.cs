@@ -1,4 +1,5 @@
 using Mediator;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Mvc;
 using SnackFlow.Application.Common;
@@ -13,6 +14,7 @@ namespace SnackFlow.Api.Controllers;
 public sealed class UserController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
+    [AllowAnonymous]
     [RequestTimeout("standard")]
     [ProducesResponseType<Result<CreateUserCommandResponse>>(StatusCodes.Status201Created)]
     public async Task<IActionResult> CreateUser(

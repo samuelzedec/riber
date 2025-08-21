@@ -104,6 +104,7 @@ public static class ErrorMessage
     {
         public const string IdIsNull = "O ID não pode ser nulo.";
         public const string Password = "Senha inválida.";
+        public const string Auth = "Credenciais inválidas.";
     }
 
     public static class Exception
