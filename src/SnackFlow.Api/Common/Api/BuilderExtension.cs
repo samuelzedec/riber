@@ -91,7 +91,7 @@ public static class BuilderExtension
         {
             setup.GroupNameFormat = "'v'VVV";
             setup.SubstituteApiVersionInUrl = true;
-        });;
+        });
     }
 
     private static void AddSecurity(this WebApplicationBuilder builder)
@@ -161,43 +161,48 @@ public static class BuilderExtension
         builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
         builder.Services.AddAuthorization();
     }
-
+    
     private static void AddDocumentationApi(this WebApplicationBuilder builder)
     {
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen(c =>
+        builder.Services.AddOpenApi(options =>
         {
-            c.SwaggerDoc("v1", new OpenApiInfo 
-            { 
-                Title = "SnackFlow Documentation API", 
-                Version = "v1" 
-            });
-        
-            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            options.AddDocumentTransformer((document, _, _) =>
             {
-                Description = "JWT Authorization header usando o esquema Bearer. Exemplo: \"Bearer {token}\"",
-                Name = "Authorization",
-                In = ParameterLocation.Header,
-                Type = SecuritySchemeType.ApiKey,
-                Scheme = "Bearer"
-            });
-
-            c.AddSecurityRequirement(new OpenApiSecurityRequirement
-            {
+                document.Info = new()
                 {
-                    new OpenApiSecurityScheme 
+                    Title = "SnackFlow Documentation API",
+                    Version = "v1",
+                    Description = "API do SnackFlow"
+                };
+
+                document.Components ??= new();
+                document.Components.SecuritySchemes = new Dictionary<string, OpenApiSecurityScheme>
+                {
+                    ["Bearer"] = new()
                     {
-                        Reference = new OpenApiReference 
+                        Type = SecuritySchemeType.Http,
+                        Scheme = "bearer",
+                        BearerFormat = "JWT",
+                        Description = "Insert your JWT Token here"
+                    }
+                };
+
+                document.SecurityRequirements =
+                [
+                    new OpenApiSecurityRequirement
+                    {
+                        [new OpenApiSecurityScheme
                         {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        },
-                        Scheme = "Bearer",
-                        Name = "Authorization",
-                        In = ParameterLocation.Header,
-                    },
-                    new List<string>()
-                }
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        }] = Array.Empty<string>()
+                    }
+                ];
+
+                return Task.CompletedTask;
             });
         });
     }

@@ -46,7 +46,8 @@ Pacotes específicos da camada de apresentação (API Web).
 | Pacote                                            | Versão | Descrição                                                                                                |
 |---------------------------------------------------|--------|----------------------------------------------------------------------------------------------------------|
 | `Microsoft.AspNetCore.Authentication.JwtBearer`   | 9.0.6  | Autenticação via JWT Bearer tokens                                                                       |
-| `Swashbuckle.AspNetCore`                          | 9.0.1  | Suporte para documentação Swagger/OpenAPI                                                                |
+| `Microsoft.AspNetCore.OpenApi`                    | 9.0.8  | Suporte nativo do .NET 9 para documentação OpenAPI/Swagger                                               |
+| `Scalar.AspNetCore`                               | 2.7.0  | Interface moderna e interativa para documentação de APIs                                                 |
 | `Microsoft.AspNetCore.Mvc.Versioning`             | 5.1.0  | Permite que você defina diferentes versões de endpoints de API                                           |
 | `Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer` | 5.1.0  | Integra o versionamento com ferramentas de descoberta e documentação de APIs, como Swagger (Swashbuckle) |
 
