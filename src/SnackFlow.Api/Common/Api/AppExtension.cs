@@ -1,5 +1,6 @@
 ﻿using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Scalar.AspNetCore;
 using SnackFlow.Api.Middlewares;
 
 namespace SnackFlow.Api.Common.Api;
@@ -31,8 +32,8 @@ public static class AppExtension
         app.UseExceptionHandler();
         if (app.Environment.IsDevelopment())
         {
-            app.UseSwagger();
-            app.UseSwaggerUI();
+            app.MapOpenApi();
+            app.MapScalarApiReference();
         }
         
         if (app.Environment.IsProduction())
@@ -43,7 +44,7 @@ public static class AppExtension
 
     private static void UseHealthChecks(this WebApplication app)
     {
-        app.MapHealthChecks("/health", new HealthCheckOptions
+        app.MapHealthChecks("/", new HealthCheckOptions
         {
             ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
         });
