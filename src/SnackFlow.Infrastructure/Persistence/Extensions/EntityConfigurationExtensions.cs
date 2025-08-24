@@ -100,4 +100,90 @@ public static class EntityConfigurationExtensions
         });
         return builder;
     }
+
+    public static EntityTypeBuilder<T> ConfigureRandomToken<T>(this EntityTypeBuilder<T> builder, string tableName, string columnName)
+        where T : class, IHasRandomToken
+    {
+        builder.OwnsOne(x => x.Token, randomToken =>
+        {
+            randomToken
+                .Property(i => i.Value)
+                .HasColumnName(columnName)
+                .HasColumnType("text")
+                .HasMaxLength(100)
+                .IsRequired();
+
+            randomToken
+                .HasIndex(i => i.Value, $"uq_{tableName}_{columnName}")
+                .IsUnique();
+        });
+        return builder;
+    }
+
+    public static EntityTypeBuilder<T> ConfigureDiscount<T>(this EntityTypeBuilder<T> builder)
+        where T : class, IHasDiscount
+    {
+        builder.OwnsOne(x => x.ItemDiscount, discount =>
+        {
+            discount
+                .Property(d => d.Percentage)
+                .HasColumnName("discount_percentage")
+                .HasColumnType("numeric(4,2)")
+                .IsRequired(false);
+
+            discount
+                .Property(d => d.FixedAmount)
+                .HasColumnName("discount_fixed_amount")
+                .HasColumnType("numeric")
+                .IsRequired(false);
+
+            discount
+                .Property(d => d.Reason)
+                .HasColumnName("discount_reason")
+                .HasColumnType("text")
+                .HasMaxLength(255)
+                .IsRequired(false);
+            
+        }).Navigation(x => x.ItemDiscount).IsRequired(false);
+        
+        return builder;
+    }
+
+    public static EntityTypeBuilder<T> ConfigureUnitPrice<T>(this EntityTypeBuilder<T> builder)
+        where T : class, IHasUnitPrice
+    {
+        builder.OwnsOne(x => x.UnitPrice, money =>
+        {
+            money
+                .Property(m => m.Value)
+                .HasColumnName("unit_price")
+                .HasColumnType("numeric")
+                .IsRequired();
+
+            money
+                .Property(m => m.Currency)
+                .HasColumnName("unit_price_currency")
+                .HasColumnType("text")
+                .HasMaxLength(3)
+                .IsRequired();
+            
+        }).Navigation(x => x.UnitPrice).IsRequired();
+        
+        return builder;
+    }
+
+    public static EntityTypeBuilder<T> ConfigureQuantity<T>(this EntityTypeBuilder<T> builder)
+        where T : class, IHasQuantity
+    {
+        builder.OwnsOne(x => x.Quantity, quantity =>
+        {
+            quantity
+                .Property(q => q.Value)
+                .HasColumnName("quantity")
+                .HasColumnType("integer")
+                .IsRequired();
+            
+        }).Navigation(x => x.Quantity).IsRequired();
+        return builder;
+    }
 }
