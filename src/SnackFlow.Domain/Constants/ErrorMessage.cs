@@ -76,6 +76,38 @@ public static class ErrorMessage
     }
 
     /// <summary>
+    /// Representa um valor de desconto associado ao contexto de um objeto de valor.
+    /// Pode ser criado com base em uma porcentagem ou um valor fixo.
+    /// </summary>
+    public static class Discount
+    {
+        public const string PercentageIsInvalid = "O valor do desconto deve ser maior que zero ou menor ou igual a 100%.";
+        public const string FixedAmountIsInvalid = "O valor do desconto deve ser maior que zero.";
+        public const string LessThanOrEqualToZero = "O valor do desconto deve ser maior que zero.";
+        public const string GreaterThanSubtotal = "Desconto não pode ser maior que o subtotal.";
+    }
+
+    /// <summary>
+    /// Contém mensagens de erro relacionadas a valores monetários e regras de consistência entre moedas.
+    /// Fornece mensagens para operações como adição e subtração, garantindo a consistência das moedas.
+    /// </summary>
+    public static class Money
+    {
+        public const string NegativeValue = "Valor não pode ser negativo.";
+        public const string InvalidSum = "Não é possível somar moedas diferentes.";
+        public const string InvalidSubtraction = "Não é possível subtrair moedas diferentes";
+        public const string ZeroValue = "O valor deve ser maior que zero";
+    }
+
+    public static class Product
+    {
+        public const string CategoryNameIsNull = "O nome da categoria não pode ser nulo.";
+        public const string CategoryCodeIsNull = "O código da categoria não pode ser nulo.";
+        public const string NameIsNull = "O nome do produto não pode ser nulo.";
+        public const string DescriptionIsNull = "A descrição do produto não pode ser nula.";
+    }
+
+    /// <summary>
     /// Contém mensagens de erro relacionadas a conflitos no sistema, como duplicidade de registros.
     /// </summary>
     public static class Conflict
@@ -102,9 +134,13 @@ public static class ErrorMessage
     /// </summary>
     public static class Invalid
     {
-        public const string IdIsNull = "O ID não pode ser nulo.";
+        public const string CompanyId = "O id da empresa é inválido.";
+        public const string UserId = "O id do usuário é inválido.";
+        public const string CategoryId = "O Id da categoria é inválido.";
+        public const string ProductId = "O Id do produto é inválido.";
         public const string Password = "Senha inválida.";
         public const string Auth = "Credenciais inválidas.";
+        public const string Quantity = "Quantidade deve ser maior que zero.";
     }
 
     public static class Exception
