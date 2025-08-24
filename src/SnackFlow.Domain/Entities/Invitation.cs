@@ -1,11 +1,13 @@
 using System.Security.Cryptography;
 using SnackFlow.Domain.Abstractions;
+using SnackFlow.Domain.Abstractions.ValueObjects;
 using SnackFlow.Domain.Enums;
 using SnackFlow.Domain.ValueObjects.Email;
 
 namespace SnackFlow.Domain.Entities;
 
-public sealed class Invitation : BaseEntity, IAggregateRoot
+public sealed class Invitation 
+    : BaseEntity, IAggregateRoot, IHasEmail
 {
     #region Properties
 

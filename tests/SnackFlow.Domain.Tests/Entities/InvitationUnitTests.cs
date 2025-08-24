@@ -1,0 +1,409 @@
+using FluentAssertions;
+using SnackFlow.Domain.Abstractions;
+using SnackFlow.Domain.Abstractions.ValueObjects;
+using SnackFlow.Domain.Entities;
+using SnackFlow.Domain.Enums;
+
+namespace SnackFlow.Domain.Tests.Entities;
+
+public sealed class InvitationUnitTests : BaseTest
+{
+   #region Valid Tests
+
+   [Fact(DisplayName = "Should create invitation with valid parameters")]
+   public void Create_WhenValidParameters_ShouldCreateInvitation()
+   {
+       // Arrange
+       var email = _faker.Person.Email;
+       var companyId = Guid.NewGuid();
+       var role = _faker.Name.JobTitle();
+       var permissions = new List<string> { "read", "write", "admin" };
+       var position = _faker.Random.Enum<BusinessPosition>();
+       var createdByUserId = Guid.NewGuid();
+
+       // Act
+       var result = Invitation.Create(email, companyId, role, permissions, position, createdByUserId);
+
+       // Assert
+       result.Should().NotBeNull();
+       result.Id.Should().NotBe(Guid.Empty);
+       result.Email.Value.Should().Be(email.ToLower());
+       result.CompanyId.Should().Be(companyId);
+       result.Role.Should().Be(role);
+       result.Position.Should().Be(position);
+       result.CreatedByUserId.Should().Be(createdByUserId);
+       result.IsUsed.Should().BeFalse();
+       result.InviteToken.Should().NotBeNullOrEmpty();
+       result.ExpiresAt.Should().BeAfter(DateTime.UtcNow);
+       result.ExpiresAt.Should().BeOnOrBefore(DateTime.UtcNow.AddDays(2).AddMinutes(1));
+       result.Permissions.Should().Be("read,write,admin");
+   }
+
+   [Theory(DisplayName = "Should create invitation with different business positions")]
+   [InlineData(BusinessPosition.Manager)]
+   [InlineData(BusinessPosition.Employee)]
+   [InlineData(BusinessPosition.Director)]
+   public void Create_WhenDifferentPositions_ShouldCreateInvitationCorrectly(BusinessPosition position)
+   {
+       // Arrange
+       var email = _faker.Person.Email;
+       var companyId = Guid.NewGuid();
+       var role = _faker.Name.JobTitle();
+       var permissions = new List<string> { "read" };
+       var createdByUserId = Guid.NewGuid();
+
+       // Act
+       var result = Invitation.Create(email, companyId, role, permissions, position, createdByUserId);
+
+       // Assert
+       result.Should().NotBeNull();
+       result.Position.Should().Be(position);
+   }
+
+   [Fact(DisplayName = "Should create invitation with empty permissions list")]
+   public void Create_WhenEmptyPermissions_ShouldCreateInvitationWithEmptyPermissions()
+   {
+       // Arrange
+       var email = _faker.Person.Email;
+       var companyId = Guid.NewGuid();
+       var role = _faker.Name.JobTitle();
+       var permissions = new List<string>();
+       var position = _faker.Random.Enum<BusinessPosition>();
+       var createdByUserId = Guid.NewGuid();
+
+       // Act
+       var result = Invitation.Create(email, companyId, role, permissions, position, createdByUserId);
+
+       // Assert
+       result.Should().NotBeNull();
+       result.Permissions.Should().BeEmpty();
+   }
+
+   [Fact(DisplayName = "Should generate unique invite tokens for different invitations")]
+   public void Create_WhenMultipleInvitations_ShouldGenerateUniqueTokens()
+   {
+       // Arrange
+       var email1 = _faker.Person.Email;
+       var email2 = _faker.Person.Email;
+       var companyId = Guid.NewGuid();
+       var role = _faker.Name.JobTitle();
+       var permissions = new List<string> { "read" };
+       var position = _faker.Random.Enum<BusinessPosition>();
+       var createdByUserId = Guid.NewGuid();
+
+       // Act
+       var invitation1 = Invitation.Create(email1, companyId, role, permissions, position, createdByUserId);
+       var invitation2 = Invitation.Create(email2, companyId, role, permissions, position, createdByUserId);
+
+       // Assert
+       invitation1.InviteToken.Should().NotBe(invitation2.InviteToken);
+       invitation1.InviteToken.Should().NotBeNullOrEmpty();
+       invitation2.InviteToken.Should().NotBeNullOrEmpty();
+   }
+
+   #endregion
+
+   #region Invalid Tests
+
+   [Theory(DisplayName = "Should throw exception when creating with invalid email")]
+   [InlineData("")]
+   [InlineData("   ")]
+   [InlineData("invalid-email")]
+   [InlineData("@domain.com")]
+   [InlineData("user@")]
+   public void Create_WhenInvalidEmail_ShouldThrowException(string invalidEmail)
+   {
+       // Arrange
+       var companyId = Guid.NewGuid();
+       var role = _faker.Name.JobTitle();
+       var permissions = new List<string> { "read" };
+       var position = _faker.Random.Enum<BusinessPosition>();
+       var createdByUserId = Guid.NewGuid();
+
+       // Act
+       var act = () => Invitation.Create(invalidEmail, companyId, role, permissions, position, createdByUserId);
+
+       // Assert
+       act.Should().Throw<Exception>(); // Ajustar conforme exceção específica do Email
+   }
+
+   #endregion
+
+   #region Status Methods Tests
+
+   [Fact(DisplayName = "Should mark invitation as used")]
+   public void MarkAsUsed_WhenCalled_ShouldSetIsUsedToTrue()
+   {
+       // Arrange
+       var invitation = CreateValidInvitation();
+
+       // Act
+       invitation.MarkAsUsed();
+
+       // Assert
+       invitation.IsUsed.Should().BeTrue();
+       invitation.IsValid().Should().BeFalse();
+   }
+
+   [Fact(DisplayName = "Should return false when invitation is not expired")]
+   public void IsExpired_WhenNotExpired_ShouldReturnFalse()
+   {
+       // Arrange
+       var invitation = CreateValidInvitation();
+
+       // Act
+       var result = invitation.IsExpired();
+
+       // Assert
+       result.Should().BeFalse();
+   }
+
+   [Fact(DisplayName = "Should return true when invitation is expired")]
+   public void IsExpired_WhenExpired_ShouldReturnTrue()
+   {
+       // Arrange
+       var invitation = CreateValidInvitation();
+       
+       // Simular expiração usando reflection para alterar ExpiresAt
+       var expiresAtField = typeof(Invitation).GetField("<ExpiresAt>k__BackingField", 
+           System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+       expiresAtField?.SetValue(invitation, DateTime.UtcNow.AddDays(-1));
+
+       // Act
+       var result = invitation.IsExpired();
+
+       // Assert
+       result.Should().BeTrue();
+   }
+
+   [Fact(DisplayName = "Should return true when invitation is valid")]
+   public void IsValid_WhenNotUsedAndNotExpired_ShouldReturnTrue()
+   {
+       // Arrange
+       var invitation = CreateValidInvitation();
+
+       // Act
+       var result = invitation.IsValid();
+
+       // Assert
+       result.Should().BeTrue();
+       invitation.IsUsed.Should().BeFalse();
+       invitation.IsExpired().Should().BeFalse();
+   }
+
+   [Fact(DisplayName = "Should return false when invitation is used")]
+   public void IsValid_WhenUsed_ShouldReturnFalse()
+   {
+       // Arrange
+       var invitation = CreateValidInvitation();
+       invitation.MarkAsUsed();
+
+       // Act
+       var result = invitation.IsValid();
+
+       // Assert
+       result.Should().BeFalse();
+   }
+
+   [Fact(DisplayName = "Should return false when invitation is expired")]
+   public void IsValid_WhenExpired_ShouldReturnFalse()
+   {
+       // Arrange
+       var invitation = CreateValidInvitation();
+       
+       // Simular expiração
+       var expiresAtField = typeof(Invitation).GetField("<ExpiresAt>k__BackingField", 
+           System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+       expiresAtField?.SetValue(invitation, DateTime.UtcNow.AddDays(-1));
+
+       // Act
+       var result = invitation.IsValid();
+
+       // Assert
+       result.Should().BeFalse();
+   }
+
+   #endregion
+
+   #region Permissions Tests
+
+   [Theory(DisplayName = "Should serialize permissions correctly")]
+   [InlineData(new[] { "read" }, "read")]
+   [InlineData(new[] { "read", "write" }, "read,write")]
+   [InlineData(new[] { "read", "write", "admin" }, "read,write,admin")]
+   [InlineData(new string[0], "")]
+   public void SerializePermissions_WhenCalled_ShouldReturnCorrectString(string[] permissions, string expected)
+   {
+       // Act
+       var result = Invitation.SerializePermissions(permissions.ToList());
+
+       // Assert
+       result.Should().Be(expected);
+   }
+
+   [Theory(DisplayName = "Should deserialize permissions correctly")]
+   [InlineData("read", new[] { "read" })]
+   [InlineData("read,write", new[] { "read", "write" })]
+   [InlineData("read,write,admin", new[] { "read", "write", "admin" })]
+   [InlineData("", new string[0])]
+   public void DeserializePermissions_WhenCalled_ShouldReturnCorrectList(string permissions, string[] expected)
+   {
+       // Act
+       var result = Invitation.DeserializePermissions(permissions);
+
+       // Assert
+       result.Should().BeEquivalentTo(expected);
+   }
+
+   [Fact(DisplayName = "Should handle permissions with extra commas")]
+   public void DeserializePermissions_WhenExtraCommas_ShouldIgnoreEmptyEntries()
+   {
+       // Arrange
+       var permissions = "read,,write,";
+
+       // Act
+       var result = Invitation.DeserializePermissions(permissions);
+
+       // Assert
+       result.Should().BeEquivalentTo(new[] { "read", "write" });
+   }
+
+   #endregion
+
+   #region Token Tests
+
+   [Fact(DisplayName = "Should generate base64 token with correct length")]
+   public void InviteToken_WhenGenerated_ShouldBeValidBase64()
+   {
+       // Arrange
+       var invitation = CreateValidInvitation();
+
+       // Act & Assert
+       invitation.InviteToken.Should().NotBeNullOrEmpty();
+       
+       // Verificar se é base64 válido
+       var act = () => Convert.FromBase64String(invitation.InviteToken);
+       act.Should().NotThrow();
+       
+       // Verificar se tem o tamanho esperado (32 bytes = ~44 chars em base64)
+       invitation.InviteToken.Length.Should().BeGreaterThan(40);
+   }
+
+   #endregion
+
+   #region Implicit Operator Tests
+
+   [Fact(DisplayName = "Should convert invitation to string using implicit operator")]
+   public void ImplicitOperator_WhenConvertingToString_ShouldReturnInviteToken()
+   {
+       // Arrange
+       var invitation = CreateValidInvitation();
+
+       // Act
+       string result = invitation;
+
+       // Assert
+       result.Should().Be(invitation.InviteToken);
+   }
+
+   [Fact(DisplayName = "Should return invite token when calling ToString")]
+   public void ToString_WhenCalled_ShouldReturnInviteToken()
+   {
+       // Arrange
+       var invitation = CreateValidInvitation();
+
+       // Act
+       var result = invitation.ToString();
+
+       // Assert
+       result.Should().Be(invitation.InviteToken);
+   }
+
+   #endregion
+
+   #region Interface Implementation Tests
+
+   [Fact(DisplayName = "Should implement IHasEmail correctly")]
+   public void Invitation_ShouldImplementIHasEmailCorrectly()
+   {
+       // Arrange
+       var invitation = CreateValidInvitation();
+
+       // Assert
+       invitation.Should().BeAssignableTo<IHasEmail>();
+       invitation.Email.Should().NotBeNull();
+   }
+
+   [Fact(DisplayName = "Should implement IAggregateRoot correctly")]
+   public void Invitation_ShouldImplementIAggregateRootCorrectly()
+   {
+       // Arrange
+       var invitation = CreateValidInvitation();
+
+       // Assert
+       invitation.Should().BeAssignableTo<IAggregateRoot>();
+   }
+
+   #endregion
+
+   #region Edge Cases
+
+   [Fact(DisplayName = "Should handle single permission correctly")]
+   public void Create_WhenSinglePermission_ShouldSerializeCorrectly()
+   {
+       // Arrange
+       var email = _faker.Person.Email;
+       var permissions = new List<string> { "admin" };
+
+       // Act
+       var invitation = CreateInvitationWithPermissions(email, permissions);
+
+       // Assert
+       invitation.Permissions.Should().Be("admin");
+       Invitation.DeserializePermissions(invitation.Permissions).Should().ContainSingle().Which.Should().Be("admin");
+   }
+
+   [Fact(DisplayName = "Should handle permissions with spaces correctly")]
+   public void Create_WhenPermissionsWithSpaces_ShouldSerializeCorrectly()
+   {
+       // Arrange
+       var email = _faker.Person.Email;
+       var permissions = new List<string> { "read data", "write data", "admin panel" };
+
+       // Act
+       var invitation = CreateInvitationWithPermissions(email, permissions);
+
+       // Assert
+       invitation.Permissions.Should().Be("read data,write data,admin panel");
+       Invitation.DeserializePermissions(invitation.Permissions)
+           .Should().BeEquivalentTo(new[] { "read data", "write data", "admin panel" });
+   }
+
+   #endregion
+
+   #region Helper Methods
+
+   private Invitation CreateValidInvitation()
+   {
+       return Invitation.Create(
+           _faker.Person.Email,
+           Guid.NewGuid(),
+           _faker.Name.JobTitle(),
+           new List<string> { "read", "write" },
+           _faker.Random.Enum<BusinessPosition>(),
+           Guid.NewGuid());
+   }
+
+   private Invitation CreateInvitationWithPermissions(string email, List<string> permissions)
+   {
+       return Invitation.Create(
+           email,
+           Guid.NewGuid(),
+           _faker.Name.JobTitle(),
+           permissions,
+           _faker.Random.Enum<BusinessPosition>(),
+           Guid.NewGuid());
+   }
+
+   #endregion
+}
