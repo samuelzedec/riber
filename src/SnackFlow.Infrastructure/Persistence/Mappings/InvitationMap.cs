@@ -12,7 +12,9 @@ public sealed class InvitationMap : BaseEntityConfiguration<Invitation>
 
     protected override void ConfigureEntity(EntityTypeBuilder<Invitation> builder)
     {
-        builder.ConfigureEmail("uq_invitations_email");
+        builder
+            .ConfigureEmail("uq_invitations_email")
+            .ConfigureRandomToken(GetTableName(), "invite_token");
         
         builder
             .Property(i => i.CompanyId)
@@ -61,17 +63,6 @@ public sealed class InvitationMap : BaseEntityConfiguration<Invitation>
             .HasColumnName("expires_at")
             .HasColumnType("timestamptz")
             .IsRequired();
-
-        builder
-            .Property(i => i.InviteToken)
-            .HasColumnName("invite_token")
-            .HasColumnType("text")
-            .HasMaxLength(64)
-            .IsRequired();
-
-        builder
-            .HasIndex(i => i.InviteToken, "uq_invitations_invite_token")
-            .IsUnique();
     }
     
     protected override void ConfigureQueryFilter(EntityTypeBuilder<Invitation> builder)

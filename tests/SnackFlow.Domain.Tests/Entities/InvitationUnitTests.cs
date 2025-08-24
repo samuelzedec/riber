@@ -33,7 +33,8 @@ public sealed class InvitationUnitTests : BaseTest
        result.Position.Should().Be(position);
        result.CreatedByUserId.Should().Be(createdByUserId);
        result.IsUsed.Should().BeFalse();
-       result.InviteToken.Should().NotBeNullOrEmpty();
+       result.Token.Should().NotBeNull();
+       result.Token.Value.Should().NotBeNullOrEmpty();
        result.ExpiresAt.Should().BeAfter(DateTime.UtcNow);
        result.ExpiresAt.Should().BeOnOrBefore(DateTime.UtcNow.AddDays(2).AddMinutes(1));
        result.Permissions.Should().Be("read,write,admin");
@@ -96,9 +97,9 @@ public sealed class InvitationUnitTests : BaseTest
        var invitation2 = Invitation.Create(email2, companyId, role, permissions, position, createdByUserId);
 
        // Assert
-       invitation1.InviteToken.Should().NotBe(invitation2.InviteToken);
-       invitation1.InviteToken.Should().NotBeNullOrEmpty();
-       invitation2.InviteToken.Should().NotBeNullOrEmpty();
+       invitation1.Token.Value.Should().NotBe(invitation2.Token.Value);
+       invitation1.Token.Value.Should().NotBeNullOrEmpty();
+       invitation2.Token.Value.Should().NotBeNullOrEmpty();
    }
 
    #endregion
@@ -124,7 +125,7 @@ public sealed class InvitationUnitTests : BaseTest
        var act = () => Invitation.Create(invalidEmail, companyId, role, permissions, position, createdByUserId);
 
        // Assert
-       act.Should().Throw<Exception>(); // Ajustar conforme exceção específica do Email
+       act.Should().Throw<Exception>();
    }
 
    #endregion
@@ -272,21 +273,22 @@ public sealed class InvitationUnitTests : BaseTest
 
    #region Token Tests
 
-   [Fact(DisplayName = "Should generate base64 token with correct length")]
-   public void InviteToken_WhenGenerated_ShouldBeValidBase64()
+   [Fact(DisplayName = "Should generate valid RandomToken")]
+   public void InviteToken_WhenGenerated_ShouldBeValidRandomToken()
    {
        // Arrange
        var invitation = CreateValidInvitation();
 
        // Act & Assert
-       invitation.InviteToken.Should().NotBeNullOrEmpty();
+       invitation.Token.Should().NotBeNull();
+       invitation.Token.Value.Should().NotBeNullOrEmpty();
        
        // Verificar se é base64 válido
-       var act = () => Convert.FromBase64String(invitation.InviteToken);
+       var act = () => Convert.FromBase64String(invitation.Token.Value);
        act.Should().NotThrow();
        
-       // Verificar se tem o tamanho esperado (32 bytes = ~44 chars em base64)
-       invitation.InviteToken.Length.Should().BeGreaterThan(40);
+       // Verificar se tem o tamanho esperado
+       invitation.Token.Value.Length.Should().BeGreaterThan(40);
    }
 
    #endregion
@@ -294,7 +296,7 @@ public sealed class InvitationUnitTests : BaseTest
    #region Implicit Operator Tests
 
    [Fact(DisplayName = "Should convert invitation to string using implicit operator")]
-   public void ImplicitOperator_WhenConvertingToString_ShouldReturnInviteToken()
+   public void ImplicitOperator_WhenConvertingToString_ShouldReturnInviteTokenValue()
    {
        // Arrange
        var invitation = CreateValidInvitation();
@@ -303,11 +305,11 @@ public sealed class InvitationUnitTests : BaseTest
        string result = invitation;
 
        // Assert
-       result.Should().Be(invitation.InviteToken);
+       result.Should().Be(invitation.Token.Value);
    }
 
-   [Fact(DisplayName = "Should return invite token when calling ToString")]
-   public void ToString_WhenCalled_ShouldReturnInviteToken()
+   [Fact(DisplayName = "Should return invite token value when calling ToString")]
+   public void ToString_WhenCalled_ShouldReturnInviteTokenValue()
    {
        // Arrange
        var invitation = CreateValidInvitation();
@@ -316,7 +318,7 @@ public sealed class InvitationUnitTests : BaseTest
        var result = invitation.ToString();
 
        // Assert
-       result.Should().Be(invitation.InviteToken);
+       result.Should().Be(invitation.Token.Value);
    }
 
    #endregion
