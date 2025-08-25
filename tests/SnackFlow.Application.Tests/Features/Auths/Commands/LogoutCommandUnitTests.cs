@@ -86,7 +86,7 @@ public sealed class LogoutCommandUnitTests : BaseTest
 
         // Assert
         await result.Should().ThrowExactlyAsync<BadRequestException>()
-            .WithMessage(ErrorMessage.Invalid.IdIsNull);
+            .WithMessage(ErrorMessage.Invalid.UserId);
         
         _mockCurrentUserService.Verify(x => x.GetUserId(), Times.Once);
         _mockAuthService.Verify(x => x.UpdateSecurityStampAndGetUserAsync(It.IsAny<string>()), Times.Never);

@@ -1,4 +1,4 @@
 namespace SnackFlow.Domain.Exceptions;
 
-public sealed class CompanyIsNullException(string message)
+public sealed class ProductDescriptionNullException(string message)
     : DomainException(message);

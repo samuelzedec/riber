@@ -27,7 +27,7 @@ internal sealed class CreateUserCommandValidator : AbstractValidator<CreateUserC
         {
             RuleFor(x => x.CompanyId)
                 .NotEqual(Guid.Empty)
-                .WithMessage(ErrorMessage.Invalid.IdIsNull);
+                .WithMessage(ErrorMessage.Invalid.CompanyId);
         });
         
         RuleFor(x => x.UserName)

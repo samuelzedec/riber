@@ -26,8 +26,13 @@ public sealed record Money : BaseValueObject
     public static Money Create(decimal value, string currency = "BRL")
         => value < 0 
             ? throw new InvalidMoneyException(ErrorMessage.Money.NegativeValue)
-            : new(value, currency);
-
+            : new Money(value, currency);
+    
+    public static Money CreatePrice(decimal value, string currency = "BRL")
+        => value <= 0 
+            ? throw new InvalidMoneyException(ErrorMessage.Money.ZeroValue)
+            : new Money(value, currency);
+    
     public static Money Zero() => new();
 
     #endregion

@@ -129,13 +129,15 @@ public static class EntityConfigurationExtensions
                 .Property(d => d.Percentage)
                 .HasColumnName("discount_percentage")
                 .HasColumnType("numeric(4,2)")
-                .IsRequired(false);
+                .HasDefaultValue(0m)
+                .IsRequired();
 
             discount
                 .Property(d => d.FixedAmount)
                 .HasColumnName("discount_fixed_amount")
                 .HasColumnType("numeric")
-                .IsRequired(false);
+                .HasDefaultValue(0m)
+                .IsRequired();
 
             discount
                 .Property(d => d.Reason)

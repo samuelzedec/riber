@@ -9,6 +9,7 @@ public sealed class UserMap : BaseEntityConfiguration<User>
 {
     protected override string GetTableName()
         => "user";
+    
     protected override void ConfigureEntity(EntityTypeBuilder<User> builder)
     {
         builder
