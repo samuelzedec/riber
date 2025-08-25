@@ -1,11 +1,13 @@
-using System.Security.Cryptography;
 using SnackFlow.Domain.Abstractions;
+using SnackFlow.Domain.Abstractions.ValueObjects;
 using SnackFlow.Domain.Enums;
 using SnackFlow.Domain.ValueObjects.Email;
+using SnackFlow.Domain.ValueObjects.RandomToken;
 
 namespace SnackFlow.Domain.Entities;
 
-public sealed class Invitation : BaseEntity, IAggregateRoot
+public sealed class Invitation 
+    : BaseEntity, IAggregateRoot, IHasEmail, IHasRandomToken
 {
     #region Properties
 
@@ -17,7 +19,7 @@ public sealed class Invitation : BaseEntity, IAggregateRoot
     public Guid CreatedByUserId { get; private set; }
     public bool IsUsed { get; private set; }
     public DateTime ExpiresAt { get; private set; }
-    public string InviteToken { get; private set; }
+    public RandomToken Token { get; private set; }
 
     #endregion
 
@@ -33,7 +35,7 @@ public sealed class Invitation : BaseEntity, IAggregateRoot
         Permissions = string.Empty;
         CreatedByUserId = Guid.Empty;
         ExpiresAt = default;
-        InviteToken = string.Empty;
+        Token = null!;
     }
 
     private Invitation(
@@ -52,7 +54,7 @@ public sealed class Invitation : BaseEntity, IAggregateRoot
         Permissions = permissions;
         CreatedByUserId = createdByUserId;
         ExpiresAt = DateTime.UtcNow.AddDays(2);
-        InviteToken = GeneratePublicCode();
+        Token = RandomToken.Create();
     }
 
     #endregion
@@ -87,13 +89,6 @@ public sealed class Invitation : BaseEntity, IAggregateRoot
 
     public bool IsValid()
         => !IsUsed && !IsExpired();
-    
-    private string GeneratePublicCode()
-    {
-        var bytes = new byte[32];
-        RandomNumberGenerator.Fill(bytes);
-        return Convert.ToBase64String(bytes);
-    }
 
     #endregion
 
@@ -117,7 +112,7 @@ public sealed class Invitation : BaseEntity, IAggregateRoot
     #region Overrides
 
     public override string ToString()
-        => InviteToken;
+        => Token;
 
     #endregion
 }

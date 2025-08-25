@@ -9,6 +9,6 @@ internal sealed class GetCompanyByIdQueryValidator : AbstractValidator<GetCompan
     {
         RuleFor(x => x.CompanyId)
             .NotEmpty()
-            .WithMessage(ErrorMessage.Invalid.IdIsNull);
+            .WithMessage(ErrorMessage.Invalid.CompanyId);
     }
 }

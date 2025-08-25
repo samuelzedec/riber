@@ -1,4 +1,5 @@
 using SnackFlow.Domain.Abstractions;
+using SnackFlow.Domain.Abstractions.ValueObjects;
 using SnackFlow.Domain.Enums;
 using SnackFlow.Domain.ValueObjects.CompanyName;
 using SnackFlow.Domain.ValueObjects.Email;
@@ -7,7 +8,8 @@ using SnackFlow.Domain.ValueObjects.TaxId;
 
 namespace SnackFlow.Domain.Entities;
 
-public sealed class Company : BaseEntity, IAggregateRoot
+public sealed class Company 
+    : BaseEntity, IAggregateRoot, IHasCompanyName, IHasTaxId, IHasEmail, IHasPhone
 {
     #region Properties
 

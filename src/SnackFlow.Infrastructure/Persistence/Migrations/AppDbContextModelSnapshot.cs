@@ -74,12 +74,6 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamptz")
                         .HasColumnName("expires_at");
 
-                    b.Property<string>("InviteToken")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("text")
-                        .HasColumnName("invite_token");
-
                     b.Property<bool>("IsUsed")
                         .HasColumnType("boolean")
                         .HasColumnName("is_used");
@@ -110,10 +104,200 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
 
                     b.HasIndex(new[] { "CompanyId" }, "ix_invitations_company_id");
 
-                    b.HasIndex(new[] { "InviteToken" }, "uq_invitations_invite_token")
+                    b.ToTable("invitations", (string)null);
+                });
+
+            modelBuilder.Entity("SnackFlow.Domain.Entities.Order", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("AttendantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("modified_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_order_id");
+
+                    b.HasIndex("AttendantId");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("order", (string)null);
+                });
+
+            modelBuilder.Entity("SnackFlow.Domain.Entities.OrderItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("order_id");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("text")
+                        .HasColumnName("product_name");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("modified_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_order_item_id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId")
                         .IsUnique();
 
-                    b.ToTable("invitations", (string)null);
+                    b.ToTable("order_item", (string)null);
+                });
+
+            modelBuilder.Entity("SnackFlow.Domain.Entities.Product", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("category_id");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("company_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("text")
+                        .HasColumnName("image_url");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("modified_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_product_id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex(new[] { "Name" }, "ix_product_name");
+
+                    b.ToTable("product", (string)null);
+                });
+
+            modelBuilder.Entity("SnackFlow.Domain.Entities.ProductCategory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("text")
+                        .HasColumnName("code");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("company_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("modified_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_product_category_id");
+
+                    b.HasIndex(new[] { "Name" }, "ix_product_category_name");
+
+                    b.HasIndex(new[] { "CompanyId", "Code" }, "uq_product_category_company_code")
+                        .IsUnique();
+
+                    b.ToTable("product_category", (string)null);
                 });
 
             modelBuilder.Entity("SnackFlow.Domain.Entities.User", b =>
@@ -1118,15 +1302,13 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                                 .IsRequired()
                                 .HasMaxLength(150)
                                 .HasColumnType("text")
-                                .HasColumnName("corporate_name")
-                                .HasAnnotation("MinLength", (byte)3);
+                                .HasColumnName("corporate_name");
 
                             b1.Property<string>("Fantasy")
                                 .IsRequired()
                                 .HasMaxLength(100)
                                 .HasColumnType("text")
-                                .HasColumnName("fantasy_name")
-                                .HasAnnotation("MinLength", (byte)3);
+                                .HasColumnName("fantasy_name");
 
                             b1.HasKey("CompanyId");
 
@@ -1188,9 +1370,30 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
 
                             b1.HasKey("InvitationId");
 
-                            b1.HasIndex(new[] { "Value" }, "uq_company_email")
-                                .IsUnique()
-                                .HasDatabaseName("uq_company_email1");
+                            b1.HasIndex(new[] { "Value" }, "uq_invitations_email")
+                                .IsUnique();
+
+                            b1.ToTable("invitations");
+
+                            b1.WithOwner()
+                                .HasForeignKey("InvitationId");
+                        });
+
+                    b.OwnsOne("SnackFlow.Domain.ValueObjects.RandomToken.RandomToken", "Token", b1 =>
+                        {
+                            b1.Property<Guid>("InvitationId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("text")
+                                .HasColumnName("invite_token");
+
+                            b1.HasKey("InvitationId");
+
+                            b1.HasIndex(new[] { "Value" }, "uq_invitations_invite_token")
+                                .IsUnique();
 
                             b1.ToTable("invitations");
 
@@ -1200,6 +1403,213 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
 
                     b.Navigation("Email")
                         .IsRequired();
+
+                    b.Navigation("Token")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SnackFlow.Domain.Entities.Order", b =>
+                {
+                    b.HasOne("SnackFlow.Domain.Entities.User", "Attendant")
+                        .WithMany()
+                        .HasForeignKey("AttendantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_order_attendant_id");
+
+                    b.HasOne("SnackFlow.Domain.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_order_company_id");
+
+                    b.OwnsOne("SnackFlow.Domain.ValueObjects.RandomToken.RandomToken", "Token", b1 =>
+                        {
+                            b1.Property<Guid>("OrderId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("text")
+                                .HasColumnName("order_token");
+
+                            b1.HasKey("OrderId");
+
+                            b1.HasIndex(new[] { "Value" }, "uq_order_order_token")
+                                .IsUnique();
+
+                            b1.ToTable("order");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderId");
+                        });
+
+                    b.Navigation("Attendant");
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Token")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SnackFlow.Domain.Entities.OrderItem", b =>
+                {
+                    b.HasOne("SnackFlow.Domain.Entities.Order", "Order")
+                        .WithMany("_items")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_order_item_order_id");
+
+                    b.HasOne("SnackFlow.Domain.Entities.Product", "Product")
+                        .WithOne()
+                        .HasForeignKey("SnackFlow.Domain.Entities.OrderItem", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_order_item_product_id");
+
+                    b.OwnsOne("SnackFlow.Domain.ValueObjects.Money.Money", "UnitPrice", b1 =>
+                        {
+                            b1.Property<Guid>("OrderItemId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("text")
+                                .HasColumnName("unit_price_currency");
+
+                            b1.Property<decimal>("Value")
+                                .HasColumnType("numeric")
+                                .HasColumnName("unit_price");
+
+                            b1.HasKey("OrderItemId");
+
+                            b1.ToTable("order_item");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderItemId");
+                        });
+
+                    b.OwnsOne("SnackFlow.Domain.ValueObjects.Discount.Discount", "ItemDiscount", b1 =>
+                        {
+                            b1.Property<Guid>("OrderItemId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<decimal>("FixedAmount")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("numeric")
+                                .HasDefaultValue(0m)
+                                .HasColumnName("discount_fixed_amount");
+
+                            b1.Property<decimal>("Percentage")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("numeric(4,2)")
+                                .HasDefaultValue(0m)
+                                .HasColumnName("discount_percentage");
+
+                            b1.Property<string>("Reason")
+                                .HasMaxLength(255)
+                                .HasColumnType("text")
+                                .HasColumnName("discount_reason");
+
+                            b1.HasKey("OrderItemId");
+
+                            b1.ToTable("order_item");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderItemId");
+                        });
+
+                    b.OwnsOne("SnackFlow.Domain.ValueObjects.Quantity.Quantity", "Quantity", b1 =>
+                        {
+                            b1.Property<Guid>("OrderItemId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<int>("Value")
+                                .HasColumnType("integer")
+                                .HasColumnName("quantity");
+
+                            b1.HasKey("OrderItemId");
+
+                            b1.ToTable("order_item");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderItemId");
+                        });
+
+                    b.Navigation("ItemDiscount");
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Quantity")
+                        .IsRequired();
+
+                    b.Navigation("UnitPrice")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SnackFlow.Domain.Entities.Product", b =>
+                {
+                    b.HasOne("SnackFlow.Domain.Entities.ProductCategory", "Category")
+                        .WithMany("_products")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_product_category_id");
+
+                    b.HasOne("SnackFlow.Domain.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_product_company_id");
+
+                    b.OwnsOne("SnackFlow.Domain.ValueObjects.Money.Money", "UnitPrice", b1 =>
+                        {
+                            b1.Property<Guid>("ProductId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("text")
+                                .HasColumnName("unit_price_currency");
+
+                            b1.Property<decimal>("Value")
+                                .HasColumnType("numeric")
+                                .HasColumnName("unit_price");
+
+                            b1.HasKey("ProductId");
+
+                            b1.ToTable("product");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ProductId");
+                        });
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Company");
+
+                    b.Navigation("UnitPrice")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SnackFlow.Domain.Entities.ProductCategory", b =>
+                {
+                    b.HasOne("SnackFlow.Domain.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_product_category_company_id");
+
+                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("SnackFlow.Domain.Entities.User", b =>
@@ -1275,6 +1685,16 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
                         .HasConstraintName("fk_aspnet_user_user_domain_id");
 
                     b.Navigation("UserDomain");
+                });
+
+            modelBuilder.Entity("SnackFlow.Domain.Entities.Order", b =>
+                {
+                    b.Navigation("_items");
+                });
+
+            modelBuilder.Entity("SnackFlow.Domain.Entities.ProductCategory", b =>
+                {
+                    b.Navigation("_products");
                 });
 #pragma warning restore 612, 618
         }

@@ -7,7 +7,7 @@ using SnackFlow.Domain.Events;
 
 namespace SnackFlow.Application.Events.Handlers;
 
-public sealed class CompanyWelcomeEmailRequestedEventHandler(
+internal sealed class CompanyWelcomeEmailRequestedEventHandler(
     IEmailScheduler emailScheduler)
     : IDomainEventHandler<CompanyWelcomeEmailRequestedEvent>
 {

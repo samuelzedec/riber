@@ -1,4 +1,5 @@
 using SnackFlow.Domain.Abstractions;
+using SnackFlow.Domain.Abstractions.ValueObjects;
 using SnackFlow.Domain.Constants;
 using SnackFlow.Domain.Enums;
 using SnackFlow.Domain.Exceptions;
@@ -7,7 +8,8 @@ using SnackFlow.Domain.ValueObjects.TaxId;
 
 namespace SnackFlow.Domain.Entities;
 
-public class User : BaseEntity, IAggregateRoot
+public class User 
+    : BaseEntity, IAggregateRoot, IHasFullName, IHasTaxId
 {
     #region Properties
 
@@ -16,6 +18,11 @@ public class User : BaseEntity, IAggregateRoot
     public BusinessPosition Position { get; private set; }
     public bool IsActive { get; private set; }
     public Guid? CompanyId { get; private set; }
+
+    #endregion
+
+    #region Navigation Properties
+
     public Company Company { get; private set; } = null!;
 
     #endregion
@@ -61,7 +68,7 @@ public class User : BaseEntity, IAggregateRoot
     public void Activate()
     {
         if (CompanyId is null)
-            throw new CompanyIsNullException(ErrorMessage.Invalid.IdIsNull);
+            throw new IdentifierNullException(ErrorMessage.Invalid.CompanyId);
         IsActive = true;
     }
     
