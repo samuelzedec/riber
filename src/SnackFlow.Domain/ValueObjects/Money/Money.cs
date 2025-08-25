@@ -61,8 +61,6 @@ public sealed record Money : BaseValueObject
     #endregion
     
     #region Methods
-
-    public string ToString(string format) => Value.ToString(format);
     
     public Money Multiply(int quantity) => this * quantity;
     public Money Multiply(decimal factor) => this * factor;

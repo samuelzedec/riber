@@ -115,7 +115,7 @@ public sealed class MoneyUnitTests : BaseTest
    public void AddOperator_WhenDifferentCurrencies_ShouldThrowInvalidSumException()
    {
        // Arrange
-       var money1 = Money.Create(100, "BRL");
+       var money1 = Money.Create(100);
        var money2 = Money.Create(50, "USD");
 
        // Act
@@ -149,7 +149,7 @@ public sealed class MoneyUnitTests : BaseTest
    public void SubtractOperator_WhenDifferentCurrencies_ShouldThrowInvalidSubtractionException()
    {
        // Arrange
-       var money1 = Money.Create(100, "BRL");
+       var money1 = Money.Create(100);
        var money2 = Money.Create(50, "USD");
 
        // Act
@@ -283,20 +283,6 @@ public sealed class MoneyUnitTests : BaseTest
        result.Currency.Should().Be("BRL");
    }
 
-   [Fact(DisplayName = "Should format money value correctly using ToString method")]
-   public void ToString_WhenCalledWithFormat_ShouldReturnFormattedValue()
-   {
-       // Arrange
-       var money = Money.Create(1234.56m);
-       var format = "C2";
-
-       // Act
-       var result = money.ToString(format);
-
-       // Assert
-       result.Should().Be("R$ 1.234,56"); // Formato brasileiro
-   }
-
    #endregion
 
    #region Equality Tests
@@ -332,7 +318,7 @@ public sealed class MoneyUnitTests : BaseTest
    public void Equality_WhenDifferentCurrencies_ShouldNotBeEqual()
    {
        // Arrange
-       var money1 = Money.Create(100, "BRL");
+       var money1 = Money.Create(100);
        var money2 = Money.Create(100, "USD");
 
        // Act & Assert
