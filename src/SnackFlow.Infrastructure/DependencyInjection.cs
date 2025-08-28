@@ -89,7 +89,7 @@ public static class DependencyInjection
     {
         services.AddScoped<ICompanyRepository, CompanyRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IInvitationRepository, IInvitationRepository>();
+        services.AddScoped<IInvitationRepository, InvitationRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
     }
 
