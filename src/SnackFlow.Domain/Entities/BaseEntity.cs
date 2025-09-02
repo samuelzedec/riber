@@ -6,7 +6,7 @@ namespace SnackFlow.Domain.Entities;
 /// Representa uma entidade base abstrata que fornece funcionalidades comuns para entidades de domínio.
 /// Esta classe inclui um identificador, gerenciamento de eventos de domínio e mecanismos de comparação de igualdade.
 /// </summary>
-public abstract class BaseEntity(Guid id) : IEquatable<Guid>
+public abstract class BaseEntity(Guid id) : IEquatable<BaseEntity>
 {
     #region Private Members
 
@@ -23,17 +23,16 @@ public abstract class BaseEntity(Guid id) : IEquatable<Guid>
 
     #endregion
 
-    #region IEquatable Implementations
-
-    public bool Equals(Guid id)
-        => Id == id;
-
-    #endregion
-
     #region Overrides
 
     public override int GetHashCode()
         => Id.GetHashCode();
+    
+    public override bool Equals(object? obj)
+        => obj is BaseEntity other && Equals(other);
+    
+    public bool Equals(BaseEntity? other)
+        => other is not null && Id == other.Id;
 
     #endregion
     
@@ -58,5 +57,15 @@ public abstract class BaseEntity(Guid id) : IEquatable<Guid>
     public void DeleteEntity()
         => DeletedAt = DateTime.UtcNow;
     
+    #endregion
+
+    #region Operators
+
+    public static bool operator ==(BaseEntity? left, BaseEntity? right)
+        => EqualityComparer<BaseEntity>.Default.Equals(left, right);
+    
+    public static bool operator !=(BaseEntity? left, BaseEntity? right)
+        => !(left == right);
+
     #endregion
 }
