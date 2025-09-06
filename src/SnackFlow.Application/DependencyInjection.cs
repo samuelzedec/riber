@@ -22,7 +22,10 @@ public static class DependencyInjection
                 typeof(LoggingBehavior<,>),
             ];
         });
-        
-        services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
+
+        services.AddValidatorsFromAssembly(
+            typeof(DependencyInjection).Assembly,
+            includeInternalTypes: true
+        );
     }
 }
