@@ -3,6 +3,15 @@ using Microsoft.Extensions.Options;
 
 namespace SnackFlow.Api.Authorizations.Permissions;
 
+/// <summary>
+/// Provider responsável por criar políticas de autorização dinamicamente baseadas em permissões.
+/// Intercepta policies no formato "RequirePermissions:perm1,perm2" e cria automaticamente.
+/// </summary>
+/// <remarks>
+/// Evita ter que registrar manualmente cada combinação de permissões no Program.cs.
+/// Para policies que não seguem o padrão, delega para o DefaultAuthorizationPolicyProvider.
+/// </remarks>
+/// <param name="options">Opções de autorização do ASP.NET Core</param>
 public sealed class PermissionPolicyProvider(IOptions<AuthorizationOptions> options) 
     : IAuthorizationPolicyProvider
 {
