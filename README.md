@@ -80,7 +80,7 @@ docker-compose -f docker-compose-dev.yml up -d
 docker-compose -f docker-compose-dev.yml logs -f
 
 # Parar os serviços
-docker-compose -f docker-compose-dev.yml down
+docker-compose -f docker-compose-dev.yml down --rmi all --volumes
 ```
 
 ### 4. Comandos úteis
