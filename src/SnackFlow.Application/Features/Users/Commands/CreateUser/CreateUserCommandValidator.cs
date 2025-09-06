@@ -21,7 +21,9 @@ internal sealed class CreateUserCommandValidator : AbstractValidator<CreateUserC
         
         RuleFor(x => x.Position)
             .NotNull()
-            .WithMessage("O cargo deve ser preenchido.");
+            .WithMessage("O cargo deve ser preenchido.")
+            .IsInEnum()
+            .WithMessage("O cargo informado não é válido.");
 
         When(x => x.CompanyId.HasValue, () =>
         {
