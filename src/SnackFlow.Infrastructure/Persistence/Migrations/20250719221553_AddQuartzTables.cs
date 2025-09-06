@@ -11,26 +11,6 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql(@"
-                DO $$
-                  DECLARE DropDb INT := 1; -- Set this to 0 to skip DROP statements, 1 to include them
-                BEGIN
-                  IF DropDb = 1 THEN
-                    SET client_min_messages = WARNING;
-                    DROP TABLE IF EXISTS qrtz_fired_triggers;
-                    DROP TABLE IF EXISTS qrtz_paused_trigger_grps;
-                    DROP TABLE IF EXISTS qrtz_scheduler_state;
-                    DROP TABLE IF EXISTS qrtz_locks;
-                    DROP TABLE IF EXISTS qrtz_simprop_triggers;
-                    DROP TABLE IF EXISTS qrtz_simple_triggers;
-                    DROP TABLE IF EXISTS qrtz_cron_triggers;
-                    DROP TABLE IF EXISTS qrtz_blob_triggers;
-                    DROP TABLE IF EXISTS qrtz_triggers;
-                    DROP TABLE IF EXISTS qrtz_job_details;
-                    DROP TABLE IF EXISTS qrtz_calendars;
-                    SET client_min_messages = NOTICE;
-                  END IF;
-                END $$;
-
                 CREATE TABLE qrtz_job_details
                   (
                     sched_name TEXT NOT NULL,
@@ -197,7 +177,27 @@ namespace SnackFlow.Infrastructure.Persistence.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-
+            migrationBuilder.Sql(@"
+                DO $$
+                  DECLARE DropDb INT := 1; -- Set this to 0 to skip DROP statements, 1 to include them
+                BEGIN
+                  IF DropDb = 1 THEN
+                    SET client_min_messages = WARNING;
+                    DROP TABLE IF EXISTS qrtz_fired_triggers;
+                    DROP TABLE IF EXISTS qrtz_paused_trigger_grps;
+                    DROP TABLE IF EXISTS qrtz_scheduler_state;
+                    DROP TABLE IF EXISTS qrtz_locks;
+                    DROP TABLE IF EXISTS qrtz_simprop_triggers;
+                    DROP TABLE IF EXISTS qrtz_simple_triggers;
+                    DROP TABLE IF EXISTS qrtz_cron_triggers;
+                    DROP TABLE IF EXISTS qrtz_blob_triggers;
+                    DROP TABLE IF EXISTS qrtz_triggers;
+                    DROP TABLE IF EXISTS qrtz_job_details;
+                    DROP TABLE IF EXISTS qrtz_calendars;
+                    SET client_min_messages = NOTICE;
+                  END IF;
+                END $$;
+            ");
         }
     }
 }
