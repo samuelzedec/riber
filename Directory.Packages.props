@@ -15,6 +15,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageVersion>
+    <PackageVersion Include="Microsoft.SemanticKernel.Abstractions" Version="1.64.0" />
+    <PackageVersion Include="Microsoft.Extensions.AI.Abstractions" Version="9.8.0" />
   </ItemGroup>
   <!-- Pacotes específicos da camada Infrastructure -->
   <ItemGroup>
@@ -33,7 +35,11 @@
     <PackageVersion Include="Quartz.Extensions.Hosting" Version="3.14.0" />
     <PackageVersion Include="Quartz.Serialization.Json" Version="3.14.0" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.6" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.8" />
+    <PackageVersion Include="Microsoft.SemanticKernel.Connectors.Ollama" Version="1.64.0-alpha" />
+    <PackageVersion Include="Microsoft.SemanticKernel.Core" Version="1.64.0" />
+    <PackageVersion Include="Pgvector.EntityFrameworkCore" Version="0.2.2" />
+    <PackageVersion Include="Microsoft.Extensions.AI" Version="9.8.0" />
   </ItemGroup>
   <!-- Pacotes Pacotes específicos da camada Api -->
   <ItemGroup>
@@ -60,5 +66,6 @@
   <ItemGroup>
     <PackageVersion Include="AWSSDK.Extensions.NETCore.Setup" Version="4.0.2" />
     <PackageVersion Include="AWSSDK.SimpleEmail" Version="4.0.0.14" />
+    <PackageVersion Include="AWSSDK.S3" Version="4.0.6.13" />
   </ItemGroup>
 </Project>
