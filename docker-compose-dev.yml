@@ -2,7 +2,7 @@ name: snackflow
 
 services:
   postgres:
-    image: postgres:15
+    image: pgvector/pgvector:pg17
     container_name: postgres-dev
     env_file:
       - .env.dev
