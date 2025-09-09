@@ -4,6 +4,5 @@ public sealed record WelcomeBaseEmailDTO(
     string Name,
     string To,
     string Subject,
-    string Audience,
-    string Template
-) : BaseEmailDTO(To, Subject, Audience, Template);
+    string TemplatePath
+) : BaseEmailDTO(To, Subject, TemplatePath);

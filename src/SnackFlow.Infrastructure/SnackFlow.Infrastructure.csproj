@@ -28,7 +28,7 @@
         <ProjectReference Include="..\SnackFlow.Domain\SnackFlow.Domain.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <Content Include="Services\EmailTemplateService\Templates\**\*.html">
+        <Content Include="Services\AWS\Email\Templates\*.html">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
     </ItemGroup>

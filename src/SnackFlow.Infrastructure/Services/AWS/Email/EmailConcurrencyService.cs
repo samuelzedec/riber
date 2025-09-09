@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Configuration;
-using SnackFlow.Application.Abstractions.Services.Concurrency;
+using SnackFlow.Application.Abstractions.Services.Email;
 
-namespace SnackFlow.Infrastructure.Services.Concurrency;
+namespace SnackFlow.Infrastructure.Services.AWS.Email;
 
 public sealed class EmailConcurrencyService
     : IEmailConcurrencyService
@@ -22,6 +22,6 @@ public sealed class EmailConcurrencyService
 
     private sealed class SemaphoreReleaser(SemaphoreSlim semaphoreSlim) : IDisposable
     {
-        public void Dispose() => semaphoreSlim.Dispose();
+        public void Dispose() => semaphoreSlim.Release();
     }
 }

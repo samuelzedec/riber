@@ -1,4 +1,4 @@
-namespace SnackFlow.Application.Abstractions.Services.Concurrency;
+namespace SnackFlow.Application.Abstractions.Services.Email;
 
 /// <summary>
 /// Fornece funcionalidade para gerenciar concorrência durante operações relacionadas a emails.

@@ -7,7 +7,7 @@ using Moq;
 using SnackFlow.Application.Abstractions.Services;
 using SnackFlow.Application.DTOs;
 using SnackFlow.Domain.Tests;
-using SnackFlow.Infrastructure.Services;
+using SnackFlow.Infrastructure.Services.Authentication;
 using SnackFlow.Infrastructure.Settings;
 
 namespace SnackFlow.Infrastructure.Tests.Services;

@@ -8,7 +8,7 @@ using SnackFlow.Application.Exceptions;
 using SnackFlow.Domain.Constants;
 using SnackFlow.Infrastructure.Persistence.Identity;
 
-namespace SnackFlow.Infrastructure.Services;
+namespace SnackFlow.Infrastructure.Services.Authentication;
 
 public sealed class AuthService(
     UserManager<ApplicationUser> userManager,

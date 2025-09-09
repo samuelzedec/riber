@@ -1,4 +1,4 @@
-namespace SnackFlow.Application.Abstractions.Services;
+namespace SnackFlow.Application.Abstractions.Services.Email;
 
 /// <summary>
 /// Define um serviço para envio de emails.

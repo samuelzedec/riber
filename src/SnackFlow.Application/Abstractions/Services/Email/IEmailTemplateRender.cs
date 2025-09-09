@@ -1,11 +1,12 @@
 using Newtonsoft.Json.Linq;
-namespace SnackFlow.Application.Abstractions.Services;
+
+namespace SnackFlow.Application.Abstractions.Services.Email;
 
 /// <summary>
 /// Interface de serviço para manipulação de templates de email.
 /// Fornece métodos para recuperar e processar templates de email com base em parâmetros especificados.
 /// </summary>
-public interface IEmailTemplateService
+public interface IEmailTemplateRender
 {
     /// <summary>
     /// Recupera um template de email com base no público-alvo, tipo de template e contexto de dados especificados.

@@ -6,7 +6,7 @@ using SnackFlow.Application.Abstractions.Services;
 using SnackFlow.Application.DTOs;
 using SnackFlow.Infrastructure.Settings;
 
-namespace SnackFlow.Infrastructure.Services;
+namespace SnackFlow.Infrastructure.Services.Authentication;
 
 public sealed class JwtTokenService(
     IOptions<AccessTokenSettings> accessTokenSettings,

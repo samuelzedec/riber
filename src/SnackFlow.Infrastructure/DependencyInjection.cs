@@ -1,4 +1,5 @@
-﻿using Amazon.SimpleEmail;
+﻿using Amazon.S3;
+using Amazon.SimpleEmail;
 using SnackFlow.Infrastructure.Persistence;
 using SnackFlow.Infrastructure.Persistence.Interceptors;
 using SnackFlow.Infrastructure.Persistence.Repositories;
@@ -13,13 +14,15 @@ using Serilog;
 using Serilog.Events;
 using SnackFlow.Application.Abstractions.Schedulers;
 using SnackFlow.Application.Abstractions.Services;
-using SnackFlow.Application.Abstractions.Services.Concurrency;
+using SnackFlow.Application.Abstractions.Services.Email;
 using SnackFlow.Domain.Repositories;
 using SnackFlow.Infrastructure.Jobs;
 using SnackFlow.Infrastructure.Schedulers;
 using SnackFlow.Infrastructure.Services;
-using SnackFlow.Infrastructure.Services.Concurrency;
-using SnackFlow.Infrastructure.Services.EmailTemplateService;
+using SnackFlow.Infrastructure.Services.Authentication;
+using SnackFlow.Infrastructure.Services.AWS;
+using SnackFlow.Infrastructure.Services.AWS.Email;
+using SnackFlow.Infrastructure.Services.Local;
 
 namespace SnackFlow.Infrastructure;
 
@@ -30,13 +33,12 @@ namespace SnackFlow.Infrastructure;
 /// </summary>
 public static class DependencyInjection
 {
-    public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration,
-        ILoggingBuilder logging)
+    public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration, ILoggingBuilder logging)
     {
         logging.AddLogging();
         services.AddPersistence(configuration);
         services.AddRepositories();
-        services.AddServices();
+        services.AddServices(configuration);
         services.AddAwsServices(configuration);
         services.AddBackgroundJobs(configuration);
         services.AddJsonConfiguration();
@@ -93,17 +95,22 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork, UnitOfWork>();
     }
 
-    private static void AddServices(this IServiceCollection services)
+    private static void AddServices(this IServiceCollection services, IConfiguration configuration)
     {
         // Transient
-        services.AddTransient<ICertificateService, CertificateService>();
-        services.AddTransient<IEmailTemplateService, EmailTemplateService>();
-        services.AddTransient<IEmailService, EmailService>();
+        services.AddTransient<ICertificateService, LocalCertificateService>();
+        services.AddTransient<IEmailTemplateRender, EmailTemplateRender>();
+        services.AddTransient<IEmailService, AmazonSesEmailService>();
         services.AddTransient<IPermissionDataService, PermissionDataService>();
         services.AddTransient<IAuthService, AuthService>();
         services.AddTransient<ITokenService, JwtTokenService>();
         services.AddTransient<IUserCreationService,  UserCreationService>();
         services.AddTransient<ICurrentUserService, CurrentUserService>();
+
+        if (configuration["ASPNETCORE_ENVIRONMENT"] == "Development")
+            services.AddTransient<IImageStorageService, LocalImageStorageService>();
+        else
+            services.AddTransient<IImageStorageService, AmazonS3Service>();
         
         // Singleton
         services.AddSingleton<IEmailConcurrencyService, EmailConcurrencyService>();
@@ -113,6 +120,7 @@ public static class DependencyInjection
     {
         services.AddDefaultAWSOptions(configuration.GetAWSOptions());
         services.AddAWSService<IAmazonSimpleEmailService>();
+        services.AddAWSService<IAmazonS3>();
     }
 
     private static void AddSchedulersAndJobs(this IServiceCollection services)

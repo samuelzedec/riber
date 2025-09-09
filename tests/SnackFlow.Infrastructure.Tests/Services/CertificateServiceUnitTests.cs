@@ -1,6 +1,6 @@
 using FluentAssertions;
 using SnackFlow.Domain.Tests;
-using SnackFlow.Infrastructure.Services;
+using SnackFlow.Infrastructure.Services.Local;
 
 namespace SnackFlow.Infrastructure.Tests.Services;
 
@@ -8,7 +8,7 @@ public sealed class CertificateServiceUnitTests : BaseTest
 {
     #region Setup
     
-    private readonly CertificateService _certificateService = new();
+    private readonly LocalCertificateService _localCertificateService = new();
 
     #endregion
     
@@ -22,7 +22,7 @@ public sealed class CertificateServiceUnitTests : BaseTest
         var password = "test-password";
         
         // Act
-        var act = () => _certificateService.LoadCertificate(nonExistentFile, password);
+        var act = () => _localCertificateService.LoadCertificate(nonExistentFile, password);
         
         // Assert
         act.Should().Throw<Exception>();
@@ -35,7 +35,7 @@ public sealed class CertificateServiceUnitTests : BaseTest
         var password = "test-password";
         
         // Act
-        var act = () => _certificateService.LoadCertificate(string.Empty, password);
+        var act = () => _localCertificateService.LoadCertificate(string.Empty, password);
         
         // Assert
         act.Should().Throw<ArgumentException>();
@@ -49,7 +49,7 @@ public sealed class CertificateServiceUnitTests : BaseTest
         var password = "test-password";
         
         // Act
-        var act = () => _certificateService.LoadCertificate(emptyKey, password);
+        var act = () => _localCertificateService.LoadCertificate(emptyKey, password);
         
         // Assert
         act.Should().Throw<ArgumentException>();
@@ -62,7 +62,7 @@ public sealed class CertificateServiceUnitTests : BaseTest
         var key = "test-certificate.pfx";
         
         // Act
-        var act = () => _certificateService.LoadCertificate(key, string.Empty);
+        var act = () => _localCertificateService.LoadCertificate(key, string.Empty);
         
         // Assert
         act.Should().Throw<Exception>();
