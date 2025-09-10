@@ -107,6 +107,12 @@ public static class ErrorMessage
         public const string DescriptionIsNull = "A descrição do produto não pode ser nula.";
     }
 
+    public static class Image
+    {
+        public const string IsInvalid = "A imagam é inválida.";
+        public const string NoExists = "A imagem não existe.";
+    }
+
     /// <summary>
     /// Contém mensagens de erro relacionadas a conflitos no sistema, como duplicidade de registros.
     /// </summary>
