@@ -8,7 +8,7 @@ using SnackFlow.Domain.Constants;
 using SnackFlow.Domain.Tests;
 using SnackFlow.Infrastructure.Persistence;
 using SnackFlow.Infrastructure.Persistence.Identity;
-using SnackFlow.Infrastructure.Services;
+using SnackFlow.Infrastructure.Services.Authentication;
 
 namespace SnackFlow.Infrastructure.Tests.Services;
 

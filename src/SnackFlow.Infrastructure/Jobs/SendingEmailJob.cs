@@ -2,15 +2,14 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Quartz;
-using SnackFlow.Application.Abstractions.Services;
-using SnackFlow.Application.Abstractions.Services.Concurrency;
+using SnackFlow.Application.Abstractions.Services.Email;
 using SnackFlow.Domain.Constants;
 
 namespace SnackFlow.Infrastructure.Jobs;
 
 public sealed class SendingEmailJob(
     IEmailService emailService,
-    IEmailTemplateService templateEmailService,
+    IEmailTemplateRender templateEmailRender,
     IEmailConcurrencyService emailConcurrencyService,
     ILogger<SendingEmailJob> logger) 
     : IJob
@@ -21,11 +20,11 @@ public sealed class SendingEmailJob(
         var jobDataMap = context.Trigger.JobDataMap;
         try
         {
-            var emailAddress = jobDataMap.GetString("EmailAddress")!;
-            var data = JsonConvert.DeserializeObject<JObject>(jobDataMap.GetString("DataEmail")!)!;
-            var to = data["to"]?.ToString()!;
-            var subject = data["subject"]?.ToString()!;
-            var templateProcessed = await templateEmailService.GetTemplateAsync(data);
+            var emailAddress = jobDataMap.GetString("emailAddress")!;
+            var emailPayload = JsonConvert.DeserializeObject<JObject>(jobDataMap.GetString("emailPayload")!)!;
+            var to = emailPayload["to"]?.ToString()!;
+            var subject = emailPayload["subject"]?.ToString()!;
+            var templateProcessed = await templateEmailRender.GetTemplateAsync(emailPayload);
             
             await emailService.SendAsync(
                 to,

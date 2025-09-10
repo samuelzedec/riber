@@ -4,22 +4,22 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SnackFlow.Domain.Tests;
-using SnackFlow.Infrastructure.Services;
+using SnackFlow.Infrastructure.Services.AWS.Email;
 
 namespace SnackFlow.Infrastructure.Tests.Services;
 
 public sealed class EmailServiceUnitTests : BaseTest
 {
     private readonly Mock<IAmazonSimpleEmailService> _mockAmazonSimpleEmailService;
-    private readonly Mock<ILogger<EmailService>> _mockLogger;
-    private readonly EmailService _emailService;
+    private readonly Mock<ILogger<AmazonSesEmailService>> _mockLogger;
+    private readonly AmazonSesEmailService _amazonSesEmailService;
 
     public EmailServiceUnitTests()
     {
         _mockAmazonSimpleEmailService = new Mock<IAmazonSimpleEmailService>();
-        _mockLogger = new Mock<ILogger<EmailService>>();
+        _mockLogger = new Mock<ILogger<AmazonSesEmailService>>();
 
-        _emailService = new EmailService(
+        _amazonSesEmailService = new AmazonSesEmailService(
             _mockAmazonSimpleEmailService.Object,
             _mockLogger.Object
         );
@@ -39,7 +39,7 @@ public sealed class EmailServiceUnitTests : BaseTest
             .ReturnsAsync(new SendEmailResponse());
         
         // Act
-        var result = async () => await _emailService.SendAsync(to, subject, body, emailAddres);
+        var result = async () => await _amazonSesEmailService.SendAsync(to, subject, body, emailAddres);
 
         // Assert
         await result.Should().NotThrowAsync();
@@ -59,7 +59,7 @@ public sealed class EmailServiceUnitTests : BaseTest
             .ReturnsAsync(new SendEmailResponse());
         
         // Act
-        await _emailService.SendAsync(to, subject, body, emailAddress);
+        await _amazonSesEmailService.SendAsync(to, subject, body, emailAddress);
         
         // Assert
         _mockAmazonSimpleEmailService.Verify(x => x.SendEmailAsync(
@@ -85,7 +85,7 @@ public sealed class EmailServiceUnitTests : BaseTest
             .ThrowsAsync(new Exception("Exception Test"));
         
         // Act
-        var result = async () => await _emailService.SendAsync(to, subject, body, emailAddres);
+        var result = async () => await _amazonSesEmailService.SendAsync(to, subject, body, emailAddres);
         
         // Assert
         await result.Should().ThrowExactlyAsync<Exception>();

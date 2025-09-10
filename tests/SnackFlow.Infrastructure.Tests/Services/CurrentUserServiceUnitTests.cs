@@ -3,7 +3,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using SnackFlow.Domain.Tests;
-using SnackFlow.Infrastructure.Services;
+using SnackFlow.Infrastructure.Services.Authentication;
 
 namespace SnackFlow.Infrastructure.Tests.Services;
 

@@ -1,14 +1,14 @@
 using Amazon.SimpleEmail;
 using Amazon.SimpleEmail.Model;
 using Microsoft.Extensions.Logging;
-using SnackFlow.Application.Abstractions.Services;
+using SnackFlow.Application.Abstractions.Services.Email;
 using SnackFlow.Domain.Constants;
 
-namespace SnackFlow.Infrastructure.Services;
+namespace SnackFlow.Infrastructure.Services.AWS.Email;
 
-public sealed class EmailService(
+public sealed class AmazonSesEmailService(
     IAmazonSimpleEmailService amazonSimpleEmailService,
-    ILogger<EmailService> logger)
+    ILogger<AmazonSesEmailService> logger)
     : IEmailService
 {
     public async Task SendAsync(string to, string subject, string body, string emailAddress)

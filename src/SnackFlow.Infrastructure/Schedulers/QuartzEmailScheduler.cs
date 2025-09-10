@@ -19,8 +19,8 @@ public sealed class QuartzEmailScheduler(
         var dataInString = JsonConvert.SerializeObject(dataEmail);
         var jobData = new JobDataMap
         {
-            ["EmailAddress"] = emailAddress.GetDescription(),
-            ["DataEmail"] = dataInString
+            ["emailAddress"] = emailAddress.GetDescription(),
+            ["emailPayload"] = dataInString
         };
 
         var scheduler = await schedulerFactory.GetScheduler(cancellationToken);

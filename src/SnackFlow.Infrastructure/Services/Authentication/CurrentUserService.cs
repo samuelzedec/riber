@@ -2,7 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using SnackFlow.Application.Abstractions.Services;
 
-namespace SnackFlow.Infrastructure.Services;
+namespace SnackFlow.Infrastructure.Services.Authentication;
 
 public sealed class CurrentUserService(IHttpContextAccessor httpContextAccessor) 
     : ICurrentUserService
