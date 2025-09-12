@@ -6,9 +6,9 @@ using SnackFlow.Domain.Constants;
 
 namespace SnackFlow.Infrastructure.Services.AWS.Email;
 
-public sealed class AmazonSesEmailService(
+public sealed class AmazonSESService(
     IAmazonSimpleEmailService amazonSimpleEmailService,
-    ILogger<AmazonSesEmailService> logger)
+    ILogger<AmazonSESService> logger)
     : IEmailService
 {
     public async Task SendAsync(string to, string subject, string body, string emailAddress)
