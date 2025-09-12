@@ -10,9 +10,9 @@ public sealed class LocalImageStorageService
 {
     private readonly string _storagePath;
 
-    public LocalImageStorageService(IWebHostEnvironment environment)
+    public LocalImageStorageService()
     {
-        _storagePath = Path.Combine(environment.ContentRootPath, "..", "SnackFlow.Infrastructure", "storage", "images");
+        _storagePath = Path.Combine(Directory.GetCurrentDirectory(), "storage", "images");
         Directory.CreateDirectory(_storagePath);
     }
 

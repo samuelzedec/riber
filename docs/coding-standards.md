@@ -110,62 +110,6 @@ public void TestCreateCompany() // não segue o padrão
 public void CreateCompany_ShouldWork() // muito vago
 ```
 
-### Organização de Testes
-```
-Tests/
-├── SnackFlow.Domain.Tests/           (UnitTest - lógica pura)
-├── SnackFlow.Application.Tests/      (UnitTest - casos de uso)
-└── SnackFlow.Infrastructure.Tests/   (IntegrationTest - banco, APIs)
-```
-
-### Categorização por Regions
-```csharp
-public class CompanyValidatorUnitTest
-{
-    #region Fields and Setup
-    // Campos e configuração inicial
-    #endregion
-
-    #region Valid Cases Tests
-    // Testes de casos válidos
-    #endregion
-
-    #region Invalid Cases Tests
-    // Testes de casos inválidos
-    #endregion
-
-    #region Edge Cases Tests
-    // Testes de casos extremos
-    #endregion
-}
-```
-
-### Acesso a Classes Internas para Testes
-Para testar handlers e validators internos, configure `InternalsVisibleTo`:
-
-```xml
-<!-- No .csproj da Application -->
-<ItemGroup>
-    <InternalsVisibleTo Include="SnackFlow.Application.Tests" />
-    <InternalsVisibleTo Include="SnackFlow.IntegrationTests" />
-</ItemGroup>
-```
-
-```csharp
-// Exemplo de teste acessando classe interna
-public class CreateCompanyHandlerUnitTest
-{
-    [Fact]
-    public async Task Handle_WhenValidCommand_ShouldCreateCompany()
-    {
-        // ✅ Funciona com InternalsVisibleTo configurado
-        var handler = new CreateCompanyHandler(mockUnitOfWork);
-        
-        // teste...
-    }
-}
-```
-
 ## Entidades
 
 ### Estrutura Base
