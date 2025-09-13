@@ -9,7 +9,7 @@
 
   <!-- Repositório e Documentação -->
   <PropertyGroup>
-    <RepositoryUrl>https://github.com/samuelzedec/SnackFlow</RepositoryUrl>
+    <RepositoryUrl>https://github.com/samuelzedec/Riber</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 

@@ -1,0 +1,15 @@
+using System.ComponentModel;
+
+namespace Riber.Domain.Enums;
+
+public enum EmailAddress
+{
+    [Description("noreply@snackflow.app")]
+    NoReply = 1,
+    [Description("contact@snackflow.app")]
+    Contact = 2,
+    [Description("security@snackflow.app")]
+    Security = 3,
+    [Description("support@snackflow.app")]
+    Support = 4
+}
