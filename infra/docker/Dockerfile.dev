@@ -10,19 +10,19 @@ COPY Directory.Packages.props ./
 COPY Directory.Build.props ./
 COPY SnackFlow.slnx ./
 
-COPY src/SnackFlow.Api/SnackFlow.Api.csproj ./src/SnackFlow.Api/
-COPY src/SnackFlow.Application/SnackFlow.Application.csproj ./src/SnackFlow.Application/
-COPY src/SnackFlow.Domain/SnackFlow.Domain.csproj ./src/SnackFlow.Domain/
-COPY src/SnackFlow.Infrastructure/SnackFlow.Infrastructure.csproj ./src/SnackFlow.Infrastructure/
-COPY tests/SnackFlow.Application.Tests/SnackFlow.Application.Tests.csproj ./tests/SnackFlow.Application.Tests/
-COPY tests/SnackFlow.Domain.Tests/SnackFlow.Domain.Tests.csproj ./tests/SnackFlow.Domain.Tests/
-COPY tests/SnackFlow.Infrastructure.Tests/SnackFlow.Infrastructure.Tests.csproj ./tests/SnackFlow.Infrastructure.Tests/
-RUN dotnet restore SnackFlow.slnx
+COPY src/Riber.Api/Riber.Api.csproj ./src/Riber.Api/
+COPY src/Riber.Application/Riber.Application.csproj ./src/Riber.Application/
+COPY src/Riber.Domain/Riber.Domain.csproj ./src/Riber.Domain/
+COPY src/Riber.Infrastructure/Riber.Infrastructure.csproj ./src/Riber.Infrastructure/
+COPY tests/Riber.Application.Tests/Riber.Application.Tests.csproj ./tests/Riber.Application.Tests/
+COPY tests/Riber.Domain.Tests/Riber.Domain.Tests.csproj ./tests/Riber.Domain.Tests/
+COPY tests/Riber.Infrastructure.Tests/Riber.Infrastructure.Tests.csproj ./tests/Riber.Infrastructure.Tests/
+RUN dotnet restore Riber.slnx
 
 COPY . .
-RUN dotnet build SnackFlow.slnx -c Debug --no-restore
-RUN dotnet test SnackFlow.slnx --no-build --no-restore
-RUN dotnet publish src/SnackFlow.Api/SnackFlow.Api.csproj -c Debug -o /app/publish --no-build --no-restore
+RUN dotnet build Riber.slnx -c Debug --no-restore
+RUN dotnet test Riber.slnx --no-build --no-restore
+RUN dotnet publish src/Riber.Api/Riber.Api.csproj -c Debug -o /app/publish --no-build --no-restore
 
 # Etapa 2 - Migration Stage
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS migration

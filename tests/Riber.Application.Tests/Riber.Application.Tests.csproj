@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <IsTestProject>true</IsTestProject>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Bogus" />
+        <PackageReference Include="FluentAssertions" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" />
+        <PackageReference Include="Moq" />
+        <PackageReference Include="xunit" />
+        <PackageReference Include="xunit.runner.visualstudio" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Using Include="Xunit" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\Riber.Api\Riber.Api.csproj" />
+        <ProjectReference Include="..\..\src\Riber.Application\Riber.Application.csproj" />
+        <ProjectReference Include="..\..\src\Riber.Domain\Riber.Domain.csproj" />
+        <ProjectReference Include="..\..\src\Riber.Infrastructure\Riber.Infrastructure.csproj" />
+        <ProjectReference Include="..\Riber.Domain.Tests\Riber.Domain.Tests.csproj" />
+    </ItemGroup>
+
+</Project>
