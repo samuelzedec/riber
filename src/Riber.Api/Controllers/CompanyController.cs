@@ -13,7 +13,7 @@ namespace Riber.Api.Controllers;
 
 [ApiController]
 [Produces("application/json")]
-[Route("api/v{version:apiVersion}/company")]
+[Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("1.0")]
 public sealed class CompanyController(IMediator mediator) : ControllerBase
 {
