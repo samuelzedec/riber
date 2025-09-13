@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Hosting;
 using SnackFlow.Application.Abstractions.Services;
 using SnackFlow.Application.Exceptions;
 using SnackFlow.Domain.Constants;

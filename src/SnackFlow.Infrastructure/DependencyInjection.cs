@@ -100,7 +100,7 @@ public static class DependencyInjection
         // Transient
         services.AddTransient<ICertificateService, LocalCertificateService>();
         services.AddTransient<IEmailTemplateRender, EmailTemplateRender>();
-        services.AddTransient<IEmailService, AmazonSesEmailService>();
+        services.AddTransient<IEmailService, AmazonSESService>();
         services.AddTransient<IPermissionDataService, PermissionDataService>();
         services.AddTransient<IAuthService, AuthService>();
         services.AddTransient<ITokenService, JwtTokenService>();
