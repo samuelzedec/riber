@@ -10,19 +10,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📥 Checkout code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: ⚙️ Setup .NET 9
+      - name: Setup .NET 9
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '9.0.x'
 
-      - name: 📦 Restore NuGet packages
+      - name: Restore NuGet packages
         run: dotnet restore
 
-      - name: 🔨 Build in Release mode
+      - name: Build in Release mode
         run: dotnet build -c Release --no-restore
 
-      - name: 🧪 Run all tests
+      - name: Run all tests
         run: dotnet test -c Release --no-build --verbosity minimal
