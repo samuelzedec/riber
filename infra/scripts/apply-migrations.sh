@@ -11,6 +11,6 @@ while ! pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER -q; do
 done
 
 echo "Database connection established. Applying migrations..."
-cd /src/src/SnackFlow.Infrastructure
+cd /src/src/Riber.Infrastructure
 dotnet ef database update
 echo "Database migrations completed successfully."

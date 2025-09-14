@@ -60,7 +60,7 @@ RefreshTokenSettings__Password=sua-senha-aqui
 Configure a senha do PostgreSQL:
 ```env
 DB_PASSWORD=sua-senha-db
-ConnectionStrings__DefaultConnection=Host=postgres;Database=snackflow_db;Username=postgres;Password=sua-senha-db;Port=5432
+ConnectionStrings__DefaultConnection=Host=postgres;Database=riber_db;Username=postgres;Password=sua-senha-db;Port=5432
 ```
 
 #### AWS (opcional)
@@ -74,24 +74,24 @@ AWS_DEFAULT_REGION=us-east-1
 
 ```bash
 # Subir todos os serviços
-docker-compose -f docker-compose-dev.yml up -d
+docker-compose up -d
 
 # Ver logs em tempo real
-docker-compose -f docker-compose-dev.yml logs -f
+docker-compose logs
 
 # Parar os serviços
-docker-compose -f docker-compose-dev.yml down --rmi all --volumes
+docker-compose down --rmi all --volumes
 ```
 
 ### 4. Comandos úteis
 
 ```bash
 # Rebuildar e subir
-docker-compose -f docker-compose-dev.yml up --build
+docker-compose up -d --build
 
 # Subir apenas o banco
-docker-compose -f docker-compose-dev.yml up postgres
+docker-compose up postgres
 
 # Ver status dos containers
-docker-compose -f docker-compose-dev.yml ps
+docker-compose ps
 ```

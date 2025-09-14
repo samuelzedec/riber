@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y \
 
 COPY Directory.Packages.props ./
 COPY Directory.Build.props ./
-COPY SnackFlow.slnx ./
+COPY Riber.slnx ./
 
 COPY src/Riber.Api/Riber.Api.csproj ./src/Riber.Api/
 COPY src/Riber.Application/Riber.Application.csproj ./src/Riber.Application/

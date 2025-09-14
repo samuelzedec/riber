@@ -1,19 +1,19 @@
-name: snackflow
+name: riber
 
 services:
   postgres:
     image: pgvector/pgvector:pg17
-    container_name: postgres-dev
+    container_name: riber-pgsql-dev
     env_file:
       - .env.dev
     environment:
-      POSTGRES_DB: ${DB_NAME:-snackflow_db}
+      POSTGRES_DB: ${DB_NAME:-riber_db}
       POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-root}
     ports:
       - "5432:5432"
     volumes:
-      - postgres_dev_data:/var/lib/postgresql/data
+      - riber-data-dev:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
@@ -25,7 +25,7 @@ services:
       context: .
       dockerfile: infra/docker/Dockerfile.dev
       target: migration
-    container_name: migration-dev
+    container_name: riber-migration-dev
     depends_on:
       postgres:
         condition: service_healthy
@@ -33,12 +33,12 @@ services:
       - .env.dev
     command: ["/usr/local/bin/apply-migrations.sh"]
 
-  snackflow-api:
+  api:
     build:
       context: .
       dockerfile: infra/docker/Dockerfile.dev
       target: runtime
-    container_name: api-dev
+    container_name: riber-api-dev
     depends_on:
       migration:
         condition: service_completed_successfully
@@ -50,8 +50,8 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
 
 volumes:
-  postgres_dev_data:
+  riber-data-dev:
 
 networks:
   default:
-    name: snackflow-dev-network
+    name: riber-network-dev
