@@ -1,4 +1,4 @@
-# 🍔 Snack Flow
+# 🍔 Riber
 Olá! Me chamo **Samuel Ribeiro** e este é o backend que estou desenvolvendo para a aplicação de gestão de uma
 **lanchonete local em Manaus-AM 🍔🍟**.
 
