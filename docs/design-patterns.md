@@ -1,4 +1,4 @@
-﻿# 🔧 Design Patterns - SnackFlow
+﻿# 🔧 Design Patterns - Riber
 
 Este documento detalha todos os **design patterns** e **práticas arquiteturais** implementados no projeto SnackFlow, organizados conforme a estrutura atual das pastas.
 
