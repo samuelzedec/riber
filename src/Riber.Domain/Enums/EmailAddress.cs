@@ -4,12 +4,12 @@ namespace Riber.Domain.Enums;
 
 public enum EmailAddress
 {
-    [Description("noreply@snackflow.app")]
+    [Description("noreply@riber.app")]
     NoReply = 1,
-    [Description("contact@snackflow.app")]
+    [Description("contact@sriber.app")]
     Contact = 2,
-    [Description("security@snackflow.app")]
+    [Description("security@riber.app")]
     Security = 3,
-    [Description("support@snackflow.app")]
+    [Description("support@riber.app")]
     Support = 4
 }
