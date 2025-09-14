@@ -1,4 +1,4 @@
-# SnackFlow - Padrões de Codificação
+# Riber - Padrões de Codificação
 
 Este documento define as convenções e padrões de código para o projeto SnackFlow.
 
