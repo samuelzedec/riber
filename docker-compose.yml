@@ -23,7 +23,7 @@ services:
   migration:
     build:
       context: .
-      dockerfile: infra/docker/Dockerfile.dev
+      dockerfile: Dockerfile.dev
       target: migration
     container_name: riber-migration-dev
     depends_on:
@@ -36,7 +36,7 @@ services:
   api:
     build:
       context: .
-      dockerfile: infra/docker/Dockerfile.dev
+      dockerfile: Dockerfile.dev
       target: runtime
     container_name: riber-api-dev
     depends_on:
