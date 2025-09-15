@@ -12,5 +12,5 @@ public sealed record UserDetailsDTO(
     ICollection<string> Roles,
     ICollection<ClaimDTO> Claims,
     Guid UserDomainId,
-    User UserDomain = null!
+    User UserDomain
 );

@@ -17,9 +17,7 @@ internal sealed class LogoutCommandHandler(
     {
         try
         {
-            var userId = currentUserService.GetUserId()?.ToString()
-                ?? throw new BadRequestException(ErrorMessage.Invalid.UserId);
-
+            var userId = currentUserService.GetUserId().ToString();
             await authService.UpdateSecurityStampAndGetUserAsync(userId);
             return Result.Success();
         }

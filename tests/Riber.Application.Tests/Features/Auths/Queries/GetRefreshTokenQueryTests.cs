@@ -1,3 +1,4 @@
+using Bogus.Extensions.Brazil;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -5,7 +6,8 @@ using Riber.Application.Abstractions.Services;
 using Riber.Application.DTOs;
 using Riber.Application.Exceptions;
 using Riber.Application.Features.Auths.Queries.GetRefreshToken;
-using Riber.Domain.Constants;
+using Riber.Domain.Entities;
+using Riber.Domain.Enums;
 using Riber.Domain.Tests;
 
 namespace Riber.Application.Tests.Features.Auths.Queries;
@@ -29,12 +31,18 @@ public sealed class GetRefreshTokenQueryTests : BaseTest
         _mockAuthService = new Mock<IAuthService>();
         _mockTokenService = new Mock<ITokenService>();
         _mockLogger = new Mock<ILogger<GetRefreshTokenQueryHandler>>();
-
-        _userId = Guid.CreateVersion7();
         
+        var userDomain = User.Create(
+            _faker.Name.FullName(),
+            _faker.Person.Cpf(),
+            BusinessPosition.Owner,
+            Guid.CreateVersion7()
+        );
+
+        _userId = userDomain.Id;
         _userDetailsTest = CreateFaker<UserDetailsDTO>()
             .CustomInstantiator(f => new UserDetailsDTO(
-                Id: _userId,
+                Id: Guid.CreateVersion7(),
                 UserName: f.Internet.UserName(),
                 Email: f.Internet.Email(),
                 EmailConfirmed: false,
@@ -42,7 +50,8 @@ public sealed class GetRefreshTokenQueryTests : BaseTest
                 SecurityStamp: f.Random.AlphaNumeric(32),
                 Roles: f.Make(2, () => f.Name.JobTitle()).ToList(),
                 Claims: [],
-                UserDomainId: Guid.CreateVersion7()
+                UserDomainId: userDomain.Id,
+                UserDomain: userDomain
             ));
 
         _query = new GetRefreshTokenQuery();
@@ -108,36 +117,6 @@ public sealed class GetRefreshTokenQueryTests : BaseTest
     #endregion
 
     #region Exception Tests
-
-    [Fact(DisplayName = "Should throw UnauthorizedException when user ID is null")]
-    public async Task Handle_WhenUserIdIsNull_ShouldThrowUnauthorizedException()
-    {
-        // Arrange
-        _mockCurrentUserService
-            .Setup(x => x.GetUserId())
-            .Returns((Guid?)null);
-
-        // Act
-        var result = async () => await _handler.Handle(_query, CancellationToken.None);
-
-        // Assert
-        await result.Should().ThrowExactlyAsync<UnauthorizedException>()
-            .WithMessage(ErrorMessage.Invalid.Auth);
-        
-        _mockCurrentUserService.Verify(x => x.GetUserId(), Times.Once);
-        _mockAuthService.Verify(x => x.UpdateSecurityStampAndGetUserAsync(It.IsAny<string>()), Times.Never);
-        _mockTokenService.Verify(x => x.GenerateToken(It.IsAny<UserDetailsDTO>()), Times.Never);
-        _mockTokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
-        
-        _mockLogger.Verify(x => x.Log(
-                It.IsAny<LogLevel>(),
-                It.IsAny<EventId>(),
-                It.IsAny<It.IsAnyType>(),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.Never
-        );
-    }
 
     [Fact(DisplayName = "Should log error and rethrow when unexpected exception occurs in currentUserService")]
     public async Task Handle_WhenCurrentUserServiceThrowsUnexpectedException_ShouldLogErrorAndRethrow()

@@ -72,34 +72,7 @@ public sealed class LogoutCommandHandlerTests : BaseTest
     #endregion
 
     #region Exception Tests
-
-    [Fact(DisplayName = "Should throw BadRequestException when user ID is null")]
-    public async Task Handle_WhenUserIdIsNull_ShouldThrowBadRequestException()
-    {
-        // Arrange
-        _mockCurrentUserService
-            .Setup(x => x.GetUserId())
-            .Returns((Guid?)null);
-
-        // Act
-        var result = async () => await _handler.Handle(_command, CancellationToken.None);
-
-        // Assert
-        await result.Should().ThrowExactlyAsync<BadRequestException>()
-            .WithMessage(ErrorMessage.Invalid.UserId);
-        
-        _mockCurrentUserService.Verify(x => x.GetUserId(), Times.Once);
-        _mockAuthService.Verify(x => x.UpdateSecurityStampAndGetUserAsync(It.IsAny<string>()), Times.Never);
-        _mockLogger.Verify(x => x.Log(
-                It.IsAny<LogLevel>(),
-                It.IsAny<EventId>(),
-                It.IsAny<It.IsAnyType>(),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.Never
-        );
-    }
-
+    
     [Fact(DisplayName = "Should log error and rethrow when unexpected exception occurs in authService")]
     public async Task Handle_WhenAuthServiceThrowsUnexpectedException_ShouldLogErrorAndRethrow()
     {

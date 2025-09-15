@@ -1,3 +1,4 @@
+using Bogus.Extensions.Brazil;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -6,6 +7,8 @@ using Riber.Application.DTOs;
 using Riber.Application.Exceptions;
 using Riber.Application.Features.Auths.Commands.Login;
 using Riber.Domain.Constants;
+using Riber.Domain.Entities;
+using Riber.Domain.Enums;
 using Riber.Domain.Tests;
 
 namespace Riber.Application.Tests.Features.Auths.Commands;
@@ -27,6 +30,14 @@ public sealed class LoginCommandHandlerTests : BaseTest
         _mockTokenService = new Mock<ITokenService>();
         _mockLogger = new Mock<ILogger<LoginCommandHandler>>();
 
+
+        var userDomain = User.Create(
+            _faker.Name.FullName(),
+            _faker.Person.Cpf(),
+            BusinessPosition.Owner,
+            Guid.CreateVersion7()
+        );
+
         _userDetailsTest = CreateFaker<UserDetailsDTO>()
             .CustomInstantiator(f => new UserDetailsDTO(
                 Id: Guid.CreateVersion7(),
@@ -37,7 +48,8 @@ public sealed class LoginCommandHandlerTests : BaseTest
                 SecurityStamp: f.Random.AlphaNumeric(32),
                 Roles: f.Make(2, () => f.Name.JobTitle()).ToList(),
                 Claims: [],
-                UserDomainId: Guid.CreateVersion7()
+                UserDomainId: userDomain.Id,
+                UserDomain: userDomain
             ));
 
         _command = CreateFaker<LoginCommand>()
