@@ -27,6 +27,14 @@ public static class PermissionsSettings
         public const string Import = "products.import";
     }
 
+    public static class Categories
+    {
+        public const string Create = "categories.create";
+        public const string Read = "categories.read";
+        public const string Update = "categories.update";
+        public const string Delete = "categories.delete";
+    }
+
     public static class Users
     {
         public const string Create = "users.create";

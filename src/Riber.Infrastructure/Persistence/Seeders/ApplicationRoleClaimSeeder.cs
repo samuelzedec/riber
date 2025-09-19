@@ -44,7 +44,8 @@ public static class ApplicationRoleClaimSeeder
             "users.create", "users.read", "users.update", "users.delete", "users.assign_roles",
             "reports.view", "reports.export", "reports.schedule",
             "settings.view", "settings.update",
-            "roles.create", "roles.read", "roles.update", "roles.delete", "roles.assign_permissions"
+            "roles.create", "roles.read", "roles.update", "roles.delete", "roles.assign_permissions",
+            "categories.create", "categories.read", "categories.update", "categories.delete"
         ];
 
     private static List<string> GetManagerPermissions()

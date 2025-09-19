@@ -28,6 +28,12 @@ public static class ApplicationPermissionSeeder
             new() { Id = 303, Name = PermissionsSettings.Products.Update, Description = "Editar produtos", Category = "Products" },
             new() { Id = 304, Name = PermissionsSettings.Products.Delete, Description = "Remover produtos", Category = "Products" },
             new() { Id = 305, Name = PermissionsSettings.Products.Import, Description = "Importar produtos", Category = "Products" },
+            
+            // Categories - 3xx
+            new() { Id = 306, Name = PermissionsSettings.Categories.Create, Description = "Criar categorias", Category = "Categories" },
+            new() { Id = 307, Name = PermissionsSettings.Categories.Read, Description = "Visualizar categorias", Category = "Categories" },
+            new() { Id = 308, Name = PermissionsSettings.Categories.Update, Description = "Editar categorias", Category = "Categories" },
+            new() { Id = 309, Name = PermissionsSettings.Categories.Delete, Description = "Remover categorias", Category = "Categories" },
 
             // Users - 4xx
             new() { Id = 401, Name = PermissionsSettings.Users.Create, Description = "Criar usuários", Category = "Users" },
