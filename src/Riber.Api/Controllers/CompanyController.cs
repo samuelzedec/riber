@@ -12,9 +12,10 @@ using Riber.Infrastructure.Settings;
 namespace Riber.Api.Controllers;
 
 [ApiController]
-[Produces("application/json")]
 [Route("api/v{version:apiVersion}/company")]
 [ApiVersion("1.0")]
+[Produces("application/json")]
+[Consumes("application/json")]
 public sealed class CompanyController(IMediator mediator) : ControllerBase
 {
     [HttpPost]

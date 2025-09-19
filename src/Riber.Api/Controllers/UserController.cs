@@ -8,9 +8,10 @@ using Riber.Application.Features.Users.Commands.CreateUser;
 namespace Riber.Api.Controllers;
 
 [ApiController]
-[Produces("application/json")]
 [Route("api/v{version:apiVersion}/user")]
 [ApiVersion("1.0")]
+[Produces("application/json")]
+[Consumes("application/json")]
 public sealed class UserController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
