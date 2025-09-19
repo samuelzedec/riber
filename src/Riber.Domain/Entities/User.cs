@@ -1,6 +1,7 @@
 using Riber.Domain.Abstractions;
 using Riber.Domain.Abstractions.ValueObjects;
 using Riber.Domain.Constants;
+using Riber.Domain.Entities.Tenants;
 using Riber.Domain.Enums;
 using Riber.Domain.Exceptions;
 using Riber.Domain.ValueObjects.FullName;
@@ -8,8 +9,8 @@ using Riber.Domain.ValueObjects.TaxId;
 
 namespace Riber.Domain.Entities;
 
-public class User 
-    : BaseEntity, IAggregateRoot, IHasFullName, IHasTaxId
+public sealed class User 
+    : OptionalTenantEntity, IAggregateRoot, IHasFullName, IHasTaxId
 {
     #region Properties
 
@@ -17,7 +18,6 @@ public class User
     public TaxId TaxId { get; private set; }
     public BusinessPosition Position { get; private set; }
     public bool IsActive { get; private set; }
-    public Guid? CompanyId { get; private set; }
 
     #endregion
 

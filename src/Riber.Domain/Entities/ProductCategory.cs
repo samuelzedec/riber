@@ -1,9 +1,12 @@
+using Riber.Domain.Abstractions;
 using Riber.Domain.Constants;
+using Riber.Domain.Entities.Tenants;
 using Riber.Domain.Exceptions;
 
 namespace Riber.Domain.Entities;
 
-public sealed class ProductCategory : BaseEntity
+public sealed class ProductCategory 
+    : TenantEntity
 {
     #region Properties
 
@@ -11,7 +14,6 @@ public sealed class ProductCategory : BaseEntity
     public string Description { get; private set; }
     public string Code { get; private set; }
     public bool IsActive { get; private set; }
-    public Guid CompanyId { get; private set; }
     private readonly List<Product> _products = [];
 
     #endregion

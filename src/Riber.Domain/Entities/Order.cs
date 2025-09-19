@@ -1,16 +1,16 @@
 using Riber.Domain.Abstractions;
 using Riber.Domain.Abstractions.ValueObjects;
+using Riber.Domain.Entities.Tenants;
 using Riber.Domain.ValueObjects.RandomToken;
 
 namespace Riber.Domain.Entities;
 
 public sealed class Order 
-    : BaseEntity, IAggregateRoot, IHasRandomToken
+    : TenantEntity, IAggregateRoot, IHasRandomToken
 {
     #region Properties
 
     public RandomToken Token { get; private set; }
-    public Guid CompanyId { get; private set; }
     public Guid AttendantId { get; private set; }
     private readonly List<OrderItem> _items = [];
     public decimal SubTotal => _items.Sum(x => x.SubTotal);
