@@ -1,6 +1,6 @@
 ﻿# 🔧 Design Patterns - Riber
 
-Este documento detalha todos os **design patterns** e **práticas arquiteturais** implementados no projeto SnackFlow, organizados conforme a estrutura atual das pastas.
+Este documento detalha todos os **design patterns** e **práticas arquiteturais** implementados no projeto Riber, organizados conforme a estrutura atual das pastas.
 
 ---
 
@@ -9,6 +9,7 @@ Este documento detalha todos os **design patterns** e **práticas arquiteturais*
 - [Domain-Driven Design](#domain-driven-design)
 - [CQRS + Mediator](#cqrs--mediator)
 - [Repository + Unit of Work](#repository--unit-of-work)
+- [Specification Pattern](#specification-pattern)
 - [Patterns de Validação](#patterns-de-validação)
 - [Patterns de Infraestrutura](#patterns-de-infraestrutura)
 - [Patterns de Tratamento de Erros](#patterns-de-tratamento-de-erros)
@@ -23,16 +24,16 @@ Organização em camadas com dependências sempre apontando para dentro.
 
 ```
 ┌─────────────────────────────────────┐
-│            SnackFlow.Api            │  ← Apresentação
+│            Riber.Api               │  ← Apresentação
 └─────────────────────────────────────┘
 ┌─────────────────────────────────────┐
-│        SnackFlow.Application        │  ← Casos de Uso
+│        Riber.Application           │  ← Casos de Uso
 └─────────────────────────────────────┘
 ┌─────────────────────────────────────┐
-│          SnackFlow.Domain           │  ← Regras de Negócio
+│          Riber.Domain              │  ← Regras de Negócio
 └─────────────────────────────────────┘
 ┌─────────────────────────────────────┐
-│      SnackFlow.Infrastructure       │  ← Detalhes Externos
+│      Riber.Infrastructure          │  ← Detalhes Externos
 └─────────────────────────────────────┘
 ```
 
@@ -51,7 +52,10 @@ Entidades com comportamento encapsulado, não apenas dados.
 
 ```
 Domain/Entities/
-└── Company.cs                    # Aggregate Root com regras de negócio
+├── Product.cs                    # Aggregate Root com regras de negócio
+├── ProductCategory.cs            # Entidade do agregado Product
+├── User.cs                       # Aggregate Root
+└── Company.cs                    # Aggregate Root
 ```
 
 **Características:**
@@ -68,8 +72,9 @@ Domain/ValueObjects/
 │   ├── Email.cs                  # Imutável com validação
 │   └── Exceptions/               # Exceções específicas
 ├── Phone/
-├── CompanyName/
-└── TaxId/
+├── Money/
+│   └── Money.cs                  # Value Object para valores monetários
+└── CompanyName/
 ```
 
 **Implementação:**
@@ -95,10 +100,10 @@ Domain/Events/
 Garantia de consistência através de raízes de agregado.
 
 ```csharp
-// Company é Aggregate Root
-public class Company : Entity, IAggregateRoot
+// Product é Aggregate Root
+public class Product : TenantEntity, IAggregateRoot
 {
-    // Controla acesso a entidades filhas
+    // Controla acesso a entidades filhas (ProductCategory)
     // Garante invariantes do agregado
 }
 ```
@@ -111,15 +116,15 @@ public class Company : Entity, IAggregateRoot
 Separação entre operações de escrita e leitura.
 
 ```
-Application/Features/Companies/
+Application/Features/Products/
 ├── Commands/                     # Operações de escrita
-│   └── CreateCompany/
-│       ├── CreateCompanyCommand.cs
-│       ├── CreateCompanyHandler.cs
-│       ├── CreateCompanyResponse.cs
-│       └── CreateCompanyValidator.cs
-└── Queries/                      # Operações de leitura (futuro)
-    └── GetCompanyById/
+│   └── CreateProduct/
+│       ├── CreateProductCommand.cs
+│       ├── CreateProductHandler.cs
+│       ├── CreateProductResponse.cs
+│       └── CreateProductValidator.cs
+└── Queries/                      # Operações de leitura
+    └── GetProductById/
 ```
 
 **Vantagens:**
@@ -170,22 +175,29 @@ Abstração sobre acesso a dados com interfaces no domínio.
 
 ```
 Domain/Repositories/
-├── IRepository.cs                # Interface genérica
-├── ICompanyRepository.cs         # Interface específica
+├── IProductRepository.cs         # Interface específica para Product
+├── IOrderRepository.cs           # Interface específica para Order
 └── IUnitOfWork.cs               # Controle transacional
 ```
 
 ```
 Infrastructure/Persistence/Repositories/
 ├── BaseRepository.cs             # Implementação genérica
-├── CompanyRepository.cs          # Implementação específica
+├── ProductRepository.cs          # Implementação específica
+├── OrderRepository.cs            # Implementação específica
 └── UnitOfWork.cs                # Controle de transações
 ```
+
+**Implementação do BaseRepository:**
+- Operações genéricas para todas as entidades
+- Integração com specifications e includes
+- Reutilização através de herança
 
 **Benefícios:**
 - Testabilidade (mocks fáceis)
 - Abstração sobre EF Core
 - Queries específicas do domínio
+- Reutilização através do BaseRepository
 
 ### **Unit of Work Pattern**
 Controle transacional centralizado.
@@ -195,8 +207,11 @@ public class UnitOfWork : IUnitOfWork
 {
     private readonly AppDbContext _context;
     
-    public ICompanyRepository Companies => 
-        _companyRepository ??= new CompanyRepository(_context);
+    public IProductRepository Products => 
+        _productRepository ??= new ProductRepository(_context);
+        
+    public IOrderRepository Orders => 
+        _orderRepository ??= new OrderRepository(_context);
     
     public async Task<int> SaveChangesAsync() => 
         await _context.SaveChangesAsync();
@@ -207,6 +222,91 @@ public class UnitOfWork : IUnitOfWork
 - Uma transação por unidade de trabalho
 - Lazy loading dos repositories
 - Controle centralizado de persistência
+
+---
+
+## 🔍 Specification Pattern
+
+### **Core Specification**
+Implementação base do padrão para encapsular regras de consulta.
+
+```
+Domain/Specifications/Core/
+└── Specification.cs              # Classe base abstrata
+```
+
+### **Specifications Específicas**
+Encapsulamento de regras de consulta por domínio.
+
+```
+Domain/Specifications/
+├── User/
+│   ├── UserIdSpecification.cs           # Busca por ID
+│   └── UserByCpfSpecification.cs        # Busca por CPF
+└── Product/
+    ├── ProductByCategoryIdSpecification.cs  # Produtos por categoria
+    └── ProductByCompanySpecification.cs     # Produtos por empresa
+```
+
+**Exemplo de implementação:**
+- Encapsulamento de regras específicas de consulta
+- Expressões tipadas e compiláveis
+- Testabilidade isolada das regras de negócio
+
+### **SpecificationExtensions**
+Extension methods para aplicar specifications em IQueryable de forma fluente.
+
+```
+Infrastructure/Persistence/Extensions/
+├── SpecificationExtension.cs     # Extension para aplicar Specification
+└── IQueryableExtension.cs        # Extensions para IQueryable com includes
+```
+
+```csharp
+public static class IQueryableExtension
+{
+    public static IQueryable<T> GetQueryWithIncludes<T>(
+        this IQueryable<T> queryable,
+        Specification<T>? specification,
+        params Expression<Func<T, object>>[] includes) where T : class
+    {
+        var query = specification is not null 
+            ? queryable.Where(specification) 
+            : queryable;
+        
+        return includes.Length > 0
+            ? includes.Aggregate(query, (current, include) => current.Include(include))
+            : query;
+    }
+}
+```
+
+### **Vantagens do Specification Pattern**
+
+**✅ Separação de Responsabilidades**
+- **Domain/Specifications** → Define regras de negócio (ToExpression)
+- **Infrastructure/Extensions** → Aplica em IQueryable (Apply extension)
+- Domain Layer permanece agnóstico sobre detalhes de persistência
+
+**✅ Sintaxe Fluente**
+- `specification.Apply(queryable)` - Uso intuitivo e expressivo
+- Extension methods mantêm Domain puro
+- Facilita composição e encadeamento
+
+**✅ Expressividade**
+- Nomes descritivos para consultas complexas
+- Encapsulamento de lógica de filtro
+- Facilita leitura e manutenção
+
+**✅ Consistência**
+- Padronização de consultas em todo o sistema
+- Elimina duplicação de código (DRY)
+- Integração seamless com Entity Framework
+
+**Exemplo de uso no Repository:**
+- Aplicação fluente de specifications
+- Integração com Entity Framework
+- Manutenção do Domain Layer puro
 
 ---
 
@@ -236,8 +336,8 @@ public interface IDocumentValidator
 Validação fluente na camada de aplicação.
 
 ```
-Application/Features/Companies/Commands/CreateCompany/
-└── CreateCompanyValidator.cs     # Validação de entrada
+Application/Features/Products/Commands/CreateProduct/
+└── CreateProductValidator.cs     # Validação de entrada
 ```
 
 **Pipeline automático:**
@@ -286,11 +386,9 @@ Infrastructure/Settings/
 ```
 
 **Binding automático:**
-```csharp
-// Program.cs
-builder.Services.Configure<AccessTokenSettings>(
-    builder.Configuration.GetSection("AccessToken"));
-```
+- Configurações tipadas via IOptions
+- Validação automática na inicialização
+- Injeção de dependência simplificada
 
 ---
 
@@ -327,7 +425,8 @@ Hierarquia organizada de exceções por contexto.
 ```
 Domain/Exceptions/
 ├── DomainException.cs            # Base para domínio
-└── UnsupportedCompanyTypeException.cs
+├── ProductNameNullException.cs   # Exceções específicas de Product
+└── ProductDescriptionNullException.cs
 
 Domain/ValueObjects/Email/Exceptions/
 ├── EmailFormatInvalidException.cs
@@ -352,11 +451,15 @@ Organização por funcionalidade na camada de aplicação.
 
 ```
 Application/Features/
-├── Companies/                    # Tudo relacionado a Company
+├── Products/                     # Tudo relacionado a Product
 │   ├── Commands/
 │   └── Queries/
-├── Orders/                       # Futuro: Orders
-└── Products/                     # Futuro: Products
+├── Orders/                       # Tudo relacionado a Orders
+│   ├── Commands/
+│   └── Queries/
+└── Users/                        # Tudo relacionado a Users
+    ├── Commands/
+    └── Queries/
 ```
 
 **Benefícios:**
@@ -373,6 +476,10 @@ Domain/
 ├── ValueObjects/                 # Todos os value objects
 ├── Events/                       # Todos os domain events
 ├── Repositories/                 # Todas as interfaces
+├── Specifications/               # Todas as specifications organizadas por domínio
+│   ├── Core/                     # Specification base
+│   ├── User/                     # Specifications de User
+│   └── Product/                  # Specifications de Product
 ├── Validators/                   # Todos os validadores
 └── Abstractions/                 # Todas as abstrações
 ```
@@ -409,6 +516,7 @@ Cada camada com responsabilidade específica.
 | **Mediator** | Application/Abstractions/ | Desacoplamento de handlers |
 | **Repository** | Domain/Repositories/ + Infrastructure/ | Abstração de persistência |
 | **Unit of Work** | Infrastructure/Repositories/ | Controle transacional |
+| **Specification** | Domain/Specifications/ | Encapsulamento de consultas |
 | **Strategy** | Domain/Validators/ | Algoritmos intercambiáveis |
 | **Factory** | Infrastructure/Factories/ | Criação de objetos complexos |
 | **Interceptor** | Infrastructure/Interceptors/ | Cross-cutting concerns |
@@ -423,22 +531,26 @@ Cada camada com responsabilidade específica.
 - Código organizado e previsível
 - Responsabilidades bem definidas
 - Facilidade para mudanças
+- Specifications reutilizáveis e testáveis
 
 ### **Testabilidade**
 - Abstrações mockáveis
 - Lógica isolada por camada
 - Comportamentos específicos testáveis
+- Specifications testáveis independentemente
 
 ### **Escalabilidade**
 - Estrutura preparada para crescimento
 - Patterns que suportam complexidade
 - Organização que facilita trabalho em equipe
+- Eliminação de duplicação (DRY)
 
 ### **Flexibilidade**
 - Implementações intercambiáveis
 - Configurações externalizadas
 - Extensibilidade através de interfaces
+- Consultas expressivas e combinam
 
 ---
 
-*Este documento reflete a implementação atual dos patterns no projeto SnackFlow e será atualizado conforme a evolução da arquitetura.*
+*Este documento reflete a implementação atual dos patterns no projeto Riber e será atualizado conforme a evolução da arquitetura.*
