@@ -4,6 +4,7 @@ using Riber.Application.Exceptions;
 using Riber.Application.Extensions;
 using Riber.Domain.Constants;
 using Riber.Domain.Repositories;
+using Riber.Domain.Specifications.Company;
 
 namespace Riber.Application.Features.Companies.Queries.GetCompanyById;
 
@@ -14,7 +15,7 @@ internal sealed class GetCompanyByIdQueryHandler(IUnitOfWork unitOfWork)
     {
         var companyRepository = unitOfWork.Companies;
         var company = await companyRepository.GetSingleAsync(
-            x => x.Id == request.CompanyId,
+            new CompanyIdSpecification(request.CompanyId),
             cancellationToken
         );
 

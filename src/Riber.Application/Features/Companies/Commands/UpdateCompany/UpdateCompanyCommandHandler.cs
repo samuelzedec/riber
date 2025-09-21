@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using Microsoft.Extensions.Logging;
 using Riber.Application.Abstractions.Commands;
 using Riber.Application.Common;
@@ -7,6 +6,8 @@ using Riber.Application.Extensions;
 using Riber.Domain.Constants;
 using Riber.Domain.Entities;
 using Riber.Domain.Repositories;
+using Riber.Domain.Specifications.Company;
+using Riber.Domain.Specifications.Core;
 using Riber.Domain.ValueObjects.Email;
 using Riber.Domain.ValueObjects.Phone;
 
@@ -25,7 +26,7 @@ internal sealed class UpdateCompanyCommandHandler(
         {
             await unitOfWork.BeginTransactionAsync(cancellationToken);
             var company = await companyRepository.GetSingleAsync(
-                x => x.Id == request.CompanyId, cancellationToken) 
+                new CompanyIdSpecification(request.CompanyId), cancellationToken) 
                 ?? throw new NotFoundException(ErrorMessage.NotFound.Company);
             
             await UpdateEmailAsync(company, request.Email, cancellationToken);
@@ -52,12 +53,12 @@ internal sealed class UpdateCompanyCommandHandler(
 
     private async Task UpdateEmailAsync(Company company, string email, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrWhiteSpace(email) || company.Email.Value == Email.Standardization(email))
-            return;
-
         email = Email.Standardization(email);
+        if (string.IsNullOrWhiteSpace(email) || company.Email.Value == email)
+            return;
+        
         await CheckForConflictAsync(
-            x => x.Email.Value == email,
+            new CompanyEmailSpecification(email),
             ErrorMessage.Conflict.EmailAlreadyExists,
             cancellationToken
         );
@@ -67,12 +68,12 @@ internal sealed class UpdateCompanyCommandHandler(
 
     private async Task UpdatePhoneAsync(Company company, string phone, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrWhiteSpace(phone) || company.Phone.Value == Phone.RemoveFormatting(phone))
+        phone = Phone.RemoveFormatting(phone);
+        if (string.IsNullOrWhiteSpace(phone) || company.Phone.Value == phone)
             return;
 
-        phone = Phone.RemoveFormatting(phone);
         await CheckForConflictAsync(
-            x => x.Phone.Value == phone,
+            new CompanyPhoneSpecification(phone),
             ErrorMessage.Conflict.PhoneAlreadyExists,
             cancellationToken
         );
@@ -89,12 +90,12 @@ internal sealed class UpdateCompanyCommandHandler(
     }
 
     private async Task CheckForConflictAsync(
-        Expression<Func<Company, bool>> expression,
+        Specification<Company> specification,
         string message,
         CancellationToken cancellationToken = default)
     {
         var companyRepository = unitOfWork.Companies;
-        if (await companyRepository.ExistsAsync(expression, cancellationToken))
+        if (await companyRepository.ExistsAsync(specification, cancellationToken))
             throw new ConflictException(message);
     }
 }

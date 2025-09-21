@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using Bogus.Extensions.Brazil;
 using FluentAssertions;
 using Moq;
@@ -9,6 +8,7 @@ using Riber.Domain.Constants;
 using Riber.Domain.Entities;
 using Riber.Domain.Enums;
 using Riber.Domain.Repositories;
+using Riber.Domain.Specifications.Core;
 using Riber.Domain.Tests;
 using Riber.Domain.ValueObjects.CompanyName;
 using Riber.Domain.ValueObjects.Email;
@@ -53,7 +53,7 @@ public sealed class GetCompanyByIdQueryHandlerTests : BaseTest
         // Arrange
         _mockCompanyRepository
             .Setup(x => x.GetSingleAsync(
-                It.IsAny<Expression<Func<Company, bool>>>(),
+                It.IsAny<Specification<Company>>(),
                 It.IsAny<CancellationToken>()
             ))
             .ReturnsAsync(_company);
@@ -77,7 +77,7 @@ public sealed class GetCompanyByIdQueryHandlerTests : BaseTest
         result.Value.Type.Should().Be(_company.TaxId.Type.GetDescription());
 
         _mockCompanyRepository.Verify(x => x.GetSingleAsync(
-            It.IsAny<Expression<Func<Company, bool>>>(), 
+            It.IsAny<Specification<Company>>(), 
             It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -91,7 +91,7 @@ public sealed class GetCompanyByIdQueryHandlerTests : BaseTest
         // Arrange
         _mockCompanyRepository
             .Setup(x => x.GetSingleAsync(
-                It.IsAny<Expression<Func<Company, bool>>>(),
+                It.IsAny<Specification<Company>>(),
                 It.IsAny<CancellationToken>()
             ))
             .ReturnsAsync((Company?)null);
@@ -109,7 +109,7 @@ public sealed class GetCompanyByIdQueryHandlerTests : BaseTest
             .WithMessage(ErrorMessage.NotFound.Company);
 
         _mockCompanyRepository.Verify(x => x.GetSingleAsync(
-            It.IsAny<Expression<Func<Company, bool>>>(), 
+            It.IsAny<Specification<Company>>(), 
             It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -121,7 +121,7 @@ public sealed class GetCompanyByIdQueryHandlerTests : BaseTest
         
         _mockCompanyRepository
             .Setup(x => x.GetSingleAsync(
-                It.IsAny<Expression<Func<Company, bool>>>(),
+                It.IsAny<Specification<Company>>(),
                 It.IsAny<CancellationToken>()
             ))
             .ReturnsAsync((Company?)null);
@@ -139,7 +139,7 @@ public sealed class GetCompanyByIdQueryHandlerTests : BaseTest
             .WithMessage(ErrorMessage.NotFound.Company);
 
         _mockCompanyRepository.Verify(x => x.GetSingleAsync(
-            It.IsAny<Expression<Func<Company, bool>>>(), 
+            It.IsAny<Specification<Company>>(), 
             It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -155,7 +155,7 @@ public sealed class GetCompanyByIdQueryHandlerTests : BaseTest
 
         _mockCompanyRepository
             .Setup(x => x.GetSingleAsync(
-                It.IsAny<Expression<Func<Company, bool>>>(),
+                It.IsAny<Specification<Company>>(),
                 It.Is<CancellationToken>(ct => ct.IsCancellationRequested)))
             .ThrowsAsync(new OperationCanceledException());
 
@@ -171,105 +171,13 @@ public sealed class GetCompanyByIdQueryHandlerTests : BaseTest
             .ThrowAsync<OperationCanceledException>();
 
         _mockCompanyRepository.Verify(x => x.GetSingleAsync(
-                It.IsAny<Expression<Func<Company, bool>>>(),
+                It.IsAny<Specification<Company>>(),
                 It.Is<CancellationToken>(ct => ct.IsCancellationRequested)),
             Times.Once);
     }
 
     #endregion
-
-    #region Repository Verification Tests
-
-    [Fact(DisplayName = "Should call repository with correct expression")]
-    public async Task Handle_WhenCalled_ShouldCallRepositoryWithCorrectExpression()
-    {
-        // Arrange
-        Expression<Func<Company, bool>>? capturedExpression = null;
-        
-        _mockCompanyRepository
-            .Setup(x => x.GetSingleAsync(
-                It.IsAny<Expression<Func<Company, bool>>>(),
-                It.IsAny<CancellationToken>(),
-                It.IsAny<Expression<Func<Company, object>>[]>()
-            ))
-            .Callback<Expression<Func<Company, bool>>, CancellationToken, Expression<Func<Company, object>>[]>(
-                (expr, ct, includes) => 
-                {
-                    capturedExpression = expr;
-                })
-            .ReturnsAsync(_company);
-
-        _mockUnitOfWork
-            .Setup(x => x.Companies)
-            .Returns(_mockCompanyRepository.Object);
-
-        // Act
-        await _queryHandler.Handle(_query, CancellationToken.None);
-
-        // Assert
-        capturedExpression.Should().NotBeNull();
-        
-        var compiledExpression = capturedExpression!.Compile();
-        compiledExpression(_company).Should().BeTrue();
-        
-        var differentCompany = Company.Create(
-            CompanyName.Create(_faker.Person.FullName, _faker.Company.CompanyName()),
-            TaxId.Create(_faker.Company.Cnpj(), TaxIdType.LegalEntityWithCnpj),
-            Email.Create(_faker.Person.Email.ToLowerInvariant()),
-            Phone.Create(_faker.Phone.PhoneNumber("(92) 9####-####"))
-        );
-        
-        compiledExpression(differentCompany).Should().BeFalse();
-    }
-
-    #endregion
-
-    #region Repository Verification Tests - Alternative with includes parameter
-
-    [Fact(DisplayName = "Should call repository with correct expression including includes parameter")]
-    public async Task Handle_WhenCalledWithIncludes_ShouldCallRepositoryWithCorrectExpression()
-    {
-        // Arrange
-        Expression<Func<Company, bool>>? capturedExpression = null;
-        
-        _mockCompanyRepository
-            .Setup(x => x.GetSingleAsync(
-                It.IsAny<Expression<Func<Company, bool>>>(),
-                It.IsAny<CancellationToken>(),
-                It.IsAny<Expression<Func<Company, object>>[]>()
-            ))
-            .Callback<Expression<Func<Company, bool>>, CancellationToken, Expression<Func<Company, object>>[]>(
-                (expr, ct, includes) => 
-                {
-                    capturedExpression = expr;
-                })
-            .ReturnsAsync(_company);
-
-        _mockUnitOfWork
-            .Setup(x => x.Companies)
-            .Returns(_mockCompanyRepository.Object);
-
-        // Act
-        await _queryHandler.Handle(_query, CancellationToken.None);
-
-        // Assert
-        capturedExpression.Should().NotBeNull();
-        
-        var compiledExpression = capturedExpression!.Compile();
-        compiledExpression(_company).Should().BeTrue();
-        
-        var differentCompany = Company.Create(
-            CompanyName.Create(_faker.Person.FullName, _faker.Company.CompanyName()),
-            TaxId.Create(_faker.Company.Cnpj(), TaxIdType.LegalEntityWithCnpj),
-            Email.Create(_faker.Person.Email.ToLowerInvariant()),
-            Phone.Create(_faker.Phone.PhoneNumber("(92) 9####-####"))
-        );
-        
-        compiledExpression(differentCompany).Should().BeFalse();
-    }
-
-    #endregion
-
+    
     #region Response Mapping Tests
 
     [Fact(DisplayName = "Should map all company properties correctly to response")]
@@ -278,7 +186,7 @@ public sealed class GetCompanyByIdQueryHandlerTests : BaseTest
         // Arrange
         _mockCompanyRepository
             .Setup(x => x.GetSingleAsync(
-                It.IsAny<Expression<Func<Company, bool>>>(),
+                It.IsAny<Specification<Company>>(),
                 It.IsAny<CancellationToken>()
             ))
             .ReturnsAsync(_company);

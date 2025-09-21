@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Riber.Domain.Specifications.Core;
 
 namespace Riber.Infrastructure.Persistence.Repositories;
 
@@ -24,14 +25,14 @@ public abstract class BaseRepository<T>(AppDbContext context)
     public void Delete(T entity)
         => Table.Remove(entity);
     
-    public async Task<T?> GetSingleAsync(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default, params Expression<Func<T, object>>[] includes) 
-        => await GetQueryWithIncludes(expression, includes).FirstOrDefaultAsync(cancellationToken);
+    public async Task<T?> GetSingleAsync(Specification<T> specification, CancellationToken cancellationToken = default, params Expression<Func<T, object>>[] includes) 
+        => await GetQueryWithIncludes(specification.ToExpression(), includes).FirstOrDefaultAsync(cancellationToken);
 
-    public async Task<bool> ExistsAsync(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default)
-        => await Table.AnyAsync(expression, cancellationToken);
+    public async Task<bool> ExistsAsync(Specification<T> specification, CancellationToken cancellationToken = default)
+        => await Table.AnyAsync(specification.ToExpression(), cancellationToken);
     
-    public IQueryable<T> Query(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes)
-        => GetQueryWithIncludes(predicate, includes);
+    public IQueryable<T> Query(Specification<T> specification, params Expression<Func<T, object>>[] includes)
+        => GetQueryWithIncludes(specification.ToExpression(), includes);
 
     /// <summary>
     /// Cria uma query na tabela do banco de dados com base em um predicado especificado e inclui as propriedades relacionadas.
