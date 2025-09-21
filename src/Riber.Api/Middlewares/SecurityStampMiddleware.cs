@@ -31,29 +31,17 @@ public sealed class SecurityStampMiddleware(
             return;
         }
         
-        try
+        logger.LogWarning("Validando os dados do usuário com ID {UserId} e security stamp {TokenSecurityStamp}", userId, tokenSecurityStamp);
+        var user = await authService.FindByIdAsync(userId);
+        if (user is null || user.SecurityStamp != tokenSecurityStamp)
         {
-            logger.LogWarning("Validando os dados do usuário com ID {UserId} e security stamp {TokenSecurityStamp}", userId, tokenSecurityStamp);
-            var user = await authService.FindByIdAsync(userId);
-            if (user is null || user.SecurityStamp != tokenSecurityStamp)
-            {
-                await context.WriteUnauthorizedResponse(
-                    title: "Acesso não autorizado",
-                    message: "Security stamp inválido ou usuário não encontrado.",
-                    code: StatusCodes.Status401Unauthorized
-                );
-                return;
-            }
-            await next(context);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Erro ao validar security stamp para usuário {UserId}", userId);
             await context.WriteUnauthorizedResponse(
-                title: "Erro interno de validação",
-                message: "Ocorreu um erro ao validar o security stamp do usuário.",
-                code: StatusCodes.Status500InternalServerError
+                title: "Acesso não autorizado",
+                message: "Security stamp inválido ou usuário não encontrado.",
+                code: StatusCodes.Status401Unauthorized
             );
+            return;
         }
+        await next(context);
     }
 }

@@ -18,7 +18,7 @@ if [[ "$ASPNETCORE_ENVIRONMENT" == "Development" ]] && [[ -n "$CONTAINER_ENV" ]]
 else
     # Local development - calculate path automatically
     CERT_PATH="$PROJECT_ROOT/src/Riber.Api/Common/Certificates"
-    PASSWORD="root"
+    PASSWORD="root@dev"
     echo "Environment: Local Development"
 fi
 
