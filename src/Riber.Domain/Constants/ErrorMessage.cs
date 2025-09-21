@@ -105,6 +105,7 @@ public static class ErrorMessage
         public const string CategoryCodeIsNull = "O código da categoria não pode ser nulo.";
         public const string NameIsNull = "O nome do produto não pode ser nulo.ErrorMessage.Product.";
         public const string DescriptionIsNull = "A descrição do produto não pode ser nula.";
+        public const string CategoryCodeExist = "Já existe uma categoria com esse código.";
     }
 
     public static class Image
