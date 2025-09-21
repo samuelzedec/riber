@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using Bogus.Extensions.Brazil;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -12,6 +11,7 @@ using Riber.Domain.Constants;
 using Riber.Domain.Entities;
 using Riber.Domain.Enums;
 using Riber.Domain.Repositories;
+using Riber.Domain.Specifications.Core;
 using Riber.Domain.Tests;
 
 namespace Riber.Application.Tests.Features.Companies.Commands;
@@ -64,7 +64,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
         // Arrange
         _mockCompanyRepository
             .SetupSequence(x => x.ExistsAsync(
-                It.IsAny<Expression<Func<Company, bool>>>(),
+                It.IsAny<Specification<Company>>(),
                 It.IsAny<CancellationToken>()
             ))
             .ReturnsAsync(false)
@@ -107,7 +107,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
         result.Value.AdminUserName.Should().Be(_command.AdminUserName);
 
         _mockCompanyRepository.Verify(x => x.ExistsAsync(
-            It.IsAny<Expression<Func<Company, bool>>>(), It.IsAny<CancellationToken>()), Times.Exactly(4));
+            It.IsAny<Specification<Company>>(), It.IsAny<CancellationToken>()), Times.Exactly(4));
 
         _mockCompanyRepository.Verify(x => x.CreateAsync(
             It.IsAny<Company>(), CancellationToken.None), Times.Once);
@@ -132,7 +132,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
         // Arrange
         _mockCompanyRepository
             .SetupSequence(x => x.ExistsAsync(
-                It.IsAny<Expression<Func<Company, bool>>>(),
+                It.IsAny<Specification<Company>>(),
                 It.IsAny<CancellationToken>()
             ))
             .ReturnsAsync(true)
@@ -159,7 +159,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
             .WithMessage(ErrorMessage.Conflict.CorporateNameAlreadyExists);
 
         _mockCompanyRepository.Verify(x => x.ExistsAsync(
-            It.IsAny<Expression<Func<Company, bool>>>(), It.IsAny<CancellationToken>()), Times.Once);
+            It.IsAny<Specification<Company>>(), It.IsAny<CancellationToken>()), Times.Once);
 
         _mockCompanyRepository.Verify(x => x.CreateAsync(
             It.IsAny<Company>(), CancellationToken.None), Times.Never);
@@ -183,7 +183,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
         // Arrange
         _mockCompanyRepository
             .SetupSequence(x => x.ExistsAsync(
-                It.IsAny<Expression<Func<Company, bool>>>(),
+                It.IsAny<Specification<Company>>(),
                 It.IsAny<CancellationToken>()
             ))
             .ReturnsAsync(false)
@@ -210,7 +210,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
             .WithMessage(ErrorMessage.Conflict.TaxIdAlreadyExists);
 
         _mockCompanyRepository.Verify(x => x.ExistsAsync(
-            It.IsAny<Expression<Func<Company, bool>>>(), It.IsAny<CancellationToken>()), Times.Exactly(2));
+            It.IsAny<Specification<Company>>(), It.IsAny<CancellationToken>()), Times.Exactly(2));
 
         _mockCompanyRepository.Verify(x => x.CreateAsync(
             It.IsAny<Company>(), CancellationToken.None), Times.Never);
@@ -234,7 +234,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
         // Arrange
         _mockCompanyRepository
             .SetupSequence(x => x.ExistsAsync(
-                It.IsAny<Expression<Func<Company, bool>>>(),
+                It.IsAny<Specification<Company>>(),
                 It.IsAny<CancellationToken>()
             ))
             .ReturnsAsync(false)
@@ -261,7 +261,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
             .WithMessage(ErrorMessage.Conflict.EmailAlreadyExists);
 
         _mockCompanyRepository.Verify(x => x.ExistsAsync(
-            It.IsAny<Expression<Func<Company, bool>>>(), It.IsAny<CancellationToken>()), Times.Exactly(3));
+            It.IsAny<Specification<Company>>(), It.IsAny<CancellationToken>()), Times.Exactly(3));
 
         _mockCompanyRepository.Verify(x => x.CreateAsync(
             It.IsAny<Company>(), CancellationToken.None), Times.Never);
@@ -285,7 +285,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
         // Arrange
         _mockCompanyRepository
             .SetupSequence(x => x.ExistsAsync(
-                It.IsAny<Expression<Func<Company, bool>>>(),
+                It.IsAny<Specification<Company>>(),
                 It.IsAny<CancellationToken>()
             ))
             .ReturnsAsync(false)
@@ -312,7 +312,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
             .WithMessage(ErrorMessage.Conflict.PhoneAlreadyExists);
 
         _mockCompanyRepository.Verify(x => x.ExistsAsync(
-            It.IsAny<Expression<Func<Company, bool>>>(), It.IsAny<CancellationToken>()), Times.Exactly(4));
+            It.IsAny<Specification<Company>>(), It.IsAny<CancellationToken>()), Times.Exactly(4));
 
         _mockCompanyRepository.Verify(x => x.CreateAsync(
             It.IsAny<Company>(), CancellationToken.None), Times.Never);
@@ -342,7 +342,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
 
         _mockCompanyRepository
             .SetupSequence(x => x.ExistsAsync(
-                It.IsAny<Expression<Func<Company, bool>>>(),
+                It.IsAny<Specification<Company>>(),
                 It.IsAny<CancellationToken>()
             ))
             .ReturnsAsync(false)
@@ -403,7 +403,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
 
         _mockCompanyRepository
             .Setup(x => x.ExistsAsync(
-                It.IsAny<Expression<Func<Company, bool>>>(),
+                It.IsAny<Specification<Company>>(),
                 It.Is<CancellationToken>(ct => ct.IsCancellationRequested)))
             .ThrowsAsync(new OperationCanceledException());
 
@@ -425,7 +425,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
             .ThrowAsync<OperationCanceledException>();
 
         _mockCompanyRepository.Verify(x => x.ExistsAsync(
-                It.IsAny<Expression<Func<Company, bool>>>(),
+                It.IsAny<Specification<Company>>(),
                 It.Is<CancellationToken>(ct => ct.IsCancellationRequested)),
             Times.Once);
 
@@ -453,7 +453,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
 
         _mockCompanyRepository
             .SetupSequence(x => x.ExistsAsync(
-                It.IsAny<Expression<Func<Company, bool>>>(),
+                It.IsAny<Specification<Company>>(),
                 It.IsAny<CancellationToken>()
             ))
             .ReturnsAsync(false)
@@ -491,7 +491,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
             .ThrowAsync<OperationCanceledException>();
 
         _mockCompanyRepository.Verify(x => x.ExistsAsync(
-            It.IsAny<Expression<Func<Company, bool>>>(), It.IsAny<CancellationToken>()), Times.Exactly(4));
+            It.IsAny<Specification<Company>>(), It.IsAny<CancellationToken>()), Times.Exactly(4));
 
         _mockCompanyRepository.Verify(x => x.CreateAsync(
             It.IsAny<Company>(), CancellationToken.None), Times.Never);

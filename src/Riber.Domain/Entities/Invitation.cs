@@ -1,5 +1,6 @@
 using Riber.Domain.Abstractions;
 using Riber.Domain.Abstractions.ValueObjects;
+using Riber.Domain.Entities.Tenants;
 using Riber.Domain.Enums;
 using Riber.Domain.ValueObjects.Email;
 using Riber.Domain.ValueObjects.RandomToken;
@@ -7,12 +8,11 @@ using Riber.Domain.ValueObjects.RandomToken;
 namespace Riber.Domain.Entities;
 
 public sealed class Invitation 
-    : BaseEntity, IAggregateRoot, IHasEmail, IHasRandomToken
+    : TenantEntity, IAggregateRoot, IHasEmail, IHasRandomToken
 {
     #region Properties
 
     public Email Email { get; private set; }
-    public Guid CompanyId { get; private set; }
     public BusinessPosition Position { get; private set; }
     public string Role { get; private set; }
     public string Permissions { get; private set; }

@@ -1,35 +1,36 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Riber.Application.Abstractions.Services;
+using Riber.Application.Exceptions;
+using Riber.Domain.Constants;
 
 namespace Riber.Infrastructure.Services.Authentication;
 
 public sealed class CurrentUserService(IHttpContextAccessor httpContextAccessor) 
     : ICurrentUserService
 {
-    private ClaimsPrincipal? CurrentUser 
-        => httpContextAccessor.HttpContext?.User;
+    private ClaimsPrincipal CurrentUser 
+        => httpContextAccessor.HttpContext?.User!;
     
     public string[] GetPermissions()
-        => CurrentUser is null ? [] : [.. 
+        => [.. 
             CurrentUser.Claims
             .Where(x => x.Type == "permission")
             .Select(x => x.Value)
         ];
 
-    public Guid? GetUserId()
+    public Guid GetUserId()
     {
-        if (CurrentUser is null)
-            return null;
+        var userIdClaim = CurrentUser.FindFirst(ClaimTypes.NameIdentifier)!;
+        return Guid.Parse(userIdClaim.Value);
+    }
 
-        var userIdClaim = CurrentUser.FindFirst(ClaimTypes.NameIdentifier);
-
-        if (userIdClaim is null)
-            return null;
-
-        if (Guid.TryParse(userIdClaim.Value, out var userId) && userId != Guid.Empty)
-            return userId;
-
-        return null;
+    public Guid GetCompanyId()
+    {
+        var companyIdClaim = CurrentUser.FindFirst("companyId")!;
+        if (!Guid.TryParse(companyIdClaim.Value, out var companyId))
+            throw new BadRequestException(ErrorMessage.Invalid.CompanyId);
+        
+        return companyId;
     }
 }

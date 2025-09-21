@@ -17,7 +17,7 @@ if [[ "$ASPNETCORE_ENVIRONMENT" == "Development" ]] && [[ -n "$CONTAINER_ENV" ]]
     echo "Environment: Docker Development"
 else
     # Local development - calculate path automatically
-    CERT_PATH="$PROJECT_ROOT/src/SnackFlow.Api/Common/Certificates"
+    CERT_PATH="$PROJECT_ROOT/src/Riber.Api/Common/Certificates"
     PASSWORD="root"
     echo "Environment: Local Development"
 fi

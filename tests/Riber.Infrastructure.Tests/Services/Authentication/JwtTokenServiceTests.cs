@@ -1,11 +1,14 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography.X509Certificates;
+using Bogus.Extensions.Brazil;
 using FluentAssertions;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Moq;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.DTOs;
+using Riber.Domain.Entities;
+using Riber.Domain.Enums;
 using Riber.Domain.Tests;
 using Riber.Infrastructure.Services.Authentication;
 using Riber.Infrastructure.Settings;
@@ -44,6 +47,13 @@ public sealed class JwtTokenServiceTests : BaseTest
             Audience = "test-audience"
         };
         
+        var userDomain = User.Create(
+            _faker.Name.FullName(),
+            _faker.Person.Cpf(),
+            BusinessPosition.Owner,
+            Guid.CreateVersion7()
+        );
+        
         _userDetailsTest = CreateFaker<UserDetailsDTO>()
             .CustomInstantiator(f => new UserDetailsDTO(
                 Id: Guid.CreateVersion7(),
@@ -53,7 +63,7 @@ public sealed class JwtTokenServiceTests : BaseTest
                 PhoneNumber: string.Empty,
                 SecurityStamp: f.Random.AlphaNumeric(32),
                 UserDomainId: Guid.Empty,
-                UserDomain: null!,
+                UserDomain: userDomain,
                 Roles: f.Make(2, () => f.Name.JobTitle()).ToList(),
                 Claims: [.. f.Make(2, () => new ClaimDTO(
                     Type: f.Random.Word(),
@@ -162,7 +172,7 @@ public sealed class JwtTokenServiceTests : BaseTest
         var handler = new JwtSecurityTokenHandler();
         var jsonToken = handler.ReadJwtToken(token);
    
-        jsonToken.Claims.Count().Should().Be(10 + userWithoutClaims.Roles.Count);
+        jsonToken.Claims.Count().Should().Be(11 + userWithoutClaims.Roles.Count);
     }
 
     #endregion

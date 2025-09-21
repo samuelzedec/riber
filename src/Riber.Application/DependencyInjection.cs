@@ -19,7 +19,7 @@ public static class DependencyInjection
             options.NotificationPublisherType = typeof(Mediator.TaskWhenAllPublisher);
             options.PipelineBehaviors = [
                 typeof(ValidationBehavior<,>),
-                typeof(LoggingBehavior<,>),
+                typeof(LoggingBehavior<,>)
             ];
         });
 

@@ -1,9 +1,11 @@
 using Riber.Application.Abstractions.Services;
 using Riber.Application.DTOs;
 using Riber.Application.Exceptions;
+using Riber.Domain.Abstractions;
 using Riber.Domain.Constants;
 using Riber.Domain.Entities;
 using Riber.Domain.Repositories;
+using Riber.Domain.Specifications.User;
 using Riber.Domain.ValueObjects.Email;
 using Riber.Domain.ValueObjects.Phone;
 
@@ -63,7 +65,7 @@ public sealed class UserCreationService(
         if (await authService.FindByPhoneAsync(phoneNumber) is not null)
             throw new ConflictException(ErrorMessage.Conflict.PhoneAlreadyExists);
 
-        if (await unitOfWork.Users.ExistsAsync(x => x.TaxId.Value == taxId))
+        if (await unitOfWork.Users.ExistsAsync(new UserTaxIdSpecification(IDocumentValidator.SanitizeStatic(taxId))))
             throw new ConflictException(ErrorMessage.Conflict.TaxIdAlreadyExists);
     }
 }

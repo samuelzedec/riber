@@ -8,7 +8,7 @@ public sealed record CpfValidator : IDocumentValidator
 {
     #region Properties Private
 
-    private const int Length = 11;
+    private const int ExpectedLength = 11;
 
     #endregion
 
@@ -51,10 +51,12 @@ public sealed record CpfValidator : IDocumentValidator
         if (string.IsNullOrWhiteSpace(document))
             throw new InvalidCpfException(ErrorMessage.Cpf.IsNullOrEmpty);
         
-        document = new string([.. document.Where(char.IsDigit)]);
-        return document.Length != Length
-           ? throw new InvalidLengthCpfException(ErrorMessage.Cpf.LengthIsInvalid)
-           : document;
+        var sanitized = IDocumentValidator.SanitizeStatic(document);
+        return IDocumentValidator.ValidateLength(
+            sanitized, 
+            ExpectedLength, 
+            new InvalidLengthCpfException(ErrorMessage.Cpf.LengthIsInvalid)
+        );
     }
 
     public static string Format(string document)

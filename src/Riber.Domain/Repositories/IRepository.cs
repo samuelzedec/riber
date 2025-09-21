@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Riber.Domain.Abstractions;
+using Riber.Domain.Specifications.Core;
 
 namespace Riber.Domain.Repositories;
 
@@ -43,10 +44,10 @@ public interface IRepository<T> where T : IAggregateRoot
     void Delete(T entity);
 
     /// <summary>
-    /// Recupera uma única entidade do tipo <typeparamref name="T"/> que corresponde à expressão fornecida.
+    /// Recupera uma única entidade do tipo <typeparamref name="T"/> que corresponde à especificação fornecida.
     /// </summary>
-    /// <param name="expression">
-    /// Expressão lambda utilizada para filtrar a entidade que deve ser recuperada.
+    /// <param name="specification">
+    /// Especificação que define os critérios para filtrar a entidade que deve ser recuperada.
     /// </param>
     /// <param name="cancellationToken">
     /// Token de cancelamento que pode ser utilizado para cancelar a operação.
@@ -57,14 +58,14 @@ public interface IRepository<T> where T : IAggregateRoot
     /// <returns>
     /// Uma instância da entidade do tipo <typeparamref name="T"/> ou <c>null</c> se nenhuma correspondência for encontrada.
     /// </returns>
-    Task<T?> GetSingleAsync(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default,
+    Task<T?> GetSingleAsync(Specification<T> specification, CancellationToken cancellationToken = default,
         params Expression<Func<T, object>>[] includes);
 
     /// <summary>
     /// Verifica se existe uma entidade que atende à condição especificada.
     /// </summary>
-    /// <param name="expression">
-    /// Expressão lambda que define o critério da busca.
+    /// <param name="specification">
+    /// Especificação que define os critérios para filtrar a entidade que deve ser verificada.
     /// </param>
     /// <param name="cancellationToken">
     /// Token de cancelamento que pode ser usado para cancelar a operação.
@@ -72,19 +73,19 @@ public interface IRepository<T> where T : IAggregateRoot
     /// <returns>
     /// Retorna um valor booleano indicando se pelo menos uma entidade atende à condição especificada.
     /// </returns>
-    Task<bool> ExistsAsync(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default);
+    Task<bool> ExistsAsync(Specification<T> specification, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Recupera uma coleção consultável de entidades do tipo <typeparamref name="T"/> utilizando um predicado especificado e inclui as entidades relacionadas definidas.
+    /// Recupera uma coleção consultável de entidades do tipo <typeparamref name="T"/> que atendem à especificação fornecida e inclui as entidades relacionadas definidas.
     /// </summary>
-    /// <param name="predicate">
-    /// Uma expressão que define as condições que as entidades retornadas devem atender.
+    /// <param name="specification">
+    /// Especificação que define os critérios para filtrar as entidades que devem ser recuperadas.
     /// </param>
     /// <param name="includes">
     /// Um array de expressões representando as entidades relacionadas a serem incluídas na consulta.
     /// </param>
     /// <returns>
-    /// Uma coleção consultável de entidades do tipo <typeparamref name="T"/> que atendem ao predicado especificado.
+    /// Uma coleção consultável de entidades do tipo <typeparamref name="T"/> que atendem à especificação fornecida.
     /// </returns>
-    IQueryable<T> Query(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes);
+    IQueryable<T> Query(Specification<T> specification, params Expression<Func<T, object>>[] includes);
 }

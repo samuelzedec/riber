@@ -14,6 +14,10 @@ public interface IUnitOfWork
     
     IInvitationRepository Invitations { get; }
     
+    IOrderRepository Orders { get; }
+    
+    IProductRepository Products { get; }
+    
     #endregion
 
     #region Default Methods

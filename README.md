@@ -1,10 +1,10 @@
-# 🍔 Riber
+# Riber - Backend
 Olá! Me chamo **Samuel Ribeiro** e este é o backend que estou desenvolvendo para a aplicação de gestão de uma
-**lanchonete local em Manaus-AM 🍔🍟**.
+**lanchonete local em Manaus-AM **.
 
 O sistema está sendo criado com o objetivo de oferecer à lanchonete um controle mais eficiente das operações e das finanças, permitindo gerenciar receitas, despesas e fluxo de caixa de forma simples e organizada.
 
-## 🏛️ Arquitetura
+## Arquitetura
 
 O projeto segue os princípios de **Clean Architecture**, organizando as dependências em camadas bem definidas:
 
@@ -13,7 +13,7 @@ O projeto segue os princípios de **Clean Architecture**, organizando as depend�
 - **Infrastructure**: Implementações de persistência e serviços externos
 - **API**: Controladores e configurações web
 
-## 🛠️ Tecnologias Principais
+## Tecnologias Principais
 
 - **.NET 9.0** - Framework principal
 - **PostgreSQL** - Banco de dados
@@ -25,7 +25,7 @@ O projeto segue os princípios de **Clean Architecture**, organizando as depend�
 - **Serilog** - Logging estruturado
 - **xUnit** - Testes unitários
 
-## 📚 Documentação
+## Documentação
 
 Para informações detalhadas sobre desenvolvimento e padrões do projeto, consulte:
 
@@ -34,7 +34,17 @@ Para informações detalhadas sobre desenvolvimento e padrões do projeto, consu
 - **[Pacotes e Dependências](docs/packages.md)** - Lista completa de bibliotecas e suas finalidades
 - **[Configuração de Timeout](docs/request-timeout.md)** - Configurações de timeout para requisições
 
-## 🐋 Executando com Docker Compose
+## Usuários Padrão no banco de dados
+
+### Administrador: 
+- UserName = admin123 
+- Password = Admin@123
+
+### Diretor: 
+- UserName = director123 
+- Password = Director@123
+
+## Executando com Docker Compose
 
 ### 1. Configuração do ambiente
 

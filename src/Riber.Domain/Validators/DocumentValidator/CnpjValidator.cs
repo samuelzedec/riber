@@ -8,7 +8,7 @@ public sealed record CnpjValidator : IDocumentValidator
 {
     #region Properties Private
 
-    private const int Length = 14;
+    private const int ExpectedLength = 14;
 
     #endregion
 
@@ -57,10 +57,12 @@ public sealed record CnpjValidator : IDocumentValidator
         if (string.IsNullOrWhiteSpace(document))
             throw new InvalidCnpjException(ErrorMessage.Cnpj.IsNullOrEmpty);
         
-        document = new string([.. document.Where(char.IsDigit)]);
-        return document.Length != Length
-            ? throw new InvalidLengthCnpjException(ErrorMessage.Cnpj.LengthIsInvalid)
-            : document;
+        var sanitized = IDocumentValidator.SanitizeStatic(document);
+        return IDocumentValidator.ValidateLength(
+            sanitized, 
+            ExpectedLength, 
+            new InvalidLengthCnpjException(ErrorMessage.Cnpj.LengthIsInvalid)
+        );
     }
 
     public static string Format(string document)

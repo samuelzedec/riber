@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using Bogus.Extensions.Brazil;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -9,6 +8,7 @@ using Riber.Domain.Constants;
 using Riber.Domain.Entities;
 using Riber.Domain.Enums;
 using Riber.Domain.Repositories;
+using Riber.Domain.Specifications.Core;
 using Riber.Domain.Tests;
 using Riber.Domain.ValueObjects.Email;
 
@@ -65,7 +65,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
 
         _mockCompanyRepository
             .Setup(x => x.GetSingleAsync(
-                It.IsAny<Expression<Func<Company, bool>>>(),
+                It.IsAny<Specification<Company>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(_baseCompany);
 
@@ -90,7 +90,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
         _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()), Times.Once);
 
         _mockCompanyRepository.Verify(x => x.GetSingleAsync(
-                It.IsAny<Expression<Func<Company, bool>>>(),
+                It.IsAny<Specification<Company>>(),
                 It.IsAny<CancellationToken>()),
             Times.Once);
 
@@ -115,7 +115,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
 
         _mockCompanyRepository
             .Setup(x => x.GetSingleAsync(
-                It.IsAny<Expression<Func<Company, bool>>>(),
+                It.IsAny<Specification<Company>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(_baseCompany);
 
@@ -140,7 +140,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
         _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()), Times.Once);
 
         _mockCompanyRepository.Verify(x => x.GetSingleAsync(
-                It.IsAny<Expression<Func<Company, bool>>>(),
+                It.IsAny<Specification<Company>>(),
                 It.IsAny<CancellationToken>()),
             Times.Once);
 
@@ -165,7 +165,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
 
         _mockCompanyRepository
             .Setup(x => x.GetSingleAsync(
-                It.IsAny<Expression<Func<Company, bool>>>(),
+                It.IsAny<Specification<Company>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(_baseCompany);
 
@@ -190,7 +190,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
         _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()), Times.Once);
 
         _mockCompanyRepository.Verify(x => x.GetSingleAsync(
-                It.IsAny<Expression<Func<Company, bool>>>(),
+                It.IsAny<Specification<Company>>(),
                 It.IsAny<CancellationToken>()),
             Times.Once);
 
@@ -215,7 +215,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
 
         _mockCompanyRepository
             .Setup(x => x.GetSingleAsync(
-                It.IsAny<Expression<Func<Company, bool>>>(),
+                It.IsAny<Specification<Company>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(_baseCompany);
 
@@ -240,7 +240,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
         _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()), Times.Once);
 
         _mockCompanyRepository.Verify(x => x.GetSingleAsync(
-                It.IsAny<Expression<Func<Company, bool>>>(),
+                It.IsAny<Specification<Company>>(),
                 It.IsAny<CancellationToken>()),
             Times.Once);
 
@@ -269,7 +269,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
 
         _mockCompanyRepository
             .Setup(x => x.GetSingleAsync(
-                It.IsAny<Expression<Func<Company, bool>>>(),
+                It.IsAny<Specification<Company>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync((Company?)null);
 
@@ -290,7 +290,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
 
         _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()), Times.Once);
         _mockCompanyRepository.Verify(x => x.GetSingleAsync(
-                It.IsAny<Expression<Func<Company, bool>>>(),
+                It.IsAny<Specification<Company>>(),
                 It.IsAny<CancellationToken>()),
             Times.Once);
 
@@ -328,7 +328,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
 
         _mockCompanyRepository
             .Setup(x => x.GetSingleAsync(
-                It.IsAny<Expression<Func<Company, bool>>>(),
+                It.IsAny<Specification<Company>>(),
                 It.Is<CancellationToken>(ct => ct.IsCancellationRequested)))
             .ThrowsAsync(new OperationCanceledException());
 
@@ -348,7 +348,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
             .ThrowAsync<OperationCanceledException>();
 
         _mockCompanyRepository.Verify(x => x.GetSingleAsync(
-                It.IsAny<Expression<Func<Company, bool>>>(),
+                It.IsAny<Specification<Company>>(),
                 It.Is<CancellationToken>(ct => ct.IsCancellationRequested)),
             Times.Once);
 
@@ -378,13 +378,13 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
 
         _mockCompanyRepository
             .Setup(x => x.GetSingleAsync(
-                It.IsAny<Expression<Func<Company, bool>>>(),
+                It.IsAny<Specification<Company>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(_baseCompany);
 
         _mockCompanyRepository
             .Setup(x => x.ExistsAsync(
-                It.IsAny<Expression<Func<Company, bool>>>(),
+                It.IsAny<Specification<Company>>(),
                 It.Is<CancellationToken>(ct => ct.IsCancellationRequested)))
             .ThrowsAsync(new OperationCanceledException());
 
@@ -404,11 +404,11 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
             .ThrowAsync<OperationCanceledException>();
 
         _mockCompanyRepository.Verify(x => x.GetSingleAsync(
-            It.IsAny<Expression<Func<Company, bool>>>(),
+            It.IsAny<Specification<Company>>(),
             It.IsAny<CancellationToken>()), Times.Once);
 
         _mockCompanyRepository.Verify(x => x.ExistsAsync(
-                It.IsAny<Expression<Func<Company, bool>>>(),
+                It.IsAny<Specification<Company>>(),
                 It.Is<CancellationToken>(ct => ct.IsCancellationRequested)),
             Times.Once);
 

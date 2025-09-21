@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Riber.Application.Abstractions.Commands;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Common;
@@ -11,6 +10,8 @@ using Riber.Domain.Entities;
 using Riber.Domain.Enums;
 using Riber.Domain.Events;
 using Riber.Domain.Repositories;
+using Riber.Domain.Specifications.Company;
+using Riber.Domain.Specifications.Core;
 using Riber.Domain.ValueObjects.Email;
 using Riber.Domain.ValueObjects.Phone;
 
@@ -90,16 +91,17 @@ internal sealed class CreateCompanyWithAdminCommandHandler(
         var companyRepository = unitOfWork.Companies;
         var normalizedPhone = Phone.RemoveFormatting(request.Phone);
         var normalizedEmail = Email.Standardization(request.Email);
+        var normalizedTaxId = new string([..request.TaxId.Where(char.IsDigit)]);
         
-        var validations = new (Expression<Func<Company, bool>>, string message)[]
+        var validations = new (Specification<Company>, string message)[]
         {
-            (x => x.Name.Corporate == request.CorporateName, ErrorMessage.Conflict.CorporateNameAlreadyExists),
-            (x => x.TaxId.Value == request.TaxId, ErrorMessage.Conflict.TaxIdAlreadyExists),
-            (x => x.Email.Value == normalizedEmail, ErrorMessage.Conflict.EmailAlreadyExists),
-            (x => x.Phone.Value == normalizedPhone, ErrorMessage.Conflict.PhoneAlreadyExists)
+            (new CorporateNameSpecification(request.CorporateName), ErrorMessage.Conflict.CorporateNameAlreadyExists),
+            (new CompanyTaxIdSpecification(normalizedTaxId), ErrorMessage.Conflict.TaxIdAlreadyExists),
+            (new CompanyEmailSpecification(normalizedEmail), ErrorMessage.Conflict.EmailAlreadyExists),
+            (new CompanyPhoneSpecification(normalizedPhone), ErrorMessage.Conflict.PhoneAlreadyExists)
         };
 
-        foreach ((Expression<Func<Company, bool>> expression, string message) in validations)
+        foreach ((Specification<Company> expression, string message) in validations)
         {
             if (await companyRepository.ExistsAsync(expression, cancellationToken))
                 throw new ConflictException(message);

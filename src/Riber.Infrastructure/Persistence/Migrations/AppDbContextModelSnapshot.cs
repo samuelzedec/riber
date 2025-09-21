@@ -101,11 +101,11 @@ namespace Riber.Infrastructure.Persistence.Migrations
                         .HasColumnName("modified_at");
 
                     b.HasKey("Id")
-                        .HasName("pk_invitations_id");
+                        .HasName("pk_invitation_id");
 
                     b.HasIndex(new[] { "CompanyId" }, "ix_invitations_company_id");
 
-                    b.ToTable("invitations", (string)null);
+                    b.ToTable("invitation", (string)null);
                 });
 
             modelBuilder.Entity("Riber.Domain.Entities.Order", b =>
@@ -254,7 +254,7 @@ namespace Riber.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasMaxLength(3)
+                        .HasMaxLength(5)
                         .HasColumnType("text")
                         .HasColumnName("code");
 
@@ -375,7 +375,7 @@ namespace Riber.Infrastructure.Persistence.Migrations
                     b.HasIndex(new[] { "Name" }, "uq_application_permission_name")
                         .IsUnique();
 
-                    b.ToTable("application_permissions", (string)null);
+                    b.ToTable("application_permission", (string)null);
 
                     b.HasData(
                         new
@@ -481,6 +481,38 @@ namespace Riber.Infrastructure.Persistence.Migrations
                             Description = "Importar produtos",
                             IsActive = false,
                             Name = "products.import"
+                        },
+                        new
+                        {
+                            Id = 306,
+                            Category = "Categories",
+                            Description = "Criar categorias",
+                            IsActive = false,
+                            Name = "categories.create"
+                        },
+                        new
+                        {
+                            Id = 307,
+                            Category = "Categories",
+                            Description = "Visualizar categorias",
+                            IsActive = false,
+                            Name = "categories.read"
+                        },
+                        new
+                        {
+                            Id = 308,
+                            Category = "Categories",
+                            Description = "Editar categorias",
+                            IsActive = false,
+                            Name = "categories.update"
+                        },
+                        new
+                        {
+                            Id = 309,
+                            Category = "Categories",
+                            Description = "Remover categorias",
+                            IsActive = false,
+                            Name = "categories.delete"
                         },
                         new
                         {
@@ -885,133 +917,133 @@ namespace Riber.Infrastructure.Persistence.Migrations
                         {
                             Id = 31,
                             ClaimType = "permission",
-                            ClaimValue = "products.create",
-                            RoleId = new Guid("2a74bf8e-0be3-46cc-9310-fdd5f80bd878")
+                            ClaimValue = "categories.create",
+                            RoleId = new Guid("72bf32a9-69e8-4a57-936b-c6b23c47216d")
                         },
                         new
                         {
                             Id = 32,
                             ClaimType = "permission",
-                            ClaimValue = "products.read",
-                            RoleId = new Guid("2a74bf8e-0be3-46cc-9310-fdd5f80bd878")
+                            ClaimValue = "categories.read",
+                            RoleId = new Guid("72bf32a9-69e8-4a57-936b-c6b23c47216d")
                         },
                         new
                         {
                             Id = 33,
                             ClaimType = "permission",
-                            ClaimValue = "products.update",
-                            RoleId = new Guid("2a74bf8e-0be3-46cc-9310-fdd5f80bd878")
+                            ClaimValue = "categories.update",
+                            RoleId = new Guid("72bf32a9-69e8-4a57-936b-c6b23c47216d")
                         },
                         new
                         {
                             Id = 34,
                             ClaimType = "permission",
-                            ClaimValue = "products.import",
-                            RoleId = new Guid("2a74bf8e-0be3-46cc-9310-fdd5f80bd878")
+                            ClaimValue = "categories.delete",
+                            RoleId = new Guid("72bf32a9-69e8-4a57-936b-c6b23c47216d")
                         },
                         new
                         {
                             Id = 35,
                             ClaimType = "permission",
-                            ClaimValue = "users.create",
+                            ClaimValue = "products.create",
                             RoleId = new Guid("2a74bf8e-0be3-46cc-9310-fdd5f80bd878")
                         },
                         new
                         {
                             Id = 36,
                             ClaimType = "permission",
-                            ClaimValue = "users.read",
+                            ClaimValue = "products.read",
                             RoleId = new Guid("2a74bf8e-0be3-46cc-9310-fdd5f80bd878")
                         },
                         new
                         {
                             Id = 37,
                             ClaimType = "permission",
-                            ClaimValue = "users.update",
+                            ClaimValue = "products.update",
                             RoleId = new Guid("2a74bf8e-0be3-46cc-9310-fdd5f80bd878")
                         },
                         new
                         {
                             Id = 38,
                             ClaimType = "permission",
-                            ClaimValue = "users.assign_roles",
+                            ClaimValue = "products.import",
                             RoleId = new Guid("2a74bf8e-0be3-46cc-9310-fdd5f80bd878")
                         },
                         new
                         {
                             Id = 39,
                             ClaimType = "permission",
-                            ClaimValue = "reports.view",
+                            ClaimValue = "users.create",
                             RoleId = new Guid("2a74bf8e-0be3-46cc-9310-fdd5f80bd878")
                         },
                         new
                         {
                             Id = 40,
                             ClaimType = "permission",
-                            ClaimValue = "reports.export",
+                            ClaimValue = "users.read",
                             RoleId = new Guid("2a74bf8e-0be3-46cc-9310-fdd5f80bd878")
                         },
                         new
                         {
                             Id = 41,
                             ClaimType = "permission",
-                            ClaimValue = "reports.schedule",
+                            ClaimValue = "users.update",
                             RoleId = new Guid("2a74bf8e-0be3-46cc-9310-fdd5f80bd878")
                         },
                         new
                         {
                             Id = 42,
                             ClaimType = "permission",
-                            ClaimValue = "roles.read",
+                            ClaimValue = "users.assign_roles",
                             RoleId = new Guid("2a74bf8e-0be3-46cc-9310-fdd5f80bd878")
                         },
                         new
                         {
                             Id = 43,
                             ClaimType = "permission",
-                            ClaimValue = "roles.update",
+                            ClaimValue = "reports.view",
                             RoleId = new Guid("2a74bf8e-0be3-46cc-9310-fdd5f80bd878")
                         },
                         new
                         {
                             Id = 44,
                             ClaimType = "permission",
-                            ClaimValue = "roles.assign_permissions",
+                            ClaimValue = "reports.export",
                             RoleId = new Guid("2a74bf8e-0be3-46cc-9310-fdd5f80bd878")
                         },
                         new
                         {
                             Id = 45,
                             ClaimType = "permission",
-                            ClaimValue = "orders.create",
-                            RoleId = new Guid("5b20150c-817c-4020-bb91-59d29f732a32")
+                            ClaimValue = "reports.schedule",
+                            RoleId = new Guid("2a74bf8e-0be3-46cc-9310-fdd5f80bd878")
                         },
                         new
                         {
                             Id = 46,
                             ClaimType = "permission",
-                            ClaimValue = "orders.read",
-                            RoleId = new Guid("5b20150c-817c-4020-bb91-59d29f732a32")
+                            ClaimValue = "roles.read",
+                            RoleId = new Guid("2a74bf8e-0be3-46cc-9310-fdd5f80bd878")
                         },
                         new
                         {
                             Id = 47,
                             ClaimType = "permission",
-                            ClaimValue = "orders.update",
-                            RoleId = new Guid("5b20150c-817c-4020-bb91-59d29f732a32")
+                            ClaimValue = "roles.update",
+                            RoleId = new Guid("2a74bf8e-0be3-46cc-9310-fdd5f80bd878")
                         },
                         new
                         {
                             Id = 48,
                             ClaimType = "permission",
-                            ClaimValue = "products.read",
-                            RoleId = new Guid("5b20150c-817c-4020-bb91-59d29f732a32")
+                            ClaimValue = "roles.assign_permissions",
+                            RoleId = new Guid("2a74bf8e-0be3-46cc-9310-fdd5f80bd878")
                         },
                         new
                         {
                             Id = 49,
                             ClaimType = "permission",
-                            ClaimValue = "reports.view",
+                            ClaimValue = "orders.create",
                             RoleId = new Guid("5b20150c-817c-4020-bb91-59d29f732a32")
                         },
                         new
@@ -1019,11 +1051,39 @@ namespace Riber.Infrastructure.Persistence.Migrations
                             Id = 50,
                             ClaimType = "permission",
                             ClaimValue = "orders.read",
-                            RoleId = new Guid("f9bb36fe-9ac3-4cad-9a37-b90eab601cf5")
+                            RoleId = new Guid("5b20150c-817c-4020-bb91-59d29f732a32")
                         },
                         new
                         {
                             Id = 51,
+                            ClaimType = "permission",
+                            ClaimValue = "orders.update",
+                            RoleId = new Guid("5b20150c-817c-4020-bb91-59d29f732a32")
+                        },
+                        new
+                        {
+                            Id = 52,
+                            ClaimType = "permission",
+                            ClaimValue = "products.read",
+                            RoleId = new Guid("5b20150c-817c-4020-bb91-59d29f732a32")
+                        },
+                        new
+                        {
+                            Id = 53,
+                            ClaimType = "permission",
+                            ClaimValue = "reports.view",
+                            RoleId = new Guid("5b20150c-817c-4020-bb91-59d29f732a32")
+                        },
+                        new
+                        {
+                            Id = 54,
+                            ClaimType = "permission",
+                            ClaimValue = "orders.read",
+                            RoleId = new Guid("f9bb36fe-9ac3-4cad-9a37-b90eab601cf5")
+                        },
+                        new
+                        {
+                            Id = 55,
                             ClaimType = "permission",
                             ClaimValue = "products.read",
                             RoleId = new Guid("f9bb36fe-9ac3-4cad-9a37-b90eab601cf5")
@@ -1374,7 +1434,7 @@ namespace Riber.Infrastructure.Persistence.Migrations
                             b1.HasIndex(new[] { "Value" }, "uq_invitations_email")
                                 .IsUnique();
 
-                            b1.ToTable("invitations");
+                            b1.ToTable("invitation");
 
                             b1.WithOwner()
                                 .HasForeignKey("InvitationId");
@@ -1393,10 +1453,10 @@ namespace Riber.Infrastructure.Persistence.Migrations
 
                             b1.HasKey("InvitationId");
 
-                            b1.HasIndex(new[] { "Value" }, "uq_invitations_invite_token")
+                            b1.HasIndex(new[] { "Value" }, "uq_invitation_invite_token")
                                 .IsUnique();
 
-                            b1.ToTable("invitations");
+                            b1.ToTable("invitation");
 
                             b1.WithOwner()
                                 .HasForeignKey("InvitationId");

@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using Bogus.Extensions.Brazil;
 using FluentAssertions;
 using Moq;
@@ -10,6 +9,7 @@ using Riber.Domain.Constants;
 using Riber.Domain.Entities;
 using Riber.Domain.Repositories;
 using Riber.Domain.Enums;
+using Riber.Domain.Specifications.Core;
 using Riber.Domain.Tests;
 
 namespace Riber.Infrastructure.Tests.Services;
@@ -84,7 +84,7 @@ public sealed class UserCreationServiceTests : BaseTest
             .Returns(_mockUserRepository.Object);
 
         _mockUserRepository
-            .Setup(x => x.ExistsAsync(It.IsAny<Expression<Func<User, bool>>>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.ExistsAsync(It.IsAny<Specification<User>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
 
         _mockUserRepository
@@ -102,7 +102,7 @@ public sealed class UserCreationServiceTests : BaseTest
         _mockAuthService.Verify(x => x.FindByPhoneAsync(It.IsAny<string>()), Times.Once);
         _mockUnitOfWork.Verify(x => x.Users, Times.Exactly(2));
         _mockUserRepository.Verify(
-            x => x.ExistsAsync(It.IsAny<Expression<Func<User, bool>>>(), It.IsAny<CancellationToken>()), Times.Once);
+            x => x.ExistsAsync(It.IsAny<Specification<User>>(), It.IsAny<CancellationToken>()), Times.Once);
         _mockUserRepository.Verify(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()), Times.Once);
         _mockAuthService.Verify(x => x.CreateAsync(It.IsAny<CreateApplicationUserDTO>(), It.IsAny<CancellationToken>()),
             Times.Once);
@@ -128,7 +128,7 @@ public sealed class UserCreationServiceTests : BaseTest
         _mockAuthService.Verify(x => x.FindByPhoneAsync(It.IsAny<string>()), Times.Never);
         _mockUnitOfWork.Verify(x => x.Users, Times.Never);
         _mockUserRepository.Verify(
-            x => x.ExistsAsync(It.IsAny<Expression<Func<User, bool>>>(), It.IsAny<CancellationToken>()), Times.Never);
+            x => x.ExistsAsync(It.IsAny<Specification<User>>(), It.IsAny<CancellationToken>()), Times.Never);
         _mockUserRepository.Verify(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()), Times.Never);
         _mockAuthService.Verify(x => x.CreateAsync(It.IsAny<CreateApplicationUserDTO>(), It.IsAny<CancellationToken>()),
             Times.Never);
@@ -158,7 +158,7 @@ public sealed class UserCreationServiceTests : BaseTest
         _mockAuthService.Verify(x => x.FindByPhoneAsync(It.IsAny<string>()), Times.Never);
         _mockUnitOfWork.Verify(x => x.Users, Times.Never);
         _mockUserRepository.Verify(
-            x => x.ExistsAsync(It.IsAny<Expression<Func<User, bool>>>(), It.IsAny<CancellationToken>()), Times.Never);
+            x => x.ExistsAsync(It.IsAny<Specification<User>>(), It.IsAny<CancellationToken>()), Times.Never);
         _mockUserRepository.Verify(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()), Times.Never);
         _mockAuthService.Verify(x => x.CreateAsync(It.IsAny<CreateApplicationUserDTO>(), It.IsAny<CancellationToken>()),
             Times.Never);
@@ -192,7 +192,7 @@ public sealed class UserCreationServiceTests : BaseTest
         _mockAuthService.Verify(x => x.FindByPhoneAsync(It.IsAny<string>()), Times.Once);
         _mockUnitOfWork.Verify(x => x.Users, Times.Never);
         _mockUserRepository.Verify(
-            x => x.ExistsAsync(It.IsAny<Expression<Func<User, bool>>>(), It.IsAny<CancellationToken>()), Times.Never);
+            x => x.ExistsAsync(It.IsAny<Specification<User>>(), It.IsAny<CancellationToken>()), Times.Never);
         _mockUserRepository.Verify(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()), Times.Never);
         _mockAuthService.Verify(x => x.CreateAsync(It.IsAny<CreateApplicationUserDTO>(), It.IsAny<CancellationToken>()),
             Times.Never);
@@ -219,7 +219,7 @@ public sealed class UserCreationServiceTests : BaseTest
             .Returns(_mockUserRepository.Object);
 
         _mockUserRepository
-            .Setup(x => x.ExistsAsync(It.IsAny<Expression<Func<User, bool>>>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.ExistsAsync(It.IsAny<Specification<User>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
         // Act
@@ -234,7 +234,7 @@ public sealed class UserCreationServiceTests : BaseTest
         _mockAuthService.Verify(x => x.FindByPhoneAsync(It.IsAny<string>()), Times.Once);
         _mockUnitOfWork.Verify(x => x.Users, Times.Once);
         _mockUserRepository.Verify(
-            x => x.ExistsAsync(It.IsAny<Expression<Func<User, bool>>>(), It.IsAny<CancellationToken>()), Times.Once);
+            x => x.ExistsAsync(It.IsAny<Specification<User>>(), It.IsAny<CancellationToken>()), Times.Once);
         _mockUserRepository.Verify(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()), Times.Never);
         _mockAuthService.Verify(x => x.CreateAsync(It.IsAny<CreateApplicationUserDTO>(), It.IsAny<CancellationToken>()),
             Times.Never);

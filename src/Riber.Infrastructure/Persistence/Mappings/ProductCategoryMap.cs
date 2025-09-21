@@ -32,7 +32,7 @@ public sealed class ProductCategoryMap : BaseEntityConfiguration<ProductCategory
             .Property(pc => pc.Code)
             .HasColumnName("code")
             .HasColumnType("text")
-            .HasMaxLength(3)
+            .HasMaxLength(5)
             .IsRequired();
         
         builder

@@ -17,7 +17,17 @@ namespace Riber.Infrastructure.Persistence.Interceptors;
 /// </example>
 public sealed class CaseInsensitiveInterceptor : DbCommandInterceptor
 {
-    public override ValueTask<InterceptionResult<DbDataReader>> ReaderExecutingAsync(DbCommand command,
+    public override InterceptionResult<DbDataReader> ReaderExecuting(
+        DbCommand command,
+        CommandEventData eventData, 
+        InterceptionResult<DbDataReader> result)
+    {
+        ApplyCaseInsensitive(command);
+        return base.ReaderExecuting(command, eventData, result);
+    }
+    
+    public override ValueTask<InterceptionResult<DbDataReader>> ReaderExecutingAsync(
+        DbCommand command,
         CommandEventData eventData, InterceptionResult<DbDataReader> result,
         CancellationToken cancellationToken = default)
     {

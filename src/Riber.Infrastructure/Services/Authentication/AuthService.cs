@@ -16,7 +16,17 @@ public sealed class AuthService(
     ILogger<AuthService> logger)
     : IAuthService
 {
-    public async Task CreateAsync(CreateApplicationUserDTO userDto, CancellationToken cancellationToken)
+
+    #region Properties
+
+    private IQueryable<ApplicationUser> GetBaseUserQuery
+        => userManager.Users.AsNoTracking().Include(u => u.UserDomain);
+
+    #endregion
+    
+    #region Methods
+    
+     public async Task CreateAsync(CreateApplicationUserDTO userDto, CancellationToken cancellationToken)
     {
         try
         {
@@ -46,9 +56,10 @@ public sealed class AuthService(
 
     public async Task<UserDetailsDTO?> LoginAsync(string userNameOrEmail, string password)
     {
-        var user = await userManager.FindByEmailAsync(userNameOrEmail)
-            ?? await userManager.FindByNameAsync(userNameOrEmail)
-            ?? throw new NotFoundException(ErrorMessage.NotFound.User);
+        var normalizedInput = userNameOrEmail.ToUpperInvariant();
+        var user = await GetBaseUserQuery
+             .FirstOrDefaultAsync(u => u.NormalizedUserName == normalizedInput || u.NormalizedEmail == normalizedInput)
+             ?? throw new NotFoundException(ErrorMessage.NotFound.User);
 
         return await userManager.CheckPasswordAsync(user, password)
             ? await MapUserDetailsAsync(user) : null;
@@ -56,27 +67,41 @@ public sealed class AuthService(
 
     public async Task<UserDetailsDTO?> FindByIdAsync(string userId)
     {
-        var user = await userManager.FindByIdAsync(userId.ToString());
-        return user is null ? null : await MapUserDetailsAsync(user);
+        var inputParsed = Guid.Parse(userId);
+        var user = await GetBaseUserQuery
+            .FirstOrDefaultAsync(u => u.Id == inputParsed);
+        
+        return user is not null 
+            ? await MapUserDetailsAsync(user) : null;
     }
 
     public async Task<UserDetailsDTO?> FindByEmailAsync(string email)
     {
-        var user = await userManager.FindByEmailAsync(email);
-        return user is null ? null : await MapUserDetailsAsync(user);
+        var normalizedEmail = email.ToUpperInvariant();
+        var user = await GetBaseUserQuery
+            .FirstOrDefaultAsync(u => u.NormalizedEmail == normalizedEmail);
+        
+        return user is not null 
+            ? await MapUserDetailsAsync(user) : null;
     }
     
     public async Task<UserDetailsDTO?> FindByUserNameAsync(string userName)
     {
-        var user = await userManager.FindByNameAsync(userName);
-        return user is null ? null : await MapUserDetailsAsync(user);
+        var normalizedUserName = userName.ToUpperInvariant();
+        var user = await GetBaseUserQuery
+            .FirstOrDefaultAsync(u => u.NormalizedUserName == normalizedUserName);
+        
+        return user is not null 
+            ? await MapUserDetailsAsync(user) : null;
     }
 
     public async Task<UserDetailsDTO?> FindByPhoneAsync(string phoneNumber)
     {
-        var user = await userManager
-            .Users.AsNoTracking().FirstOrDefaultAsync(x => x.PhoneNumber == phoneNumber);
-        return user is null ? null : await MapUserDetailsAsync(user);
+        var user = await GetBaseUserQuery
+            .FirstOrDefaultAsync(x => x.PhoneNumber == phoneNumber);
+        
+        return user is not null 
+            ? await MapUserDetailsAsync(user) : null;
     }
 
     public async Task AssignRoleToUserAsync(string userId, string roleName)
@@ -123,6 +148,8 @@ public sealed class AuthService(
         await userManager.UpdateSecurityStampAsync(user);
         return await MapUserDetailsAsync(user);
     }
+    
+    #endregion
 
     #region Helpers
 
@@ -144,7 +171,8 @@ public sealed class AuthService(
             SecurityStamp: user.SecurityStamp!,
             UserDomainId: user.UserDomainId,
             Roles: [.. roles],
-            Claims: [.. claims.Select(x => new ClaimDTO(Type: x.Type, Value: x.Value))]
+            Claims: [.. claims.Select(x => new ClaimDTO(Type: x.Type, Value: x.Value))],
+            UserDomain: user.UserDomain
         );
     }
     

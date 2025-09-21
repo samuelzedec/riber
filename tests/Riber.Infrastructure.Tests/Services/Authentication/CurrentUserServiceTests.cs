@@ -2,6 +2,8 @@ using System.Security.Claims;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Moq;
+using Riber.Application.Exceptions;
+using Riber.Domain.Constants;
 using Riber.Domain.Tests;
 using Riber.Infrastructure.Services.Authentication;
 
@@ -21,138 +23,108 @@ public sealed class CurrentUserServiceTests : BaseTest
             _mockHttpContextAccessor.Object
         );
     }
-    
+
     #endregion
 
-    [Fact(DisplayName = "Should return empty array when user is null")]
-    public void GetPermissions_WhenUserIsNull_ShouldReturnEmptyArray()
+    [Fact(DisplayName = "Should throw exception when user id claim is null")]
+    public void GetUserId_WhenUserIdClaimIsNull_ShouldThrowException()
     {
         // Arrange
-        _mockHttpContextAccessor.Setup(x => x.HttpContext)
-            .Returns((HttpContext?)null);
-        
-        // Act
-        var result = _currentUserService.GetPermissions();
-        
-        // Assert
-        result.Should().BeEmpty();
-    }
-
-    [Fact(DisplayName = "Should return empty array when user has no permissions")]
-    public void GetPermissions_WhenUserHasNoPermissions_ShouldReturnEmptyArray()
-    {
-        // Arrange
-        Claim[] claims = [
-            new(ClaimTypes.Name, Guid.CreateVersion7().ToString()),
+        Claim[] claims =
+        [
             new(ClaimTypes.Email, _faker.Person.Email)
-        ];
-        var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(claims));
-        
-        _mockHttpContextAccessor.Setup(x => x.HttpContext)
-            .Returns(new DefaultHttpContext { User = claimsPrincipal });
-        
-        // Act
-        var result = _currentUserService.GetPermissions();
-        
-        // Assert
-        result.Should().BeEmpty();
-    }
-
-    [Fact(DisplayName = "Should return permission array when user has permissions")]
-    public void GetPermissions_WhenUserHasPermissions_ShouldReturnPermissionArray()
-    {
-        // Arrange
-        string[] permissions = ["read", "write"];
-        Claim[] claims = [
-            new(ClaimTypes.Name, Guid.CreateVersion7().ToString()),
-            new(ClaimTypes.Email, _faker.Person.Email),
-            new("permission", permissions[0]),
-            new("permission", permissions[1])
+            // Sem ClaimTypes.NameIdentifier
         ];
         var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(claims, "Bearer"));
-        
+
         _mockHttpContextAccessor.Setup(x => x.HttpContext)
             .Returns(new DefaultHttpContext { User = claimsPrincipal });
-        
-        // Act
-        var result = _currentUserService.GetPermissions();
-        
-        // Assert
-        result.Should().BeEquivalentTo(permissions);
+
+        // Act & Assert
+        var act = () => _currentUserService.GetUserId();
+        act.Should().Throw<NullReferenceException>();
     }
 
-    [Fact(DisplayName = "Should return null when user is null")]
-    public void GetUserId_WhenUserIsNull_ShouldReturnNull()
+    [Fact(DisplayName = "Should throw exception when user id is invalid guid")]
+    public void GetUserId_WhenUserIdIsInvalidGuid_ShouldThrowException()
     {
         // Arrange
-        _mockHttpContextAccessor.Setup(x => x.HttpContext)
-            .Returns((HttpContext?)null);
-        
-        // Act
-        var result = _currentUserService.GetUserId();
-        
-        // Assert
-        result.Should().BeNull();
-    }
-
-    [Fact(DisplayName = "Should return null when user has no name identifier")]
-    public void GetUserId_WhenUserHasNoNameIdentifier_ShouldReturnNull()
-    {
-        // Arrange
-        Claim[] claims = [new(ClaimTypes.Email, _faker.Person.Email)];
-        
-        var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(claims));
-        
-        _mockHttpContextAccessor.Setup(x => x.HttpContext)
-            .Returns(new DefaultHttpContext { User = claimsPrincipal });
-        
-        // Act
-        var result = _currentUserService.GetUserId();
-        
-        // Assert
-        result.Should().BeNull();
-    }
-
-    [Fact(DisplayName = "Should return null when user has invalid guid")]
-    public void GetUserId_WhenUserHasInvalidGuid_ShouldReturnNull()
-    {
-        // Arrange
-        Claim[] claims = [
-            new(ClaimTypes.NameIdentifier, "this-is-definitely-not-a-valid-guid-string-at-all"),
-            new(ClaimTypes.Email, _faker.Person.Email)
-        ];
-        
-        var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(claims));
-        
-        _mockHttpContextAccessor.Setup(x => x.HttpContext)
-            .Returns(new DefaultHttpContext { User = claimsPrincipal });
-        
-        // Act
-        var result = _currentUserService.GetUserId();
-        
-        // Assert
-        result.Should().BeNull();
-    }
-
-    [Fact(DisplayName = "Should return user id when user has valid guid")]
-    public void GetUserId_WhenUserHasValidGuid_ShouldReturnUserId()
-    {
-        // Arrange
-        var guid = Guid.CreateVersion7();
-        
-        Claim[] claims = [
-            new(ClaimTypes.NameIdentifier, guid.ToString()),
+        Claim[] claims =
+        [
+            new(ClaimTypes.NameIdentifier, "invalid-guid"),
             new(ClaimTypes.Email, _faker.Person.Email)
         ];
         var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(claims, "Bearer"));
-        
+
         _mockHttpContextAccessor.Setup(x => x.HttpContext)
             .Returns(new DefaultHttpContext { User = claimsPrincipal });
-        
+
+        // Act & Assert
+        var act = () => _currentUserService.GetUserId();
+        act.Should().Throw<FormatException>();
+    }
+
+    [Fact(DisplayName = "Should return company id when user has valid company guid")]
+    public void GetCompanyId_WhenUserHasValidCompanyGuid_ShouldReturnCompanyId()
+    {
+        // Arrange
+        var companyId = Guid.CreateVersion7();
+
+        Claim[] claims =
+        [
+            new(ClaimTypes.NameIdentifier, Guid.CreateVersion7().ToString()),
+            new("companyId", companyId.ToString()),
+            new(ClaimTypes.Email, _faker.Person.Email)
+        ];
+        var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(claims, "Bearer"));
+
+        _mockHttpContextAccessor.Setup(x => x.HttpContext)
+            .Returns(new DefaultHttpContext { User = claimsPrincipal });
+
         // Act
-        var result = _currentUserService.GetUserId();
-        
+        var result = _currentUserService.GetCompanyId();
+
         // Assert
-        result.Should().Be(guid);
+        result.Should().Be(companyId);
+    }
+
+    [Fact(DisplayName = "Should throw exception when company id claim is null")]
+    public void GetCompanyId_WhenCompanyIdClaimIsNull_ShouldThrowException()
+    {
+        // Arrange
+        Claim[] claims =
+        [
+            new(ClaimTypes.NameIdentifier, Guid.CreateVersion7().ToString()),
+            new(ClaimTypes.Email, _faker.Person.Email)
+            // Sem "companyId"
+        ];
+        var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(claims, "Bearer"));
+
+        _mockHttpContextAccessor.Setup(x => x.HttpContext)
+            .Returns(new DefaultHttpContext { User = claimsPrincipal });
+
+        // Act & Assert
+        var act = () => _currentUserService.GetCompanyId();
+        act.Should().Throw<NullReferenceException>();
+    }
+
+    [Fact(DisplayName = "Should throw BadRequestException when company id is invalid guid")]
+    public void GetCompanyId_WhenCompanyIdIsInvalidGuid_ShouldThrowBadRequestException()
+    {
+        // Arrange
+        Claim[] claims =
+        [
+            new(ClaimTypes.NameIdentifier, Guid.CreateVersion7().ToString()),
+            new("companyId", "invalid-guid"),
+            new(ClaimTypes.Email, _faker.Person.Email)
+        ];
+        var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(claims, "Bearer"));
+
+        _mockHttpContextAccessor.Setup(x => x.HttpContext)
+            .Returns(new DefaultHttpContext { User = claimsPrincipal });
+
+        // Act & Assert
+        var act = () => _currentUserService.GetCompanyId();
+        act.Should().Throw<BadRequestException>().WithMessage(ErrorMessage.Invalid.CompanyId);
     }
 }

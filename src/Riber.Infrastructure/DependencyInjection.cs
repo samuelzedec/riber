@@ -56,12 +56,14 @@ public static class DependencyInjection
             .MinimumLevel.Override("System", LogEventLevel.Warning)
             .Enrich.FromLogContext()
             .WriteTo.Console(outputTemplate: output)
-            .WriteTo.File(
-                path: "Common/Logs/app-.log",
-                outputTemplate: output,
-                rollingInterval: RollingInterval.Day,
-                restrictedToMinimumLevel: LogEventLevel.Information,
-                retainedFileCountLimit: 30)
+            .WriteTo.Logger(lc => lc
+                .Filter.ByExcluding(evt => evt.Level >= LogEventLevel.Error)
+                .WriteTo.File(
+                    path: "Common/Logs/app-.log",
+                    outputTemplate: output,
+                    rollingInterval: RollingInterval.Day,
+                    restrictedToMinimumLevel: LogEventLevel.Information,
+                    retainedFileCountLimit: 30))
             .WriteTo.File(
                 path: "Common/Logs/errors-.log",
                 outputTemplate: output,
@@ -92,6 +94,8 @@ public static class DependencyInjection
         services.AddScoped<ICompanyRepository, CompanyRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IInvitationRepository, InvitationRepository>();
+        services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
     }
 

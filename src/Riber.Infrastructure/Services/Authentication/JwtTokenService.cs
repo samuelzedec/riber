@@ -16,6 +16,7 @@ public sealed class JwtTokenService(
 {
     public string GenerateToken(UserDetailsDTO user)
     {
+        var companyId = user.UserDomain.CompanyId.ToString() ?? string.Empty;
         var claims = new List<Claim>
         {
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
@@ -23,6 +24,7 @@ public sealed class JwtTokenService(
             new(ClaimTypes.Name, user.UserName),
             new("userDomainId", user.UserDomainId.ToString()),
             new("securityStamp", user.SecurityStamp),
+            new("companyId", companyId)
         };
 
         claims.AddRange(user.Roles.Select(role => new Claim(ClaimTypes.Role, role)));

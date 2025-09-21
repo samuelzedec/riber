@@ -9,7 +9,7 @@ public sealed class ApplicationPermissionMap
 {
     public void Configure(EntityTypeBuilder<ApplicationPermission> builder)
     {
-        builder.ToTable("application_permissions");
+        builder.ToTable("application_permission");
 
         builder
             .HasKey(ap => ap.Id)

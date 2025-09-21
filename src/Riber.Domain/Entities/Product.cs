@@ -1,13 +1,14 @@
 using Riber.Domain.Abstractions;
 using Riber.Domain.Abstractions.ValueObjects;
 using Riber.Domain.Constants;
+using Riber.Domain.Entities.Tenants;
 using Riber.Domain.Exceptions;
 using Riber.Domain.ValueObjects.Money;
 
 namespace Riber.Domain.Entities;
 
 public sealed class Product 
-    : BaseEntity, IAggregateRoot, IHasUnitPrice
+    : TenantEntity, IAggregateRoot, IHasUnitPrice
 {
     #region Properties
 
@@ -15,7 +16,6 @@ public sealed class Product
     public string Description { get; private set; }
     public Money UnitPrice { get; private set; }
     public Guid CategoryId { get; private set; }
-    public Guid CompanyId { get; private set; }
     public bool IsActive { get; private set; }
     public string? ImageUrl { get; private set; }
 

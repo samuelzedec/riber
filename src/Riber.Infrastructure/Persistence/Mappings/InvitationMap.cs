@@ -8,7 +8,7 @@ namespace Riber.Infrastructure.Persistence.Mappings;
 public sealed class InvitationMap : BaseEntityConfiguration<Invitation>
 {
     protected override string GetTableName()
-        => "invitations";
+        => "invitation";
 
     protected override void ConfigureEntity(EntityTypeBuilder<Invitation> builder)
     {
