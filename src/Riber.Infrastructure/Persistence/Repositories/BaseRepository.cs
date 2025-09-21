@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Riber.Domain.Specifications.Core;
+using Riber.Infrastructure.Persistence.Extensions;
 
 namespace Riber.Infrastructure.Persistence.Repositories;
 
@@ -26,46 +27,11 @@ public abstract class BaseRepository<T>(AppDbContext context)
         => Table.Remove(entity);
     
     public async Task<T?> GetSingleAsync(Specification<T> specification, CancellationToken cancellationToken = default, params Expression<Func<T, object>>[] includes) 
-        => await GetQueryWithIncludes(specification.ToExpression(), includes).FirstOrDefaultAsync(cancellationToken);
+        => await Table.GetQueryWithIncludes(specification, includes).SingleOrDefaultAsync(cancellationToken);
 
     public async Task<bool> ExistsAsync(Specification<T> specification, CancellationToken cancellationToken = default)
         => await Table.AnyAsync(specification.ToExpression(), cancellationToken);
     
     public IQueryable<T> Query(Specification<T> specification, params Expression<Func<T, object>>[] includes)
-        => GetQueryWithIncludes(specification.ToExpression(), includes);
-
-    /// <summary>
-    /// Cria uma query na tabela do banco de dados com base em um predicado especificado e inclui as propriedades relacionadas.
-    /// </summary>
-    /// <param name="predicate">
-    /// O predicado usado para filtrar as entidades na consulta. Esta é uma expressão que define a condição de filtragem.
-    /// </param>
-    /// <param name="includes">
-    /// Um array de expressões que representam as propriedades relacionadas a serem incluídas na consulta.
-    /// </param>
-    /// <returns>
-    /// Um <see cref="IQueryable{T}"/> contendo os elementos filtrados pelo predicado e incluindo as propriedades especificadas.
-    /// </returns>
-    private IQueryable<T> GetQueryWithIncludes(
-        Expression<Func<T, bool>>? predicate,
-        params Expression<Func<T, object>>[] includes)
-    {
-        var query = BaseQuery(predicate);
-        return includes.Length > 0
-            ? includes.Aggregate(query, (current, include) 
-                => current.Include(include))
-            : query;
-    }
-
-    /// <summary>
-    /// Realiza uma consulta na tabela do banco de dados com base em um predicado especificado.
-    /// </summary>
-    /// <param name="predicate">
-    /// O predicado usado para filtrar as entidades na consulta. Esta é uma expressão que define a condição de filtragem.
-    /// </param>
-    /// <returns>
-    /// Um <see cref="IQueryable{T}"/> contendo os elementos que satisfazem a condição definida pelo predicado.
-    /// </returns>
-    private IQueryable<T> BaseQuery(Expression<Func<T, bool>>? predicate)
-        => predicate is not null ? Table.Where(predicate) : Table;
+        => Table.GetQueryWithIncludes(specification, includes);
 }

@@ -18,6 +18,8 @@ public sealed class UnitOfWork(AppDbContext context, IMediator mediator)
     private ICompanyRepository? _companyRepository;
     private IUserRepository? _userRepository;
     private IInvitationRepository? _invitationRepository;
+    private IOrderRepository? _orderRepository;
+    private IProductRepository? _productRepository;
 
     #endregion
     
@@ -31,6 +33,12 @@ public sealed class UnitOfWork(AppDbContext context, IMediator mediator)
 
     public IInvitationRepository Invitations
         => _invitationRepository ??= new InvitationRepository(context);
+    
+    public IOrderRepository Orders
+        => _orderRepository ??= new OrderRepository(context);
+    
+    public IProductRepository Products
+        => _productRepository ??= new ProductRepository(context);
 
     #endregion
 
