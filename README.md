@@ -59,9 +59,8 @@ cp .env.example .env.dev
 Edite o arquivo `.env.dev` e configure as seguintes variáveis:
 
 #### Senhas dos Certificados
-Configure a mesma senha para todos os certificados:
+Configure uma senha para cada certificado:
 ```env
-CERT_PASSWORD=sua-senha-aqui
 AccessTokenSettings__Password=sua-senha-aqui
 RefreshTokenSettings__Password=sua-senha-aqui
 ```
