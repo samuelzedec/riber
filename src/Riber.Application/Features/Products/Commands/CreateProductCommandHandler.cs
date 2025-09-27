@@ -5,7 +5,7 @@ using Riber.Application.Common;
 using Riber.Domain.Constants;
 using Riber.Domain.Repositories;
 
-namespace Riber.Application.Features.Product.Commands;
+namespace Riber.Application.Features.Products.Commands;
 
 internal sealed class CreateProductCommandHandler(
     IUnitOfWork unitOfWork,

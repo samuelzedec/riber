@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Riber.Application.Common;
 using Riber.Application.Features.Auths.Commands.Login;
 using Riber.Application.Features.Auths.Commands.Logout;
-using Riber.Application.Features.Auths.Queries.GetAuthenticatedUser;
+using Riber.Application.Features.Auths.Queries.GetPermissions;
 using Riber.Application.Features.Auths.Queries.GetRefreshToken;
 using Riber.Infrastructure.Settings;
 
@@ -30,13 +30,13 @@ public sealed class AuthController(IMediator mediator) : ControllerBase
         return Ok(response);
     }
 
-    [HttpGet("me")]
+    [HttpGet("permissions")]
     [Authorize]
     [RequestTimeout(("fast"))]
-    [ProducesResponseType<Result<GetAuthenticatedUserQueryResponse>>(StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetAuthenticatedUser(CancellationToken cancellationToken)
+    [ProducesResponseType<Result<GetPermissionsQueryResponse>>(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetPermissionsByAuthenticatedUser(CancellationToken cancellationToken)
     {
-        var response = await mediator.Send(new GetAuthenticatedUserQuery(), cancellationToken);
+        var response = await mediator.Send(new GetPermissionsQuery(), cancellationToken);
         return Ok(response);
     }
     

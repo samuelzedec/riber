@@ -1,6 +1,6 @@
 using Riber.Application.Abstractions.Commands;
 
-namespace Riber.Application.Features.Product.Commands;
+namespace Riber.Application.Features.Products.Commands;
 
 public sealed record CreateProductCommand(
     string Name,

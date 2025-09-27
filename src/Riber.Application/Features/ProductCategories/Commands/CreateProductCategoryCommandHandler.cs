@@ -17,19 +17,19 @@ internal sealed class CreateProductCategoryCommandHandler(
     ILogger<CreateProductCategoryCommandHandler> logger) 
     : ICommandHandler<CreateProductCategoryCommand, CreateProductCategoryCommandResponse>
 {
-    private readonly Guid _companyId = currentUserService.GetCompanyId();
-    
     public async ValueTask<Result<CreateProductCategoryCommandResponse>> Handle(CreateProductCategoryCommand command, CancellationToken cancellationToken)
     {
         try
         {
-            await ValidateCode(command.Code);
+            var companyId = currentUserService.GetCompanyId();
+            await ValidateCode(command.Code, companyId, cancellationToken);
+            
             var codeNormalized = command.Code.ToUpperInvariant();
             var category = ProductCategory.Create(
                 code: codeNormalized,
                 name: command.Name,
                 description: command.Description,
-                companyId: _companyId
+                companyId: companyId
             );
             
             await unitOfWork.Products.CreateCategoryAsync(category, cancellationToken);
@@ -41,19 +41,22 @@ internal sealed class CreateProductCategoryCommandHandler(
                 category.Name
             );
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not BadRequestException)
         {
             logger.LogError(ex, ErrorMessage.Exception.Unexpected(ex.GetType().Name, ex.Message));
             throw;
         }
     }
     
-    private async Task ValidateCode(string code)
+    private async Task ValidateCode(
+        string code, 
+        Guid companyId, 
+        CancellationToken cancellationToken = default)
     {
-        var specification = new TenantSpecification<ProductCategory>(_companyId)
+        var specification = new TenantSpecification<ProductCategory>(companyId)
             .And(new ProductCategoryCodeSpecification(code));
 
-        if(await unitOfWork.Products.GetCategoryAsync(specification) is not null)
+        if(await unitOfWork.Products.GetCategoryAsync(specification, cancellationToken) is not null)
             throw new BadRequestException(ErrorMessage.Product.CategoryCodeExist);
     }
 }

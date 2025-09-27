@@ -63,5 +63,5 @@ docs/
 **/Thumbs.db
 
 # Pasta de scripts de infraestrutura
-infrastructure/
-!infrastructure/scripts
+infra/
+!infra/scripts

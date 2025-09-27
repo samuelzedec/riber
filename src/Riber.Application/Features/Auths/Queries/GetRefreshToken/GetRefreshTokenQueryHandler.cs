@@ -19,7 +19,11 @@ internal sealed class GetRefreshTokenQueryHandler(
         try
         {
             var userId = currentUserService.GetUserId().ToString();
-            var user = await authService.UpdateSecurityStampAndGetUserAsync(userId);
+            await authService.RefreshUserSecurityAsync(userId);
+            
+            var user = await authService.FindByIdAsync(userId)
+                ?? throw new NotFoundException(ErrorMessage.NotFound.User);
+            
             var token = tokenService.GenerateToken(user);
             var refreshToken = tokenService.GenerateRefreshToken(user.Id, user.SecurityStamp);
 

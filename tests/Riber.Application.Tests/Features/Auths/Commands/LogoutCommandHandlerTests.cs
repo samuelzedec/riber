@@ -49,7 +49,7 @@ public sealed class LogoutCommandHandlerTests : BaseTest
             .Returns(_userId);
 
         _mockAuthService
-            .Setup(x => x.UpdateSecurityStampAndGetUserAsync(It.IsAny<string>()));
+            .Setup(x => x.RefreshUserSecurityAsync(It.IsAny<string>()));
 
         // Act
         var result = await _handler.Handle(_command, CancellationToken.None);
@@ -58,7 +58,7 @@ public sealed class LogoutCommandHandlerTests : BaseTest
         result.IsSuccess.Should().BeTrue();
         
         _mockCurrentUserService.Verify(x => x.GetUserId(), Times.Once);
-        _mockAuthService.Verify(x => x.UpdateSecurityStampAndGetUserAsync(_userId.ToString()), Times.Once);
+        _mockAuthService.Verify(x => x.RefreshUserSecurityAsync(_userId.ToString()), Times.Once);
         _mockLogger.Verify(x => x.Log(
                 It.IsAny<LogLevel>(),
                 It.IsAny<EventId>(),
@@ -84,7 +84,7 @@ public sealed class LogoutCommandHandlerTests : BaseTest
             .Returns(_userId);
 
         _mockAuthService
-            .Setup(x => x.UpdateSecurityStampAndGetUserAsync(It.IsAny<string>()))
+            .Setup(x => x.RefreshUserSecurityAsync(It.IsAny<string>()))
             .ThrowsAsync(exception);
 
         // Act
@@ -95,7 +95,7 @@ public sealed class LogoutCommandHandlerTests : BaseTest
             .WithMessage("Database connection failed");
         
         _mockCurrentUserService.Verify(x => x.GetUserId(), Times.Once);
-        _mockAuthService.Verify(x => x.UpdateSecurityStampAndGetUserAsync(_userId.ToString()), Times.Once);
+        _mockAuthService.Verify(x => x.RefreshUserSecurityAsync(_userId.ToString()), Times.Once);
         
         _mockLogger.Verify(
             x => x.Log(
@@ -125,7 +125,7 @@ public sealed class LogoutCommandHandlerTests : BaseTest
             .WithMessage("Unable to retrieve user context");
         
         _mockCurrentUserService.Verify(x => x.GetUserId(), Times.Once);
-        _mockAuthService.Verify(x => x.UpdateSecurityStampAndGetUserAsync(It.IsAny<string>()), Times.Never);
+        _mockAuthService.Verify(x => x.RefreshUserSecurityAsync(It.IsAny<string>()), Times.Never);
         
         _mockLogger.Verify(
             x => x.Log(
@@ -146,14 +146,14 @@ public sealed class LogoutCommandHandlerTests : BaseTest
             .Returns(_userId);
 
         _mockAuthService
-            .Setup(x => x.UpdateSecurityStampAndGetUserAsync(It.IsAny<string>()));
+            .Setup(x => x.RefreshUserSecurityAsync(It.IsAny<string>()));
 
         // Act
         await _handler.Handle(_command, CancellationToken.None);
 
         // Assert
         _mockAuthService.Verify(
-            x => x.UpdateSecurityStampAndGetUserAsync(_userId.ToString()), 
+            x => x.RefreshUserSecurityAsync(_userId.ToString()), 
             Times.Once);
     }
 
