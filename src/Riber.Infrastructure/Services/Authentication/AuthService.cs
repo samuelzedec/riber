@@ -141,12 +141,11 @@ public sealed class AuthService(
     }
 
     
-    public async Task<UserDetailsDTO> UpdateSecurityStampAndGetUserAsync(string userid)
+    public async Task RefreshUserSecurityAsync(string userId)
     {
-        var user = await userManager.FindByIdAsync(userid)
-            ?? throw new NotFoundException(ErrorMessage.NotFound.User);
-        await userManager.UpdateSecurityStampAsync(user);
-        return await MapUserDetailsAsync(user);
+        var user = await userManager.FindByIdAsync(userId);
+        if (user is not null) 
+            await userManager.UpdateSecurityStampAsync(user);
     }
     
     #endregion

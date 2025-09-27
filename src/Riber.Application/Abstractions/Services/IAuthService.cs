@@ -77,9 +77,9 @@ public interface IAuthService
     Task EnsureRoleExistsAsync(string roleName);
 
     /// <summary>
-    /// Atualiza o SecurityStamp de um usuário especificado e retorna os detalhes atualizados do usuário.
+    /// Atualiza os detalhes de segurança de um usuário, atualizando propriedades ou dados necessários.
     /// </summary>
-    /// <param name="userid">O identificador único do usuário cujo SecurityStamp será atualizado.</param>
-    /// <returns>Uma tarefa que representa a operação assíncrona, contendo os detalhes do usuário atualizado.</returns>
-    Task<UserDetailsDTO> UpdateSecurityStampAndGetUserAsync(string userid);
+    /// <param name="userId">O identificador único do usuário cujos detalhes de segurança precisam ser atualizados.</param>
+    /// <returns>Uma tarefa que representa a operação assíncrona de atualização dos detalhes de segurança do usuário.</returns>
+    Task RefreshUserSecurityAsync(string userId);
 }

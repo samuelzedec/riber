@@ -77,8 +77,12 @@ public sealed class GetRefreshTokenQueryHandlerTests : BaseTest
             .Returns(_userId);
 
         _mockAuthService
-            .Setup(x => x.UpdateSecurityStampAndGetUserAsync(It.IsAny<string>()))
-            .ReturnsAsync(_userDetailsTest);
+            .Setup(x => x.RefreshUserSecurityAsync(It.IsAny<string>()))
+            .Returns(Task.CompletedTask); // RefreshUserSecurityAsync agora é void
+
+        _mockAuthService
+            .Setup(x => x.FindByIdAsync(It.IsAny<string>()))
+            .ReturnsAsync(_userDetailsTest); // Agora usa FindByIdAsync separadamente
 
         _mockTokenService
             .Setup(x => x.GenerateToken(It.IsAny<UserDetailsDTO>()))
@@ -100,7 +104,8 @@ public sealed class GetRefreshTokenQueryHandlerTests : BaseTest
         result.Value.UserDomainId.Should().Be(_userDetailsTest.UserDomainId);
 
         _mockCurrentUserService.Verify(x => x.GetUserId(), Times.Once);
-        _mockAuthService.Verify(x => x.UpdateSecurityStampAndGetUserAsync(_userId.ToString()), Times.Once);
+        _mockAuthService.Verify(x => x.RefreshUserSecurityAsync(_userId.ToString()), Times.Once);
+        _mockAuthService.Verify(x => x.FindByIdAsync(_userId.ToString()), Times.Once); // Nova verificação
         _mockTokenService.Verify(x => x.GenerateToken(_userDetailsTest), Times.Once);
         _mockTokenService.Verify(x => x.GenerateRefreshToken(_userDetailsTest.Id, _userDetailsTest.SecurityStamp), Times.Once);
         
@@ -136,7 +141,8 @@ public sealed class GetRefreshTokenQueryHandlerTests : BaseTest
             .WithMessage("Unable to retrieve user context");
         
         _mockCurrentUserService.Verify(x => x.GetUserId(), Times.Once);
-        _mockAuthService.Verify(x => x.UpdateSecurityStampAndGetUserAsync(It.IsAny<string>()), Times.Never);
+        _mockAuthService.Verify(x => x.RefreshUserSecurityAsync(It.IsAny<string>()), Times.Never);
+        _mockAuthService.Verify(x => x.FindByIdAsync(It.IsAny<string>()), Times.Never);
         _mockTokenService.Verify(x => x.GenerateToken(It.IsAny<UserDetailsDTO>()), Times.Never);
         _mockTokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
         
@@ -150,8 +156,8 @@ public sealed class GetRefreshTokenQueryHandlerTests : BaseTest
             Times.Once);
     }
 
-    [Fact(DisplayName = "Should log error and rethrow when unexpected exception occurs in authService")]
-    public async Task Handle_WhenAuthServiceThrowsUnexpectedException_ShouldLogErrorAndRethrow()
+    [Fact(DisplayName = "Should log error and rethrow when unexpected exception occurs in RefreshUserSecurityAsync")]
+    public async Task Handle_WhenRefreshUserSecurityAsyncThrowsUnexpectedException_ShouldLogErrorAndRethrow()
     {
         // Arrange
         var exception = new InvalidOperationException("Database connection failed");
@@ -161,7 +167,7 @@ public sealed class GetRefreshTokenQueryHandlerTests : BaseTest
             .Returns(_userId);
 
         _mockAuthService
-            .Setup(x => x.UpdateSecurityStampAndGetUserAsync(It.IsAny<string>()))
+            .Setup(x => x.RefreshUserSecurityAsync(It.IsAny<string>()))
             .ThrowsAsync(exception);
 
         // Act
@@ -172,7 +178,8 @@ public sealed class GetRefreshTokenQueryHandlerTests : BaseTest
             .WithMessage("Database connection failed");
         
         _mockCurrentUserService.Verify(x => x.GetUserId(), Times.Once);
-        _mockAuthService.Verify(x => x.UpdateSecurityStampAndGetUserAsync(_userId.ToString()), Times.Once);
+        _mockAuthService.Verify(x => x.RefreshUserSecurityAsync(_userId.ToString()), Times.Once);
+        _mockAuthService.Verify(x => x.FindByIdAsync(It.IsAny<string>()), Times.Never);
         _mockTokenService.Verify(x => x.GenerateToken(It.IsAny<UserDetailsDTO>()), Times.Never);
         _mockTokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
         
@@ -186,6 +193,80 @@ public sealed class GetRefreshTokenQueryHandlerTests : BaseTest
             Times.Once);
     }
 
+    [Fact(DisplayName = "Should log error and rethrow when user not found in FindByIdAsync")]
+    public async Task Handle_WhenUserNotFound_ShouldLogErrorAndRethrow()
+    {
+        // Arrange
+        _mockCurrentUserService
+            .Setup(x => x.GetUserId())
+            .Returns(_userId);
+
+        _mockAuthService
+            .Setup(x => x.RefreshUserSecurityAsync(It.IsAny<string>()))
+            .Returns(Task.CompletedTask);
+
+        _mockAuthService
+            .Setup(x => x.FindByIdAsync(It.IsAny<string>()))
+            .ReturnsAsync((UserDetailsDTO?)null);
+
+        // Act
+        var result = async () => await _handler.Handle(_query, CancellationToken.None);
+
+        // Assert
+        await result.Should().ThrowExactlyAsync<NotFoundException>();
+        
+        _mockCurrentUserService.Verify(x => x.GetUserId(), Times.Once);
+        _mockAuthService.Verify(x => x.RefreshUserSecurityAsync(_userId.ToString()), Times.Once);
+        _mockAuthService.Verify(x => x.FindByIdAsync(_userId.ToString()), Times.Once);
+        _mockTokenService.Verify(x => x.GenerateToken(It.IsAny<UserDetailsDTO>()), Times.Never);
+        _mockTokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
+    }
+
+    [Fact(DisplayName = "Should log error and rethrow when unexpected exception occurs in FindByIdAsync")]
+    public async Task Handle_WhenFindByIdAsyncThrowsUnexpectedException_ShouldLogErrorAndRethrow()
+    {
+        // Arrange
+        var exception = new InvalidOperationException("Database connection failed during user retrieval");
+        
+        _mockCurrentUserService
+            .Setup(x => x.GetUserId())
+            .Returns(_userId);
+
+        _mockAuthService
+            .Setup(x => x.RefreshUserSecurityAsync(It.IsAny<string>()))
+            .Returns(Task.CompletedTask);
+
+        _mockAuthService
+            .Setup(x => x.FindByIdAsync(It.IsAny<string>()))
+            .ThrowsAsync(exception);
+
+        // Act
+        var result = async () => await _handler.Handle(_query, CancellationToken.None);
+
+        // Assert
+        await result.Should().ThrowExactlyAsync<InvalidOperationException>()
+            .WithMessage("Database connection failed during user retrieval");
+        
+        _mockCurrentUserService.Verify(x => x.GetUserId(), Times.Once);
+        _mockAuthService.Verify(x => x.RefreshUserSecurityAsync(_userId.ToString()), Times.Once);
+        _mockAuthService.Verify(x => x.FindByIdAsync(_userId.ToString()), Times.Once);
+        _mockTokenService.Verify(x => x.GenerateToken(It.IsAny<UserDetailsDTO>()), Times.Never);
+        _mockTokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
+        
+        _mockLogger.Verify(
+            x => x.Log(
+                LogLevel.Error,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("InvalidOperationException")),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
+    }
+
+    #endregion
+
+    #region Parameter Validation Tests
+
     [Fact(DisplayName = "Should call services with correct parameters")]
     public async Task Handle_WhenCalled_ShouldCallServicesWithCorrectParameters()
     {
@@ -195,7 +276,11 @@ public sealed class GetRefreshTokenQueryHandlerTests : BaseTest
             .Returns(_userId);
 
         _mockAuthService
-            .Setup(x => x.UpdateSecurityStampAndGetUserAsync(It.IsAny<string>()))
+            .Setup(x => x.RefreshUserSecurityAsync(It.IsAny<string>()))
+            .Returns(Task.CompletedTask);
+
+        _mockAuthService
+            .Setup(x => x.FindByIdAsync(It.IsAny<string>()))
             .ReturnsAsync(_userDetailsTest);
 
         _mockTokenService
@@ -211,7 +296,11 @@ public sealed class GetRefreshTokenQueryHandlerTests : BaseTest
 
         // Assert
         _mockAuthService.Verify(
-            x => x.UpdateSecurityStampAndGetUserAsync(_userId.ToString()), 
+            x => x.RefreshUserSecurityAsync(_userId.ToString()), 
+            Times.Once);
+        
+        _mockAuthService.Verify(
+            x => x.FindByIdAsync(_userId.ToString()), 
             Times.Once);
         
         _mockTokenService.Verify(
