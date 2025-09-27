@@ -1,25 +1,25 @@
 using FluentAssertions;
 using Moq;
 using Riber.Application.Abstractions.Services;
-using Riber.Application.Features.Auths.Queries.GetAuthenticatedUser;
+using Riber.Application.Features.Auths.Queries.GetPermissions;
 using Riber.Domain.Tests;
 
 namespace Riber.Application.Tests.Features.Auths.Queries;
 
-public sealed class GetAuthenticatedUserQueryTests : BaseTest
+public sealed class GetPermissionsQueryHandlerTests : BaseTest
 {
     #region Setup
 
     private readonly Mock<ICurrentUserService> _mockCurrentUserService;
-    private readonly GetAuthenticatedUserQuery _query;
-    private readonly GetAuthenticatedUserQueryHandler _handler;
+    private readonly GetPermissionsQuery _query;
+    private readonly GetPermissionsQueryHandler _handler;
 
-    public GetAuthenticatedUserQueryTests()
+    public GetPermissionsQueryHandlerTests()
     {
         _mockCurrentUserService = new Mock<ICurrentUserService>();
-        _query = new GetAuthenticatedUserQuery();
+        _query = new GetPermissionsQuery();
 
-        _handler = new GetAuthenticatedUserQueryHandler(
+        _handler = new GetPermissionsQueryHandler(
             _mockCurrentUserService.Object
         );
     }

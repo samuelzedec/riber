@@ -12,7 +12,7 @@ using Riber.Domain.Tests;
 
 namespace Riber.Application.Tests.Features.Auths.Queries;
 
-public sealed class GetRefreshTokenQueryTests : BaseTest
+public sealed class GetRefreshTokenQueryHandlerTests : BaseTest
 {
     #region Setup
 
@@ -25,7 +25,7 @@ public sealed class GetRefreshTokenQueryTests : BaseTest
     private readonly GetRefreshTokenQueryHandler _handler;
     private readonly Guid _userId;
 
-    public GetRefreshTokenQueryTests()
+    public GetRefreshTokenQueryHandlerTests()
     {
         _mockCurrentUserService = new Mock<ICurrentUserService>();
         _mockAuthService = new Mock<IAuthService>();
