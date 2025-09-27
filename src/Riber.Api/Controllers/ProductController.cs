@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Riber.Api.Attributes;
 using Riber.Api.Requests;
 using Riber.Application.Common;
-using Riber.Application.Features.Product.Commands;
+using Riber.Application.Features.Products.Commands;
 using Riber.Infrastructure.Settings;
 
 namespace Riber.Api.Controllers;

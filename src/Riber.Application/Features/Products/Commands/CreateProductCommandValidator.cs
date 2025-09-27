@@ -1,8 +1,7 @@
-using System.Data;
 using FluentValidation;
 using Riber.Domain.Constants;
 
-namespace Riber.Application.Features.Product.Commands;
+namespace Riber.Application.Features.Products.Commands;
 
 public sealed class CreateProductCommandValidator : AbstractValidator<CreateProductCommand>
 { 
