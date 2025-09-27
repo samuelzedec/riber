@@ -2,9 +2,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Riber.Application.Abstractions.Services;
-using Riber.Application.Exceptions;
 using Riber.Application.Features.Auths.Commands.Logout;
-using Riber.Domain.Constants;
 using Riber.Domain.Tests;
 
 namespace Riber.Application.Tests.Features.Auths.Commands;

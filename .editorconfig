@@ -10,6 +10,11 @@ indent_size = 2
 
 # C# files
 [*.cs]
+dotnet_diagnostic.CS8019.severity = error
+
+# Migrations and auto-generated code
+[**/Migrations/*.cs]
+dotnet_diagnostic.CS8019.severity = none
 
 #### Core EditorConfig Options ####
 

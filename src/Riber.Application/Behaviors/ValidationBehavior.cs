@@ -2,7 +2,6 @@
 using Mediator;
 using Riber.Application.Common;
 using Exceptions_ValidationException = Riber.Application.Exceptions.ValidationException;
-using ValidationException = Riber.Application.Exceptions.ValidationException;
 
 namespace Riber.Application.Behaviors;
 

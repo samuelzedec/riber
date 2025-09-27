@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ApplicationUser = Riber.Infrastructure.Persistence.Identity.ApplicationUser;
-using Identity = Riber.Infrastructure.Persistence.Identity;
 
 namespace Riber.Infrastructure.Persistence.Mappings.Identity;
 
