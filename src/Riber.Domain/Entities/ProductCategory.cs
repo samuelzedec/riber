@@ -75,16 +75,13 @@ public sealed class ProductCategory
 
     #region Business Methods
 
-    public void UpdateDetails(string name, string description, string code)
+    public void UpdateDetails(string name, string description)
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ProductCategoryNameNullException(ErrorMessage.Product.CategoryNameIsNull);
-        if (string.IsNullOrWhiteSpace(code))
-            throw new ProductCategoryCodeNullException(ErrorMessage.Product.CategoryCodeIsNull);
-
+        
         Name = name;
         Description = description;
-        Code = code.ToUpperInvariant();
     }
 
     public void Activate() => IsActive = true;

@@ -134,37 +134,13 @@ public sealed class ProductCategoryTests : BaseTest
 
         var newName = _faker.Commerce.Categories(1).First();
         var newDescription = _faker.Commerce.ProductDescription();
-        var newCode = _faker.Random.AlphaNumeric(3);
 
         // Act
-        category.UpdateDetails(newName, newDescription, newCode);
+        category.UpdateDetails(newName, newDescription);
 
         // Assert
         category.Name.Should().Be(newName);
         category.Description.Should().Be(newDescription);
-        category.Code.Should().Be(newCode.ToUpperInvariant());
-    }
-
-    [Fact(DisplayName = "Should convert code to uppercase when updating details")]
-    public void UpdateDetails_WhenCodeIsLowercase_ShouldConvertToUppercase()
-    {
-        // Arrange
-        var category = ProductCategory.Create(
-            _faker.Commerce.Categories(1).First(),
-            _faker.Commerce.ProductDescription(),
-            _faker.Random.AlphaNumeric(3),
-            Guid.NewGuid()
-        );
-
-        var newName = _faker.Commerce.Categories(1).First();
-        var newDescription = _faker.Commerce.ProductDescription();
-        var lowercaseCode = _faker.Random.AlphaNumeric(3).ToLower();
-
-        // Act
-        category.UpdateDetails(newName, newDescription, lowercaseCode);
-
-        // Assert
-        category.Code.Should().Be(lowercaseCode.ToUpperInvariant());
     }
 
     [Theory(DisplayName = "Should throw ProductCategoryNameNullException when updating with invalid name")]
@@ -181,38 +157,13 @@ public sealed class ProductCategoryTests : BaseTest
         );
 
         var description = _faker.Commerce.ProductDescription();
-        var code = _faker.Random.AlphaNumeric(3);
 
         // Act
-        var act = () => category.UpdateDetails(invalidName, description, code);
+        var act = () => category.UpdateDetails(invalidName, description);
 
         // Assert
         act.Should().Throw<ProductCategoryNameNullException>()
            .WithMessage(ErrorMessage.Product.CategoryNameIsNull);
-    }
-
-    [Theory(DisplayName = "Should throw ProductCategoryCodeNullException when updating with invalid code")]
-    [InlineData("")]
-    [InlineData("   ")]
-    public void UpdateDetails_WhenCodeIsInvalid_ShouldThrowProductCategoryCodeNullException(string invalidCode)
-    {
-        // Arrange
-        var category = ProductCategory.Create(
-            _faker.Commerce.Categories(1).First(),
-            _faker.Commerce.ProductDescription(),
-            _faker.Random.AlphaNumeric(3),
-            Guid.NewGuid()
-        );
-
-        var name = _faker.Commerce.Categories(1).First();
-        var description = _faker.Commerce.ProductDescription();
-
-        // Act
-        var act = () => category.UpdateDetails(name, description, invalidCode);
-
-        // Assert
-        act.Should().Throw<ProductCategoryCodeNullException>()
-           .WithMessage(ErrorMessage.Product.CategoryCodeIsNull);
     }
 
     #endregion
