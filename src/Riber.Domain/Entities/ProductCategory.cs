@@ -1,4 +1,3 @@
-using Riber.Domain.Abstractions;
 using Riber.Domain.Constants;
 using Riber.Domain.Entities.Tenants;
 using Riber.Domain.Exceptions;
