@@ -26,8 +26,9 @@ RUN addgroup -g 1000 appgroup && \
 ENV ConnectionStrings__DefaultConnection=""
 ENV AccessTokenSettings__SecretKey=""
 ENV RefreshTokenSettings__SecretKey=""
-ENV ASPNETCORE_ENVIRONMENT=Production
 ENV S3__BucketImagesName=riber-bucket-images
+ENV ASPNETCORE_ENVIRONMENT=Production
+ENV ASPNETCORE_URLS=http://0.0.0.0:8080
 
 RUN apk add --no-cache bash
 COPY --from=build /app/publish .
@@ -35,4 +36,5 @@ COPY --from=build /app/publish .
 RUN chown -R appuser:appgroup /app
 USER appuser
 
+EXPOSE 8080
 ENTRYPOINT ["dotnet", "Riber.Api.dll"]
