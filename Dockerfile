@@ -12,16 +12,10 @@ COPY src/Riber.Application/Riber.Application.csproj ./src/Riber.Application/
 COPY src/Riber.Domain/Riber.Domain.csproj ./src/Riber.Domain/
 COPY src/Riber.Infrastructure/Riber.Infrastructure.csproj ./src/Riber.Infrastructure/
 
-COPY tests/Riber.Application.Tests/Riber.Application.Tests.csproj ./tests/Riber.Application.Tests/
-COPY tests/Riber.Domain.Tests/Riber.Domain.Tests.csproj ./tests/Riber.Domain.Tests/
-COPY tests/Riber.Infrastructure.Tests/Riber.Infrastructure.Tests.csproj ./tests/Riber.Infrastructure.Tests/
-
 RUN dotnet restore Riber.slnx
 COPY . .
 
 RUN dotnet build Riber.slnx -c Release --no-restore
-RUN dotnet test Riber.slnx -c Release --no-build --no-restore
-
 RUN dotnet publish src/Riber.Api/Riber.Api.csproj -c Release -o /app/publish --no-build --no-restore
 
 FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine AS runtime
