@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Text;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authorization;
 using Riber.Application;
 using Riber.Infrastructure;
@@ -10,7 +11,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Riber.Api.Authorizations.Permissions;
 using Riber.Api.Middlewares;
-using Riber.Application.Abstractions.Services;
 using Riber.Infrastructure.Persistence;
 using Riber.Infrastructure.Persistence.Identity;
 using Riber.Infrastructure.Settings;
@@ -104,18 +104,6 @@ public static class BuilderExtension
             builder.Configuration.GetSection(nameof(RefreshTokenSettings)).Get<RefreshTokenSettings>()
             ?? throw new InvalidOperationException($"{nameof(RefreshTokenSettings)} configuration not found");
         
-        using var provider = builder.Services.BuildServiceProvider();
-        var certificateService = provider.GetRequiredService<ICertificateService>();
-        var accessCertificate = certificateService.LoadCertificate(
-            accessToken.Key,
-            accessToken.Password
-        );
-    
-        var refreshCertificate = certificateService.LoadCertificate(
-            refreshToken.Key,
-            refreshToken.Password
-        );
-        
         builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
@@ -131,7 +119,7 @@ public static class BuilderExtension
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new X509SecurityKey(accessCertificate),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(accessToken.SecretKey)),
                     ValidateIssuer = true,
                     ValidIssuer = accessToken.Issuer,
                     ValidateAudience = true,
@@ -146,7 +134,7 @@ public static class BuilderExtension
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new X509SecurityKey(refreshCertificate),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(accessToken.SecretKey)),
                     ValidateIssuer = true,
                     ValidIssuer = refreshToken.Issuer,
                     ValidateAudience = true,

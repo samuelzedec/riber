@@ -42,15 +42,6 @@ README.md
 **/*.md
 docs/
 
-# Certificados locais
-**/Common/Certificates/
-**/*.pfx
-**/*.pem
-
-# Environment específicos
-.env
-.env.*
-
 # Testes de performance/carga
 **/BenchmarkDotNet.Artifacts/
 
@@ -61,7 +52,3 @@ docs/
 # OS específicos
 **/.DS_Store
 **/Thumbs.db
-
-# Pasta de scripts de infraestrutura
-infra/
-!infra/scripts

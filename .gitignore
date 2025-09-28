@@ -3,10 +3,6 @@
 ##
 ## Get latest from `dotnet new gitignore`
 
-# dotenv files
-.env*
-!.env.example
-
 # User-specific files
 *.rsuser
 *.suo
@@ -245,8 +241,6 @@ ClientBin/
 *.pfx
 *.publishsettings
 orleans.codegen.cs
-**/Certificates/*
-!**/Certificates/.gitkeep
 **/Logs/*
 !**/Logs/.gitkeep
 **/storage/*

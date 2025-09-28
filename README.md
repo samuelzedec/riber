@@ -46,39 +46,6 @@ Para informações detalhadas sobre desenvolvimento e padrões do projeto, consu
 
 ## Executando com Docker Compose
 
-### 1. Configuração do ambiente
-
-Primeiro, copie o arquivo de exemplo para criar seu ambiente de desenvolvimento:
-
-```bash
-cp .env.example .env.dev
-```
-
-### 2. Configuração das variáveis
-
-Edite o arquivo `.env.dev` e configure as seguintes variáveis:
-
-#### Senhas dos Certificados
-Configure uma senha para cada certificado:
-```env
-AccessTokenSettings__Password=sua-senha-aqui
-RefreshTokenSettings__Password=sua-senha-aqui
-```
-
-#### Banco de Dados
-Configure a senha do PostgreSQL:
-```env
-DB_PASSWORD=sua-senha-db
-ConnectionStrings__DefaultConnection=Host=postgres;Database=riber_db;Username=postgres;Password=sua-senha-db;Port=5432
-```
-
-#### AWS (opcional)
-```env
-AWS_ACCESS_KEY_ID=sua-aws-key
-AWS_SECRET_ACCESS_KEY=sua-aws-secret
-AWS_DEFAULT_REGION=us-east-1
-```
-
 ### 3. Executando os serviços
 
 ```bash
