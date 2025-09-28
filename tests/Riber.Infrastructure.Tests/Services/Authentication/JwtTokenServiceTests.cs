@@ -1,11 +1,9 @@
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Cryptography.X509Certificates;
 using Bogus.Extensions.Brazil;
 using FluentAssertions;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Moq;
-using Riber.Application.Abstractions.Services;
 using Riber.Application.DTOs;
 using Riber.Domain.Entities;
 using Riber.Domain.Enums;
@@ -19,7 +17,6 @@ public sealed class JwtTokenServiceTests : BaseTest
 {
     #region Fields and Setup
 
-    private readonly Mock<ICertificateService> _certificateServiceMock;
     private readonly JwtTokenService _tokenService;
     private readonly UserDetailsDTO _userDetailsTest;
     private readonly AccessTokenSettings _accessTokenSettings;
@@ -27,13 +24,10 @@ public sealed class JwtTokenServiceTests : BaseTest
 
     public JwtTokenServiceTests()
     {
-        X509Certificate2 testCertificate = CreateTestCertificate();
-        
         _accessTokenSettings = new AccessTokenSettings
         {
             ExpirationInMinutes = 15,
-            Key = "test-access-key",
-            Password = "test-access-password",
+            SecretKey = "super-secret-key-for-testing-that-is-long-enough-256-bits",
             Issuer = "test-issuer",
             Audience = "test-audience"
         };
@@ -41,10 +35,9 @@ public sealed class JwtTokenServiceTests : BaseTest
         _refreshTokenSettings = new RefreshTokenSettings
         {
             ExpirationInDays = 7,
-            Key = "test-refresh-key",
-            Password = "test-refresh-password",
-            Issuer = "test-issuer",
-            Audience = "test-audience"
+            SecretKey = "another-super-secret-key-for-refresh-tokens-256-bits",
+            Issuer = "test-refresh-issuer",
+            Audience = "test-refresh-audience"
         };
         
         var userDomain = User.Create(
@@ -62,7 +55,7 @@ public sealed class JwtTokenServiceTests : BaseTest
                 EmailConfirmed: false,
                 PhoneNumber: string.Empty,
                 SecurityStamp: f.Random.AlphaNumeric(32),
-                UserDomainId: Guid.Empty,
+                UserDomainId: Guid.CreateVersion7(),
                 UserDomain: userDomain,
                 Roles: f.Make(2, () => f.Name.JobTitle()).ToList(),
                 Claims: [.. f.Make(2, () => new ClaimDTO(
@@ -72,22 +65,15 @@ public sealed class JwtTokenServiceTests : BaseTest
             ))
             .Generate();
 
-
-        _certificateServiceMock = new Mock<ICertificateService>();
         Mock<IOptions<AccessTokenSettings>> accessTokenSettingsMock = new();
         Mock<IOptions<RefreshTokenSettings>> refreshTokenSettingsMock = new();
 
         accessTokenSettingsMock.Setup(x => x.Value).Returns(_accessTokenSettings);
         refreshTokenSettingsMock.Setup(x => x.Value).Returns(_refreshTokenSettings);
-        
-        _certificateServiceMock
-            .Setup(x => x.LoadCertificate(It.IsAny<string>(), It.IsAny<string>()))
-            .Returns(testCertificate);
 
         _tokenService = new JwtTokenService(
             accessTokenSettingsMock.Object,
-            refreshTokenSettingsMock.Object,
-            _certificateServiceMock.Object);
+            refreshTokenSettingsMock.Object);
     }
 
     #endregion
@@ -107,7 +93,7 @@ public sealed class JwtTokenServiceTests : BaseTest
         var jsonToken = handler.ReadJwtToken(token);
         
         jsonToken.Should().NotBeNull();
-        jsonToken.Header.Alg.Should().Be(SecurityAlgorithms.RsaSha256);
+        jsonToken.Header.Alg.Should().Be(SecurityAlgorithms.HmacSha256);
         jsonToken.Issuer.Should().Be(_accessTokenSettings.Issuer);
         jsonToken.Audiences.Should().Contain(_accessTokenSettings.Audience);
         
@@ -119,6 +105,8 @@ public sealed class JwtTokenServiceTests : BaseTest
         jsonToken.Claims.Should().Contain(c => c.Type == "email" && c.Value == _userDetailsTest.Email);
         jsonToken.Claims.Should().Contain(c => c.Type == "unique_name" && c.Value == _userDetailsTest.UserName);
         jsonToken.Claims.Should().Contain(c => c.Type == "securityStamp" && c.Value == _userDetailsTest.SecurityStamp);
+        jsonToken.Claims.Should().Contain(c => c.Type == "userDomainId" && c.Value == _userDetailsTest.UserDomainId.ToString());
+        jsonToken.Claims.Should().Contain(c => c.Type == "companyId" && c.Value == _userDetailsTest.UserDomain.CompanyId.ToString());
         
         foreach (var role in _userDetailsTest.Roles)
         {
@@ -129,18 +117,6 @@ public sealed class JwtTokenServiceTests : BaseTest
         {
             jsonToken.Claims.Should().Contain(c => c.Type == claim.Type && c.Value == claim.Value);
         }
-    }
-
-    [Fact(DisplayName = "Generating access token should call certificate service with correct parameters")]
-    public void GenerateToken_WhenCalled_ShouldCallCertificateServiceWithCorrectParameters()
-    {
-        // Act
-        _tokenService.GenerateToken(_userDetailsTest);
-
-        // Assert
-        _certificateServiceMock.Verify(
-            x => x.LoadCertificate(_accessTokenSettings.Key, _accessTokenSettings.Password),
-            Times.Once);
     }
 
     [Fact(DisplayName = "Generating access token with empty roles should not include role claims")]
@@ -172,7 +148,51 @@ public sealed class JwtTokenServiceTests : BaseTest
         var handler = new JwtSecurityTokenHandler();
         var jsonToken = handler.ReadJwtToken(token);
    
-        jsonToken.Claims.Count().Should().Be(11 + userWithoutClaims.Roles.Count);
+        // Base claims: NameIdentifier, Email, Name, userDomainId, securityStamp, companyId + standard JWT claims (iat, nbf, exp, iss, aud)
+        var baseClaims = 6; // Custom base claims
+        var expectedClaims = baseClaims + userWithoutClaims.Roles.Count;
+        
+        var customClaims = jsonToken.Claims.Where(c => 
+            c.Type != "nbf" && c.Type != "exp" && c.Type != "iat" && 
+            c.Type != "iss" && c.Type != "aud");
+        customClaims.Count().Should().Be(expectedClaims);
+    }
+
+    [Fact(DisplayName = "Generating access token should include correct number of claims")]
+    public void GenerateToken_WhenCalled_ShouldIncludeCorrectNumberOfClaims()
+    {
+        // Act
+        var token = _tokenService.GenerateToken(_userDetailsTest);
+
+        // Assert
+        var handler = new JwtSecurityTokenHandler();
+        var jsonToken = handler.ReadJwtToken(token);
+        
+        // Base claims: NameIdentifier, Email, Name, userDomainId, securityStamp, companyId
+        var baseClaims = 6;
+        var totalExpected = baseClaims + _userDetailsTest.Roles.Count + _userDetailsTest.Claims.Count;
+        
+        var customClaims = jsonToken.Claims.Where(c => 
+            c.Type != "nbf" && c.Type != "exp" && c.Type != "iat" && 
+            c.Type != "iss" && c.Type != "aud");
+        customClaims.Count().Should().Be(totalExpected);
+    }
+
+    [Fact(DisplayName = "Generating access token should have correct expiration time")]
+    public void GenerateToken_WhenCalled_ShouldHaveCorrectExpirationTime()
+    {
+        // Arrange
+        var beforeGeneration = DateTime.UtcNow;
+        
+        // Act
+        var token = _tokenService.GenerateToken(_userDetailsTest);
+        
+        // Assert
+        var handler = new JwtSecurityTokenHandler();
+        var jsonToken = handler.ReadJwtToken(token);
+        
+        var expectedExpiration = beforeGeneration.AddMinutes(_accessTokenSettings.ExpirationInMinutes);
+        jsonToken.ValidTo.Should().BeCloseTo(expectedExpiration, TimeSpan.FromSeconds(5));
     }
 
     #endregion
@@ -196,7 +216,7 @@ public sealed class JwtTokenServiceTests : BaseTest
         var jsonToken = handler.ReadJwtToken(token);
     
         jsonToken.Should().NotBeNull();
-        jsonToken.Header.Alg.Should().Be(SecurityAlgorithms.RsaSha256);
+        jsonToken.Header.Alg.Should().Be(SecurityAlgorithms.HmacSha256);
         jsonToken.Issuer.Should().Be(_refreshTokenSettings.Issuer);
         jsonToken.Audiences.Should().Contain(_refreshTokenSettings.Audience);
     
@@ -214,56 +234,53 @@ public sealed class JwtTokenServiceTests : BaseTest
         customClaims.Count().Should().Be(3);
     }
 
-    [Fact(DisplayName = "Generating refresh token should call certificate service with correct parameters")]
-    public void GenerateRefreshToken_WhenCalled_ShouldCallCertificateServiceWithCorrectParameters()
+    [Fact(DisplayName = "Generating refresh token should have correct expiration time")]
+    public void GenerateRefreshToken_WhenCalled_ShouldHaveCorrectExpirationTime()
     {
         // Arrange
         var userId = Guid.CreateVersion7();
         var securityStamp = _faker.Random.AlphaNumeric(32);
-
+        var beforeGeneration = DateTime.UtcNow;
+        
         // Act
-        _tokenService.GenerateRefreshToken(userId, securityStamp);
-
+        var token = _tokenService.GenerateRefreshToken(userId, securityStamp);
+        
         // Assert
-        _certificateServiceMock.Verify(
-            x => x.LoadCertificate(_refreshTokenSettings.Key, _refreshTokenSettings.Password),
-            Times.Once);
+        var handler = new JwtSecurityTokenHandler();
+        var jsonToken = handler.ReadJwtToken(token);
+        
+        var expectedExpiration = beforeGeneration.AddDays(_refreshTokenSettings.ExpirationInDays);
+        jsonToken.ValidTo.Should().BeCloseTo(expectedExpiration, TimeSpan.FromSeconds(5));
     }
 
-    [Fact(DisplayName = "Generating refresh token should use different certificate than access token")]
-    public void GenerateRefreshToken_WhenCalled_ShouldUseDifferentCertificateThanAccessToken()
+    [Fact(DisplayName = "Generating refresh token should use different settings than access token")]
+    public void GenerateRefreshToken_WhenCalled_ShouldUseDifferentSettingsThanAccessToken()
     {
         // Arrange
         var userId = Guid.CreateVersion7();
         var securityStamp = _faker.Random.AlphaNumeric(32);
-
+        
         // Act
-        _tokenService.GenerateToken(_userDetailsTest);
-        _tokenService.GenerateRefreshToken(userId, securityStamp);
-
+        var refreshToken = _tokenService.GenerateRefreshToken(userId, securityStamp);
+        var accessToken = _tokenService.GenerateToken(_userDetailsTest);
+        
         // Assert
-        _certificateServiceMock.Verify(
-            x => x.LoadCertificate(_accessTokenSettings.Key, _accessTokenSettings.Password),
-            Times.Once);
+        var handler = new JwtSecurityTokenHandler();
+        var refreshJwt = handler.ReadJwtToken(refreshToken);
+        var accessJwt = handler.ReadJwtToken(accessToken);
         
-        _certificateServiceMock.Verify(
-            x => x.LoadCertificate(_refreshTokenSettings.Key, _refreshTokenSettings.Password),
-            Times.Once);
-    }
-
-    #endregion
-
-    #region Helper Methods
-
-    private static X509Certificate2 CreateTestCertificate()
-    {
-        using var rsa = System.Security.Cryptography.RSA.Create(2048);
-        var request = new CertificateRequest(
-            "cn=test", rsa, System.Security.Cryptography.HashAlgorithmName.SHA256,
-            System.Security.Cryptography.RSASignaturePadding.Pkcs1);
+        refreshJwt.Issuer.Should().Be(_refreshTokenSettings.Issuer);
+        accessJwt.Issuer.Should().Be(_accessTokenSettings.Issuer);
         
-        return request.CreateSelfSigned(DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(365));
+        refreshJwt.Audiences.Should().Contain(_refreshTokenSettings.Audience);
+        accessJwt.Audiences.Should().Contain(_accessTokenSettings.Audience);
+        
+        // Different expiration times
+        var refreshExpectedExpiration = DateTime.UtcNow.AddDays(_refreshTokenSettings.ExpirationInDays);
+        var accessExpectedExpiration = DateTime.UtcNow.AddMinutes(_accessTokenSettings.ExpirationInMinutes);
+        
+        refreshJwt.ValidTo.Should().BeCloseTo(refreshExpectedExpiration, TimeSpan.FromSeconds(5));
+        accessJwt.ValidTo.Should().BeCloseTo(accessExpectedExpiration, TimeSpan.FromSeconds(5));
     }
-
     #endregion
 }

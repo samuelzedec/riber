@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Riber.Application.Abstractions.Services;
@@ -10,8 +11,7 @@ namespace Riber.Infrastructure.Services.Authentication;
 
 public sealed class JwtTokenService(
     IOptions<AccessTokenSettings> accessTokenSettings,
-    IOptions<RefreshTokenSettings> refreshTokenSettings,
-    ICertificateService certificateService)
+    IOptions<RefreshTokenSettings> refreshTokenSettings)
     : ITokenService
 {
     public string GenerateToken(UserDetailsDTO user)
@@ -33,8 +33,7 @@ public sealed class JwtTokenService(
         return CreateJwtToken(
             claims,
             DateTime.UtcNow.AddMinutes(accessTokenSettings.Value.ExpirationInMinutes),
-            accessTokenSettings.Value.Key,
-            accessTokenSettings.Value.Password,
+            accessTokenSettings.Value.SecretKey,
             accessTokenSettings.Value.Issuer,
             accessTokenSettings.Value.Audience
         );
@@ -52,8 +51,7 @@ public sealed class JwtTokenService(
         return CreateJwtToken(
             claims,
             DateTime.UtcNow.AddDays(refreshTokenSettings.Value.ExpirationInDays),
-            refreshTokenSettings.Value.Key,
-            refreshTokenSettings.Value.Password,
+            refreshTokenSettings.Value.SecretKey,
             refreshTokenSettings.Value.Issuer,
             refreshTokenSettings.Value.Audience
         );
@@ -61,15 +59,13 @@ public sealed class JwtTokenService(
 
     #region Helpers
 
-    private string CreateJwtToken(
+    private static string CreateJwtToken(
         IEnumerable<Claim> claims, 
         DateTime expires, 
-        string key, 
-        string password,
+        string secretKey,
         string issuer, 
         string audience)
     {
-        var certificate = certificateService.LoadCertificate(key, password);
         var tokenHandler = new JwtSecurityTokenHandler();
         var tokenDescriptor = new SecurityTokenDescriptor
         {
@@ -78,8 +74,8 @@ public sealed class JwtTokenService(
             Issuer = issuer,
             Audience = audience,
             SigningCredentials = new SigningCredentials(
-                new X509SecurityKey(certificate),
-                SecurityAlgorithms.RsaSha256
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
+                SecurityAlgorithms.HmacSha256Signature
             )
         };
 

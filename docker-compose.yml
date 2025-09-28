@@ -4,34 +4,19 @@ services:
   postgres:
     image: pgvector/pgvector:pg17
     container_name: riber-pgsql-dev
-    env_file:
-      - .env.dev
     environment:
-      POSTGRES_DB: ${DB_NAME:-riber_db}
-      POSTGRES_USER: ${DB_USER:-postgres}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-root}
+      POSTGRES_DB: riber_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
     ports:
       - "5432:5432"
     volumes:
-      - riber-data-dev:/var/lib/postgresql/data
+      - data-dev:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 5s
       retries: 5
-
-  migration:
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
-      target: migration
-    container_name: riber-migration-dev
-    depends_on:
-      postgres:
-        condition: service_healthy
-    env_file:
-      - .env.dev
-    command: ["/usr/local/bin/apply-migrations.sh"]
 
   api:
     build:
@@ -40,18 +25,16 @@ services:
       target: runtime
     container_name: riber-api-dev
     depends_on:
-      migration:
-        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
     ports:
       - "8080:8080"
-    env_file:
-      - .env.dev
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
 
 volumes:
-  riber-data-dev:
+  data-dev:
 
 networks:
   default:
-    name: riber-network-dev
+    name: network-dev
