@@ -103,7 +103,7 @@ public static class ErrorMessage
     {
         public const string CategoryNameIsNull = "O nome da categoria não pode ser nulo.";
         public const string CategoryCodeIsNull = "O código da categoria não pode ser nulo.";
-        public const string NameIsNull = "O nome do produto não pode ser nulo.ErrorMessage.Product.";
+        public const string NameIsNull = "O nome do produto não pode ser nulo";
         public const string DescriptionIsNull = "A descrição do produto não pode ser nula.";
         public const string CategoryCodeExist = "Já existe uma categoria com esse código.";
     }
@@ -134,6 +134,7 @@ public static class ErrorMessage
         public const string Company = "Empresa não encontrada no sistema.";
         public const string Permission = "Essa permissão não existe.";
         public const string User = "O Usuário não foi encontrado.";
+        public const string Category = "A categoria não existe";
     }
 
     /// <summary>
