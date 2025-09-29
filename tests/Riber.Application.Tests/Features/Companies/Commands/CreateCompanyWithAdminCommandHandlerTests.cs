@@ -96,7 +96,6 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-        result.IsFailure.Should().BeFalse();
         result.Value.Should().NotBeNull();
         result.Value.CompanyId.Should().NotBeEmpty();
         result.Value.Email.Should().BeLowerCased(_command.Email);

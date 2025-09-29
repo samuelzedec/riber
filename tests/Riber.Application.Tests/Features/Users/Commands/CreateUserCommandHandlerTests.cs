@@ -72,7 +72,6 @@ public sealed class CreateUserCommandHandlerTests : BaseTest
         // Assert
         result.Should().NotBeNull();
         result.IsSuccess.Should().BeTrue();
-        result.IsFailure.Should().BeFalse();
         result.Value.Should().NotBeNull();
         result.Value.Email.Should().Be(_command.Email);
         result.Value.UserName.Should().Be(_command.UserName);

@@ -18,7 +18,6 @@ public static class HttpContextExtension
         var response = new
         {
             isSuccess = result.IsSuccess,
-            isFailure = result.IsFailure,
             error = new
             {
                 code = result.Error.Code,
