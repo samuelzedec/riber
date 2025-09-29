@@ -47,5 +47,5 @@ jobs:
               -e ConnectionStrings__DefaultConnection="${{ secrets.CONNECTION_STRING }}" \
               -e AccessTokenSettings__SecretKey="${{ secrets.ACCESS_TOKEN_SECRET_KEY }}" \
               -e RefreshTokenSettings__SecretKey="${{ secrets.REFRESH_TOKEN_SECRET_KEY }}" \
-              -e S3__BucketImagesName="${{ secrets.S3_BUCKET_IMAGES_NAME }}" \
+              -e AWS__S3__BucketImagesName="${{ secrets.S3_BUCKET_IMAGES_NAME }}" \
               ghcr.io/${{ github.repository_owner }}/riber:${{ steps.image.outputs.version }}
