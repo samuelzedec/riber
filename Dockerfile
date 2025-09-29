@@ -26,7 +26,7 @@ RUN addgroup -g 1000 appgroup && \
 ENV ConnectionStrings__DefaultConnection=""
 ENV AccessTokenSettings__SecretKey=""
 ENV RefreshTokenSettings__SecretKey=""
-ENV S3__BucketImagesName=riber-bucket-images
+ENV S3__BucketImagesName=""
 ENV ASPNETCORE_ENVIRONMENT=Production
 ENV ASPNETCORE_URLS=http://0.0.0.0:8080
 
