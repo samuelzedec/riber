@@ -90,7 +90,6 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
         // Assert
         result.Should().NotBeNull();
         result.IsSuccess.Should().BeTrue();
-        result.IsFailure.Should().BeFalse();
         result.Value.Should().NotBeNull();
         result.Value.Name.Should().Be(_command.Name);
         result.Value.Description.Should().Be(_command.Description);
@@ -164,7 +163,6 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
         // Assert
         result.Should().NotBeNull();
         result.IsSuccess.Should().BeTrue();
-        result.IsFailure.Should().BeFalse();
         result.Value.Should().NotBeNull();
         result.Value.Name.Should().Be(commandWithImage.Name);
         result.Value.Description.Should().Be(commandWithImage.Description);

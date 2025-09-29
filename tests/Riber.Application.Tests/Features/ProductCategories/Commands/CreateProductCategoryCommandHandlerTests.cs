@@ -87,7 +87,6 @@ public sealed class CreateProductCategoryCommandHandlerTests : BaseTest
         // Assert
         result.Should().NotBeNull();
         result.IsSuccess.Should().BeTrue();
-        result.IsFailure.Should().BeFalse();
         result.Value.Should().NotBeNull();
         result.Value.Code.Should().Be(expectedCodeNormalized);
         result.Value.Name.Should().Be(_command.Name);

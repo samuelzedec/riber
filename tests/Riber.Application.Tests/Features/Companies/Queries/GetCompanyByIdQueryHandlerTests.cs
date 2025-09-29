@@ -67,7 +67,6 @@ public sealed class GetCompanyByIdQueryHandlerTests : BaseTest
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-        result.IsFailure.Should().BeFalse();
         result.Value.Should().NotBeNull();
         result.Value.CorporateName.Should().Be(_company.Name.Corporate);
         result.Value.FantasyName.Should().Be(_company.Name.Fantasy);
