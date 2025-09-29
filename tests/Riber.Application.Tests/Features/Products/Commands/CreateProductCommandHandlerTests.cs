@@ -2,9 +2,12 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Riber.Application.Abstractions.Services;
+using Riber.Application.Exceptions;
 using Riber.Application.Features.Products.Commands;
+using Riber.Domain.Constants;
 using Riber.Domain.Entities;
 using Riber.Domain.Repositories;
+using Riber.Domain.Specifications.Core;
 using Riber.Domain.Tests;
 
 namespace Riber.Application.Tests.Features.Products.Commands;
@@ -21,6 +24,7 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
     private readonly CreateProductCommandHandler _handler;
     private readonly CreateProductCommand _command;
     private readonly Guid _companyId;
+    private readonly ProductCategory _existingCategory;
 
     public CreateProductCommandHandlerTests()
     {
@@ -30,6 +34,7 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
         _mockLogger = new Mock<ILogger<CreateProductCommandHandler>>();
         _mockProductRepository = new Mock<IProductRepository>();
         _companyId = Guid.NewGuid();
+        var categoryId = Guid.NewGuid();
 
         _mockUnitOfWork.Setup(x => x.Products).Returns(_mockProductRepository.Object);
         _mockCurrentUserService.Setup(x => x.GetCompanyId()).Returns(_companyId);
@@ -45,10 +50,17 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
             Name: _faker.Commerce.ProductName(),
             Description: _faker.Commerce.ProductDescription(),
             Price: _faker.Random.Decimal(10, 1000),
-            CategoryId: Guid.NewGuid(),
+            CategoryId: categoryId,
             ImageStream: null,
             ImageName: string.Empty,
             ImageContent: string.Empty
+        );
+
+        _existingCategory = ProductCategory.Create(
+            code: "CODE",
+            name: "Category Name",
+            description: "Description",
+            companyId: _companyId
         );
     }
 
@@ -60,6 +72,12 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
     public async Task Handle_WhenValidDataWithoutImage_ShouldReturnSuccessResponse()
     {
         // Arrange
+        _mockProductRepository
+            .Setup(x => x.GetCategoryAsync(
+                It.IsAny<Specification<ProductCategory>>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(_existingCategory);
+
         _mockProductRepository
             .Setup(x => x.CreateAsync(It.IsAny<Product>(), It.IsAny<CancellationToken>()));
 
@@ -79,6 +97,10 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
         result.Value.Price.Should().Be(_command.Price);
         result.Value.ImageName.Should().Be(string.Empty);
         result.Value.ProductId.Should().NotBeEmpty();
+
+        _mockProductRepository.Verify(x => x.GetCategoryAsync(
+            It.IsAny<Specification<ProductCategory>>(),
+            It.IsAny<CancellationToken>()), Times.Once);
 
         _mockProductRepository.Verify(x => x.CreateAsync(
             It.Is<Product>(p => 
@@ -117,6 +139,12 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
             ImageContent = imageContent
         };
 
+        _mockProductRepository
+            .Setup(x => x.GetCategoryAsync(
+                It.IsAny<Specification<ProductCategory>>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(_existingCategory);
+
         _mockImageStorageService
             .Setup(x => x.UploadAsync(
                 It.IsAny<Stream>(),
@@ -144,6 +172,10 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
         result.Value.ImageName.Should().Be(expectedImageUrl);
         result.Value.ProductId.Should().NotBeEmpty();
 
+        _mockProductRepository.Verify(x => x.GetCategoryAsync(
+            It.IsAny<Specification<ProductCategory>>(),
+            It.IsAny<CancellationToken>()), Times.Once);
+
         _mockImageStorageService.Verify(x => x.UploadAsync(
             imageStream,
             imageName,
@@ -167,7 +199,90 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
 
     #endregion
 
+    #region Not Found Tests
+
+    [Fact(DisplayName = "Creating product when category does not exist should throw NotFoundException")]
+    public async Task Handle_WhenCategoryDoesNotExist_ShouldThrowNotFoundException()
+    {
+        // Arrange
+        _mockProductRepository
+            .Setup(x => x.GetCategoryAsync(
+                It.IsAny<Specification<ProductCategory>>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync((ProductCategory?)null);
+
+        // Act
+        var act = async () => await _handler.Handle(_command, CancellationToken.None);
+
+        // Assert
+        await act.Should().ThrowExactlyAsync<NotFoundException>()
+            .WithMessage(ErrorMessage.NotFound.Category);
+
+        _mockProductRepository.Verify(x => x.GetCategoryAsync(
+            It.IsAny<Specification<ProductCategory>>(),
+            It.IsAny<CancellationToken>()), Times.Once);
+
+        _mockProductRepository.Verify(x => x.CreateAsync(
+            It.IsAny<Product>(), It.IsAny<CancellationToken>()), Times.Never);
+
+        _mockUnitOfWork.Verify(x => x.SaveChangesAsync(
+            It.IsAny<CancellationToken>()), Times.Never);
+
+        _mockImageStorageService.Verify(x => x.UploadAsync(
+            It.IsAny<Stream>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+
+        _mockLogger.Verify(
+            x => x.Log(
+                LogLevel.Error,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, t) => true),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Never);
+    }
+
+    #endregion
+
     #region Exception Tests
+
+    [Fact(DisplayName = "Creating product when category validation fails should log error and rethrow")]
+    public async Task Handle_WhenCategoryValidationFails_ShouldLogErrorAndRethrow()
+    {
+        // Arrange
+        var expectedException = new InvalidOperationException("Category validation failed");
+
+        _mockProductRepository
+            .Setup(x => x.GetCategoryAsync(
+                It.IsAny<Specification<ProductCategory>>(),
+                It.IsAny<CancellationToken>()))
+            .ThrowsAsync(expectedException);
+
+        // Act
+        var act = async () => await _handler.Handle(_command, CancellationToken.None);
+
+        // Assert
+        await act.Should().ThrowExactlyAsync<InvalidOperationException>()
+            .WithMessage("Category validation failed");
+
+        _mockProductRepository.Verify(x => x.GetCategoryAsync(
+            It.IsAny<Specification<ProductCategory>>(),
+            It.IsAny<CancellationToken>()), Times.Once);
+
+        _mockProductRepository.Verify(x => x.CreateAsync(
+            It.IsAny<Product>(), It.IsAny<CancellationToken>()), Times.Never);
+
+        _mockUnitOfWork.Verify(x => x.SaveChangesAsync(
+            It.IsAny<CancellationToken>()), Times.Never);
+
+        _mockLogger.Verify(
+            x => x.Log(
+                LogLevel.Error,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, t) => true),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
+    }
 
     [Fact(DisplayName = "Creating product when image upload fails should log error and rethrow")]
     public async Task Handle_WhenImageUploadFails_ShouldLogErrorAndRethrow()
@@ -185,6 +300,12 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
             ImageContent = imageContent
         };
 
+        _mockProductRepository
+            .Setup(x => x.GetCategoryAsync(
+                It.IsAny<Specification<ProductCategory>>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(_existingCategory);
+
         _mockImageStorageService
             .Setup(x => x.UploadAsync(
                 It.IsAny<Stream>(),
@@ -193,11 +314,15 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
             .ThrowsAsync(expectedException);
 
         // Act
-        var result = async () => await _handler.Handle(commandWithImage, CancellationToken.None);
+        var act = async () => await _handler.Handle(commandWithImage, CancellationToken.None);
 
         // Assert
-        await result.Should().ThrowExactlyAsync<InvalidOperationException>()
+        await act.Should().ThrowExactlyAsync<InvalidOperationException>()
             .WithMessage("Image upload failed");
+
+        _mockProductRepository.Verify(x => x.GetCategoryAsync(
+            It.IsAny<Specification<ProductCategory>>(),
+            It.IsAny<CancellationToken>()), Times.Once);
 
         _mockImageStorageService.Verify(x => x.UploadAsync(
             imageStream, imageName, imageContent), Times.Once);
@@ -225,15 +350,25 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
         var expectedException = new InvalidOperationException("Product creation failed");
 
         _mockProductRepository
+            .Setup(x => x.GetCategoryAsync(
+                It.IsAny<Specification<ProductCategory>>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(_existingCategory);
+
+        _mockProductRepository
             .Setup(x => x.CreateAsync(It.IsAny<Product>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(expectedException);
 
         // Act
-        var result = async () => await _handler.Handle(_command, CancellationToken.None);
+        var act = async () => await _handler.Handle(_command, CancellationToken.None);
 
         // Assert
-        await result.Should().ThrowExactlyAsync<InvalidOperationException>()
+        await act.Should().ThrowExactlyAsync<InvalidOperationException>()
             .WithMessage("Product creation failed");
+
+        _mockProductRepository.Verify(x => x.GetCategoryAsync(
+            It.IsAny<Specification<ProductCategory>>(),
+            It.IsAny<CancellationToken>()), Times.Once);
 
         _mockProductRepository.Verify(x => x.CreateAsync(
             It.IsAny<Product>(), It.IsAny<CancellationToken>()), Times.Once);
@@ -260,6 +395,12 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
         var expectedException = new InvalidOperationException("Save changes failed");
 
         _mockProductRepository
+            .Setup(x => x.GetCategoryAsync(
+                It.IsAny<Specification<ProductCategory>>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(_existingCategory);
+
+        _mockProductRepository
             .Setup(x => x.CreateAsync(It.IsAny<Product>(), It.IsAny<CancellationToken>()));
 
         _mockUnitOfWork
@@ -267,11 +408,15 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
             .ThrowsAsync(expectedException);
 
         // Act
-        var result = async () => await _handler.Handle(_command, CancellationToken.None);
+        var act = async () => await _handler.Handle(_command, CancellationToken.None);
 
         // Assert
-        await result.Should().ThrowExactlyAsync<InvalidOperationException>()
+        await act.Should().ThrowExactlyAsync<InvalidOperationException>()
             .WithMessage("Save changes failed");
+
+        _mockProductRepository.Verify(x => x.GetCategoryAsync(
+            It.IsAny<Specification<ProductCategory>>(),
+            It.IsAny<CancellationToken>()), Times.Once);
 
         _mockProductRepository.Verify(x => x.CreateAsync(
             It.IsAny<Product>(), It.IsAny<CancellationToken>()), Times.Once);
@@ -297,16 +442,26 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
         // Arrange
         var expectedException = new UnauthorizedAccessException("User not authenticated");
 
+        _mockProductRepository
+            .Setup(x => x.GetCategoryAsync(
+                It.IsAny<Specification<ProductCategory>>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(_existingCategory);
+
         _mockCurrentUserService
             .Setup(x => x.GetCompanyId())
             .Throws(expectedException);
 
         // Act
-        var result = async () => await _handler.Handle(_command, CancellationToken.None);
+        var act = async () => await _handler.Handle(_command, CancellationToken.None);
 
         // Assert
-        await result.Should().ThrowExactlyAsync<UnauthorizedAccessException>()
+        await act.Should().ThrowExactlyAsync<UnauthorizedAccessException>()
             .WithMessage("User not authenticated");
+
+        _mockProductRepository.Verify(x => x.GetCategoryAsync(
+            It.IsAny<Specification<ProductCategory>>(),
+            It.IsAny<CancellationToken>()), Times.Once);
 
         _mockCurrentUserService.Verify(x => x.GetCompanyId(), Times.Once);
 
@@ -330,6 +485,35 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
 
     #region Cancellation Tests
 
+    [Fact(DisplayName = "Should respect cancellation token during category validation")]
+    public async Task Handle_WhenCancellationTokenDuringCategoryValidation_ShouldRespectCancellationToken()
+    {
+        // Arrange
+        var mockCancellationToken = new CancellationToken(true);
+
+        _mockProductRepository
+            .Setup(x => x.GetCategoryAsync(
+                It.IsAny<Specification<ProductCategory>>(),
+                It.Is<CancellationToken>(ct => ct.IsCancellationRequested)))
+            .ThrowsAsync(new OperationCanceledException());
+
+        // Act
+        var act = async () => await _handler.Handle(_command, mockCancellationToken);
+
+        // Assert
+        await act.Should().ThrowAsync<OperationCanceledException>();
+
+        _mockProductRepository.Verify(x => x.GetCategoryAsync(
+            It.IsAny<Specification<ProductCategory>>(),
+            It.Is<CancellationToken>(ct => ct.IsCancellationRequested)), Times.Once);
+
+        _mockProductRepository.Verify(x => x.CreateAsync(
+            It.IsAny<Product>(), It.IsAny<CancellationToken>()), Times.Never);
+
+        _mockUnitOfWork.Verify(x => x.SaveChangesAsync(
+            It.IsAny<CancellationToken>()), Times.Never);
+    }
+
     [Fact(DisplayName = "Should respect cancellation token during image upload")]
     public async Task Handle_WhenCancellationTokenDuringImageUpload_ShouldRespectCancellationToken()
     {
@@ -345,6 +529,12 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
             ImageContent = imageContent
         };
 
+        _mockProductRepository
+            .Setup(x => x.GetCategoryAsync(
+                It.IsAny<Specification<ProductCategory>>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(_existingCategory);
+
         _mockImageStorageService
             .Setup(x => x.UploadAsync(
                 It.IsAny<Stream>(),
@@ -353,11 +543,14 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
             .ThrowsAsync(new OperationCanceledException());
 
         // Act
-        var result = async () => await _handler.Handle(commandWithImage, CancellationToken.None);
+        var act = async () => await _handler.Handle(commandWithImage, CancellationToken.None);
 
         // Assert
-        await result.Should()
-            .ThrowAsync<OperationCanceledException>();
+        await act.Should().ThrowAsync<OperationCanceledException>();
+
+        _mockProductRepository.Verify(x => x.GetCategoryAsync(
+            It.IsAny<Specification<ProductCategory>>(),
+            It.IsAny<CancellationToken>()), Times.Once);
 
         _mockImageStorageService.Verify(x => x.UploadAsync(
             imageStream, imageName, imageContent), Times.Once);
@@ -376,17 +569,26 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
         var mockCancellationToken = new CancellationToken(true);
 
         _mockProductRepository
+            .Setup(x => x.GetCategoryAsync(
+                It.IsAny<Specification<ProductCategory>>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(_existingCategory);
+
+        _mockProductRepository
             .Setup(x => x.CreateAsync(
                 It.IsAny<Product>(),
                 It.Is<CancellationToken>(ct => ct.IsCancellationRequested)))
             .ThrowsAsync(new OperationCanceledException());
 
         // Act
-        var result = async () => await _handler.Handle(_command, mockCancellationToken);
+        var act = async () => await _handler.Handle(_command, mockCancellationToken);
 
         // Assert
-        await result.Should()
-            .ThrowAsync<OperationCanceledException>();
+        await act.Should().ThrowAsync<OperationCanceledException>();
+
+        _mockProductRepository.Verify(x => x.GetCategoryAsync(
+            It.IsAny<Specification<ProductCategory>>(),
+            It.IsAny<CancellationToken>()), Times.Once);
 
         _mockProductRepository.Verify(x => x.CreateAsync(
             It.IsAny<Product>(), 
@@ -405,6 +607,12 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
         var mockCancellationToken = new CancellationToken(true);
 
         _mockProductRepository
+            .Setup(x => x.GetCategoryAsync(
+                It.IsAny<Specification<ProductCategory>>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(_existingCategory);
+
+        _mockProductRepository
             .Setup(x => x.CreateAsync(It.IsAny<Product>(), It.IsAny<CancellationToken>()));
 
         _mockUnitOfWork
@@ -413,11 +621,14 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
             .ThrowsAsync(new OperationCanceledException());
 
         // Act
-        var result = async () => await _handler.Handle(_command, mockCancellationToken);
+        var act = async () => await _handler.Handle(_command, mockCancellationToken);
 
         // Assert
-        await result.Should()
-            .ThrowAsync<OperationCanceledException>();
+        await act.Should().ThrowAsync<OperationCanceledException>();
+
+        _mockProductRepository.Verify(x => x.GetCategoryAsync(
+            It.IsAny<Specification<ProductCategory>>(),
+            It.IsAny<CancellationToken>()), Times.Once);
 
         _mockProductRepository.Verify(x => x.CreateAsync(
             It.IsAny<Product>(), It.IsAny<CancellationToken>()), Times.Once);
