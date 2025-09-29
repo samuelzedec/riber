@@ -19,6 +19,8 @@ namespace Riber.Api.Controllers;
 public sealed class ProductController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
+    [RequestSizeLimit(3_145_728)]
+    [RequestFormLimits(MultipartBodyLengthLimit = 3_145_728)]
     [RequirePermission(PermissionsSettings.Products.Create)]
     [RequestTimeout("standard")]
     [ProducesResponseType<Result<CreateProductCommandResponse>>(StatusCodes.Status201Created)]
