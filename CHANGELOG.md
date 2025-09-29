@@ -2,6 +2,7 @@
 
 ## v1.0.3 - 29/09/25
 - Retira os IsFailure do Result Pattern
+- Ajustes os testes para remover o Result Pattern
 
 ---
 
