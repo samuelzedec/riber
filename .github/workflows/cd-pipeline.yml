@@ -32,25 +32,25 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository_owner }}/riber:latest
             ghcr.io/${{ github.repository_owner }}/riber:${{ steps.image.outputs.version }}
-    
-      - name: Deploy to AWS EC2
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_KEY }}
-          script: |
-            echo "${{ secrets.GHCR }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
-            docker pull ghcr.io/${{ github.repository_owner }}/riber:${{ steps.image.outputs.version }}
-            
-            docker stop riber-api || true
-            docker rm riber-api || true
-            
-            docker run -d --name riber-api -p 80:8080 --restart unless-stopped \
-              -e ConnectionStrings__DefaultConnection="${{ secrets.CONNECTION_STRING }}" \
-              -e AccessTokenSettings__SecretKey="${{ secrets.ACCESS_TOKEN_SECRET_KEY }}" \
-              -e RefreshTokenSettings__SecretKey="${{ secrets.REFRESH_TOKEN_SECRET_KEY }}" \
-              -e AWS__S3__BucketImagesName="${{ secrets.S3_BUCKET_IMAGES_NAME }}" \
-              ghcr.io/${{ github.repository_owner }}/riber:${{ steps.image.outputs.version }}
-            
-            docker images | grep riber | tail -n +4 | awk '{print $3}' | xargs -r docker rmi || true
+#
+#      - name: Deploy to AWS EC2
+#        uses: appleboy/ssh-action@v1.0.3
+#        with:
+#          host: ${{ secrets.EC2_HOST }}
+#          username: ${{ secrets.EC2_USERNAME }}
+#          key: ${{ secrets.EC2_KEY }}
+#          script: |
+#            echo "${{ secrets.GHCR }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+#            docker pull ghcr.io/${{ github.repository_owner }}/riber:${{ steps.image.outputs.version }}
+#            
+#            docker stop riber-api || true
+#            docker rm riber-api || true
+#            
+#            docker run -d --name riber-api -p 80:8080 --restart unless-stopped \
+#              -e ConnectionStrings__DefaultConnection="${{ secrets.CONNECTION_STRING }}" \
+#              -e AccessTokenSettings__SecretKey="${{ secrets.ACCESS_TOKEN_SECRET_KEY }}" \
+#              -e RefreshTokenSettings__SecretKey="${{ secrets.REFRESH_TOKEN_SECRET_KEY }}" \
+#              -e AWS__S3__BucketImagesName="${{ secrets.S3_BUCKET_IMAGES_NAME }}" \
+#              ghcr.io/${{ github.repository_owner }}/riber:${{ steps.image.outputs.version }}
+#            
+#            docker images | grep riber | tail -n +4 | awk '{print $3}' | xargs -r docker rmi || true

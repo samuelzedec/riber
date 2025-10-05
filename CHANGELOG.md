@@ -1,5 +1,8 @@
 # Riber - Changelog
 
+# v2.0.1 - 05/10/25
+- **TEMPORÁRIO**: Deploy na AWS suspenso temporariamente
+
 ## v2.0.0 - 05/10/25
 - **BREAKING CHANGE**: Reestruturação das mensagens de erro em módulos organizados
 - Remove classe monolítica `ErrorMessage.cs` e substitui por estrutura modular
