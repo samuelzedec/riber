@@ -12,6 +12,7 @@
 - Cria exceções customizadas para tratamento de erros de imagens
 - Adiciona migração do banco de dados para tabela de imagens
 - Estabelece relacionamento entre Product e Image (1:N)
+- **TEMPORÁRIO**: CreateProduct desativado para refatoração (será reimplementado na próxima PR)
 
 ---
 
