@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.DTOs;
 using Riber.Application.Exceptions;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.Common;
 using Riber.Infrastructure.Persistence;
 using Riber.Infrastructure.Persistence.Identity;
 
@@ -16,7 +16,7 @@ public sealed class PermissionDataService(
     ILogger<PermissionDataService> logger)
     : IPermissionDataService
 {
-    private readonly DbSet<ApplicationPermission> _permissionTable 
+    private readonly DbSet<ApplicationPermission> _permissionTable
         = context.Set<ApplicationPermission>();
 
     private const string CacheKey = "permissions-cache";
@@ -28,13 +28,13 @@ public sealed class PermissionDataService(
             var permissions = await GetPermissionsCacheAsync();
             var permission = permissions
                 .FirstOrDefault(p => p.Name == name)
-                ?? throw new NotFoundException(ErrorMessage.NotFound.Permission);
+                ?? throw new NotFoundException(NotFoundErrors.Permission);
 
             return permission.IsActive;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, ErrorMessage.Exception.Unexpected(ex.GetType().Name, ex.Message));
+            logger.LogError(UnexpectedErrors.ForLogging(nameof(PermissionDataService), ex));
             throw;
         }
     }
@@ -45,18 +45,18 @@ public sealed class PermissionDataService(
         {
             var permissions = await GetPermissionsCacheAsync();
             var permission = permissions
-                .FirstOrDefault(p => p.Name == name) 
-                ?? throw new NotFoundException(ErrorMessage.NotFound.Permission);
+                .FirstOrDefault(p => p.Name == name)
+                ?? throw new NotFoundException(NotFoundErrors.Permission);
 
             permission.IsActive = !permission.IsActive;
-            
+
             _permissionTable.Update(permission);
             await context.SaveChangesAsync();
             InvalidateCache();
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, ErrorMessage.Exception.Unexpected(ex.GetType().Name, ex.Message));
+            logger.LogError(UnexpectedErrors.ForLogging(nameof(PermissionDataService), ex));
             throw;
         }
     }
@@ -75,7 +75,7 @@ public sealed class PermissionDataService(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, ErrorMessage.Exception.Unexpected(ex.GetType().Name, ex.Message));
+            logger.LogError(UnexpectedErrors.ForLogging(nameof(PermissionDataService), ex));
             throw;
         }
     }
@@ -94,10 +94,10 @@ public sealed class PermissionDataService(
             permissionsDatabase,
             TimeSpan.FromHours(1)
         );
-        
+
         return permissionsDatabase;
     }
-    
-    private void InvalidateCache() 
+
+    private void InvalidateCache()
         => memoryCache.Remove(CacheKey);
 }

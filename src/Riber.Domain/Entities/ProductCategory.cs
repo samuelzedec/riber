@@ -1,10 +1,10 @@
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.Entities;
 using Riber.Domain.Entities.Tenants;
 using Riber.Domain.Exceptions;
 
 namespace Riber.Domain.Entities;
 
-public sealed class ProductCategory 
+public sealed class ProductCategory
     : TenantEntity
 {
     #region Properties
@@ -59,14 +59,14 @@ public sealed class ProductCategory
         Guid companyId)
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new ProductCategoryNameNullException(ErrorMessage.Product.CategoryNameIsNull);
-        
+            throw new ProductCategoryNameNullException(CategoryErrors.NameEmpty);
+
         if (string.IsNullOrWhiteSpace(code))
-            throw new ProductCategoryCodeNullException(ErrorMessage.Product.CategoryCodeIsNull);
-        
+            throw new ProductCategoryCodeNullException(CategoryErrors.CodeEmpty);
+
         if (companyId == Guid.Empty)
-            throw new IdentifierNullException(ErrorMessage.Invalid.CompanyId);
-        
+            throw new IdentifierNullException(CompanyErrors.Invalid);
+
         return new ProductCategory(name, description, code, companyId);
     }
 
@@ -74,13 +74,14 @@ public sealed class ProductCategory
 
     #region Business Methods
 
-    public void UpdateDetails(string name, string description)
+    public void UpdateDetails(string name, string? description)
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new ProductCategoryNameNullException(ErrorMessage.Product.CategoryNameIsNull);
-        
+            throw new ProductCategoryNameNullException(CategoryErrors.NameEmpty);
+
         Name = name;
-        Description = description;
+        if(description is not null)
+            Description = description;
     }
 
     public void Activate() => IsActive = true;

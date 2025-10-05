@@ -4,7 +4,7 @@ using Moq;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Exceptions;
 using Riber.Application.Features.Products.Commands;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Entities;
 using Riber.Domain.Repositories;
 using Riber.Domain.Specifications.Core;
@@ -102,7 +102,7 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
             It.IsAny<CancellationToken>()), Times.Once);
 
         _mockProductRepository.Verify(x => x.CreateAsync(
-            It.Is<Product>(p => 
+            It.Is<Product>(p =>
                 p.Name == _command.Name &&
                 p.Description == _command.Description &&
                 p.UnitPrice == _command.Price &&
@@ -180,7 +180,7 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
             imageContent), Times.Once);
 
         _mockProductRepository.Verify(x => x.CreateAsync(
-            It.Is<Product>(p => 
+            It.Is<Product>(p =>
                 p.Name == commandWithImage.Name &&
                 p.Description == commandWithImage.Description &&
                 p.UnitPrice == commandWithImage.Price &&
@@ -214,7 +214,7 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
 
         // Assert
         await act.Should().ThrowExactlyAsync<NotFoundException>()
-            .WithMessage(ErrorMessage.NotFound.Category);
+            .WithMessage(NotFoundErrors.Category);
 
         _mockProductRepository.Verify(x => x.GetCategoryAsync(
             It.IsAny<Specification<ProductCategory>>(),
@@ -589,7 +589,7 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
             It.IsAny<CancellationToken>()), Times.Once);
 
         _mockProductRepository.Verify(x => x.CreateAsync(
-            It.IsAny<Product>(), 
+            It.IsAny<Product>(),
             It.Is<CancellationToken>(ct => ct.IsCancellationRequested)), Times.Once);
 
         _mockUnitOfWork.Verify(x => x.SaveChangesAsync(

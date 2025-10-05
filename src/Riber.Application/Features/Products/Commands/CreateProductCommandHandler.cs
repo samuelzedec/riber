@@ -3,7 +3,7 @@ using Riber.Application.Abstractions.Commands;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Common;
 using Riber.Application.Exceptions;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Repositories;
 using Riber.Domain.Specifications.ProductCategory;
 
@@ -22,9 +22,8 @@ internal sealed class CreateProductCommandHandler(
     {
         try
         {
-            if (await unitOfWork.Products.GetCategoryAsync(new ProductCategoryIdSpecification(command.CategoryId),
-                    cancellationToken) is null)
-                throw new NotFoundException(ErrorMessage.NotFound.Category);
+            if (await unitOfWork.Products.GetCategoryAsync(new ProductCategoryIdSpecification(command.CategoryId), cancellationToken) is null)
+                throw new NotFoundException(NotFoundErrors.Category);
 
             string? imageUrl = null;
             if (command.ImageStream is not null)
@@ -56,7 +55,7 @@ internal sealed class CreateProductCommandHandler(
         }
         catch (Exception ex) when (ex is not NotFoundException)
         {
-            logger.LogError(ErrorMessage.Exception.Unexpected(ex.GetType().Name, ex.Message));
+            logger.LogError(UnexpectedErrors.ForLogging(nameof(CreateProductCommandHandler), ex));
             throw;
         }
     }

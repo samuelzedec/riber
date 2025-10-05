@@ -3,7 +3,7 @@ using Riber.Application.Abstractions.Commands;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Common;
 using Riber.Application.Exceptions;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.Common;
 
 namespace Riber.Application.Features.Auths.Commands.Logout;
 
@@ -21,9 +21,9 @@ internal sealed class LogoutCommandHandler(
             await authService.RefreshUserSecurityAsync(userId);
             return Result.Success();
         }
-        catch (Exception ex) when(ex is not BadRequestException)
+        catch (Exception ex) when (ex is not BadRequestException)
         {
-            logger.LogError(ex, ErrorMessage.Exception.Unexpected(ex.GetType().Name, ex.Message));
+            logger.LogError(UnexpectedErrors.ForLogging(nameof(LogoutCommandHandler), ex));
             throw;
         }
     }

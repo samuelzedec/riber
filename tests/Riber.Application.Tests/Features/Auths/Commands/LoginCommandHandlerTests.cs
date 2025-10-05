@@ -6,7 +6,7 @@ using Riber.Application.Abstractions.Services;
 using Riber.Application.DTOs;
 using Riber.Application.Exceptions;
 using Riber.Application.Features.Auths.Commands.Login;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Entities;
 using Riber.Domain.Enums;
 using Riber.Domain.Tests;
@@ -110,22 +110,22 @@ public sealed class LoginCommandHandlerTests : BaseTest
         // Arrange
         _mockAuthService
             .Setup(x => x.LoginAsync(It.IsAny<string>(), It.IsAny<string>()))
-            .ThrowsAsync(new NotFoundException(ErrorMessage.NotFound.User));
+            .ThrowsAsync(new NotFoundException(NotFoundErrors.User));
 
         // Act
         var result = async () => await _handler.Handle(_command, CancellationToken.None);
 
         // Assert
-        await result.Should().ThrowExactlyAsync<NotFoundException>().WithMessage(ErrorMessage.NotFound.User);
+        await result.Should().ThrowExactlyAsync<NotFoundException>().WithMessage(NotFoundErrors.User);
         _mockAuthService.Verify(x => x.LoginAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         _mockTokenService.Verify(x => x.GenerateToken(It.IsAny<UserDetailsDTO>()), Times.Never);
         _mockTokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
-        
+
         _mockLogger.Verify(
             x => x.Log(
                 LogLevel.Error,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains(ErrorMessage.NotFound.User)),
+                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains(NotFoundErrors.User)),
                 It.IsAny<Exception>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
@@ -143,7 +143,7 @@ public sealed class LoginCommandHandlerTests : BaseTest
         var result = async () => await _handler.Handle(_command, CancellationToken.None);
 
         // Assert
-        await result.Should().ThrowExactlyAsync<UnauthorizedException>().WithMessage(ErrorMessage.Invalid.Password);
+        await result.Should().ThrowExactlyAsync<UnauthorizedException>().WithMessage(PasswordErrors.Invalid);
         _mockAuthService.Verify(x => x.LoginAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         _mockTokenService.Verify(x => x.GenerateToken(It.IsAny<UserDetailsDTO>()), Times.Never);
         _mockTokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
@@ -156,7 +156,7 @@ public sealed class LoginCommandHandlerTests : BaseTest
             Times.Never
         );
     }
-    
+
     [Fact(DisplayName = "Should log error and rethrow when unexpected exception occurs")]
     public async Task Handle_WhenUnexpectedExceptionOccurs_ShouldLogErrorAndRethrow()
     {
@@ -172,11 +172,11 @@ public sealed class LoginCommandHandlerTests : BaseTest
         // Assert
         await result.Should().ThrowExactlyAsync<InvalidOperationException>()
             .WithMessage("Database connection failed");
-    
+
         _mockAuthService.Verify(x => x.LoginAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         _mockTokenService.Verify(x => x.GenerateToken(It.IsAny<UserDetailsDTO>()), Times.Never);
         _mockTokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
-    
+
         _mockLogger.Verify(
             x => x.Log(
                 LogLevel.Error,

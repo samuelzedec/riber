@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.Common;
+using Riber.Domain.Constants.Messages.ValueObjects;
 using Riber.Domain.Enums;
 using Riber.Domain.ValueObjects.CompanyName;
 using Riber.Domain.ValueObjects.Email;
@@ -13,78 +14,78 @@ internal sealed class CreateCompanyWithAdminCommandValidator : AbstractValidator
     {
         RuleFor(x => x.CorporateName)
             .NotEmpty()
-            .WithMessage(ErrorMessage.Name.IsNullOrEmpty)
+            .WithMessage(NameErrors.CorporateNameEmpty)
             .Length(CompanyName.MinLength, CompanyName.CorporateMaxLength)
-            .WithMessage(ErrorMessage.Name.LengthIsInvalid(CompanyName.MinLength, CompanyName.CorporateMaxLength));
-        
+            .WithMessage(NameErrors.CorporateNameLength(CompanyName.MinLength, CompanyName.CorporateMaxLength));
+
         RuleFor(x => x.FantasyName)
             .NotEmpty()
-            .WithMessage(ErrorMessage.FantasyName.IsNullOrEmpty)
+            .WithMessage(NameErrors.FantasyNameEmpty)
             .Length(CompanyName.MinLength, CompanyName.FantasyMaxLength)
-            .WithMessage(ErrorMessage.Name.LengthIsInvalid(CompanyName.MinLength, CompanyName.FantasyMaxLength));
+            .WithMessage(NameErrors.FantasyNameLength(CompanyName.MinLength, CompanyName.FantasyMaxLength));
 
         RuleFor(x => x.Email)
             .NotEmpty()
-            .WithMessage(ErrorMessage.Email.IsNullOrEmpty)
+            .WithMessage(EmailErrors.Empty)
             .Matches(Email.RegexPattern)
-            .WithMessage(ErrorMessage.Email.FormatInvalid);
-        
+            .WithMessage(EmailErrors.Format);
+
         RuleFor(x => x.Phone)
             .NotEmpty()
-            .WithMessage(ErrorMessage.Phone.IsNullOrEmpty)
+            .WithMessage(PhoneErrors.Empty)
             .Matches(Phone.RegexPattern)
-            .WithMessage(ErrorMessage.Phone.FormatInvalid);
+            .WithMessage(PhoneErrors.Format);
 
         RuleFor(x => x.Type)
             .NotNull()
-            .WithMessage(ErrorMessage.Document.IsNullOrEmpty)
+            .WithMessage(DocumentErrors.Empty)
             .IsInEnum()
-            .WithMessage(ErrorMessage.Document.IsInvalid);
+            .WithMessage(DocumentErrors.Invalid);
 
         RuleFor(x => x.TaxId)
             .NotEmpty()
-            .WithMessage(ErrorMessage.Cpf.IsNullOrEmpty)
+            .WithMessage(CpfErrors.Empty)
             .Matches(@"^(?!^(\d)\1{10}$)(\d{3}\.?\d{3}\.?\d{3}-?\d{2})$")
-            .WithMessage(ErrorMessage.Cpf.LengthIsInvalid)
+            .WithMessage(CpfErrors.Length)
             .When(x => x.Type == TaxIdType.IndividualWithCpf);
-        
+
         RuleFor(x => x.TaxId)
             .NotEmpty()
-            .WithMessage(ErrorMessage.Cnpj.IsNullOrEmpty)
+            .WithMessage(CnpjErrors.Empty)
             .Matches(@"^(?!^(\d)\1{13}$)(\d{2}\.?\d{3}\.?\d{3}/?\d{4}-?\d{2})$")
-            .WithMessage(ErrorMessage.Cnpj.LengthIsInvalid)
+            .WithMessage(CnpjErrors.Length)
             .When(x => x.Type == TaxIdType.LegalEntityWithCnpj);
-        
+
         RuleFor(x => x.AdminFullName)
             .NotEmpty()
-            .WithMessage(ErrorMessage.Name.IsNullOrEmpty);
+            .WithMessage(NameErrors.FantasyNameEmpty);
 
         RuleFor(x => x.TaxId)
             .NotEmpty()
-            .WithMessage(ErrorMessage.Cpf.IsNullOrEmpty)
+            .WithMessage(CpfErrors.Empty)
             .Matches(@"^(?!^(\d)\1{10}$)(\d{3}\.?\d{3}\.?\d{3}-?\d{2})$")
-            .WithMessage(ErrorMessage.Cpf.LengthIsInvalid);
-        
+            .WithMessage(CpfErrors.Invalid);
+
         RuleFor(x => x.AdminUserName)
             .NotEmpty()
-            .WithMessage("O nome de usuário deve ser preenchido.");
-        
+            .WithMessage(NameErrors.UserNameEmpty);
+
         RuleFor(x => x.AdminPassword)
             .NotEmpty()
-            .WithMessage("A senha deve ser preenchida.")
+            .WithMessage(PasswordErrors.Empty)
             .Matches(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$")
-            .WithMessage("A senha deve ter no mínimo 8 caracteres, incluindo pelo menos: 1 letra minúscula, 1 maiúscula, 1 número e 1 caractere especial (@$!%*?&).");
-        
+            .WithMessage(PasswordErrors.Format);
+
         RuleFor(x => x.Email)
             .NotEmpty()
-            .WithMessage(ErrorMessage.Email.IsNullOrEmpty)
+            .WithMessage(EmailErrors.Empty)
             .Matches(Email.RegexPattern)
-            .WithMessage(ErrorMessage.Email.FormatInvalid);
-        
+            .WithMessage(EmailErrors.Format);
+
         RuleFor(x => x.AdminPhoneNumber)
             .NotEmpty()
-            .WithMessage(ErrorMessage.Phone.IsNullOrEmpty)
+            .WithMessage(PhoneErrors.Empty)
             .Matches(Phone.RegexPattern)
-            .WithMessage(ErrorMessage.Phone.FormatInvalid);
+            .WithMessage(PhoneErrors.Format);
     }
 }

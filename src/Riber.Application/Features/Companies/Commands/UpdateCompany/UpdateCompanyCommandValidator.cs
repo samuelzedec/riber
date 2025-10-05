@@ -1,5 +1,5 @@
 using FluentValidation;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.ValueObjects;
 using Riber.Domain.ValueObjects.CompanyName;
 using Riber.Domain.ValueObjects.Email;
 using Riber.Domain.ValueObjects.Phone;
@@ -12,17 +12,17 @@ internal sealed class UpdateCompanyCommandValidator : AbstractValidator<UpdateCo
     {
         RuleFor(x => x.FantasyName)
             .Length(CompanyName.MinLength, CompanyName.FantasyMaxLength)
-            .WithMessage(ErrorMessage.Name.LengthIsInvalid(CompanyName.MinLength, CompanyName.FantasyMaxLength))
+            .WithMessage(NameErrors.FantasyNameLength(CompanyName.MinLength, CompanyName.FantasyMaxLength))
             .When(x => !string.IsNullOrEmpty(x.FantasyName));
 
         RuleFor(x => x.Email)
             .Matches(Email.RegexPattern)
-            .WithMessage(ErrorMessage.Email.FormatInvalid)
+            .WithMessage(EmailErrors.Format)
             .When(x => !string.IsNullOrEmpty(x.Email));
-        
+
         RuleFor(x => x.Phone)
             .Matches(Phone.RegexPattern)
-            .WithMessage(ErrorMessage.Phone.FormatInvalid)
+            .WithMessage(PhoneErrors.Format)
             .When(x => !string.IsNullOrEmpty(x.Phone));
     }
 }

@@ -3,7 +3,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using Riber.Application.Exceptions;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.Entities;
 using Riber.Domain.Tests;
 using Riber.Infrastructure.Services.Authentication;
 
@@ -125,6 +125,6 @@ public sealed class CurrentUserServiceTests : BaseTest
 
         // Act & Assert
         var act = () => _currentUserService.GetCompanyId();
-        act.Should().Throw<BadRequestException>().WithMessage(ErrorMessage.Invalid.CompanyId);
+        act.Should().Throw<BadRequestException>().WithMessage(CompanyErrors.Invalid);
     }
 }

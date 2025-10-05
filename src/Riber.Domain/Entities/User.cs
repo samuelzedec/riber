@@ -1,6 +1,6 @@
 using Riber.Domain.Abstractions;
 using Riber.Domain.Abstractions.ValueObjects;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.Entities;
 using Riber.Domain.Entities.Tenants;
 using Riber.Domain.Enums;
 using Riber.Domain.Exceptions;
@@ -9,7 +9,7 @@ using Riber.Domain.ValueObjects.TaxId;
 
 namespace Riber.Domain.Entities;
 
-public sealed class User 
+public sealed class User
     : OptionalTenantEntity, IAggregateRoot, IHasFullName, IHasTaxId
 {
     #region Properties
@@ -36,7 +36,7 @@ public sealed class User
         CompanyId = null!;
         IsActive = false;
     }
-    
+
     private User(
         FullName fullName,
         TaxId taxId,
@@ -68,16 +68,16 @@ public sealed class User
     public void Activate()
     {
         if (CompanyId is null)
-            throw new IdentifierNullException(ErrorMessage.Invalid.CompanyId);
+            throw new IdentifierNullException(CompanyErrors.Invalid);
         IsActive = true;
     }
-    
+
     public void Disable()
         => IsActive = false;
-    
+
     public void AddCompany(Guid companyId)
         => CompanyId = companyId;
-    
+
     public void RemoveFromCompany()
     {
         CompanyId = null;

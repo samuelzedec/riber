@@ -3,7 +3,7 @@ using Riber.Application.Abstractions.Commands;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Common;
 using Riber.Application.Exceptions;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Entities;
 using Riber.Domain.Repositories;
 using Riber.Domain.Specifications.ProductCategory;
@@ -14,7 +14,7 @@ namespace Riber.Application.Features.ProductCategories.Commands;
 internal sealed class CreateProductCategoryCommandHandler(
     IUnitOfWork unitOfWork,
     ICurrentUserService currentUserService,
-    ILogger<CreateProductCategoryCommandHandler> logger) 
+    ILogger<CreateProductCategoryCommandHandler> logger)
     : ICommandHandler<CreateProductCategoryCommand, CreateProductCategoryCommandResponse>
 {
     public async ValueTask<Result<CreateProductCategoryCommandResponse>> Handle(CreateProductCategoryCommand command, CancellationToken cancellationToken)
@@ -23,7 +23,7 @@ internal sealed class CreateProductCategoryCommandHandler(
         {
             var companyId = currentUserService.GetCompanyId();
             await ValidateCode(command.Code, companyId, cancellationToken);
-            
+
             var codeNormalized = command.Code.ToUpperInvariant();
             var category = ProductCategory.Create(
                 code: codeNormalized,
@@ -31,7 +31,7 @@ internal sealed class CreateProductCategoryCommandHandler(
                 description: command.Description,
                 companyId: companyId
             );
-            
+
             await unitOfWork.Products.CreateCategoryAsync(category, cancellationToken);
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
@@ -43,20 +43,20 @@ internal sealed class CreateProductCategoryCommandHandler(
         }
         catch (Exception ex) when (ex is not BadRequestException)
         {
-            logger.LogError(ex, ErrorMessage.Exception.Unexpected(ex.GetType().Name, ex.Message));
+            logger.LogError(UnexpectedErrors.ForLogging(nameof(CreateProductCategoryCommandHandler), ex));
             throw;
         }
     }
-    
+
     private async Task ValidateCode(
-        string code, 
-        Guid companyId, 
+        string code,
+        Guid companyId,
         CancellationToken cancellationToken = default)
     {
         var specification = new TenantSpecification<ProductCategory>(companyId)
             .And(new ProductCategoryCodeSpecification(code));
 
-        if(await unitOfWork.Products.GetCategoryAsync(specification, cancellationToken) is not null)
-            throw new BadRequestException(ErrorMessage.Product.CategoryCodeExist);
+        if (await unitOfWork.Products.GetCategoryAsync(specification, cancellationToken) is not null)
+            throw new BadRequestException(ConflictErrors.CategoryCode);
     }
 }

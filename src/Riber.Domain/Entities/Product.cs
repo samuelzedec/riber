@@ -1,13 +1,13 @@
 using Riber.Domain.Abstractions;
 using Riber.Domain.Abstractions.ValueObjects;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.Entities;
 using Riber.Domain.Entities.Tenants;
 using Riber.Domain.Exceptions;
 using Riber.Domain.ValueObjects.Money;
 
 namespace Riber.Domain.Entities;
 
-public sealed class Product 
+public sealed class Product
     : TenantEntity, IAggregateRoot, IHasUnitPrice
 {
     #region Properties
@@ -70,17 +70,17 @@ public sealed class Product
         string? imageUrl = null)
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new ProductNameNullException(ErrorMessage.Product.NameIsNull);
-        
+            throw new ProductNameNullException(ProductErrors.NameEmpty);
+
         if (string.IsNullOrWhiteSpace(description))
-            throw new ProductDescriptionNullException(ErrorMessage.Product.DescriptionIsNull);
-        
+            throw new ProductDescriptionNullException(ProductErrors.DescriptionEmpty);
+
         if (categoryId == Guid.Empty)
-            throw new IdentifierNullException(ErrorMessage.Invalid.CategoryId);
-        
+            throw new IdentifierNullException(ProductErrors.InvalidCategory);
+
         if (companyId == Guid.Empty)
-            throw new IdentifierNullException(ErrorMessage.Invalid.CompanyId);
-        
+            throw new IdentifierNullException(ProductErrors.InvalidCategory);
+
         return new Product(name, description, price, categoryId, companyId, imageUrl);
     }
 
@@ -91,11 +91,11 @@ public sealed class Product
     public void UpdateDetails(string name, string description, decimal price)
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new ProductNameNullException(ErrorMessage.Product.NameIsNull);
-        
+            throw new ProductNameNullException(ProductErrors.NameEmpty);
+
         if (string.IsNullOrWhiteSpace(description))
-            throw new ProductDescriptionNullException(ErrorMessage.Product.DescriptionIsNull);
-        
+            throw new ProductDescriptionNullException(ProductErrors.DescriptionEmpty);
+
         Name = name;
         Description = description;
         UnitPrice = Money.CreatePrice(price);
@@ -104,8 +104,8 @@ public sealed class Product
     public void ChangeCategory(Guid categoryId)
     {
         if (categoryId == Guid.Empty)
-            throw new IdentifierNullException(ErrorMessage.Invalid.CategoryId);
-        
+            throw new IdentifierNullException(ProductErrors.InvalidCategory);
+
         CategoryId = categoryId;
     }
 

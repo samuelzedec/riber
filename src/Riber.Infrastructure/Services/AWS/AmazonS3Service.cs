@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Exceptions;
-using Riber.Domain.Constants;
 
 namespace Riber.Infrastructure.Services.AWS;
 
@@ -21,21 +20,16 @@ public sealed class AmazonS3Service : IImageStorageService
     {
         _amazonS3 = amazonS3;
         _logger = logger;
-        _bucketName = configuration["AWS:S3:BucketImagesName"] 
-            ?? throw new ArgumentNullException(nameof(configuration), "Configuration cannot be null");
-        
+        _bucketName = configuration["AWS:S3:BucketImagesName"]
+                      ?? throw new ArgumentNullException(nameof(configuration), "Configuration cannot be null");
+
         if (string.IsNullOrWhiteSpace(_bucketName))
-            throw new InvalidOperationException("AWS S3 bucket name is not configured. Please set 'AWS:S3:BucketImagesName' in configuration.");
+            throw new InvalidOperationException(
+                "AWS S3 bucket name is not configured. Please set 'AWS:S3:BucketImagesName' in configuration.");
     }
 
     public async Task<string> UploadAsync(Stream stream, string fileName, string contentType)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(fileName, nameof(fileName));
-        ArgumentException.ThrowIfNullOrWhiteSpace(contentType, nameof(contentType));
-
-        if (!IImageStorageService.IsValidImageType(contentType))
-            throw new BadRequestException(ErrorMessage.Image.IsInvalid);
-
         var uniqueImageName = $"{Guid.CreateVersion7()}{Path.GetExtension(fileName).ToLowerInvariant()}";
         try
         {
@@ -86,33 +80,30 @@ public sealed class AmazonS3Service : IImageStorageService
         ArgumentException.ThrowIfNullOrWhiteSpace(fileName, nameof(fileName));
         try
         {
-            var request = new GetObjectRequest
-            {
-                BucketName = _bucketName,
-                Key = fileName
-            };
-            
+            var request = new GetObjectRequest { BucketName = _bucketName, Key = fileName };
+
             var response = await _amazonS3.GetObjectAsync(request);
-            
-            _logger.LogDebug("Successfully retrieved image {FileName} from S3 bucket {BucketName}", 
-                fileName, _bucketName);
-            
+
+            _logger.LogDebug("Successfully retrieved image {FileName} from S3 bucket {BucketName}", fileName,
+                _bucketName);
+
             return response.ResponseStream;
         }
         catch (AmazonS3Exception s3Ex) when (s3Ex.ErrorCode == "NoSuchKey")
         {
             _logger.LogWarning("Image {FileName} not found in S3 bucket {BucketName}", fileName, _bucketName);
-            throw new NotFoundException(ErrorMessage.Image.NoExists);
+            // throw new NotFoundException(ErrorMessage.Image.NoExists);
+            throw;
         }
         catch (AmazonS3Exception s3Ex) when (s3Ex.ErrorCode == "AccessDenied")
         {
-            _logger.LogError(s3Ex, "Access denied when retrieving image {FileName} from S3 bucket {BucketName}", 
+            _logger.LogError(s3Ex, "Access denied when retrieving image {FileName} from S3 bucket {BucketName}",
                 fileName, _bucketName);
             throw new InternalException("Storage service is temporarily unavailable. Please try again later.");
         }
         catch (AmazonS3Exception s3Ex)
         {
-            _logger.LogError(s3Ex, "S3 error when retrieving image {FileName}: {ErrorCode} - {ErrorMessage}", 
+            _logger.LogError(s3Ex, "S3 error when retrieving image {FileName}: {ErrorCode} - {ErrorMessage}",
                 fileName, s3Ex.ErrorCode, s3Ex.Message);
             throw new InternalException("Failed to retrieve image. Please try again later.");
         }
@@ -128,26 +119,21 @@ public sealed class AmazonS3Service : IImageStorageService
         ArgumentException.ThrowIfNullOrWhiteSpace(fileName, nameof(fileName));
         try
         {
-            var request = new DeleteObjectRequest
-            {
-                BucketName = _bucketName,
-                Key = fileName
-            };
-            
+            var request = new DeleteObjectRequest { BucketName = _bucketName, Key = fileName };
+
             await _amazonS3.DeleteObjectAsync(request);
-            
-            _logger.LogDebug("Successfully deleted image {FileName} from S3 bucket {BucketName}", 
+            _logger.LogDebug("Successfully deleted image {FileName} from S3 bucket {BucketName}",
                 fileName, _bucketName);
         }
         catch (AmazonS3Exception s3Ex) when (s3Ex.ErrorCode == "AccessDenied")
         {
-            _logger.LogError(s3Ex, "Access denied when deleting image {FileName} from S3 bucket {BucketName}", 
-                fileName, _bucketName);
+            _logger.LogError(s3Ex, "Access denied when deleting image {FileName} from S3 bucket {BucketName}", fileName,
+                _bucketName);
             throw new InternalException("Storage service is temporarily unavailable. Please try again later.");
         }
         catch (AmazonS3Exception s3Ex)
         {
-            _logger.LogError(s3Ex, "S3 error when deleting image {FileName}: {ErrorCode} - {ErrorMessage}", 
+            _logger.LogError(s3Ex, "S3 error when deleting image {FileName}: {ErrorCode} - {ErrorMessage}",
                 fileName, s3Ex.ErrorCode, s3Ex.Message);
             throw new InternalException("Failed to delete image. Please try again later.");
         }

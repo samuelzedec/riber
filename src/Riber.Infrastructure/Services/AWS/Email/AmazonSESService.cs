@@ -2,7 +2,7 @@ using Amazon.SimpleEmail;
 using Amazon.SimpleEmail.Model;
 using Microsoft.Extensions.Logging;
 using Riber.Application.Abstractions.Services.Email;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.Common;
 
 namespace Riber.Infrastructure.Services.AWS.Email;
 
@@ -25,12 +25,12 @@ public sealed class AmazonSESService(
                     Body = new Body { Html = new Content { Data = body } }
                 }
             };
-            
+
             await amazonSimpleEmailService.SendEmailAsync(request);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, ErrorMessage.Exception.Unexpected(ex.GetType().Name, ex.Message));
+            logger.LogError(UnexpectedErrors.ForLogging(nameof(AmazonSESService), ex));
             throw;
         }
     }

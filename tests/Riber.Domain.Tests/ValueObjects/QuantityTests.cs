@@ -1,5 +1,5 @@
 using FluentAssertions;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.ValueObjects;
 using Riber.Domain.ValueObjects.Quantity;
 using Riber.Domain.ValueObjects.Quantity.Exceptions;
 
@@ -63,7 +63,7 @@ public sealed class QuantityTests : BaseTest
 
         // Assert
         act.Should().Throw<InvalidQuantityException>()
-           .WithMessage(ErrorMessage.Invalid.Quantity);
+           .WithMessage(QuantityErrors.ValueMustBeGreaterThanZero);
     }
 
     #endregion

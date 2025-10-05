@@ -1,5 +1,5 @@
 ﻿using System.Text.RegularExpressions;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.ValueObjects;
 using Riber.Domain.ValueObjects.Phone.Exceptions;
 
 namespace Riber.Domain.ValueObjects.Phone;
@@ -30,13 +30,13 @@ public sealed partial record Phone : BaseValueObject
     public static Phone Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
-            throw new PhoneNullOrEmptyException(ErrorMessage.Phone.IsNullOrEmpty);
+            throw new PhoneNullOrEmptyException(PhoneErrors.Empty);
 
         value = value.Trim();
 
         return PhoneRegex().IsMatch(value)
             ? new Phone(RemoveFormatting(value))
-            : throw new PhoneFormatInvalidException(ErrorMessage.Phone.FormatInvalid);
+            : throw new PhoneFormatInvalidException(PhoneErrors.Format);
     }
 
     #endregion
@@ -62,7 +62,7 @@ public sealed partial record Phone : BaseValueObject
         {
             11 => $"({Value[..2]}) {Value[2..7]}-{Value[7..]}",
             10 => $"({Value[..2]}) {Value[2..6]}-{Value[6..]}",
-            _ => throw new PhoneFormatInvalidException(ErrorMessage.Phone.FormatInvalid)
+            _ => throw new PhoneFormatInvalidException(PhoneErrors.Format)
         };
 
     #endregion
@@ -70,7 +70,7 @@ public sealed partial record Phone : BaseValueObject
     #region Public Methods
 
     public static string RemoveFormatting(string value)
-        => new([..value.Where(char.IsDigit)]);
+        => new([.. value.Where(char.IsDigit)]);
 
     #endregion
 }

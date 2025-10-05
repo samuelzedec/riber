@@ -3,7 +3,7 @@ using Riber.Application.Abstractions.Queries;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Common;
 using Riber.Application.Exceptions;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.Common;
 
 namespace Riber.Application.Features.Auths.Queries.GetRefreshToken;
 
@@ -20,10 +20,10 @@ internal sealed class GetRefreshTokenQueryHandler(
         {
             var userId = currentUserService.GetUserId().ToString();
             await authService.RefreshUserSecurityAsync(userId);
-            
+
             var user = await authService.FindByIdAsync(userId)
-                ?? throw new NotFoundException(ErrorMessage.NotFound.User);
-            
+                ?? throw new NotFoundException(NotFoundErrors.User);
+
             var token = tokenService.GenerateToken(user);
             var refreshToken = tokenService.GenerateRefreshToken(user.Id, user.SecurityStamp);
 
@@ -36,7 +36,7 @@ internal sealed class GetRefreshTokenQueryHandler(
         }
         catch (Exception ex) when (ex is not UnauthorizedException)
         {
-            logger.LogError(ex, ErrorMessage.Exception.Unexpected(ex.GetType().Name, ex.Message));
+            logger.LogError(UnexpectedErrors.ForLogging(nameof(GetRefreshTokenQueryHandler), ex));
             throw;
         }
     }

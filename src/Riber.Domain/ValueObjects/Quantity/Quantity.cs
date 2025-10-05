@@ -1,4 +1,5 @@
-using Riber.Domain.Constants;
+
+using Riber.Domain.Constants.Messages.ValueObjects;
 using Riber.Domain.ValueObjects.Quantity.Exceptions;
 
 namespace Riber.Domain.ValueObjects.Quantity;
@@ -13,29 +14,29 @@ public sealed record Quantity : BaseValueObject, IEquatable<int>
 
     #region Constructors
 
-    private Quantity() 
+    private Quantity()
         => Value = 0;
 
-    private Quantity(int value) 
+    private Quantity(int value)
         => Value = value;
 
     #endregion
-    
+
     #region Factories
 
     public static Quantity Create(int value)
-        => value <= 0 
-            ? throw new InvalidQuantityException(ErrorMessage.Invalid.Quantity)
+        => value <= 0
+            ? throw new InvalidQuantityException(QuantityErrors.ValueMustBeGreaterThanZero)
             : new Quantity(value);
 
-    public static Quantity One() 
+    public static Quantity One()
         => new(1);
-    
-    public static Quantity Zero() 
+
+    public static Quantity Zero()
         => new();
 
     #endregion
-    
+
     #region Operators
 
     public static implicit operator int(Quantity quantity) => quantity.Value;
@@ -50,25 +51,25 @@ public sealed record Quantity : BaseValueObject, IEquatable<int>
         => Create(quantity.Value * multiplier);
 
     #endregion
-    
+
     #region Methods
 
-    public Quantity Add(int amount) 
+    public Quantity Add(int amount)
         => Create(Value + amount);
-    
-    public Quantity Subtract(int amount) 
+
+    public Quantity Subtract(int amount)
         => Create(Value - amount);
-    
-    public Quantity Multiply(int factor) 
+
+    public Quantity Multiply(int factor)
         => Create(Value * factor);
-    
-    public bool IsGreaterThan(int value) 
+
+    public bool IsGreaterThan(int value)
         => Value > value;
-    
-    public bool IsLessThan(int value) 
+
+    public bool IsLessThan(int value)
         => Value < value;
-    
-    public bool Equals(int value) 
+
+    public bool Equals(int value)
         => Value == value;
 
     #endregion

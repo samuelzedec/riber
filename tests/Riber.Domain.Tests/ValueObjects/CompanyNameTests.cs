@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.ValueObjects;
 using Riber.Domain.Exceptions;
 using Riber.Domain.ValueObjects.CompanyName;
 using Riber.Domain.ValueObjects.CompanyName.Exceptions;
@@ -102,7 +102,7 @@ public sealed class CompanyNameTests : BaseTest
 
         // Assert
         act.Should().Throw<DomainException>();
-        act.Should().ThrowExactly<InvalidFantasyNameException>().WithMessage(ErrorMessage.FantasyName.IsNullOrEmpty);
+        act.Should().ThrowExactly<InvalidFantasyNameException>().WithMessage(NameErrors.FantasyNameEmpty);
     }
 
     [Theory(DisplayName = "Should throw InvalidNameException for empty or null names")]
@@ -121,11 +121,11 @@ public sealed class CompanyNameTests : BaseTest
 
         // Assert
         act.Should().Throw<DomainException>();
-        act.Should().ThrowExactly<InvalidNameCorporateException>().WithMessage(ErrorMessage.Name.IsNullOrEmpty);
+        act.Should().ThrowExactly<InvalidNameCorporateException>().WithMessage(NameErrors.CorporateNameEmpty);
     }
 
     #endregion
-    
+
     #region Name Property Tests
 
     [Fact(DisplayName = "Should throw exception when name exceeds maximum length")]
@@ -141,7 +141,7 @@ public sealed class CompanyNameTests : BaseTest
         // Assert
         result.Should().Throw<DomainException>();
         result.Should().ThrowExactly<InvalidLengthCorporateNameException>()
-            .WithMessage(ErrorMessage.Name.LengthIsInvalid(CompanyName.MinLength, CompanyName.CorporateMaxLength));
+            .WithMessage(NameErrors.CorporateNameLength(CompanyName.MinLength, CompanyName.CorporateMaxLength));
     }
 
     [Fact(DisplayName = "Should throw exception when name exceeds minimum length")]
@@ -157,7 +157,7 @@ public sealed class CompanyNameTests : BaseTest
         // Assert
         result.Should().Throw<DomainException>();
         result.Should().ThrowExactly<InvalidLengthCorporateNameException>()
-            .WithMessage(ErrorMessage.Name.LengthIsInvalid(CompanyName.MinLength, CompanyName.CorporateMaxLength));
+            .WithMessage(NameErrors.CorporateNameLength(CompanyName.MinLength, CompanyName.CorporateMaxLength));
     }
 
     [Fact(DisplayName = "Should throw exception when name is empty")]
@@ -172,7 +172,7 @@ public sealed class CompanyNameTests : BaseTest
 
         // Assert
         result.Should().Throw<DomainException>();
-        result.Should().ThrowExactly<InvalidNameCorporateException>().WithMessage(ErrorMessage.Name.IsNullOrEmpty);
+        result.Should().ThrowExactly<InvalidNameCorporateException>().WithMessage(NameErrors.CorporateNameEmpty);
     }
 
     #endregion
@@ -192,7 +192,7 @@ public sealed class CompanyNameTests : BaseTest
         // Assert
         result.Should().Throw<DomainException>();
         result.Should().ThrowExactly<InvalidFantasyLengthNameException>().WithMessage(
-            ErrorMessage.FantasyName.LengthIsInvalid(CompanyName.MinLength, CompanyName.FantasyMaxLength));
+            NameErrors.FantasyNameLength(CompanyName.MinLength, CompanyName.FantasyMaxLength));
     }
 
     [Fact(DisplayName = "Should throw exception when fantasy name exceeds minimum length")]
@@ -208,7 +208,7 @@ public sealed class CompanyNameTests : BaseTest
         // Assert
         result.Should().Throw<DomainException>();
         result.Should().ThrowExactly<InvalidFantasyLengthNameException>().WithMessage(
-            ErrorMessage.FantasyName.LengthIsInvalid(CompanyName.MinLength, CompanyName.FantasyMaxLength));
+            NameErrors.FantasyNameLength(CompanyName.MinLength, CompanyName.FantasyMaxLength));
     }
 
     [Fact(DisplayName = "Should throw exception when fantasy name is empty")]
@@ -223,7 +223,7 @@ public sealed class CompanyNameTests : BaseTest
 
         // Assert
         result.Should().Throw<DomainException>();
-        result.Should().ThrowExactly<InvalidFantasyNameException>().WithMessage(ErrorMessage.FantasyName.IsNullOrEmpty);
+        result.Should().ThrowExactly<InvalidFantasyNameException>().WithMessage(NameErrors.FantasyNameEmpty);
     }
 
     [Fact(DisplayName = "Should return fantasy name value when implicitly converted to string")]

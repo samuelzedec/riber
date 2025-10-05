@@ -3,7 +3,7 @@ using Riber.Application.Abstractions.Commands;
 using Riber.Application.Common;
 using Riber.Application.Exceptions;
 using Riber.Application.Extensions;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Entities;
 using Riber.Domain.Repositories;
 using Riber.Domain.Specifications.Company;
@@ -26,16 +26,16 @@ internal sealed class UpdateCompanyCommandHandler(
         {
             await unitOfWork.BeginTransactionAsync(cancellationToken);
             var company = await companyRepository.GetSingleAsync(
-                new CompanyIdSpecification(request.CompanyId), cancellationToken) 
-                ?? throw new NotFoundException(ErrorMessage.NotFound.Company);
-            
+                new CompanyIdSpecification(request.CompanyId), cancellationToken)
+                ?? throw new NotFoundException(NotFoundErrors.Company);
+
             await UpdateEmailAsync(company, request.Email, cancellationToken);
             await UpdatePhoneAsync(company, request.Phone, cancellationToken);
             UpdateFantasyName(company, request.FantasyName);
 
             companyRepository.Update(company);
             await unitOfWork.CommitTransactionAsync(cancellationToken);
-            
+
             return new UpdateCompanyCommandResponse(
                 company.Name,
                 company.Email,
@@ -45,7 +45,7 @@ internal sealed class UpdateCompanyCommandHandler(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, ErrorMessage.Exception.Unexpected(ex.GetType().Name, ex.Message));
+            logger.LogError(UnexpectedErrors.ForLogging(nameof(UpdateCompanyCommandHandler), ex));
             await unitOfWork.RollbackTransactionAsync(cancellationToken);
             throw;
         }
@@ -56,10 +56,10 @@ internal sealed class UpdateCompanyCommandHandler(
         email = Email.Standardization(email);
         if (string.IsNullOrWhiteSpace(email) || company.Email.Value == email)
             return;
-        
+
         await CheckForConflictAsync(
             new CompanyEmailSpecification(email),
-            ErrorMessage.Conflict.EmailAlreadyExists,
+            ConflictErrors.Email,
             cancellationToken
         );
 
@@ -74,7 +74,7 @@ internal sealed class UpdateCompanyCommandHandler(
 
         await CheckForConflictAsync(
             new CompanyPhoneSpecification(phone),
-            ErrorMessage.Conflict.PhoneAlreadyExists,
+            ConflictErrors.Phone,
             cancellationToken
         );
 
@@ -83,9 +83,9 @@ internal sealed class UpdateCompanyCommandHandler(
 
     private void UpdateFantasyName(Company company, string fantasyName)
     {
-        if (string.IsNullOrWhiteSpace(fantasyName) || company.Name == fantasyName) 
+        if (string.IsNullOrWhiteSpace(fantasyName) || company.Name == fantasyName)
             return;
-        
+
         company.UpdateFantasyName(fantasyName);
     }
 

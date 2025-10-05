@@ -1,5 +1,5 @@
 using System.Text.RegularExpressions;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.ValueObjects;
 using Riber.Domain.ValueObjects.Email.Exceptions;
 
 namespace Riber.Domain.ValueObjects.Email;
@@ -17,28 +17,28 @@ public sealed partial record Email : BaseValueObject
     public const string RegexPattern = @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$";
 
     #endregion
-    
+
     #region Constructors
 
     private Email(string value)
         => Value = value;
 
     #endregion
-    
+
     #region Factories
 
     public static Email Create(string value)
     {
-        if(string.IsNullOrWhiteSpace(value)) 
-            throw new EmailNullOrEmptyException(ErrorMessage.Email.IsNullOrEmpty);
+        if (string.IsNullOrWhiteSpace(value))
+            throw new EmailNullOrEmptyException(EmailErrors.Empty);
 
-        value = Standardization(value); 
-        
+        value = Standardization(value);
+
         return EmailRegex().IsMatch(value)
             ? new Email(value)
-            : throw new EmailFormatInvalidException(ErrorMessage.Email.FormatInvalid);
-    }    
-    
+            : throw new EmailFormatInvalidException(EmailErrors.Format);
+    }
+
     #endregion
 
     #region Source Generator
@@ -50,7 +50,7 @@ public sealed partial record Email : BaseValueObject
 
     #region Operators
 
-    public static implicit operator string(Email email) 
+    public static implicit operator string(Email email)
         => email.ToString();
 
     #endregion
@@ -61,11 +61,11 @@ public sealed partial record Email : BaseValueObject
         => Value;
 
     #endregion
-    
+
     #region Public Methods
-    
+
     public static string Standardization(string value)
         => value.Trim().ToLower();
-    
+
     #endregion
 }

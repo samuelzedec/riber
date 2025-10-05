@@ -4,7 +4,7 @@ using Riber.Application.Abstractions.Services;
 using Riber.Application.Common;
 using Riber.Application.DTOs;
 using Riber.Application.Exceptions;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Repositories;
 
 namespace Riber.Application.Features.Users.Commands.CreateUser;
@@ -51,7 +51,7 @@ internal sealed class CreateUserCommandHandler(
         catch (Exception ex)
         {
             await unitOfWork.RollbackTransactionAsync(cancellationToken);
-            logger.LogError(ex, ErrorMessage.Exception.Unexpected(ex.GetType().Name, ex.Message));
+            logger.LogError(UnexpectedErrors.ForLogging(nameof(CreateUserCommandHandler), ex));
             throw;
         }
     }

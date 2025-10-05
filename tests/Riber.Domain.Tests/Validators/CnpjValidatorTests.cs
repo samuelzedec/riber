@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.ValueObjects;
 using Riber.Domain.Validators.DocumentValidator;
 using Riber.Domain.Validators.DocumentValidator.Exceptions;
 
@@ -38,7 +38,7 @@ public sealed class CnpjValidatorTests : BaseTest
         // Act & Assert
         Action act = () => _validator.IsValid("98765432000180");
         act.Should().Throw<InvalidCnpjException>()
-            .WithMessage(ErrorMessage.Cnpj.IsInvalid);
+            .WithMessage(CnpjErrors.Invalid);
     }
 
     #endregion
@@ -57,7 +57,7 @@ public sealed class CnpjValidatorTests : BaseTest
     {
         // Act & Assert
         Action act = () => _validator.IsValid(cnpj);
-        act.Should().Throw<InvalidLengthCnpjException>(ErrorMessage.Cnpj.LengthIsInvalid);
+        act.Should().Throw<InvalidLengthCnpjException>(CnpjErrors.Length);
     }
 
     #endregion
@@ -74,7 +74,7 @@ public sealed class CnpjValidatorTests : BaseTest
     {
         // Act & Assert
         Action act = () => _validator.IsValid(cnpj);
-        act.Should().Throw<InvalidCnpjException>().WithMessage(ErrorMessage.Cnpj.IsNullOrEmpty);
+        act.Should().Throw<InvalidCnpjException>().WithMessage(CnpjErrors.Empty);
     }
 
     #endregion

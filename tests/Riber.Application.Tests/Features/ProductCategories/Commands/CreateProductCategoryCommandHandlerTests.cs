@@ -5,7 +5,8 @@ using Moq;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Exceptions;
 using Riber.Application.Features.ProductCategories.Commands;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.Common;
+using Riber.Domain.Constants.Messages.Entities;
 using Riber.Domain.Entities;
 using Riber.Domain.Repositories;
 using Riber.Domain.Specifications.Core;
@@ -49,7 +50,7 @@ public sealed class CreateProductCategoryCommandHandlerTests : BaseTest
             Name: _faker.Commerce.Department(),
             Description: _faker.Lorem.Sentence()
         );
-        
+
         _productCategory = ProductCategory.Create(
             code: _command.Code.ToUpperInvariant(),
             name: _command.Name,
@@ -70,7 +71,7 @@ public sealed class CreateProductCategoryCommandHandlerTests : BaseTest
 
         _mockProductRepository
             .Setup(x => x.GetCategoryAsync(
-                It.IsAny<Specification<ProductCategory>>(), 
+                It.IsAny<Specification<ProductCategory>>(),
                 It.IsAny<CancellationToken>(),
                 It.IsAny<Expression<Func<ProductCategory, object>>[]>()))
             .ReturnsAsync((ProductCategory?)null);
@@ -93,13 +94,13 @@ public sealed class CreateProductCategoryCommandHandlerTests : BaseTest
         result.Value.ProductCategoryId.Should().NotBeEmpty();
 
         _mockProductRepository.Verify(x => x.GetCategoryAsync(
-                It.IsAny<Specification<ProductCategory>>(), 
+                It.IsAny<Specification<ProductCategory>>(),
                 It.IsAny<CancellationToken>(),
-                It.IsAny<Expression<Func<ProductCategory, object>>[]>()), 
+                It.IsAny<Expression<Func<ProductCategory, object>>[]>()),
             Times.Once);
 
         _mockProductRepository.Verify(x => x.CreateCategoryAsync(
-            It.Is<ProductCategory>(c => 
+            It.Is<ProductCategory>(c =>
                 c.Code == expectedCodeNormalized &&
                 c.Name == _command.Name &&
                 c.Description == _command.Description &&
@@ -166,7 +167,7 @@ public sealed class CreateProductCategoryCommandHandlerTests : BaseTest
 
         // Assert
         await result.Should().ThrowExactlyAsync<BadRequestException>()
-            .WithMessage(ErrorMessage.Product.CategoryCodeExist);
+            .WithMessage(ConflictErrors.CategoryCode);
 
         _mockProductRepository.Verify(x => x.GetCategoryAsync(
             It.IsAny<Specification<ProductCategory>>(), It.IsAny<CancellationToken>()), Times.Once);
@@ -200,7 +201,7 @@ public sealed class CreateProductCategoryCommandHandlerTests : BaseTest
 
         // Assert
         await result.Should().ThrowExactlyAsync<BadRequestException>()
-            .WithMessage(ErrorMessage.Product.CategoryCodeExist);
+            .WithMessage(ConflictErrors.CategoryCode);
 
         _mockProductRepository.Verify(x => x.GetCategoryAsync(
             It.IsAny<Specification<ProductCategory>>(), It.IsAny<CancellationToken>()), Times.Once);
@@ -229,7 +230,7 @@ public sealed class CreateProductCategoryCommandHandlerTests : BaseTest
     public async Task Handle_WhenCurrentUserServiceFails_ShouldLogErrorAndRethrow()
     {
         // Arrange
-        var expectedException = new BadRequestException(ErrorMessage.Invalid.CompanyId);
+        var expectedException = new BadRequestException(CompanyErrors.Invalid);
 
         _mockCurrentUserService
             .Setup(x => x.GetCompanyId())
@@ -246,7 +247,7 @@ public sealed class CreateProductCategoryCommandHandlerTests : BaseTest
 
         // Assert
         await result.Should().ThrowExactlyAsync<BadRequestException>()
-            .WithMessage(ErrorMessage.Invalid.CompanyId);
+            .WithMessage(CompanyErrors.Invalid);
 
         _mockCurrentUserService.Verify(x => x.GetCompanyId(), Times.Once);
 
@@ -412,7 +413,7 @@ public sealed class CreateProductCategoryCommandHandlerTests : BaseTest
             It.IsAny<Specification<ProductCategory>>(), It.IsAny<CancellationToken>()), Times.Once);
 
         _mockProductRepository.Verify(x => x.CreateCategoryAsync(
-            It.IsAny<ProductCategory>(), 
+            It.IsAny<ProductCategory>(),
             It.Is<CancellationToken>(ct => ct.IsCancellationRequested)), Times.Once);
 
         _mockUnitOfWork.Verify(x => x.SaveChangesAsync(
