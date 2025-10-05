@@ -48,6 +48,63 @@ namespace Riber.Infrastructure.Persistence.Migrations
                     b.ToTable("company", (string)null);
                 });
 
+            modelBuilder.Entity("Riber.Domain.Entities.Image", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("content_type");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<string>("Extension")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("extension");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("key");
+
+                    b.Property<long>("Length")
+                        .HasColumnType("bigint")
+                        .HasColumnName("length");
+
+                    b.Property<DateTimeOffset?>("MarkedForDeletionAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("marked_for_deletion_at");
+
+                    b.Property<string>("OriginalName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("original_name");
+
+                    b.Property<bool>("ShouldDelete")
+                        .HasColumnType("boolean")
+                        .HasColumnName("should_delete");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("modified_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_image_id");
+
+                    b.ToTable("image", (string)null);
+                });
+
             modelBuilder.Entity("Riber.Domain.Entities.Invitation", b =>
                 {
                     b.Property<Guid>("Id")
@@ -215,9 +272,9 @@ namespace Riber.Infrastructure.Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("description");
 
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("text")
-                        .HasColumnName("image_url");
+                    b.Property<Guid?>("ImageId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("image_id");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean")
@@ -233,12 +290,21 @@ namespace Riber.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamptz")
                         .HasColumnName("modified_at");
 
+                    b.Property<uint>("XminCode")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
                     b.HasKey("Id")
                         .HasName("pk_product_id");
 
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("CompanyId");
+
+                    b.HasIndex("ImageId")
+                        .IsUnique();
 
                     b.HasIndex(new[] { "Name" }, "ix_product_name");
 
@@ -1630,6 +1696,12 @@ namespace Riber.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_product_company_id");
 
+                    b.HasOne("Riber.Domain.Entities.Image", "Image")
+                        .WithOne()
+                        .HasForeignKey("Riber.Domain.Entities.Product", "ImageId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_product_image_id");
+
                     b.OwnsOne("Riber.Domain.ValueObjects.Money.Money", "UnitPrice", b1 =>
                         {
                             b1.Property<Guid>("ProductId")
@@ -1656,6 +1728,8 @@ namespace Riber.Infrastructure.Persistence.Migrations
                     b.Navigation("Category");
 
                     b.Navigation("Company");
+
+                    b.Navigation("Image");
 
                     b.Navigation("UnitPrice")
                         .IsRequired();

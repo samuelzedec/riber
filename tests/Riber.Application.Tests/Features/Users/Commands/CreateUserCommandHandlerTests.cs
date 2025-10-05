@@ -6,7 +6,7 @@ using Riber.Application.Abstractions.Services;
 using Riber.Application.DTOs;
 using Riber.Application.Exceptions;
 using Riber.Application.Features.Users.Commands.CreateUser;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Enums;
 using Riber.Domain.Repositories;
 using Riber.Domain.Tests;
@@ -77,7 +77,7 @@ public sealed class CreateUserCommandHandlerTests : BaseTest
         result.Value.UserName.Should().Be(_command.UserName);
 
         _mockUserCreationService.Verify(x => x.CreateCompleteUserAsync(
-            It.Is<CreateUserCompleteDTO>(dto => 
+            It.Is<CreateUserCompleteDTO>(dto =>
                 dto.FullName == _command.FullName &&
                 dto.UserName == _command.UserName &&
                 dto.Email == _command.Email &&
@@ -111,7 +111,7 @@ public sealed class CreateUserCommandHandlerTests : BaseTest
             .Setup(x => x.CreateCompleteUserAsync(
                 It.IsAny<CreateUserCompleteDTO>(),
                 It.IsAny<CancellationToken>()))
-            .ThrowsAsync(new ConflictException(ErrorMessage.Conflict.EmailAlreadyExists));
+            .ThrowsAsync(new ConflictException(ConflictErrors.Email));
 
         _mockUnitOfWork
             .Setup(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()));
@@ -124,7 +124,7 @@ public sealed class CreateUserCommandHandlerTests : BaseTest
 
         // Assert
         await result.Should().ThrowExactlyAsync<ConflictException>()
-            .WithMessage(ErrorMessage.Conflict.EmailAlreadyExists);
+            .WithMessage(ConflictErrors.Email);
 
         _mockUserCreationService.Verify(x => x.CreateCompleteUserAsync(
             It.IsAny<CreateUserCompleteDTO>(), It.IsAny<CancellationToken>()), Times.Once);
@@ -279,7 +279,7 @@ public sealed class CreateUserCommandHandlerTests : BaseTest
             .ThrowAsync<OperationCanceledException>();
 
         _mockUserCreationService.Verify(x => x.CreateCompleteUserAsync(
-            It.IsAny<CreateUserCompleteDTO>(), 
+            It.IsAny<CreateUserCompleteDTO>(),
             It.Is<CancellationToken>(ct => ct.IsCancellationRequested)), Times.Once);
 
         _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(

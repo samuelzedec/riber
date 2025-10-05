@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.ValueObjects;
 using Riber.Domain.ValueObjects.Phone;
 using Riber.Domain.ValueObjects.Phone.Exceptions;
 
@@ -36,7 +36,7 @@ public sealed class PhoneTests : BaseTest
     public void Create_WhenNullOrEmptyPhone_ShouldThrowPhoneNullOrEmptyException(string phone)
     {
         var act = () => Phone.Create(phone);
-        act.Should().Throw<PhoneNullOrEmptyException>().WithMessage(ErrorMessage.Phone.IsNullOrEmpty);
+        act.Should().Throw<PhoneNullOrEmptyException>().WithMessage(PhoneErrors.Empty);
     }
 
     [Theory(DisplayName = "Should throw PhoneFormatInvalidException for invalid phone formats")]
@@ -47,7 +47,7 @@ public sealed class PhoneTests : BaseTest
     public void Create_WhenInvalidPhoneFormat_ShouldThrowPhoneFormatInvalidException(string phone)
     {
         var act = () => Phone.Create(phone);
-        act.Should().ThrowExactly<PhoneFormatInvalidException>().WithMessage(ErrorMessage.Phone.FormatInvalid);
+        act.Should().ThrowExactly<PhoneFormatInvalidException>().WithMessage(PhoneErrors.Format);
     }
 
     #endregion

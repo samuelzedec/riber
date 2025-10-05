@@ -3,7 +3,7 @@ using Riber.Application.Abstractions.Commands;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Common;
 using Riber.Application.Exceptions;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.Common;
 
 namespace Riber.Application.Features.Auths.Commands.Login;
 
@@ -18,8 +18,8 @@ internal sealed class LoginCommandHandler(
         try
         {
             var user = await authService.LoginAsync(command.EmailOrUserName, command.Password)
-                ?? throw new UnauthorizedException(ErrorMessage.Invalid.Password);
-            
+                ?? throw new UnauthorizedException(PasswordErrors.Invalid);
+
             var token = tokenService.GenerateToken(user);
             var refreshToken = tokenService.GenerateRefreshToken(user.Id, user.SecurityStamp);
 
@@ -32,7 +32,7 @@ internal sealed class LoginCommandHandler(
         }
         catch (Exception ex) when (ex is not UnauthorizedException)
         {
-            logger.LogError(ex, ErrorMessage.Exception.Unexpected(ex.GetType().Name, ex.Message));
+            logger.LogError(UnexpectedErrors.ForLogging(nameof(LoginCommandHandler), ex));
             throw;
         }
     }

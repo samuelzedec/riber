@@ -89,6 +89,6 @@ public sealed class ProductByCategoryIdSpecificationTests : BaseTest
             _faker.Random.Decimal(1, 1000),
             Guid.NewGuid(),
             Guid.NewGuid(),
-            _faker.Image.PicsumUrl()
+            Guid.Empty
         );
 }

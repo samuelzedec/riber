@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Riber.Domain.Abstractions;
 using Riber.Domain.Abstractions.ValueObjects;
 using Riber.Domain.ValueObjects.CompanyName;
 using Riber.Domain.ValueObjects.FullName;
@@ -101,7 +102,8 @@ public static class EntityConfigurationExtensions
         return builder;
     }
 
-    public static EntityTypeBuilder<T> ConfigureRandomToken<T>(this EntityTypeBuilder<T> builder, string tableName, string columnName)
+    public static EntityTypeBuilder<T> ConfigureRandomToken<T>(this EntityTypeBuilder<T> builder, string tableName,
+        string columnName)
         where T : class, IHasRandomToken
     {
         builder.OwnsOne(x => x.Token, randomToken =>
@@ -145,9 +147,8 @@ public static class EntityConfigurationExtensions
                 .HasColumnType("text")
                 .HasMaxLength(255)
                 .IsRequired(false);
-            
         }).Navigation(x => x.ItemDiscount).IsRequired(false);
-        
+
         return builder;
     }
 
@@ -168,9 +169,8 @@ public static class EntityConfigurationExtensions
                 .HasColumnType("text")
                 .HasMaxLength(3)
                 .IsRequired();
-            
         }).Navigation(x => x.UnitPrice).IsRequired();
-        
+
         return builder;
     }
 
@@ -184,8 +184,20 @@ public static class EntityConfigurationExtensions
                 .HasColumnName("quantity")
                 .HasColumnType("integer")
                 .IsRequired();
-            
         }).Navigation(x => x.Quantity).IsRequired();
+        return builder;
+    }
+
+    public static EntityTypeBuilder<T> ConfigureXmin<T>(this EntityTypeBuilder<T> builder)
+        where T : class, IHasXmin
+    {
+        builder
+            .Property(x => x.XminCode)
+            .HasColumnName("xmin")
+            .HasColumnType("xid")
+            .ValueGeneratedOnAddOrUpdate()
+            .IsConcurrencyToken();
+
         return builder;
     }
 }

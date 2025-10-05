@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.ValueObjects;
 using Riber.Domain.Validators.DocumentValidator;
 using Riber.Domain.Validators.DocumentValidator.Exceptions;
 
@@ -36,7 +36,7 @@ public sealed class CpfValidatorTests : BaseTest
         // Act & Assert
         Action act = () => _validator.IsValid("12345678901");
         act.Should().Throw<InvalidCpfException>()
-            .WithMessage(ErrorMessage.Cpf.IsInvalid);
+            .WithMessage(CpfErrors.Invalid);
     }
 
     #endregion
@@ -55,7 +55,7 @@ public sealed class CpfValidatorTests : BaseTest
     {
         // Act & Assert
         Action act = () => _validator.IsValid(cpf);
-        act.Should().Throw<InvalidLengthCpfException>(ErrorMessage.Cpf.LengthIsInvalid);
+        act.Should().Throw<InvalidLengthCpfException>(CpfErrors.Length);
     }
 
     #endregion
@@ -72,7 +72,7 @@ public sealed class CpfValidatorTests : BaseTest
     {
         // Act & Assert
         Action act = () => _validator.IsValid(cpf);
-        act.Should().Throw<InvalidCpfException>().WithMessage(ErrorMessage.Cpf.IsNullOrEmpty);
+        act.Should().Throw<InvalidCpfException>().WithMessage(CpfErrors.Empty);
     }
 
     #endregion
@@ -95,7 +95,7 @@ public sealed class CpfValidatorTests : BaseTest
         // Act & Assert
         Action act = () => _validator.IsValid(cpf);
         act.Should().Throw<InvalidCpfException>()
-            .WithMessage(ErrorMessage.Cpf.OnlyRepeatedDigits);
+            .WithMessage(CpfErrors.OnlyRepeatedDigits);
     }
 
     #endregion

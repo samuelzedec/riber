@@ -4,7 +4,7 @@ using Moq;
 using Riber.Application.Exceptions;
 using Riber.Application.Extensions;
 using Riber.Application.Features.Companies.Queries.GetCompanyById;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Entities;
 using Riber.Domain.Enums;
 using Riber.Domain.Repositories;
@@ -32,7 +32,7 @@ public sealed class GetCompanyByIdQueryHandlerTests : BaseTest
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _mockCompanyRepository = new Mock<ICompanyRepository>();
         _queryHandler = new GetCompanyByIdQueryHandler(_mockUnitOfWork.Object);
-    
+
         _company = Company.Create(
             CompanyName.Create(_faker.Person.FullName, _faker.Company.CompanyName()),
             TaxId.Create(_faker.Company.Cnpj(), TaxIdType.LegalEntityWithCnpj),
@@ -76,7 +76,7 @@ public sealed class GetCompanyByIdQueryHandlerTests : BaseTest
         result.Value.Type.Should().Be(_company.TaxId.Type.GetDescription());
 
         _mockCompanyRepository.Verify(x => x.GetSingleAsync(
-            It.IsAny<Specification<Company>>(), 
+            It.IsAny<Specification<Company>>(),
             It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -105,10 +105,10 @@ public sealed class GetCompanyByIdQueryHandlerTests : BaseTest
         // Assert
         await result.Should()
             .ThrowAsync<NotFoundException>()
-            .WithMessage(ErrorMessage.NotFound.Company);
+            .WithMessage(NotFoundErrors.Company);
 
         _mockCompanyRepository.Verify(x => x.GetSingleAsync(
-            It.IsAny<Specification<Company>>(), 
+            It.IsAny<Specification<Company>>(),
             It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -117,7 +117,7 @@ public sealed class GetCompanyByIdQueryHandlerTests : BaseTest
     {
         // Arrange
         var emptyQuery = new GetCompanyByIdQuery(Guid.Empty);
-        
+
         _mockCompanyRepository
             .Setup(x => x.GetSingleAsync(
                 It.IsAny<Specification<Company>>(),
@@ -135,10 +135,10 @@ public sealed class GetCompanyByIdQueryHandlerTests : BaseTest
         // Assert
         await result.Should()
             .ThrowAsync<NotFoundException>()
-            .WithMessage(ErrorMessage.NotFound.Company);
+            .WithMessage(NotFoundErrors.Company);
 
         _mockCompanyRepository.Verify(x => x.GetSingleAsync(
-            It.IsAny<Specification<Company>>(), 
+            It.IsAny<Specification<Company>>(),
             It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -176,7 +176,7 @@ public sealed class GetCompanyByIdQueryHandlerTests : BaseTest
     }
 
     #endregion
-    
+
     #region Response Mapping Tests
 
     [Fact(DisplayName = "Should map all company properties correctly to response")]
@@ -199,14 +199,14 @@ public sealed class GetCompanyByIdQueryHandlerTests : BaseTest
 
         // Assert
         result.Value.Should().NotBeNull();
-        
+
         result.Value.CorporateName.Should().Be(_company.Name.Corporate);
         result.Value.FantasyName.Should().Be(_company.Name.Fantasy);
         result.Value.Email.Should().Be(_company.Email);
         result.Value.Phone.Should().Be(_company.Phone);
         result.Value.TaxId.Should().Be(_company.TaxId);
         result.Value.Type.Should().Be(_company.TaxId.Type.GetDescription());
-        
+
         result.Value.CorporateName.Should().NotBeNullOrEmpty();
         result.Value.FantasyName.Should().NotBeNullOrEmpty();
         result.Value.Email.Should().NotBeNullOrEmpty();

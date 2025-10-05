@@ -1,5 +1,5 @@
 using FluentAssertions;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.Entities;
 using Riber.Domain.Entities;
 using Riber.Domain.Exceptions;
 
@@ -64,10 +64,12 @@ public sealed class ProductCategoryTests : BaseTest
         result.Code.Should().Be(lowercaseCode.ToUpperInvariant());
     }
 
-    [Theory(DisplayName = "Should throw ProductCategoryNameNullException when name is invalid")]
+    [Theory(DisplayName = "Should throw exception when name is null or empty")]
     [InlineData("")]
     [InlineData("   ")]
-    public void Create_WhenNameIsInvalid_ShouldThrowProductCategoryNameNullException(string invalidName)
+    [InlineData("\t")]
+    [InlineData("\n")]
+    public void Create_WhenNameIsNullOrEmpty_ShouldThrowException(string invalidName)
     {
         // Arrange
         var description = _faker.Commerce.ProductDescription();
@@ -79,13 +81,15 @@ public sealed class ProductCategoryTests : BaseTest
 
         // Assert
         act.Should().Throw<ProductCategoryNameNullException>()
-           .WithMessage(ErrorMessage.Product.CategoryNameIsNull);
+           .WithMessage(CategoryErrors.NameEmpty);
     }
 
-    [Theory(DisplayName = "Should throw ProductCategoryCodeNullException when code is invalid")]
+    [Theory(DisplayName = "Should throw exception when code is null or empty")]
     [InlineData("")]
     [InlineData("   ")]
-    public void Create_WhenCodeIsInvalid_ShouldThrowProductCategoryCodeNullException(string invalidCode)
+    [InlineData("\t")]
+    [InlineData("\n")]
+    public void Create_WhenCodeIsNullOrEmpty_ShouldThrowException(string invalidCode)
     {
         // Arrange
         var name = _faker.Commerce.Categories(1).First();
@@ -93,28 +97,28 @@ public sealed class ProductCategoryTests : BaseTest
         var companyId = Guid.NewGuid();
 
         // Act
-        var act = () => ProductCategory.Create(name, description, invalidCode, companyId);
+        var act = () => ProductCategory.Create(invalidCode, name, description, companyId);
 
         // Assert
-        act.Should().Throw<ProductCategoryCodeNullException>()
-           .WithMessage(ErrorMessage.Product.CategoryCodeIsNull);
+        act.Should().Throw<DomainException>()
+           .WithMessage(CategoryErrors.NameEmpty);
     }
 
-    [Fact(DisplayName = "Should throw IdentifierNullException when company id is empty")]
-    public void Create_WhenCompanyIdIsEmpty_ShouldThrowIdentifierNullException()
+    [Fact(DisplayName = "Should throw exception when company id is empty")]
+    public void Create_WhenCompanyIdIsEmpty_ShouldThrowException()
     {
         // Arrange
         var name = _faker.Commerce.Categories(1).First();
         var description = _faker.Commerce.ProductDescription();
         var code = _faker.Random.AlphaNumeric(3);
-        var emptyCompanyId = Guid.Empty;
+        var companyId = Guid.Empty;
 
         // Act
-        var act = () => ProductCategory.Create(name, description, code, emptyCompanyId);
+        var act = () => ProductCategory.Create(code, name, description, companyId);
 
         // Assert
-        act.Should().Throw<IdentifierNullException>()
-           .WithMessage(ErrorMessage.Invalid.CompanyId);
+        act.Should().Throw<DomainException>()
+           .WithMessage(CompanyErrors.Invalid);
     }
 
     #endregion
@@ -143,27 +147,26 @@ public sealed class ProductCategoryTests : BaseTest
         category.Description.Should().Be(newDescription);
     }
 
-    [Theory(DisplayName = "Should throw ProductCategoryNameNullException when updating with invalid name")]
+    [Theory(DisplayName = "Should throw exception when updating with null or empty name")]
     [InlineData("")]
     [InlineData("   ")]
-    public void UpdateDetails_WhenNameIsInvalid_ShouldThrowProductCategoryNameNullException(string invalidName)
+    [InlineData("\t")]
+    [InlineData("\n")]
+    public void UpdateName_WhenNameIsNullOrEmpty_ShouldThrowException(string invalidName)
     {
         // Arrange
-        var category = ProductCategory.Create(
-            _faker.Commerce.Categories(1).First(),
-            _faker.Commerce.ProductDescription(),
-            _faker.Random.AlphaNumeric(3),
-            Guid.NewGuid()
-        );
-
+        var name = _faker.Commerce.Categories(1).First();
         var description = _faker.Commerce.ProductDescription();
+        var code = _faker.Random.AlphaNumeric(3);
+        var companyId = Guid.NewGuid();
+        var category = ProductCategory.Create(code, name, description, companyId);
 
         // Act
-        var act = () => category.UpdateDetails(invalidName, description);
+        var act = () => category.UpdateDetails(invalidName, null);
 
         // Assert
-        act.Should().Throw<ProductCategoryNameNullException>()
-           .WithMessage(ErrorMessage.Product.CategoryNameIsNull);
+        act.Should().Throw<DomainException>()
+           .WithMessage(CategoryErrors.NameEmpty);
     }
 
     #endregion

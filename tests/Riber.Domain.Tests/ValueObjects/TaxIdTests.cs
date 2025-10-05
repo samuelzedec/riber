@@ -1,6 +1,6 @@
 ﻿using Bogus.Extensions.Brazil;
 using FluentAssertions;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.ValueObjects;
 using Riber.Domain.Enums;
 using Riber.Domain.Exceptions;
 using Riber.Domain.Validators.DocumentValidator;
@@ -108,7 +108,7 @@ public sealed class TaxIdTests : BaseTest
 
         // Assert
         act.Should().Throw<DomainException>();
-        act.Should().ThrowExactly<InvalidCpfException>().WithMessage(ErrorMessage.Cpf.OnlyRepeatedDigits);
+        act.Should().ThrowExactly<InvalidCpfException>().WithMessage(CpfErrors.OnlyRepeatedDigits);
     }
 
     [Theory(DisplayName = "Should throw exception when creating with CPF having invalid verification digits")]
@@ -122,7 +122,7 @@ public sealed class TaxIdTests : BaseTest
 
         // Assert
         act.Should().Throw<DomainException>();
-        act.Should().ThrowExactly<InvalidCpfException>().WithMessage(ErrorMessage.Cpf.IsInvalid);
+        act.Should().ThrowExactly<InvalidCpfException>().WithMessage(CpfErrors.Invalid);
     }
 
     [Theory(DisplayName = "Should throw exception when creating with CPF having invalid length")]
@@ -138,7 +138,7 @@ public sealed class TaxIdTests : BaseTest
 
         // Assert
         act.Should().Throw<DomainException>();
-        act.Should().ThrowExactly<InvalidLengthCpfException>().WithMessage(ErrorMessage.Cpf.LengthIsInvalid);
+        act.Should().ThrowExactly<InvalidLengthCpfException>().WithMessage(CpfErrors.Length);
     }
 
     [Theory(DisplayName = "Should throw exception when creating with empty or whitespace CPF")]
@@ -155,7 +155,7 @@ public sealed class TaxIdTests : BaseTest
 
         // Assert
         act.Should().Throw<DomainException>();
-        act.Should().ThrowExactly<InvalidCpfException>().WithMessage(ErrorMessage.Cpf.IsNullOrEmpty);
+        act.Should().ThrowExactly<InvalidCpfException>().WithMessage(CpfErrors.Empty);
     }
 
     #endregion
@@ -176,7 +176,7 @@ public sealed class TaxIdTests : BaseTest
 
         // Assert
         act.Should().Throw<DomainException>();
-        act.Should().ThrowExactly<InvalidCnpjException>().WithMessage(ErrorMessage.Cnpj.OnlyRepeatedDigits);
+        act.Should().ThrowExactly<InvalidCnpjException>().WithMessage(CnpjErrors.OnlyRepeatedDigits);
     }
 
     [Theory(DisplayName = "Should throw exception when creating with CNPJ having invalid verification digits")]
@@ -190,7 +190,7 @@ public sealed class TaxIdTests : BaseTest
 
         // Assert
         act.Should().Throw<DomainException>();
-        act.Should().ThrowExactly<InvalidCnpjException>().WithMessage(ErrorMessage.Cnpj.IsInvalid);
+        act.Should().ThrowExactly<InvalidCnpjException>().WithMessage(CnpjErrors.Invalid);
     }
 
     [Theory(DisplayName = "Should throw exception when creating with CNPJ having invalid length")]
@@ -206,7 +206,7 @@ public sealed class TaxIdTests : BaseTest
 
         // Assert
         act.Should().Throw<DomainException>();
-        act.Should().ThrowExactly<InvalidLengthCnpjException>().WithMessage(ErrorMessage.Cnpj.LengthIsInvalid);
+        act.Should().ThrowExactly<InvalidLengthCnpjException>().WithMessage(CnpjErrors.Length);
     }
 
     [Theory(DisplayName = "Should throw exception when creating with empty or whitespace CNPJ")]
@@ -223,9 +223,9 @@ public sealed class TaxIdTests : BaseTest
 
         // Assert
         act.Should().Throw<DomainException>();
-        act.Should().ThrowExactly<InvalidCnpjException>().WithMessage(ErrorMessage.Cnpj.IsNullOrEmpty);
+        act.Should().ThrowExactly<InvalidCnpjException>().WithMessage(CnpjErrors.Empty);
     }
-    
+
     #endregion
 
     #region Overrides Tests
@@ -238,7 +238,7 @@ public sealed class TaxIdTests : BaseTest
         // Act
         var result = TaxId.Create(document, expectedType);
         string documentString = result;
-        
+
         // Assert
         result.Value.Should().Be(document);
         result.Type.Should().Be(expectedType);

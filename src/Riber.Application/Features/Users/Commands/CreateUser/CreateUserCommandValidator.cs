@@ -1,5 +1,6 @@
 using FluentValidation;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.Entities;
+using Riber.Domain.Constants.Messages.ValueObjects;
 using Riber.Domain.ValueObjects.Email;
 using Riber.Domain.ValueObjects.Phone;
 
@@ -11,13 +12,13 @@ internal sealed class CreateUserCommandValidator : AbstractValidator<CreateUserC
     {
         RuleFor(x => x.FullName)
             .NotEmpty()
-            .WithMessage(ErrorMessage.Name.IsNullOrEmpty);
+            .WithMessage(NameErrors.FullNameEmpty);
 
         RuleFor(x => x.TaxId)
             .NotEmpty()
-            .WithMessage(ErrorMessage.Cpf.IsNullOrEmpty)
+            .WithMessage(CpfErrors.Empty)
             .Matches(@"^(?!^(\d)\1{10}$)(\d{3}\.?\d{3}\.?\d{3}-?\d{2})$")
-            .WithMessage(ErrorMessage.Cpf.LengthIsInvalid);
+            .WithMessage(CpfErrors.Invalid);
 
         RuleFor(x => x.Position)
             .NotNull()
@@ -29,7 +30,7 @@ internal sealed class CreateUserCommandValidator : AbstractValidator<CreateUserC
         {
             RuleFor(x => x.CompanyId)
                 .NotEqual(Guid.Empty)
-                .WithMessage(ErrorMessage.Invalid.CompanyId);
+                .WithMessage(CompanyErrors.Invalid);
         });
 
         RuleFor(x => x.UserName)
@@ -44,14 +45,14 @@ internal sealed class CreateUserCommandValidator : AbstractValidator<CreateUserC
 
         RuleFor(x => x.Email)
             .NotEmpty()
-            .WithMessage(ErrorMessage.Email.IsNullOrEmpty)
+            .WithMessage(EmailErrors.Empty)
             .Matches(Email.RegexPattern)
-            .WithMessage(ErrorMessage.Email.FormatInvalid);
+            .WithMessage(EmailErrors.Format);
 
         RuleFor(x => x.PhoneNumber)
             .NotEmpty()
-            .WithMessage(ErrorMessage.Phone.IsNullOrEmpty)
+            .WithMessage(PhoneErrors.Empty)
             .Matches(Phone.RegexPattern)
-            .WithMessage(ErrorMessage.Phone.FormatInvalid);
+            .WithMessage(PhoneErrors.Format);
     }
 }

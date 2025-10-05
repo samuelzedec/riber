@@ -2,7 +2,7 @@ using Riber.Application.Abstractions.Services;
 using Riber.Application.DTOs;
 using Riber.Application.Exceptions;
 using Riber.Domain.Abstractions;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Entities;
 using Riber.Domain.Repositories;
 using Riber.Domain.Specifications.User;
@@ -12,8 +12,8 @@ using Riber.Domain.ValueObjects.Phone;
 namespace Riber.Infrastructure.Services;
 
 public sealed class UserCreationService(
-    IUnitOfWork unitOfWork, 
-    IAuthService authService) 
+    IUnitOfWork unitOfWork,
+    IAuthService authService)
     : IUserCreationService
 {
     public async Task CreateCompleteUserAsync(
@@ -38,7 +38,7 @@ public sealed class UserCreationService(
             UserDomainId: domainUser.Id,
             Roles: dto.Roles
         );
-        
+
         await unitOfWork.Users.CreateAsync(domainUser, cancellationToken);
         await authService.CreateAsync(applicationUser, cancellationToken);
     }
@@ -57,15 +57,15 @@ public sealed class UserCreationService(
     private async Task ValidateUserDoesNotExistAsync(string email, string userName, string phoneNumber, string taxId)
     {
         if (await authService.FindByEmailAsync(email) is not null)
-            throw new ConflictException(ErrorMessage.Conflict.EmailAlreadyExists);
+            throw new ConflictException(ConflictErrors.Email);
 
         if (await authService.FindByUserNameAsync(userName) is not null)
-            throw new ConflictException(ErrorMessage.Conflict.UserNameAlreadyExists);
+            throw new ConflictException(ConflictErrors.UserName);
 
         if (await authService.FindByPhoneAsync(phoneNumber) is not null)
-            throw new ConflictException(ErrorMessage.Conflict.PhoneAlreadyExists);
+            throw new ConflictException(ConflictErrors.Phone);
 
         if (await unitOfWork.Users.ExistsAsync(new UserTaxIdSpecification(IDocumentValidator.SanitizeStatic(taxId))))
-            throw new ConflictException(ErrorMessage.Conflict.TaxIdAlreadyExists);
+            throw new ConflictException(ConflictErrors.TaxId);
     }
 }

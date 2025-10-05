@@ -5,7 +5,7 @@ using Riber.Infrastructure.Services;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.DTOs;
 using Riber.Application.Exceptions;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Entities;
 using Riber.Domain.Repositories;
 using Riber.Domain.Enums;
@@ -29,7 +29,7 @@ public sealed class UserCreationServiceTests : BaseTest
         _mockAuthService = new Mock<IAuthService>();
         _mockUserRepository = new Mock<IUserRepository>();
         _service = new UserCreationService(_mockUnitOfWork.Object, _mockAuthService.Object);
-        
+
         _dto = CreateFaker<CreateUserCompleteDTO>()
             .CustomInstantiator(f => new CreateUserCompleteDTO(
                 FullName: f.Person.FullName,
@@ -117,11 +117,11 @@ public sealed class UserCreationServiceTests : BaseTest
             .ReturnsAsync(_response);
 
         // Act
-        var result  = async () => await _service.CreateCompleteUserAsync(_dto, CancellationToken.None);
+        var result = async () => await _service.CreateCompleteUserAsync(_dto, CancellationToken.None);
 
         // Assert
         await result.Should().ThrowExactlyAsync<ConflictException>()
-            .WithMessage(ErrorMessage.Conflict.EmailAlreadyExists);
+            .WithMessage(ConflictErrors.Email);
 
         _mockAuthService.Verify(x => x.FindByEmailAsync(It.IsAny<string>()), Times.Once);
         _mockAuthService.Verify(x => x.FindByUserNameAsync(It.IsAny<string>()), Times.Never);
@@ -147,12 +147,12 @@ public sealed class UserCreationServiceTests : BaseTest
             .ReturnsAsync(_response);
 
         // Act
-        var result  = async () => await _service.CreateCompleteUserAsync(_dto, CancellationToken.None);
+        var result = async () => await _service.CreateCompleteUserAsync(_dto, CancellationToken.None);
 
         // Assert
         await result.Should().ThrowExactlyAsync<ConflictException>()
-            .WithMessage(ErrorMessage.Conflict.UserNameAlreadyExists);
-        
+            .WithMessage(ConflictErrors.UserName);
+
         _mockAuthService.Verify(x => x.FindByEmailAsync(It.IsAny<string>()), Times.Once);
         _mockAuthService.Verify(x => x.FindByUserNameAsync(It.IsAny<string>()), Times.Once);
         _mockAuthService.Verify(x => x.FindByPhoneAsync(It.IsAny<string>()), Times.Never);
@@ -181,12 +181,12 @@ public sealed class UserCreationServiceTests : BaseTest
             .ReturnsAsync(_response);
 
         // Act
-        var result  = async () => await _service.CreateCompleteUserAsync(_dto, CancellationToken.None);
+        var result = async () => await _service.CreateCompleteUserAsync(_dto, CancellationToken.None);
 
         // Assert
         await result.Should().ThrowExactlyAsync<ConflictException>()
-            .WithMessage(ErrorMessage.Conflict.PhoneAlreadyExists);
-        
+            .WithMessage(ConflictErrors.Phone);
+
         _mockAuthService.Verify(x => x.FindByEmailAsync(It.IsAny<string>()), Times.Once);
         _mockAuthService.Verify(x => x.FindByUserNameAsync(It.IsAny<string>()), Times.Once);
         _mockAuthService.Verify(x => x.FindByPhoneAsync(It.IsAny<string>()), Times.Once);
@@ -223,12 +223,12 @@ public sealed class UserCreationServiceTests : BaseTest
             .ReturnsAsync(true);
 
         // Act
-        var result  = async () => await _service.CreateCompleteUserAsync(_dto, CancellationToken.None);
+        var result = async () => await _service.CreateCompleteUserAsync(_dto, CancellationToken.None);
 
         // Assert
         await result.Should().ThrowExactlyAsync<ConflictException>()
-            .WithMessage(ErrorMessage.Conflict.TaxIdAlreadyExists);
-        
+            .WithMessage(ConflictErrors.TaxId);
+
         _mockAuthService.Verify(x => x.FindByEmailAsync(It.IsAny<string>()), Times.Once);
         _mockAuthService.Verify(x => x.FindByUserNameAsync(It.IsAny<string>()), Times.Once);
         _mockAuthService.Verify(x => x.FindByPhoneAsync(It.IsAny<string>()), Times.Once);

@@ -5,7 +5,7 @@ using Riber.Application.Common;
 using Riber.Application.DTOs;
 using Riber.Application.Exceptions;
 using Riber.Application.Extensions;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Entities;
 using Riber.Domain.Enums;
 using Riber.Domain.Events;
@@ -59,7 +59,7 @@ internal sealed class CreateCompanyWithAdminCommandHandler(
                 ),
                 cancellationToken
             );
-            
+
             await unitOfWork.CommitTransactionAsync(cancellationToken);
             return new CreateCompanyWithAdminCommandResponse(
                 CompanyId: companyEntity.Id,
@@ -79,7 +79,7 @@ internal sealed class CreateCompanyWithAdminCommandHandler(
         catch (Exception ex)
         {
             await unitOfWork.RollbackTransactionAsync(cancellationToken);
-            logger.LogError(ex, ErrorMessage.Exception.Unexpected(ex.GetType().Name, ex.Message));
+            logger.LogError(UnexpectedErrors.ForLogging(nameof(CreateCompanyWithAdminCommandHandler), ex));
             throw;
         }
     }
@@ -91,14 +91,14 @@ internal sealed class CreateCompanyWithAdminCommandHandler(
         var companyRepository = unitOfWork.Companies;
         var normalizedPhone = Phone.RemoveFormatting(request.Phone);
         var normalizedEmail = Email.Standardization(request.Email);
-        var normalizedTaxId = new string([..request.TaxId.Where(char.IsDigit)]);
-        
+        var normalizedTaxId = new string([.. request.TaxId.Where(char.IsDigit)]);
+
         var validations = new (Specification<Company>, string message)[]
         {
-            (new CorporateNameSpecification(request.CorporateName), ErrorMessage.Conflict.CorporateNameAlreadyExists),
-            (new CompanyTaxIdSpecification(normalizedTaxId), ErrorMessage.Conflict.TaxIdAlreadyExists),
-            (new CompanyEmailSpecification(normalizedEmail), ErrorMessage.Conflict.EmailAlreadyExists),
-            (new CompanyPhoneSpecification(normalizedPhone), ErrorMessage.Conflict.PhoneAlreadyExists)
+            (new CorporateNameSpecification(request.CorporateName), ConflictErrors.CorporateName),
+            (new CompanyTaxIdSpecification(normalizedTaxId), ConflictErrors.TaxId),
+            (new CompanyEmailSpecification(normalizedEmail), ConflictErrors.Email),
+            (new CompanyPhoneSpecification(normalizedPhone), ConflictErrors.Phone)
         };
 
         foreach ((Specification<Company> expression, string message) in validations)

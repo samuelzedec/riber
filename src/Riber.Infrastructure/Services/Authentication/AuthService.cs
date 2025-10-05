@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.DTOs;
 using Riber.Application.Exceptions;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.Common;
 using Riber.Infrastructure.Persistence.Identity;
 
 namespace Riber.Infrastructure.Services.Authentication;
@@ -23,10 +23,10 @@ public sealed class AuthService(
         => userManager.Users.AsNoTracking().Include(u => u.UserDomain);
 
     #endregion
-    
+
     #region Methods
-    
-     public async Task CreateAsync(CreateApplicationUserDTO userDto, CancellationToken cancellationToken)
+
+    public async Task CreateAsync(CreateApplicationUserDTO userDto, CancellationToken cancellationToken)
     {
         try
         {
@@ -49,7 +49,7 @@ public sealed class AuthService(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, ErrorMessage.Exception.Unexpected(ex.GetType().Name, ex.Message));
+            logger.LogError(UnexpectedErrors.ForLogging(nameof(AuthService), ex));
             throw;
         }
     }
@@ -59,7 +59,7 @@ public sealed class AuthService(
         var normalizedInput = userNameOrEmail.ToUpperInvariant();
         var user = await GetBaseUserQuery
              .FirstOrDefaultAsync(u => u.NormalizedUserName == normalizedInput || u.NormalizedEmail == normalizedInput)
-             ?? throw new NotFoundException(ErrorMessage.NotFound.User);
+             ?? throw new NotFoundException(NotFoundErrors.User);
 
         return await userManager.CheckPasswordAsync(user, password)
             ? await MapUserDetailsAsync(user) : null;
@@ -70,8 +70,8 @@ public sealed class AuthService(
         var inputParsed = Guid.Parse(userId);
         var user = await GetBaseUserQuery
             .FirstOrDefaultAsync(u => u.Id == inputParsed);
-        
-        return user is not null 
+
+        return user is not null
             ? await MapUserDetailsAsync(user) : null;
     }
 
@@ -80,18 +80,18 @@ public sealed class AuthService(
         var normalizedEmail = email.ToUpperInvariant();
         var user = await GetBaseUserQuery
             .FirstOrDefaultAsync(u => u.NormalizedEmail == normalizedEmail);
-        
-        return user is not null 
+
+        return user is not null
             ? await MapUserDetailsAsync(user) : null;
     }
-    
+
     public async Task<UserDetailsDTO?> FindByUserNameAsync(string userName)
     {
         var normalizedUserName = userName.ToUpperInvariant();
         var user = await GetBaseUserQuery
             .FirstOrDefaultAsync(u => u.NormalizedUserName == normalizedUserName);
-        
-        return user is not null 
+
+        return user is not null
             ? await MapUserDetailsAsync(user) : null;
     }
 
@@ -99,15 +99,15 @@ public sealed class AuthService(
     {
         var user = await GetBaseUserQuery
             .FirstOrDefaultAsync(x => x.PhoneNumber == phoneNumber);
-        
-        return user is not null 
+
+        return user is not null
             ? await MapUserDetailsAsync(user) : null;
     }
 
     public async Task AssignRoleToUserAsync(string userId, string roleName)
     {
         var user = await userManager.FindByIdAsync(userId)
-            ?? throw new InvalidOperationException(ErrorMessage.NotFound.User);
+            ?? throw new InvalidOperationException(NotFoundErrors.User);
 
         await EnsureRoleExistsAsync(roleName);
         var result = await userManager.AddToRoleAsync(user, roleName);
@@ -121,7 +121,7 @@ public sealed class AuthService(
     public async Task UpdateUserRoleAsync(string userId, string newRole)
     {
         var user = await userManager.FindByIdAsync(userId)
-            ?? throw new InvalidOperationException(ErrorMessage.NotFound.User);
+            ?? throw new InvalidOperationException(NotFoundErrors.User);
 
         var currentRoles = await userManager.GetRolesAsync(user);
         if (currentRoles.Any())
@@ -140,14 +140,14 @@ public sealed class AuthService(
             throw new NotFoundException("Está função não existe.");
     }
 
-    
+
     public async Task RefreshUserSecurityAsync(string userId)
     {
         var user = await userManager.FindByIdAsync(userId);
-        if (user is not null) 
+        if (user is not null)
             await userManager.UpdateSecurityStampAsync(user);
     }
-    
+
     #endregion
 
     #region Helpers
@@ -174,12 +174,12 @@ public sealed class AuthService(
             UserDomain: user.UserDomain
         );
     }
-    
+
     private async Task<IList<Claim>> GetClaimsByRoleName(string roleName)
     {
         var role = await roleManager.FindByNameAsync(roleName);
         return role is null ? [] : await roleManager.GetClaimsAsync(role);
     }
-    
+
     #endregion
 }

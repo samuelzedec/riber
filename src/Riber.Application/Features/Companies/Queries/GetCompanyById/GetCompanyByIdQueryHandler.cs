@@ -2,7 +2,7 @@ using Riber.Application.Abstractions.Queries;
 using Riber.Application.Common;
 using Riber.Application.Exceptions;
 using Riber.Application.Extensions;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Repositories;
 using Riber.Domain.Specifications.Company;
 
@@ -20,7 +20,7 @@ internal sealed class GetCompanyByIdQueryHandler(IUnitOfWork unitOfWork)
         );
 
         if (company is null)
-            throw new NotFoundException(ErrorMessage.NotFound.Company);
+            throw new NotFoundException(NotFoundErrors.Company);
 
         return new GetCompanyByIdQueryResponse(
             CorporateName: company.Name.Corporate,

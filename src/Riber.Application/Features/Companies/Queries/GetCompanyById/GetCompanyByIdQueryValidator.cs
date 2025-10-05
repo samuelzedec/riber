@@ -1,5 +1,5 @@
 using FluentValidation;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.Entities;
 
 namespace Riber.Application.Features.Companies.Queries.GetCompanyById;
 
@@ -9,6 +9,6 @@ internal sealed class GetCompanyByIdQueryValidator : AbstractValidator<GetCompan
     {
         RuleFor(x => x.CompanyId)
             .NotEmpty()
-            .WithMessage(ErrorMessage.Invalid.CompanyId);
+            .WithMessage(CompanyErrors.Invalid);
     }
 }

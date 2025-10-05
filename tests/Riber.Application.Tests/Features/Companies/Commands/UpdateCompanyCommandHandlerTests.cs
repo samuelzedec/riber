@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Riber.Application.Exceptions;
 using Riber.Application.Features.Companies.Commands.UpdateCompany;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Entities;
 using Riber.Domain.Enums;
 using Riber.Domain.Repositories;
@@ -286,7 +286,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
 
         await result.Should()
             .ThrowExactlyAsync<NotFoundException>()
-            .WithMessage(ErrorMessage.NotFound.Company);
+            .WithMessage(NotFoundErrors.Company);
 
         _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()), Times.Once);
         _mockCompanyRepository.Verify(x => x.GetSingleAsync(
@@ -303,7 +303,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
             x => x.Log(
                 LogLevel.Error,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains(ErrorMessage.NotFound.Company)),
+                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains(NotFoundErrors.Company)),
                 It.IsAny<Exception>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);

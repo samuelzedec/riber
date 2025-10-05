@@ -1,6 +1,6 @@
 using FluentAssertions;
 using Riber.Domain.Abstractions.ValueObjects;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.ValueObjects;
 using Riber.Domain.Entities;
 using Riber.Domain.ValueObjects.Discount;
 using Riber.Domain.ValueObjects.Discount.Exceptions;
@@ -86,7 +86,7 @@ public sealed class OrderItemTests : BaseTest
         orderItem.TotalPrice.Should().Be(0);
         orderItem.HasDiscount().Should().BeTrue();
     }
-    
+
     #endregion
 
     #region Invalid Tests
@@ -173,7 +173,7 @@ public sealed class OrderItemTests : BaseTest
 
         // Assert
         act.Should().Throw<InvalidDiscountException>()
-           .WithMessage(ErrorMessage.Discount.LessThanOrEqualToZero);
+           .WithMessage(DiscountErrors.FixedAmount);
     }
 
     [Fact(DisplayName = "Should remove discount correctly")]

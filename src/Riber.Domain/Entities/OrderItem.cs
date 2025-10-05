@@ -1,5 +1,5 @@
 using Riber.Domain.Abstractions.ValueObjects;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.ValueObjects;
 using Riber.Domain.ValueObjects.Discount;
 using Riber.Domain.ValueObjects.Discount.Exceptions;
 using Riber.Domain.ValueObjects.Money;
@@ -7,7 +7,7 @@ using Riber.Domain.ValueObjects.Quantity;
 
 namespace Riber.Domain.Entities;
 
-public sealed class OrderItem 
+public sealed class OrderItem
     : BaseEntity, IHasDiscount, IHasQuantity, IHasUnitPrice
 {
     #region Properties
@@ -15,7 +15,7 @@ public sealed class OrderItem
     public Guid OrderId { get; private set; }
     public Guid ProductId { get; private set; }
     public string ProductName { get; private set; }
-    public Money UnitPrice { get;  private set; }
+    public Money UnitPrice { get; private set; }
     public Quantity Quantity { get; private set; }
     public Discount? ItemDiscount { get; private set; }
     public decimal SubTotal => UnitPrice.Multiply(Quantity);
@@ -23,16 +23,16 @@ public sealed class OrderItem
     public decimal TotalPrice => SubTotal - DiscountAmount;
 
     #endregion
-    
+
     #region Navigation Properties
-    
+
     public Order Order { get; private set; } = null!;
     public Product Product { get; private set; } = null!;
-    
+
     #endregion
-    
+
     #region Constructors
-    
+
     private OrderItem() : base(Guid.Empty)
     {
         OrderId = Guid.Empty;
@@ -41,10 +41,10 @@ public sealed class OrderItem
         UnitPrice = Money.Zero();
         Quantity = Quantity.Zero();
     }
-    
+
     private OrderItem(
         Guid orderId,
-        Guid productId, 
+        Guid productId,
         string productName,
         decimal unitPrice,
         int quantity
@@ -56,7 +56,7 @@ public sealed class OrderItem
         UnitPrice = Money.Create(unitPrice);
         Quantity = Quantity.Create(quantity);
     }
-    
+
     #endregion
 
     #region Factories
@@ -70,17 +70,17 @@ public sealed class OrderItem
     ) => new(orderId, productId, productName, unitPrice, quantity);
 
     #endregion
-    
+
     #region Methods
-    
+
     public void ApplyDiscount(Discount discount)
     {
         if (!discount.HasDiscount())
-            throw new InvalidDiscountException(ErrorMessage.Discount.LessThanOrEqualToZero);
+            throw new InvalidDiscountException(DiscountErrors.FixedAmount);
 
         var calculatedDiscount = discount.CalculateDiscount(SubTotal);
         if (calculatedDiscount > SubTotal)
-            throw new InvalidDiscountException(ErrorMessage.Discount.GreaterThanSubtotal);
+            throw new InvalidDiscountException(DiscountErrors.GreaterThanSubtotal);
 
         ItemDiscount = discount;
     }
@@ -92,6 +92,6 @@ public sealed class OrderItem
     }
 
     public bool HasDiscount() => ItemDiscount?.HasDiscount() == true;
-    
+
     #endregion
 }

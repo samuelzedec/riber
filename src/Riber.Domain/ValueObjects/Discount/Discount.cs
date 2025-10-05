@@ -1,4 +1,4 @@
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.ValueObjects;
 using Riber.Domain.ValueObjects.Discount.Exceptions;
 
 namespace Riber.Domain.ValueObjects.Discount;
@@ -21,43 +21,43 @@ public sealed record Discount : BaseValueObject
         => (Percentage, FixedAmount, Reason) = (percentage, fixedAmount, reason);
 
     #endregion
-    
+
     #region Factories
 
     public static Discount None() => new();
 
     public static Discount CreateByPercentage(decimal percentage, string? reason = null)
-        => percentage is <= 0 or > 100 
-            ? throw new InvalidPercentageException(ErrorMessage.Discount.PercentageIsInvalid)
+        => percentage is <= 0 or > 100
+            ? throw new InvalidPercentageException(DiscountErrors.Percentage)
             : new Discount(percentage, 0, reason);
 
     public static Discount CreateByFixedAmount(decimal fixedAmount, string? reason = null)
-        => fixedAmount <= 0 
-            ? throw new InvalidFixedAmountException(ErrorMessage.Discount.FixedAmountIsInvalid)
+        => fixedAmount <= 0
+            ? throw new InvalidFixedAmountException(DiscountErrors.FixedAmount)
             : new Discount(0, fixedAmount, reason);
 
     #endregion
-    
+
     #region Methods
 
     public decimal CalculateDiscount(decimal subTotal)
     {
-        if (subTotal <= 0) 
+        if (subTotal <= 0)
             return 0;
-        
+
         return Percentage > 0
             ? subTotal * Percentage / 100
             : Math.Min(FixedAmount, subTotal);
     }
 
-    public bool HasDiscount() 
+    public bool HasDiscount()
         => Percentage > 0 || FixedAmount > 0;
-   
-    public bool IsPercentage() 
+
+    public bool IsPercentage()
         => Percentage > 0;
-    
-    public bool IsFixedAmount() 
+
+    public bool IsFixedAmount()
         => FixedAmount > 0;
-    
+
     #endregion
 }

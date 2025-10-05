@@ -7,7 +7,7 @@ using Riber.Application.DTOs;
 using Riber.Application.Exceptions;
 using Riber.Application.Extensions;
 using Riber.Application.Features.Companies.Commands.CreateCompanyWithAdmin;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Entities;
 using Riber.Domain.Enums;
 using Riber.Domain.Repositories;
@@ -34,10 +34,10 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
         _mockUserCreationService = new Mock<IUserCreationService>();
         _mockLogger = new Mock<ILogger<CreateCompanyWithAdminCommandHandler>>();
         _commandHandler = new CreateCompanyWithAdminCommandHandler(
-            _mockUnitOfWork.Object, 
+            _mockUnitOfWork.Object,
             _mockUserCreationService.Object,
             _mockLogger.Object);
-        
+
         _command = new CreateCompanyWithAdminCommand(
             CorporateName: _faker.Company.CompanyName(),
             FantasyName: _faker.Company.CompanyName(),
@@ -155,7 +155,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
         // Assert
         await result.Should()
             .ThrowAsync<ConflictException>()
-            .WithMessage(ErrorMessage.Conflict.CorporateNameAlreadyExists);
+            .WithMessage(ConflictErrors.CorporateName);
 
         _mockCompanyRepository.Verify(x => x.ExistsAsync(
             It.IsAny<Specification<Company>>(), It.IsAny<CancellationToken>()), Times.Once);
@@ -206,7 +206,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
         // Assert
         await result.Should()
             .ThrowAsync<ConflictException>()
-            .WithMessage(ErrorMessage.Conflict.TaxIdAlreadyExists);
+            .WithMessage(ConflictErrors.TaxId);
 
         _mockCompanyRepository.Verify(x => x.ExistsAsync(
             It.IsAny<Specification<Company>>(), It.IsAny<CancellationToken>()), Times.Exactly(2));
@@ -257,7 +257,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
         // Assert
         await result.Should()
             .ThrowAsync<ConflictException>()
-            .WithMessage(ErrorMessage.Conflict.EmailAlreadyExists);
+            .WithMessage(ConflictErrors.Email);
 
         _mockCompanyRepository.Verify(x => x.ExistsAsync(
             It.IsAny<Specification<Company>>(), It.IsAny<CancellationToken>()), Times.Exactly(3));
@@ -308,7 +308,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
         // Assert
         await result.Should()
             .ThrowAsync<ConflictException>()
-            .WithMessage(ErrorMessage.Conflict.PhoneAlreadyExists);
+            .WithMessage(ConflictErrors.Phone);
 
         _mockCompanyRepository.Verify(x => x.ExistsAsync(
             It.IsAny<Specification<Company>>(), It.IsAny<CancellationToken>()), Times.Exactly(4));

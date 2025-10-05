@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.ValueObjects;
 using Riber.Domain.ValueObjects.Email;
 using Riber.Domain.ValueObjects.Email.Exceptions;
 
@@ -36,7 +36,7 @@ public sealed class EmailTests : BaseTest
     public void Create_WhenNullOrEmptyEmail_ShouldThrowEmailNullOrEmptyException(string email)
     {
         var act = () => Email.Create(email);
-        act.Should().Throw<EmailNullOrEmptyException>().WithMessage(ErrorMessage.Email.IsNullOrEmpty);
+        act.Should().Throw<EmailNullOrEmptyException>().WithMessage(EmailErrors.Empty);
     }
 
     [Fact(DisplayName = "Should throw EmailFormatInvalidException for invalid email")]
@@ -44,12 +44,12 @@ public sealed class EmailTests : BaseTest
     {
         // Arrange
         var invalidEmail = $"{_faker.Person.Email}invalid";
-        
+
         // Act
         var act = () => Email.Create(invalidEmail);
-        
+
         // Assert
-        act.Should().ThrowExactly<EmailFormatInvalidException>(ErrorMessage.Email.FormatInvalid);
+        act.Should().ThrowExactly<EmailFormatInvalidException>().WithMessage(EmailErrors.Format);
     }
 
     #endregion

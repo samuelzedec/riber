@@ -1,14 +1,14 @@
 using Riber.Domain.Abstractions;
 using Riber.Domain.Abstractions.ValueObjects;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.Entities;
 using Riber.Domain.Entities.Tenants;
 using Riber.Domain.Exceptions;
 using Riber.Domain.ValueObjects.Money;
 
 namespace Riber.Domain.Entities;
 
-public sealed class Product 
-    : TenantEntity, IAggregateRoot, IHasUnitPrice
+public sealed class Product
+    : TenantEntity, IAggregateRoot, IHasUnitPrice, IHasXmin
 {
     #region Properties
 
@@ -17,7 +17,8 @@ public sealed class Product
     public Money UnitPrice { get; private set; }
     public Guid CategoryId { get; private set; }
     public bool IsActive { get; private set; }
-    public string? ImageUrl { get; private set; }
+    public Guid? ImageId { get; private set; }
+    public uint XminCode { get; set; }
 
     #endregion
 
@@ -25,6 +26,7 @@ public sealed class Product
 
     public Company Company { get; private set; } = null!;
     public ProductCategory Category { get; private set; } = null!;
+    public Image? Image { get; private set; }
 
     #endregion
 
@@ -46,14 +48,14 @@ public sealed class Product
         decimal price,
         Guid categoryId,
         Guid companyId,
-        string? imageUrl = null) : base(Guid.CreateVersion7())
+        Guid? imageId = null) : base(Guid.CreateVersion7())
     {
         Name = name;
         Description = description;
         UnitPrice = Money.CreatePrice(price);
         CategoryId = categoryId;
         CompanyId = companyId;
-        ImageUrl = imageUrl;
+        ImageId = imageId;
         IsActive = true;
     }
 
@@ -67,21 +69,21 @@ public sealed class Product
         decimal price,
         Guid categoryId,
         Guid companyId,
-        string? imageUrl = null)
+        Guid? imageId = null)
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new ProductNameNullException(ErrorMessage.Product.NameIsNull);
-        
+            throw new ProductNameNullException(ProductErrors.NameEmpty);
+
         if (string.IsNullOrWhiteSpace(description))
-            throw new ProductDescriptionNullException(ErrorMessage.Product.DescriptionIsNull);
-        
+            throw new ProductDescriptionNullException(ProductErrors.DescriptionEmpty);
+
         if (categoryId == Guid.Empty)
-            throw new IdentifierNullException(ErrorMessage.Invalid.CategoryId);
-        
+            throw new IdentifierNullException(ProductErrors.InvalidCategory);
+
         if (companyId == Guid.Empty)
-            throw new IdentifierNullException(ErrorMessage.Invalid.CompanyId);
-        
-        return new Product(name, description, price, categoryId, companyId, imageUrl);
+            throw new IdentifierNullException(ProductErrors.InvalidCategory);
+
+        return new Product(name, description, price, categoryId, companyId, imageId);
     }
 
     #endregion
@@ -91,11 +93,11 @@ public sealed class Product
     public void UpdateDetails(string name, string description, decimal price)
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new ProductNameNullException(ErrorMessage.Product.NameIsNull);
-        
+            throw new ProductNameNullException(ProductErrors.NameEmpty);
+
         if (string.IsNullOrWhiteSpace(description))
-            throw new ProductDescriptionNullException(ErrorMessage.Product.DescriptionIsNull);
-        
+            throw new ProductDescriptionNullException(ProductErrors.DescriptionEmpty);
+
         Name = name;
         Description = description;
         UnitPrice = Money.CreatePrice(price);
@@ -104,12 +106,12 @@ public sealed class Product
     public void ChangeCategory(Guid categoryId)
     {
         if (categoryId == Guid.Empty)
-            throw new IdentifierNullException(ErrorMessage.Invalid.CategoryId);
-        
+            throw new IdentifierNullException(ProductErrors.InvalidCategory);
+
         CategoryId = categoryId;
     }
 
-    public void UpdateImage(string? imageUrl) => ImageUrl = imageUrl;
+    public void UpdateImage(Guid? imageId) => ImageId = imageId;
     public void Activate() => IsActive = true;
     public void Deactivate() => IsActive = false;
 

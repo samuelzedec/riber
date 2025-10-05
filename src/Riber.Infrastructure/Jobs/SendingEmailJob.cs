@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Quartz;
 using Riber.Application.Abstractions.Services.Email;
-using Riber.Domain.Constants;
+using Riber.Domain.Constants.Messages.Common;
 
 namespace Riber.Infrastructure.Jobs;
 
@@ -11,7 +11,7 @@ public sealed class SendingEmailJob(
     IEmailService emailService,
     IEmailTemplateRender templateEmailRender,
     IEmailConcurrencyService emailConcurrencyService,
-    ILogger<SendingEmailJob> logger) 
+    ILogger<SendingEmailJob> logger)
     : IJob
 {
     public async Task Execute(IJobExecutionContext context)
@@ -25,7 +25,7 @@ public sealed class SendingEmailJob(
             var to = emailPayload["to"]?.ToString()!;
             var subject = emailPayload["subject"]?.ToString()!;
             var templateProcessed = await templateEmailRender.GetTemplateAsync(emailPayload);
-            
+
             await emailService.SendAsync(
                 to,
                 subject,
@@ -35,7 +35,7 @@ public sealed class SendingEmailJob(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, ErrorMessage.Exception.Unexpected(ex.GetType().Name, ex.Message));
+            logger.LogError(UnexpectedErrors.ForLogging(nameof(SendingEmailJob), ex));
             throw;
         }
     }
