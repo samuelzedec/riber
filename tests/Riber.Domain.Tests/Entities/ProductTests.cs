@@ -17,7 +17,7 @@ public sealed class ProductTests : BaseTest
         var price = _faker.Random.Decimal(1, 1000);
         var categoryId = Guid.NewGuid();
         var companyId = Guid.NewGuid();
-        var imageUrl = _faker.Image.PicsumUrl();
+        var imageId = Guid.CreateVersion7();
 
         // Act
         var result = Product.Create(
@@ -26,7 +26,7 @@ public sealed class ProductTests : BaseTest
             price,
             categoryId,
             companyId,
-            imageUrl
+            imageId
         );
 
         // Assert
@@ -38,7 +38,7 @@ public sealed class ProductTests : BaseTest
         result.UnitPrice.Value.Should().Be(price);
         result.CategoryId.Should().Be(categoryId);
         result.CompanyId.Should().Be(companyId);
-        result.ImageUrl.Should().Be(imageUrl);
+        result.ImageId.Should().Be(imageId);
         result.IsActive.Should().BeTrue();
     }
 
@@ -70,7 +70,7 @@ public sealed class ProductTests : BaseTest
         result.UnitPrice.Value.Should().Be(price);
         result.CategoryId.Should().Be(categoryId);
         result.CompanyId.Should().Be(companyId);
-        result.ImageUrl.Should().BeNull();
+        result.ImageId.Should().BeNull();
         result.IsActive.Should().BeTrue();
     }
 
@@ -219,7 +219,8 @@ public sealed class ProductTests : BaseTest
     [Theory(DisplayName = "Should throw exception when updating with invalid description")]
     [InlineData("")]
     [InlineData("   ")]
-    public void UpdateDetails_WhenInvalidDescription_ShouldThrowProductDescriptionNullException(string invalidDescription)
+    public void UpdateDetails_WhenInvalidDescription_ShouldThrowProductDescriptionNullException(
+        string invalidDescription)
     {
         // Arrange
         var product = Product.Create(
@@ -290,13 +291,13 @@ public sealed class ProductTests : BaseTest
             Guid.NewGuid()
         );
 
-        var newImageUrl = _faker.Image.PicsumUrl();
+        var newImageId = Guid.CreateVersion7();
 
         // Act
-        product.UpdateImage(newImageUrl);
+        product.UpdateImage(newImageId);
 
         // Assert
-        product.ImageUrl.Should().Be(newImageUrl);
+        product.ImageId.Should().Be(newImageId);
     }
 
     [Fact(DisplayName = "Should update image to null successfully")]
@@ -309,14 +310,14 @@ public sealed class ProductTests : BaseTest
             _faker.Random.Decimal(1, 1000),
             Guid.NewGuid(),
             Guid.NewGuid(),
-            _faker.Image.PicsumUrl()
+            Guid.CreateVersion7()
         );
 
         // Act
         product.UpdateImage(null);
 
         // Assert
-        product.ImageUrl.Should().BeNull();
+        product.ImageId.Should().BeNull();
     }
 
     #endregion

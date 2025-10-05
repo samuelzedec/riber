@@ -1,5 +1,7 @@
+using Microsoft.Extensions.Logging;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Exceptions;
+using Riber.Domain.Constants.Messages.Common;
 
 namespace Riber.Infrastructure.Services.Local;
 
@@ -7,25 +9,28 @@ public sealed class LocalImageStorageService
     : IImageStorageService
 {
     private readonly string _storagePath;
+    private readonly ILogger<LocalImageStorageService> _logger;
 
-    public LocalImageStorageService()
+    public LocalImageStorageService(ILogger<LocalImageStorageService> logger)
     {
+        _logger = logger;
         _storagePath = Path.Combine(Directory.GetCurrentDirectory(), "storage", "images");
         Directory.CreateDirectory(_storagePath);
     }
 
-    public async Task<string> UploadAsync(Stream stream, string fileName, string contentType)
+    public async Task UploadAsync(Stream stream, string fileName, string contentType)
     {
-        // if (!IImageStorageService.IsValidImageType(contentType))
-        //     throw new BadRequestException(ErrorMessage.Image.IsInvalid);
-
-        var uniqueImageName = $"{Guid.CreateVersion7()}{Path.GetExtension(fileName).ToLowerInvariant()}";
-        var filePath = Path.Combine(_storagePath, uniqueImageName);
-
-        await using var fileStream = new FileStream(filePath, FileMode.Create);
-        await stream.CopyToAsync(fileStream);
-
-        return uniqueImageName;
+        try
+        {
+            var filePath = Path.Combine(_storagePath, fileName);
+            await using var fileStream = new FileStream(filePath, FileMode.Create);
+            await stream.CopyToAsync(fileStream);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(UnexpectedErrors.ForLogging(nameof(LocalImageStorageService), ex));
+            throw new InternalException(StorageErrors.UploadFailed);
+        }
     }
 
     public Task<Stream> GetImageStreamAsync(string fileName)
@@ -33,8 +38,7 @@ public sealed class LocalImageStorageService
         var imagePath = Path.Combine(_storagePath, fileName);
 
         return !File.Exists(imagePath)
-            // ? throw new NotFoundException(ErrorMessage.Image.NoExists)
-            ? throw new AbandonedMutexException()
+            ? throw new NotFoundException(StorageErrors.RetrieveFailed)
             : Task.FromResult<Stream>(new FileStream(
                 imagePath,
                 FileMode.Open,
@@ -49,8 +53,7 @@ public sealed class LocalImageStorageService
     {
         var imagePath = Path.Combine(_storagePath, fileName);
         if (!File.Exists(imagePath))
-            // throw new NotFoundException(ErrorMessage.Image.NoExists);
-            throw new ArgumentException(); 
+            throw new NotFoundException(StorageErrors.ImageNotFound); 
 
         File.Delete(imagePath);
         return Task.CompletedTask;

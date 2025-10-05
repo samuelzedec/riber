@@ -12,54 +12,63 @@ public sealed class ProductMap : BaseEntityConfiguration<Product>
 
     protected override void ConfigureEntity(EntityTypeBuilder<Product> builder)
     {
-        builder.ConfigureUnitPrice();
-        
         builder
-            .HasOne(x => x.Company)
+            .ConfigureUnitPrice()
+            .ConfigureXmin();
+
+        builder
+            .HasOne(p => p.Company)
             .WithMany()
-            .HasForeignKey(x => x.CompanyId)
+            .HasForeignKey(p => p.CompanyId)
             .HasConstraintName("fk_product_company_id")
             .IsRequired();
-        
+
         builder
-            .Property(x => x.CompanyId)
+            .Property(p => p.CompanyId)
             .HasColumnName("company_id")
             .HasColumnType("uuid")
             .IsRequired();
-        
+
         builder
-            .Property(x => x.CategoryId)
+            .Property(p => p.CategoryId)
             .HasColumnName("category_id")
             .HasColumnType("uuid")
             .IsRequired();
-        
+
         builder
-            .Property(x => x.Name)
+            .Property(p => p.Name)
             .HasColumnName("name")
             .HasColumnType("text")
             .HasMaxLength(255)
             .IsRequired();
 
         builder
-            .HasIndex(x => x.Name, "ix_product_name");
-        
+            .HasIndex(p => p.Name, "ix_product_name");
+
         builder
-            .Property(x => x.Description)
+            .Property(p => p.Description)
             .HasColumnName("description")
             .HasColumnType("text")
             .HasMaxLength(255)
             .IsRequired();
 
         builder
-            .Property(x => x.IsActive)
+            .Property(p => p.IsActive)
             .HasColumnName("is_active")
             .HasColumnType("boolean")
             .IsRequired();
 
         builder
-            .Property(x => x.ImageUrl)
-            .HasColumnName("image_url")
-            .HasColumnType("text")
+            .Property(p => p.ImageId)
+            .HasColumnName("image_id")
+            .HasColumnType("uuid")
             .IsRequired(false);
+
+        builder
+            .HasOne(p => p.Image)
+            .WithOne()
+            .HasForeignKey<Product>(p => p.ImageId)
+            .HasConstraintName("fk_product_image_id")
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

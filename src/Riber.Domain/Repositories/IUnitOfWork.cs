@@ -28,7 +28,7 @@ public interface IUnitOfWork
     /// </summary>
     /// <param name="cancellationToken">Um token para monitorar solicitações de cancelamento.</param>
     /// <returns>Uma tarefa que representa a operação assíncrona.</returns>
-    Task SaveAsync(CancellationToken cancellationToken);
+    Task SaveAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Salva todas as mudanças feitas no contexto para o banco de dados de forma assíncrona
@@ -36,22 +36,22 @@ public interface IUnitOfWork
     /// </summary>
     /// <param name="cancellationToken">Um token para monitorar solicitações de cancelamento.</param>
     /// <returns>Uma tarefa que representa a operação assíncrona. O resultado da tarefa contém o número de registros gravados no banco de dados.</returns>
-    Task<int> SaveChangesAsync(CancellationToken cancellationToken);
+    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Inicia uma nova transação de banco de dados de forma assíncrona.
-    /// Esta transação encapsula uma série de operações de banco de dados que podem ser confirmadas ou revertidas como uma unidade.
+    /// Esta transação encapsula uma série de operações que podem ser confirmadas ou revertidas como uma unidade.
     /// </summary>
-    /// <param name="cancellationToken">Um token para monitorar solicitações de cancelamento.</param>
-    /// <returns>Uma tarefa que representa a operação assíncrona.</returns>
-    Task BeginTransactionAsync(CancellationToken cancellationToken);
+    /// <param name="cancellationToken">Token para monitorar solicitações de cancelamento.</param>
+    /// <returns>Uma tarefa representando a operação assíncrona.</returns>
+    Task BeginTransactionAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Confirma a transação atual de forma assíncrona, garantindo a persistência de todas as alterações realizadas durante a transação.
+    /// Confirma a transação atual de forma assíncrona, persistindo todas as alterações realizadas.
     /// </summary>
-    /// <param name="cancellationToken">Um token para monitorar solicitações de cancelamento.</param>
-    /// <returns>Uma tarefa que representa a operação de confirmação assíncrona.</returns>
-    Task CommitTransactionAsync(CancellationToken cancellationToken);
+    /// <param name="cancellationToken">Token para monitorar solicitações de cancelamento.</param>
+    /// <returns>Uma tarefa representando a operação assíncrona.</returns>
+    Task CommitTransactionAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Reverte todas as operações realizadas na transação atual de forma assíncrona.

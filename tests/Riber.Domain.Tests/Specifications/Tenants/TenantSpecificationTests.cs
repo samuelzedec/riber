@@ -206,6 +206,6 @@ public sealed class TenantSpecificationTests : BaseTest
             price ?? _faker.Random.Decimal(10, 1000),
             categoryId ?? Guid.NewGuid(),
             companyId ?? Guid.NewGuid(),
-            imageUrl
+            Guid.Empty
         );
 }
