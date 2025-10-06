@@ -49,22 +49,22 @@ public sealed class AmazonS3Service : IImageStorageService
         }
         catch (AmazonS3Exception s3Ex) when (s3Ex.ErrorCode == "AccessDenied")
         {
-            _logger.LogError(UnexpectedErrors.ForLogging(nameof(AmazonS3Service), s3Ex));
+            LogS3Error(s3Ex);
             throw new InternalException(StorageErrors.AccessDenied);
         }
         catch (AmazonS3Exception s3Ex) when (s3Ex.ErrorCode == "NoSuchBucket")
         {
-            _logger.LogError(UnexpectedErrors.ForLogging(nameof(AmazonS3Service), s3Ex));
+            LogS3Error(s3Ex);
             throw new InternalException(StorageErrors.BucketNotFound);
         }
         catch (AmazonS3Exception s3Ex)
         {
-            _logger.LogError(UnexpectedErrors.ForLogging(nameof(AmazonS3Service), s3Ex));
+            LogS3Error(s3Ex);
             throw new InternalException(StorageErrors.UploadFailed);
         }
         catch (Exception ex)
         {
-            _logger.LogError(UnexpectedErrors.ForLogging(nameof(AmazonS3Service), ex));
+            LogUnexpectedError(ex);
             throw new InternalException(UnexpectedErrors.Response);
         }
     }
@@ -77,29 +77,29 @@ public sealed class AmazonS3Service : IImageStorageService
             var request = new GetObjectRequest { BucketName = _bucketName, Key = fileName };
             var response = await _amazonS3.GetObjectAsync(request);
 
-            _logger.LogDebug("Successfully retrieved image {FileName} from S3 bucket {BucketName}", fileName,
-                _bucketName);
+            _logger.LogDebug("Successfully retrieved image {FileName} from S3 bucket {BucketName}", 
+                fileName, _bucketName);
 
             return response.ResponseStream;
         }
         catch (AmazonS3Exception s3Ex) when (s3Ex.ErrorCode == "NoSuchKey")
         {
-            _logger.LogError(UnexpectedErrors.ForLogging(nameof(AmazonS3Service), s3Ex));
+            LogS3Error(s3Ex);
             throw new NotFoundException(StorageErrors.ImageNotFound);
         }
         catch (AmazonS3Exception s3Ex) when (s3Ex.ErrorCode == "AccessDenied")
         {
-            _logger.LogError(UnexpectedErrors.ForLogging(nameof(AmazonS3Service), s3Ex));
+            LogS3Error(s3Ex);
             throw new InternalException(StorageErrors.RetrieveAccessDenied);
         }
         catch (AmazonS3Exception s3Ex)
         {
-            _logger.LogError(UnexpectedErrors.ForLogging(nameof(AmazonS3Service), s3Ex));
+            LogS3Error(s3Ex);
             throw new InternalException(StorageErrors.RetrieveFailed);
         }
         catch (Exception ex)
         {
-            _logger.LogError(UnexpectedErrors.ForLogging(nameof(AmazonS3Service), ex));
+            LogUnexpectedError(ex);
             throw new InternalException(UnexpectedErrors.Response);
         }
     }
@@ -117,8 +117,30 @@ public sealed class AmazonS3Service : IImageStorageService
         }
         catch (Exception ex)
         {
-            _logger.LogError(UnexpectedErrors.ForLogging(nameof(AmazonS3Service), ex));
+            LogUnexpectedError(ex);
             throw new InternalException(UnexpectedErrors.Response);
         }
+    }
+
+    private void LogS3Error(AmazonS3Exception s3Ex)
+    {
+        _logger.LogError(
+            s3Ex,
+            "[{ClassName}] S3 error occurred: {ErrorCode} - {ExceptionMessage}",
+            nameof(AmazonS3Service),
+            s3Ex.ErrorCode,
+            s3Ex.Message
+        );
+    }
+
+    private void LogUnexpectedError(Exception ex)
+    {
+        _logger.LogError(
+            ex,
+            "[{ClassName}] Unexpected error: {ExceptionType} - {ExceptionMessage}",
+            nameof(AmazonS3Service),
+            ex.GetType().Name,
+            ex.Message
+        );
     }
 }

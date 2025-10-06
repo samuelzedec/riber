@@ -14,7 +14,8 @@ internal sealed class GetRefreshTokenQueryHandler(
     ILogger<GetRefreshTokenQueryHandler> logger)
     : IQueryHandler<GetRefreshTokenQuery, GetRefreshTokenQueryResponse>
 {
-    public async ValueTask<Result<GetRefreshTokenQueryResponse>> Handle(GetRefreshTokenQuery query, CancellationToken cancellationToken)
+    public async ValueTask<Result<GetRefreshTokenQueryResponse>> Handle(GetRefreshTokenQuery query,
+        CancellationToken cancellationToken)
     {
         try
         {
@@ -22,7 +23,7 @@ internal sealed class GetRefreshTokenQueryHandler(
             await authService.RefreshUserSecurityAsync(userId);
 
             var user = await authService.FindByIdAsync(userId)
-                ?? throw new NotFoundException(NotFoundErrors.User);
+                       ?? throw new NotFoundException(NotFoundErrors.User);
 
             var token = tokenService.GenerateToken(user);
             var refreshToken = tokenService.GenerateRefreshToken(user.Id, user.SecurityStamp);
@@ -36,7 +37,11 @@ internal sealed class GetRefreshTokenQueryHandler(
         }
         catch (Exception ex) when (ex is not UnauthorizedException)
         {
-            logger.LogError(UnexpectedErrors.ForLogging(nameof(GetRefreshTokenQueryHandler), ex));
+            logger.LogError(ex,
+                "[{ClassName}] exceção inesperada: {ExceptionType} - {ExceptionMessage}",
+                nameof(GetRefreshTokenQueryHandler),
+                ex.GetType(),
+                ex.Message);
             throw;
         }
     }

@@ -13,12 +13,13 @@ internal sealed class LoginCommandHandler(
     ILogger<LoginCommandHandler> logger)
     : ICommandHandler<LoginCommand, LoginCommandResponse>
 {
-    public async ValueTask<Result<LoginCommandResponse>> Handle(LoginCommand command, CancellationToken cancellationToken)
+    public async ValueTask<Result<LoginCommandResponse>> Handle(LoginCommand command,
+        CancellationToken cancellationToken)
     {
         try
         {
             var user = await authService.LoginAsync(command.EmailOrUserName, command.Password)
-                ?? throw new UnauthorizedException(PasswordErrors.Invalid);
+                       ?? throw new UnauthorizedException(PasswordErrors.Invalid);
 
             var token = tokenService.GenerateToken(user);
             var refreshToken = tokenService.GenerateRefreshToken(user.Id, user.SecurityStamp);
@@ -32,7 +33,11 @@ internal sealed class LoginCommandHandler(
         }
         catch (Exception ex) when (ex is not UnauthorizedException)
         {
-            logger.LogError(UnexpectedErrors.ForLogging(nameof(LoginCommandHandler), ex));
+            logger.LogError(ex,
+                "[{ClassName}] exceção inesperada: {ExceptionType} - {ExceptionMessage}",
+                nameof(LoginCommandHandler),
+                ex.GetType(),
+                ex.Message);
             throw;
         }
     }

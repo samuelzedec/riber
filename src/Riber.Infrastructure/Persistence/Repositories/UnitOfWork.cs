@@ -10,7 +10,7 @@ namespace Riber.Infrastructure.Persistence.Repositories;
 /// e garante consistência entre operações agrupando mudanças em transações.
 /// </summary>
 public sealed class UnitOfWork(AppDbContext context, IMediator mediator) 
-    : IUnitOfWork, IAsyncDisposable, IDisposable
+    : IUnitOfWork
 {
     #region Attributes
 

@@ -4,7 +4,7 @@
 /// Representa uma unidade de trabalho que encapsula um conjunto de mudanças para persistência.
 /// Fornece mecanismos para gerenciar transações e repositórios de forma coesa.
 /// </summary>
-public interface IUnitOfWork
+public interface IUnitOfWork : IAsyncDisposable, IDisposable
 {
     #region Repositories
     
@@ -60,20 +60,6 @@ public interface IUnitOfWork
     /// <param name="cancellationToken">Um token para monitorar solicitações de cancelamento.</param>
     /// <returns>Uma tarefa que representa a operação assíncrona.</returns>
     Task RollbackTransactionAsync(CancellationToken cancellationToken);
-
-    /// <summary>
-    /// Libera os recursos alocados pela instância de forma assíncrona.
-    /// Este método garante que quaisquer transações ou contextos associados sejam devidamente descartados.
-    /// </summary>
-    /// <returns>Uma tarefa que representa a operação de descarte assíncrono.</returns>
-    ValueTask DisposeAsync();
-
-    /// <summary>
-    /// Libera os recursos gerenciados e não gerenciados utilizados pela unidade de trabalho.
-    /// Esta operação é responsável por encerrar conexões, transações ou qualquer outro recurso alocado
-    /// durante o ciclo de vida do contexto ou repositório associado.
-    /// </summary>
-    void Dispose();
-
+    
     #endregion
 }

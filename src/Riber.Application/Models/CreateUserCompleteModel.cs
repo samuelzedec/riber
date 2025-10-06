@@ -1,8 +1,8 @@
 using Riber.Domain.Enums;
 
-namespace Riber.Application.DTOs;
+namespace Riber.Application.Models;
 
-public sealed record CreateUserCompleteDTO(
+public sealed record CreateUserCompleteModel(
     string FullName,
     string UserName,
     string Email,

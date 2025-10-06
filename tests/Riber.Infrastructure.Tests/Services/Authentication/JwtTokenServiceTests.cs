@@ -4,7 +4,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Moq;
-using Riber.Application.DTOs;
+using Riber.Application.Models;
 using Riber.Domain.Entities;
 using Riber.Domain.Enums;
 using Riber.Domain.Tests;
@@ -18,7 +18,7 @@ public sealed class JwtTokenServiceTests : BaseTest
     #region Fields and Setup
 
     private readonly JwtTokenService _tokenService;
-    private readonly UserDetailsDTO _userDetailsTest;
+    private readonly UserDetailsModel _userDetailsTest;
     private readonly AccessTokenSettings _accessTokenSettings;
     private readonly RefreshTokenSettings _refreshTokenSettings;
 
@@ -47,8 +47,8 @@ public sealed class JwtTokenServiceTests : BaseTest
             Guid.CreateVersion7()
         );
         
-        _userDetailsTest = CreateFaker<UserDetailsDTO>()
-            .CustomInstantiator(f => new UserDetailsDTO(
+        _userDetailsTest = CreateFaker<UserDetailsModel>()
+            .CustomInstantiator(f => new UserDetailsModel(
                 Id: Guid.CreateVersion7(),
                 UserName: f.Internet.UserName(),
                 Email: f.Internet.Email(),
@@ -58,7 +58,7 @@ public sealed class JwtTokenServiceTests : BaseTest
                 UserDomainId: Guid.CreateVersion7(),
                 UserDomain: userDomain,
                 Roles: f.Make(2, () => f.Name.JobTitle()).ToList(),
-                Claims: [.. f.Make(2, () => new ClaimDTO(
+                Claims: [.. f.Make(2, () => new ClaimModel(
                     Type: f.Random.Word(),
                     Value: f.Random.Word()
                 ))]

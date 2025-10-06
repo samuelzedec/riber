@@ -1,8 +1,8 @@
 using Riber.Domain.Entities;
 
-namespace Riber.Application.DTOs;
+namespace Riber.Application.Models;
 
-public sealed record UserDetailsDTO(
+public sealed record UserDetailsModel(
     Guid Id,
     string UserName,
     string Email,
@@ -10,7 +10,7 @@ public sealed record UserDetailsDTO(
     string PhoneNumber,
     string SecurityStamp,
     ICollection<string> Roles,
-    ICollection<ClaimDTO> Claims,
+    ICollection<ClaimModel> Claims,
     Guid UserDomainId,
     User UserDomain
 );

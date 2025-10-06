@@ -26,8 +26,8 @@ internal sealed class UpdateCompanyCommandHandler(
         {
             await unitOfWork.BeginTransactionAsync(cancellationToken);
             var company = await companyRepository.GetSingleAsync(
-                new CompanyIdSpecification(request.CompanyId), cancellationToken)
-                ?? throw new NotFoundException(NotFoundErrors.Company);
+                              new CompanyIdSpecification(request.CompanyId), cancellationToken)
+                          ?? throw new NotFoundException(NotFoundErrors.Company);
 
             await UpdateEmailAsync(company, request.Email, cancellationToken);
             await UpdatePhoneAsync(company, request.Phone, cancellationToken);
@@ -45,7 +45,11 @@ internal sealed class UpdateCompanyCommandHandler(
         }
         catch (Exception ex)
         {
-            logger.LogError(UnexpectedErrors.ForLogging(nameof(UpdateCompanyCommandHandler), ex));
+            logger.LogError(ex,
+                "[{ClassName}] exceção inesperada: {ExceptionType} - {ExceptionMessage}",
+                nameof(UpdateCompanyCommandHandler),
+                ex.GetType(),
+                ex.Message);
             await unitOfWork.RollbackTransactionAsync(cancellationToken);
             throw;
         }

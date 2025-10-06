@@ -72,6 +72,7 @@ Ferramentas e bibliotecas para testes automatizados.
 | `Microsoft.AspNetCore.Mvc.Testing` | 9.0.5   | Ferramentas para testes de integração de APIs      |
 | `Moq.EntityFrameworkCore`          | 9.0.0.5 | Extensões do Moq específicas para Entity Framework |
 | `MockQueryable.Moq`                | 7.0.3   | Criação de mocks para IQueryable com Moq           |
+| `coverlet.msbuild`                 | 6.0.2   | Coleta de cobertura de código integrada ao MSBuild |
 
 ## ☁️ AWS Services
 

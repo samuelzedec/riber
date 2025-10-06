@@ -6,6 +6,7 @@
     <Project Path="src\Riber.Infrastructure\Riber.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/Riber.Api.Tests/Riber.Api.Tests.csproj" />
     <Project Path="tests\Riber.Application.Tests\Riber.Application.Tests.csproj" />
     <Project Path="tests\Riber.Domain.Tests\Riber.Domain.Tests.csproj" />
     <Project Path="tests\Riber.Infrastructure.Tests\Riber.Infrastructure.Tests.csproj" />

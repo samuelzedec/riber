@@ -2,7 +2,6 @@ using Amazon.SimpleEmail;
 using Amazon.SimpleEmail.Model;
 using Microsoft.Extensions.Logging;
 using Riber.Application.Abstractions.Services.Email;
-using Riber.Domain.Constants.Messages.Common;
 
 namespace Riber.Infrastructure.Services.AWS.Email;
 
@@ -30,7 +29,11 @@ public sealed class AmazonSESService(
         }
         catch (Exception ex)
         {
-            logger.LogError(UnexpectedErrors.ForLogging(nameof(AmazonSESService), ex));
+            logger.LogError(ex,
+                "[{ClassName}] exceção inesperada: {ExceptionType} - {ExceptionMessage}",
+                nameof(AmazonSESService),
+                ex.GetType(),
+                ex.Message);
             throw;
         }
     }

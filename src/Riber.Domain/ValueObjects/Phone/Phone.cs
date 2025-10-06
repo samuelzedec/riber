@@ -58,12 +58,9 @@ public sealed partial record Phone : BaseValueObject
     #region Overrides
 
     public override string ToString()
-        => Value.Length switch
-        {
-            11 => $"({Value[..2]}) {Value[2..7]}-{Value[7..]}",
-            10 => $"({Value[..2]}) {Value[2..6]}-{Value[6..]}",
-            _ => throw new PhoneFormatInvalidException(PhoneErrors.Format)
-        };
+        => Value.Length == 11
+            ? $"({Value[..2]}) {Value[2..7]}-{Value[7..]}"
+            : $"({Value[..2]}) {Value[2..6]}-{Value[6..]}";
 
     #endregion
 

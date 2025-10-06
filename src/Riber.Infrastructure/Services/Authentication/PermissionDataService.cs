@@ -2,8 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Riber.Application.Abstractions.Services;
-using Riber.Application.DTOs;
 using Riber.Application.Exceptions;
+using Riber.Application.Models;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Infrastructure.Persistence;
 using Riber.Infrastructure.Persistence.Identity;
@@ -27,14 +27,18 @@ public sealed class PermissionDataService(
         {
             var permissions = await GetPermissionsCacheAsync();
             var permission = permissions
-                .FirstOrDefault(p => p.Name == name)
-                ?? throw new NotFoundException(NotFoundErrors.Permission);
+                                 .FirstOrDefault(p => p.Name == name)
+                             ?? throw new NotFoundException(NotFoundErrors.Permission);
 
             return permission.IsActive;
         }
         catch (Exception ex)
         {
-            logger.LogError(UnexpectedErrors.ForLogging(nameof(PermissionDataService), ex));
+            logger.LogError(ex,
+                "[{ClassName}] exceção inesperada: {ExceptionType} - {ExceptionMessage}",
+                nameof(PermissionDataService),
+                ex.GetType(),
+                ex.Message);
             throw;
         }
     }
@@ -45,8 +49,8 @@ public sealed class PermissionDataService(
         {
             var permissions = await GetPermissionsCacheAsync();
             var permission = permissions
-                .FirstOrDefault(p => p.Name == name)
-                ?? throw new NotFoundException(NotFoundErrors.Permission);
+                                 .FirstOrDefault(p => p.Name == name)
+                             ?? throw new NotFoundException(NotFoundErrors.Permission);
 
             permission.IsActive = !permission.IsActive;
 
@@ -56,33 +60,45 @@ public sealed class PermissionDataService(
         }
         catch (Exception ex)
         {
-            logger.LogError(UnexpectedErrors.ForLogging(nameof(PermissionDataService), ex));
+            logger.LogError(ex,
+                "[{ClassName}] exceção inesperada: {ExceptionType} - {ExceptionMessage}",
+                nameof(PermissionDataService),
+                ex.GetType(),
+                ex.Message);
             throw;
         }
     }
 
-    public async Task<ICollection<PermissionDTO>> GetAllWithDescriptionsAsync()
+    public async Task<ICollection<PermissionModel>> GetAllWithDescriptionsAsync()
     {
         try
         {
             var permissions = await GetPermissionsCacheAsync();
 
-            return [.. permissions.Select(p => new PermissionDTO(
-                Name: p.Name,
-                Description: p.Description,
-                IsActive: p.IsActive
-            ))];
+            return
+            [
+                .. permissions.Select(p => new PermissionModel(
+                    Name: p.Name,
+                    Description: p.Description,
+                    IsActive: p.IsActive
+                ))
+            ];
         }
         catch (Exception ex)
         {
-            logger.LogError(UnexpectedErrors.ForLogging(nameof(PermissionDataService), ex));
+            logger.LogError(ex,
+                "[{ClassName}] exceção inesperada: {ExceptionType} - {ExceptionMessage}",
+                nameof(PermissionDataService),
+                ex.GetType(),
+                ex.Message);
             throw;
         }
     }
 
     private async Task<IEnumerable<ApplicationPermission>> GetPermissionsCacheAsync()
     {
-        if (memoryCache.TryGetValue(CacheKey, out IEnumerable<ApplicationPermission>? permissions) && permissions is not null)
+        if (memoryCache.TryGetValue(CacheKey, out IEnumerable<ApplicationPermission>? permissions) &&
+            permissions is not null)
             return [.. permissions];
 
         var permissionsDatabase = await _permissionTable

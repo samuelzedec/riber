@@ -2,8 +2,8 @@ using Microsoft.Extensions.Logging;
 using Riber.Application.Abstractions.Commands;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Common;
-using Riber.Application.DTOs;
 using Riber.Application.Exceptions;
+using Riber.Application.Models;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Repositories;
 
@@ -23,7 +23,7 @@ internal sealed class CreateUserCommandHandler(
         try
         {
             await userCreationService.CreateCompleteUserAsync(
-                new CreateUserCompleteDTO(
+                new CreateUserCompleteModel(
                     FullName: command.FullName,
                     UserName: command.UserName,
                     Email: command.Email,
@@ -51,7 +51,7 @@ internal sealed class CreateUserCommandHandler(
         catch (Exception ex)
         {
             await unitOfWork.RollbackTransactionAsync(cancellationToken);
-            logger.LogError(UnexpectedErrors.ForLogging(nameof(CreateUserCommandHandler), ex));
+            logger.LogError($"[{nameof(CreateUserCommandHandler)}] exceção inesperada: {ex.GetType().Name} - {ex.Message}\nStack Trace: {ex.StackTrace}");
             throw;
         }
     }
