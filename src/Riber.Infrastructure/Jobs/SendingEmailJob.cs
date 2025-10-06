@@ -3,7 +3,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Quartz;
 using Riber.Application.Abstractions.Services.Email;
-using Riber.Domain.Constants.Messages.Common;
 
 namespace Riber.Infrastructure.Jobs;
 
@@ -35,7 +34,11 @@ public sealed class SendingEmailJob(
         }
         catch (Exception ex)
         {
-            logger.LogError(UnexpectedErrors.ForLogging(nameof(SendingEmailJob), ex));
+            logger.LogError(ex,
+                "[{ClassName}] exceção inesperada: {ExceptionType} - {ExceptionMessage}",
+                nameof(SendingEmailJob),
+                ex.GetType(),
+                ex.Message);
             throw;
         }
     }

@@ -43,7 +43,7 @@ internal sealed class CreateProductCategoryCommandHandler(
         }
         catch (Exception ex) when (ex is not BadRequestException)
         {
-            logger.LogError(UnexpectedErrors.ForLogging(nameof(CreateProductCategoryCommandHandler), ex));
+            logger.LogError($"[{nameof(CreateProductCategoryCommandHandler)}] exceção inesperada: {ex.GetType().Name} - {ex.Message}\nStack Trace: {ex.StackTrace}");
             throw;
         }
     }

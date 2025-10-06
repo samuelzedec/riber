@@ -1,4 +1,4 @@
-using Riber.Application.DTOs;
+using Riber.Application.Models;
 
 namespace Riber.Application.Abstractions.Services;
 
@@ -12,7 +12,7 @@ public interface ITokenService
     /// </summary>
     /// <param name="user">Os detalhes do usuário para quem o token está sendo gerado.</param>
     /// <returns>Uma string representando o token de autenticação gerado.</returns>
-    public string GenerateToken(UserDetailsDTO user);
+    public string GenerateToken(UserDetailsModel user);
 
     /// <summary>
     /// Gera um token de atualização, que pode ser usado para substituir um token expirado ou inválido.

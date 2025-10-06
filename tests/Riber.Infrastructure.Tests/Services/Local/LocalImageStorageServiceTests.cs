@@ -95,7 +95,7 @@ public sealed class LocalImageStorageServiceTests : BaseTest, IDisposable
     }
 
     #endregion
-    
+
     #region GetImageStreamAsync Success Tests
 
     [Fact(DisplayName = "GetImageStreamAsync should return stream when file exists")]
@@ -264,7 +264,7 @@ public sealed class LocalImageStorageServiceTests : BaseTest, IDisposable
 
             var localFileName = fileName; // Capture for closure
             var localContent = content;
-            
+
             var task = Task.Run(async () =>
             {
                 using var stream = new MemoryStream(localContent);
@@ -365,6 +365,70 @@ public sealed class LocalImageStorageServiceTests : BaseTest, IDisposable
                 // Ignore cleanup errors
             }
         }
+    }
+
+    #endregion
+
+    #region UploadAsync Error Tests
+
+    [Fact(DisplayName = "UploadAsync should throw InternalException when stream is disposed")]
+    public async Task UploadAsync_WhenStreamDisposed_ShouldThrowInternalException()
+    {
+        // Arrange
+        var stream = new MemoryStream("Test"u8.ToArray());
+        await stream.DisposeAsync(); // Stream já fechado
+        const string fileName = "test.png";
+
+        // Act
+        var action = async () => await _service.UploadAsync(stream, fileName, "image/png");
+
+        // Assert
+        await action.Should().ThrowAsync<InternalException>()
+            .WithMessage(StorageErrors.UploadFailed);
+    }
+
+    [Fact(DisplayName = "UploadAsync should log error when exception occurs")]
+    public async Task UploadAsync_WhenExceptionOccurs_ShouldLogError()
+    {
+        // Arrange
+        var stream = new MemoryStream("Test"u8.ToArray());
+        await stream.DisposeAsync();
+        const string fileName = "test.png";
+
+        // Act
+        try
+        {
+            await _service.UploadAsync(stream, fileName, "image/png");
+        }
+        catch
+        {
+            // Expected
+        }
+
+        // Assert
+        _mockLogger.Verify(
+            x => x.Log(
+                LogLevel.Error,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, t) => true),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
+    }
+
+    [Fact(DisplayName = "UploadAsync should throw when path is invalid")]
+    public async Task UploadAsync_WhenInvalidFileName_ShouldThrowInternalException()
+    {
+        // Arrange
+        using var stream = new MemoryStream("Test"u8.ToArray());
+        const string invalidFileName = "test/\\:*?\"<>|.png"; // Caracteres inválidos
+
+        // Act
+        var action = async () => await _service.UploadAsync(stream, invalidFileName, "image/png");
+
+        // Assert
+        await action.Should().ThrowAsync<InternalException>()
+            .WithMessage(StorageErrors.UploadFailed);
     }
 
     #endregion

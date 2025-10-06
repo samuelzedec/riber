@@ -1,7 +1,15 @@
 # Riber - Changelog
 
-# v2.0.1 - 05/10/25
+## v2.1.1 - 05/10/25
+- Adicionado suporte ao SonarQube para análise de qualidade de código
+- Substituídos DTOs por Models no projeto para simplificar a lógica de dados
+
+---
+
+## v2.0.1 - 05/10/25
 - **TEMPORÁRIO**: Deploy na AWS suspenso temporariamente
+
+---
 
 ## v2.0.0 - 05/10/25
 - **BREAKING CHANGE**: Reestruturação das mensagens de erro em módulos organizados

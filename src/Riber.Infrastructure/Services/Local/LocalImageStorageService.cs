@@ -28,7 +28,11 @@ public sealed class LocalImageStorageService
         }
         catch (Exception ex)
         {
-            _logger.LogError(UnexpectedErrors.ForLogging(nameof(LocalImageStorageService), ex));
+            _logger.LogError(ex,
+                "[{ClassName}] exceção inesperada: {ExceptionType} - {ExceptionMessage}",
+                nameof(LocalImageStorageService),
+                ex.GetType(),
+                ex.Message);
             throw new InternalException(StorageErrors.UploadFailed);
         }
     }
@@ -53,7 +57,7 @@ public sealed class LocalImageStorageService
     {
         var imagePath = Path.Combine(_storagePath, fileName);
         if (!File.Exists(imagePath))
-            throw new NotFoundException(StorageErrors.ImageNotFound); 
+            throw new NotFoundException(StorageErrors.ImageNotFound);
 
         File.Delete(imagePath);
         return Task.CompletedTask;

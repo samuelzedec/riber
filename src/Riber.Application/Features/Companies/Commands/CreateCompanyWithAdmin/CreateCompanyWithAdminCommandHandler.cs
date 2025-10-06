@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using Riber.Application.Abstractions.Commands;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Common;
-using Riber.Application.DTOs;
 using Riber.Application.Exceptions;
 using Riber.Application.Extensions;
+using Riber.Application.Models;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Entities;
 using Riber.Domain.Enums;
@@ -21,7 +21,7 @@ internal sealed class CreateCompanyWithAdminCommandHandler(
     IUnitOfWork unitOfWork,
     IUserCreationService userCreationService,
     ILogger<CreateCompanyWithAdminCommandHandler> logger
-    ) : ICommandHandler<CreateCompanyWithAdminCommand, CreateCompanyWithAdminCommandResponse>
+) : ICommandHandler<CreateCompanyWithAdminCommand, CreateCompanyWithAdminCommandResponse>
 {
     public async ValueTask<Result<CreateCompanyWithAdminCommandResponse>> Handle(
         CreateCompanyWithAdminCommand request, CancellationToken cancellationToken)
@@ -46,7 +46,7 @@ internal sealed class CreateCompanyWithAdminCommandHandler(
 
             await unitOfWork.Companies.CreateAsync(companyEntity, cancellationToken);
             await userCreationService.CreateCompleteUserAsync(
-                new CreateUserCompleteDTO(
+                new CreateUserCompleteModel(
                     FullName: request.AdminFullName,
                     UserName: request.AdminUserName,
                     Email: request.AdminEmail,
@@ -79,7 +79,11 @@ internal sealed class CreateCompanyWithAdminCommandHandler(
         catch (Exception ex)
         {
             await unitOfWork.RollbackTransactionAsync(cancellationToken);
-            logger.LogError(UnexpectedErrors.ForLogging(nameof(CreateCompanyWithAdminCommandHandler), ex));
+            logger.LogError(ex,
+                "[{ClassName}] exceção inesperada: {ExceptionType} - {ExceptionMessage}",
+                nameof(CreateCompanyWithAdminCommandHandler),
+                ex.GetType(),
+                ex.Message);
             throw;
         }
     }

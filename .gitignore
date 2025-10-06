@@ -10,6 +10,13 @@
 *.userosscache
 *.sln.docstates
 
+# SonarQube
+.sonarqube/
+.scannerwork/
+**/coverage.opencover.xml
+**/TestResults/
+analyze.sh
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 

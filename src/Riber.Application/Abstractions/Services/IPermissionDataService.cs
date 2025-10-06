@@ -1,4 +1,4 @@
-using Riber.Application.DTOs;
+using Riber.Application.Models;
 
 namespace Riber.Application.Abstractions.Services;
 
@@ -25,5 +25,5 @@ public interface IPermissionDataService
     /// Obtém todas as permissões juntamente com suas descrições.
     /// </summary>
     /// <returns>Uma tarefa que representa a operação assíncrona. O resultado da tarefa é uma coleção de objetos PermissionDTO contendo os dados das permissões.</returns>
-    Task<ICollection<PermissionDTO>> GetAllWithDescriptionsAsync();
+    Task<ICollection<PermissionModel>> GetAllWithDescriptionsAsync();
 }

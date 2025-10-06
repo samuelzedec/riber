@@ -1,6 +1,6 @@
-namespace Riber.Application.DTOs;
+namespace Riber.Application.Models;
 
-public sealed record CreateApplicationUserDTO(
+public sealed record CreateApplicationUserModel(
     string UserName,
     string Name,
     string Email,

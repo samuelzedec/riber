@@ -4,7 +4,7 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Riber.Application.Abstractions.Services;
-using Riber.Application.DTOs;
+using Riber.Application.Models;
 using Riber.Infrastructure.Settings;
 
 namespace Riber.Infrastructure.Services.Authentication;
@@ -14,7 +14,7 @@ public sealed class JwtTokenService(
     IOptions<RefreshTokenSettings> refreshTokenSettings)
     : ITokenService
 {
-    public string GenerateToken(UserDetailsDTO user)
+    public string GenerateToken(UserDetailsModel user)
     {
         var companyId = user.UserDomain.CompanyId.ToString() ?? string.Empty;
         var claims = new List<Claim>

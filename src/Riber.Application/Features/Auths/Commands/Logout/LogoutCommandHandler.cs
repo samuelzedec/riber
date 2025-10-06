@@ -3,7 +3,6 @@ using Riber.Application.Abstractions.Commands;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Common;
 using Riber.Application.Exceptions;
-using Riber.Domain.Constants.Messages.Common;
 
 namespace Riber.Application.Features.Auths.Commands.Logout;
 
@@ -23,7 +22,11 @@ internal sealed class LogoutCommandHandler(
         }
         catch (Exception ex) when (ex is not BadRequestException)
         {
-            logger.LogError(UnexpectedErrors.ForLogging(nameof(LogoutCommandHandler), ex));
+            logger.LogError(ex,
+                "[{ClassName}] exceção inesperada: {ExceptionType} - {ExceptionMessage}",
+                nameof(LogoutCommandHandler),
+                ex.GetType(),
+                ex.Message);
             throw;
         }
     }

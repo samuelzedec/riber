@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Riber.Application.Abstractions.Services;
-using Riber.Application.DTOs;
 using Riber.Application.Exceptions;
+using Riber.Application.Models;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Infrastructure.Persistence.Identity;
 
@@ -16,7 +16,6 @@ public sealed class AuthService(
     ILogger<AuthService> logger)
     : IAuthService
 {
-
     #region Properties
 
     private IQueryable<ApplicationUser> GetBaseUserQuery
@@ -26,88 +25,99 @@ public sealed class AuthService(
 
     #region Methods
 
-    public async Task CreateAsync(CreateApplicationUserDTO userDto, CancellationToken cancellationToken)
+    public async Task CreateAsync(CreateApplicationUserModel applicationUserModel, CancellationToken cancellationToken)
     {
         try
         {
             var applicationUser = new ApplicationUser
             {
-                Name = userDto.Name,
-                UserName = userDto.UserName,
-                Email = userDto.Email,
+                Name = applicationUserModel.Name,
+                UserName = applicationUserModel.UserName,
+                Email = applicationUserModel.Email,
                 EmailConfirmed = false,
-                PhoneNumber = userDto.PhoneNumber,
-                UserDomainId = userDto.UserDomainId
+                PhoneNumber = applicationUserModel.PhoneNumber,
+                UserDomainId = applicationUserModel.UserDomainId
             };
-            var result = await userManager.CreateAsync(applicationUser, userDto.Password);
+            var result = await userManager.CreateAsync(applicationUser, applicationUserModel.Password);
             if (!result.Succeeded)
             {
                 var errors = string.Join(", ", result.Errors.Select(e => e.Description));
                 throw new InvalidOperationException($"Falha ao criar usuário no Identity: {errors}");
             }
-            await userManager.AddToRoleAsync(applicationUser, userDto.Roles.ToList()[0]);
+
+            await userManager.AddToRoleAsync(applicationUser, applicationUserModel.Roles.ToList()[0]);
         }
         catch (Exception ex)
         {
-            logger.LogError(UnexpectedErrors.ForLogging(nameof(AuthService), ex));
+            logger.LogError(ex,
+                "[{ClassName}] exceção inesperada: {ExceptionType} - {ExceptionMessage}",
+                nameof(AuthService),
+                ex.GetType(),
+                ex.Message);
             throw;
         }
     }
 
-    public async Task<UserDetailsDTO?> LoginAsync(string userNameOrEmail, string password)
+    public async Task<UserDetailsModel?> LoginAsync(string userNameOrEmail, string password)
     {
         var normalizedInput = userNameOrEmail.ToUpperInvariant();
         var user = await GetBaseUserQuery
-             .FirstOrDefaultAsync(u => u.NormalizedUserName == normalizedInput || u.NormalizedEmail == normalizedInput)
-             ?? throw new NotFoundException(NotFoundErrors.User);
+                       .FirstOrDefaultAsync(u =>
+                           u.NormalizedUserName == normalizedInput || u.NormalizedEmail == normalizedInput)
+                   ?? throw new NotFoundException(NotFoundErrors.User);
 
         return await userManager.CheckPasswordAsync(user, password)
-            ? await MapUserDetailsAsync(user) : null;
+            ? await MapUserDetailsAsync(user)
+            : null;
     }
 
-    public async Task<UserDetailsDTO?> FindByIdAsync(string userId)
+    public async Task<UserDetailsModel?> FindByIdAsync(string userId)
     {
         var inputParsed = Guid.Parse(userId);
         var user = await GetBaseUserQuery
             .FirstOrDefaultAsync(u => u.Id == inputParsed);
 
         return user is not null
-            ? await MapUserDetailsAsync(user) : null;
+            ? await MapUserDetailsAsync(user)
+            : null;
     }
 
-    public async Task<UserDetailsDTO?> FindByEmailAsync(string email)
+    public async Task<UserDetailsModel?> FindByEmailAsync(string email)
     {
         var normalizedEmail = email.ToUpperInvariant();
         var user = await GetBaseUserQuery
             .FirstOrDefaultAsync(u => u.NormalizedEmail == normalizedEmail);
 
         return user is not null
-            ? await MapUserDetailsAsync(user) : null;
+            ? await MapUserDetailsAsync(user)
+            : null;
     }
 
-    public async Task<UserDetailsDTO?> FindByUserNameAsync(string userName)
+    public async Task<UserDetailsModel?> FindByUserNameAsync(string userName)
     {
         var normalizedUserName = userName.ToUpperInvariant();
         var user = await GetBaseUserQuery
             .FirstOrDefaultAsync(u => u.NormalizedUserName == normalizedUserName);
 
         return user is not null
-            ? await MapUserDetailsAsync(user) : null;
+            ? await MapUserDetailsAsync(user)
+            : null;
     }
 
-    public async Task<UserDetailsDTO?> FindByPhoneAsync(string phoneNumber)
+    public async Task<UserDetailsModel?> FindByPhoneAsync(string phoneNumber)
     {
         var user = await GetBaseUserQuery
             .FirstOrDefaultAsync(x => x.PhoneNumber == phoneNumber);
 
         return user is not null
-            ? await MapUserDetailsAsync(user) : null;
+            ? await MapUserDetailsAsync(user)
+            : null;
     }
 
     public async Task AssignRoleToUserAsync(string userId, string roleName)
     {
         var user = await userManager.FindByIdAsync(userId)
-            ?? throw new InvalidOperationException(NotFoundErrors.User);
+                   ?? throw new InvalidOperationException(NotFoundErrors.User);
 
         await EnsureRoleExistsAsync(roleName);
         var result = await userManager.AddToRoleAsync(user, roleName);
@@ -121,7 +131,7 @@ public sealed class AuthService(
     public async Task UpdateUserRoleAsync(string userId, string newRole)
     {
         var user = await userManager.FindByIdAsync(userId)
-            ?? throw new InvalidOperationException(NotFoundErrors.User);
+                   ?? throw new InvalidOperationException(NotFoundErrors.User);
 
         var currentRoles = await userManager.GetRolesAsync(user);
         if (currentRoles.Any())
@@ -152,7 +162,7 @@ public sealed class AuthService(
 
     #region Helpers
 
-    private async Task<UserDetailsDTO> MapUserDetailsAsync(ApplicationUser user)
+    private async Task<UserDetailsModel> MapUserDetailsAsync(ApplicationUser user)
     {
         var claims = new List<Claim>();
         claims.AddRange(await userManager.GetClaimsAsync(user));
@@ -161,7 +171,7 @@ public sealed class AuthService(
         foreach (string role in roles)
             claims.AddRange(await GetClaimsByRoleName(role));
 
-        return new UserDetailsDTO(
+        return new UserDetailsModel(
             Id: user.Id,
             UserName: user.UserName!,
             Email: user.Email!,
@@ -170,7 +180,7 @@ public sealed class AuthService(
             SecurityStamp: user.SecurityStamp!,
             UserDomainId: user.UserDomainId,
             Roles: [.. roles],
-            Claims: [.. claims.Select(x => new ClaimDTO(Type: x.Type, Value: x.Value))],
+            Claims: [.. claims.Select(x => new ClaimModel(Type: x.Type, Value: x.Value))],
             UserDomain: user.UserDomain
         );
     }

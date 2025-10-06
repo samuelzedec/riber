@@ -1,6 +1,6 @@
 using Riber.Application.Abstractions.Services;
-using Riber.Application.DTOs;
 using Riber.Application.Exceptions;
+using Riber.Application.Models;
 using Riber.Domain.Abstractions;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Entities;
@@ -17,26 +17,26 @@ public sealed class UserCreationService(
     : IUserCreationService
 {
     public async Task CreateCompleteUserAsync(
-        CreateUserCompleteDTO dto,
+        CreateUserCompleteModel model,
         CancellationToken cancellationToken = default)
     {
-        await ValidateUserDoesNotExistAsync(dto.Email, dto.UserName, dto.PhoneNumber, dto.TaxId);
+        await ValidateUserDoesNotExistAsync(model.Email, model.UserName, model.PhoneNumber, model.TaxId);
 
         var domainUser = User.Create(
-            fullName: dto.FullName,
-            taxId: dto.TaxId,
-            position: dto.Position,
-            companyId: dto.CompanyId
+            fullName: model.FullName,
+            taxId: model.TaxId,
+            position: model.Position,
+            companyId: model.CompanyId
         );
 
-        var applicationUser = new CreateApplicationUserDTO(
-            UserName: dto.UserName,
-            Name: dto.FullName.Split(' ')[0],
-            Email: Email.Create(dto.Email).Value,
-            PhoneNumber: Phone.Create(dto.PhoneNumber).Value,
-            Password: dto.Password,
+        var applicationUser = new CreateApplicationUserModel(
+            UserName: model.UserName,
+            Name: model.FullName.Split(' ')[0],
+            Email: Email.Create(model.Email).Value,
+            PhoneNumber: Phone.Create(model.PhoneNumber).Value,
+            Password: model.Password,
             UserDomainId: domainUser.Id,
-            Roles: dto.Roles
+            Roles: model.Roles
         );
 
         await unitOfWork.Users.CreateAsync(domainUser, cancellationToken);
