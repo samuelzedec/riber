@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Logging;
 using Riber.Application.Abstractions.Commands;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Common;
@@ -13,39 +12,31 @@ namespace Riber.Application.Features.ProductCategories.Commands;
 
 internal sealed class CreateProductCategoryCommandHandler(
     IUnitOfWork unitOfWork,
-    ICurrentUserService currentUserService,
-    ILogger<CreateProductCategoryCommandHandler> logger)
+    ICurrentUserService currentUserService)
     : ICommandHandler<CreateProductCategoryCommand, CreateProductCategoryCommandResponse>
 {
-    public async ValueTask<Result<CreateProductCategoryCommandResponse>> Handle(CreateProductCategoryCommand command, CancellationToken cancellationToken)
+    public async ValueTask<Result<CreateProductCategoryCommandResponse>> Handle(CreateProductCategoryCommand command,
+        CancellationToken cancellationToken)
     {
-        try
-        {
-            var companyId = currentUserService.GetCompanyId();
-            await ValidateCode(command.Code, companyId, cancellationToken);
+        var companyId = currentUserService.GetCompanyId();
+        await ValidateCode(command.Code, companyId, cancellationToken);
 
-            var codeNormalized = command.Code.ToUpperInvariant();
-            var category = ProductCategory.Create(
-                code: codeNormalized,
-                name: command.Name,
-                description: command.Description,
-                companyId: companyId
-            );
+        var codeNormalized = command.Code.ToUpperInvariant();
+        var category = ProductCategory.Create(
+            code: codeNormalized,
+            name: command.Name,
+            description: command.Description,
+            companyId: companyId
+        );
 
-            await unitOfWork.Products.CreateCategoryAsync(category, cancellationToken);
-            await unitOfWork.SaveChangesAsync(cancellationToken);
+        await unitOfWork.Products.CreateCategoryAsync(category, cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new CreateProductCategoryCommandResponse(
-                category.Id,
-                codeNormalized,
-                category.Name
-            );
-        }
-        catch (Exception ex) when (ex is not BadRequestException)
-        {
-            logger.LogError($"[{nameof(CreateProductCategoryCommandHandler)}] exceção inesperada: {ex.GetType().Name} - {ex.Message}\nStack Trace: {ex.StackTrace}");
-            throw;
-        }
+        return new CreateProductCategoryCommandResponse(
+            category.Id,
+            codeNormalized,
+            category.Name
+        );
     }
 
     private async Task ValidateCode(
