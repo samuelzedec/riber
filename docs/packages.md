@@ -49,13 +49,17 @@ Pacotes da camada de infraestrutura, responsável por persistência, logging, ag
 
 Pacotes específicos da camada de apresentação (API Web).
 
-| Pacote                                            | Versão | Descrição                                                                                                |
-|---------------------------------------------------|--------|----------------------------------------------------------------------------------------------------------|
-| `Microsoft.AspNetCore.Authentication.JwtBearer`   | 9.0.6  | Autenticação via JWT Bearer tokens                                                                       |
-| `Microsoft.AspNetCore.OpenApi`                    | 9.0.8  | Suporte nativo do .NET 9 para documentação OpenAPI/Swagger                                               |
-| `Scalar.AspNetCore`                               | 2.7.0  | Interface moderna e interativa para documentação de APIs                                                 |
-| `Microsoft.AspNetCore.Mvc.Versioning`             | 5.1.0  | Permite que você defina diferentes versões de endpoints de API                                           |
-| `Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer` | 5.1.0  | Integra o versionamento com ferramentas de descoberta e documentação de APIs, como Swagger (Swashbuckle) |
+| Pacote                                            | Versão | Descrição                                                                                                    |
+|---------------------------------------------------|--------|--------------------------------------------------------------------------------------------------------------|
+| `Microsoft.AspNetCore.Authentication.JwtBearer`   | 9.0.6  | Autenticação via JWT Bearer tokens                                                                           |
+| `Microsoft.AspNetCore.OpenApi`                    | 9.0.8  | Suporte nativo do .NET 9 para documentação OpenAPI/Swagger                                                   |
+| `Scalar.AspNetCore`                               | 2.7.0  | Interface moderna e interativa para documentação de APIs                                                     |
+| `Microsoft.AspNetCore.Mvc.Versioning`             | 5.1.0  | Permite que você defina diferentes versões de endpoints de API                                               |
+| `Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer` | 5.1.0  | Integra o versionamento com ferramentas de descoberta e documentação de APIs, como Swagger (Swashbuckle)     |
+| `OpenTelemetry.Exporter.Console`                  | 1.13.0 | Exportador de telemetria para console, útil para desenvolvimento e debugging de traces, metrics e logs       |
+| `OpenTelemetry.Extensions.Hosting`                | 1.13.0 | Integração do OpenTelemetry com .NET Generic Host para configuração de telemetria em aplicações ASP.NET Core |
+| `OpenTelemetry.Instrumentation.AspNetCore`        | 1.12.0 | Instrumentação automática de requests HTTP do ASP.NET Core, gerando traces e métricas de requisições         |
+| `OpenTelemetry.Instrumentation.Http`              | 1.12.0 | Instrumentação automática de chamadas HTTP outbound via HttpClient, capturando latência e erros              |
 
 ## 🧪 Testes
 
