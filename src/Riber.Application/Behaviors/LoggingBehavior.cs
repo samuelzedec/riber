@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Mediator;
 using Microsoft.Extensions.Logging;
+using Riber.Application.Configurations;
 using Riber.Application.Exceptions;
 
 namespace Riber.Application.Behaviors;
@@ -9,40 +10,68 @@ public class LoggingBehavior<TRequest, TResponse>(ILogger<TRequest> logger)
     : IPipelineBehavior<TRequest, TResponse> where TRequest : IMessage
 {
     public async ValueTask<TResponse> Handle(
-        TRequest request, 
+        TRequest message,
         MessageHandlerDelegate<TRequest, TResponse> next,
         CancellationToken cancellationToken)
     {
-        var requestFullName = request.GetType().FullName ?? request.GetType().Name;
+        var messageName = message.GetType().Name;
         var stopwatch = Stopwatch.StartNew();
+
+        using var activity = DiagnosticsConfig
+            .ActivitySource
+            .StartActivity($"Mediator.{messageName}");
 
         try
         {
-            logger.LogInformation("Handling request: {RequestFullName}", requestFullName);
-            var result = await next(request, cancellationToken);
+            logger.LogInformation("Handling: {RequestFullName}", messageName);
+            var result = await next(message, cancellationToken);
 
-            logger.LogInformation("Request {RequestFullName} processed in {ElapsedMs}ms.",
-                requestFullName, stopwatch.ElapsedMilliseconds);
+            stopwatch.Stop();
+            activity?.SetTag("duration_ms", stopwatch.ElapsedMilliseconds);
+            activity?.SetStatus(ActivityStatusCode.Ok);
+
+            logger.LogInformation(
+                "{RequestName} completed in {ElapsedMs}ms",
+                messageName,
+                stopwatch.ElapsedMilliseconds
+            );
 
             return result;
         }
-        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        catch (OperationCanceledException ex) when (cancellationToken.IsCancellationRequested)
         {
-            var elapsedTime = stopwatch.Elapsed;
-            logger.LogWarning("Request {RequestFullName} timed out after {ElapsedSeconds}s",
-                requestFullName, elapsedTime.TotalSeconds);
+            stopwatch.Stop();
+            activity?.SetStatus(ActivityStatusCode.Error, "Request cancelled");
 
-            throw new RequestTimeoutException(requestFullName, elapsedTime);
+            logger.LogWarning(
+                ex,
+                "{RequestName} cancelled after {ElapsedSeconds:F2}s",
+                messageName,
+                stopwatch.Elapsed.TotalSeconds
+            );
+
+            throw new RequestTimeoutException(messageName, stopwatch.Elapsed);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error while handling request: {RequestFullName} after {ElapsedMs}ms",
-                requestFullName, stopwatch.ElapsedMilliseconds);
-            throw;
-        }
-        finally
-        {
             stopwatch.Stop();
+            activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
+            activity?.SetTag("exception.type", ex.GetType().Name);
+            activity?.SetTag("exception.message", ex.Message);
+            
+            if (!ex.Data.Contains("RequestName"))
+                ex.Data["RequestName"] = messageName;
+    
+            if (!ex.Data.Contains("ElapsedMs"))
+                ex.Data["ElapsedMs"] = stopwatch.ElapsedMilliseconds;
+
+            logger.LogError(
+                ex,
+                "{RequestName} failed after {ElapsedMs}ms",
+                messageName,
+                stopwatch.ElapsedMilliseconds
+            );
+            throw;
         }
     }
 }
