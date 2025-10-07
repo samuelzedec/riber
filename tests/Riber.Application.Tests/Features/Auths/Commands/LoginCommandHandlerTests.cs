@@ -1,6 +1,5 @@
 using Bogus.Extensions.Brazil;
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
 using Moq;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Exceptions;
@@ -19,7 +18,6 @@ public sealed class LoginCommandHandlerTests : BaseTest
 
     private readonly Mock<IAuthService> _mockAuthService;
     private readonly Mock<ITokenService> _mockTokenService;
-    private readonly Mock<ILogger<LoginCommandHandler>> _mockLogger;
     private readonly UserDetailsModel _userDetailsTest;
     private readonly LoginCommand _command;
     private readonly LoginCommandHandler _handler;
@@ -28,8 +26,6 @@ public sealed class LoginCommandHandlerTests : BaseTest
     {
         _mockAuthService = new Mock<IAuthService>();
         _mockTokenService = new Mock<ITokenService>();
-        _mockLogger = new Mock<ILogger<LoginCommandHandler>>();
-
 
         var userDomain = User.Create(
             _faker.Name.FullName(),
@@ -60,8 +56,7 @@ public sealed class LoginCommandHandlerTests : BaseTest
 
         _handler = new LoginCommandHandler(
             _mockAuthService.Object,
-            _mockTokenService.Object,
-            _mockLogger.Object
+            _mockTokenService.Object
         );
     }
 
@@ -120,15 +115,6 @@ public sealed class LoginCommandHandlerTests : BaseTest
         _mockAuthService.Verify(x => x.LoginAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         _mockTokenService.Verify(x => x.GenerateToken(It.IsAny<UserDetailsModel>()), Times.Never);
         _mockTokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
-
-        _mockLogger.Verify(
-            x => x.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains(NotFoundErrors.User)),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.Once);
     }
 
     [Fact(DisplayName = "Should throw UnauthorizedException when password is incorrect")]
@@ -147,14 +133,6 @@ public sealed class LoginCommandHandlerTests : BaseTest
         _mockAuthService.Verify(x => x.LoginAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         _mockTokenService.Verify(x => x.GenerateToken(It.IsAny<UserDetailsModel>()), Times.Never);
         _mockTokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
-        _mockLogger.Verify(x => x.Log(
-                It.IsAny<LogLevel>(),
-                It.IsAny<EventId>(),
-                It.IsAny<It.IsAnyType>(),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.Never
-        );
     }
 
     [Fact(DisplayName = "Should log error and rethrow when unexpected exception occurs")]
@@ -176,15 +154,6 @@ public sealed class LoginCommandHandlerTests : BaseTest
         _mockAuthService.Verify(x => x.LoginAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         _mockTokenService.Verify(x => x.GenerateToken(It.IsAny<UserDetailsModel>()), Times.Never);
         _mockTokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
-
-        _mockLogger.Verify(
-            x => x.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("InvalidOperationException")),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.Once);
     }
 
     #endregion

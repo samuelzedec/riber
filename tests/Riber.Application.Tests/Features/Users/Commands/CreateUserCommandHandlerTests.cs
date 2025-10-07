@@ -1,6 +1,5 @@
 using Bogus.Extensions.Brazil;
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
 using Moq;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Exceptions;
@@ -19,7 +18,6 @@ public sealed class CreateUserCommandHandlerTests : BaseTest
 
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly Mock<IUserCreationService> _mockUserCreationService;
-    private readonly Mock<ILogger<CreateUserCommandHandler>> _mockLogger;
     private readonly CreateUserCommandHandler _handler;
     private readonly CreateUserCommand _command;
 
@@ -27,12 +25,10 @@ public sealed class CreateUserCommandHandlerTests : BaseTest
     {
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _mockUserCreationService = new Mock<IUserCreationService>();
-        _mockLogger = new Mock<ILogger<CreateUserCommandHandler>>();
 
         _handler = new CreateUserCommandHandler(
             _mockUnitOfWork.Object,
-            _mockUserCreationService.Object,
-            _mockLogger.Object
+            _mockUserCreationService.Object
         );
 
         _command = new CreateUserCommand(
@@ -137,15 +133,6 @@ public sealed class CreateUserCommandHandlerTests : BaseTest
 
         _mockUnitOfWork.Verify(x => x.CommitTransactionAsync(
             It.IsAny<CancellationToken>()), Times.Never);
-
-        _mockLogger.Verify(
-            x => x.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => true),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.Never);
     }
 
     #endregion
@@ -188,15 +175,6 @@ public sealed class CreateUserCommandHandlerTests : BaseTest
 
         _mockUnitOfWork.Verify(x => x.CommitTransactionAsync(
             It.IsAny<CancellationToken>()), Times.Never);
-
-        _mockLogger.Verify(
-            x => x.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => true),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.Once);
     }
 
     [Fact(DisplayName = "Creating user when commit transaction fails should log error and rethrow")]
@@ -238,15 +216,6 @@ public sealed class CreateUserCommandHandlerTests : BaseTest
 
         _mockUnitOfWork.Verify(x => x.RollbackTransactionAsync(
             It.IsAny<CancellationToken>()), Times.Once);
-
-        _mockLogger.Verify(
-            x => x.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => true),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.Once);
     }
 
     #endregion

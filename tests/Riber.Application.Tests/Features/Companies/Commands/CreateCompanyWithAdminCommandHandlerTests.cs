@@ -1,6 +1,5 @@
 using Bogus.Extensions.Brazil;
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
 using Moq;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Exceptions;
@@ -23,7 +22,6 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly Mock<ICompanyRepository> _mockCompanyRepository;
     private readonly Mock<IUserCreationService> _mockUserCreationService;
-    private readonly Mock<ILogger<CreateCompanyWithAdminCommandHandler>> _mockLogger;
     private readonly CreateCompanyWithAdminCommandHandler _commandHandler;
     private readonly CreateCompanyWithAdminCommand _command;
 
@@ -32,11 +30,10 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _mockCompanyRepository = new Mock<ICompanyRepository>();
         _mockUserCreationService = new Mock<IUserCreationService>();
-        _mockLogger = new Mock<ILogger<CreateCompanyWithAdminCommandHandler>>();
         _commandHandler = new CreateCompanyWithAdminCommandHandler(
             _mockUnitOfWork.Object,
-            _mockUserCreationService.Object,
-            _mockLogger.Object);
+            _mockUserCreationService.Object
+        );
 
         _command = new CreateCompanyWithAdminCommand(
             CorporateName: _faker.Company.CompanyName(),
@@ -379,15 +376,6 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
 
         _mockUnitOfWork.Verify(x => x.CommitTransactionAsync(
             It.IsAny<CancellationToken>()), Times.Never);
-
-        _mockLogger.Verify(
-            x => x.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.IsAny<It.IsAnyType>(),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.Once);
     }
 
     #endregion

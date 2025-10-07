@@ -1,7 +1,6 @@
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
 using Moq;
 using Riber.Application.Exceptions;
 using Riber.Domain.Constants.Messages.Common;
@@ -28,12 +27,10 @@ public sealed class PermissionDataServiceTests : BaseTest
 
         _context = new AppDbContext(options);
         _mockMemoryCache = new Mock<IMemoryCache>();
-        var mockLogger = new Mock<ILogger<PermissionDataService>>();
 
         _permissionDataService = new PermissionDataService(
             _context,
-            _mockMemoryCache.Object,
-            mockLogger.Object
+            _mockMemoryCache.Object
         );
     }
 
