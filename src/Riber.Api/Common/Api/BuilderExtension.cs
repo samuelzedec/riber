@@ -9,8 +9,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Riber.Api.Authorizations.Permissions;
 using Riber.Api.Middlewares;
+using Riber.Application.Configurations;
 using Riber.Infrastructure.Persistence;
 using Riber.Infrastructure.Persistence.Identity;
 using Riber.Infrastructure.Settings;
@@ -26,6 +29,7 @@ public static class BuilderExtension
         builder.AddConfigurations();
         builder.AddMiddleware();
         builder.AddSecurity();
+        builder.AddTelemetry();
     }
 
     private static void AddDependencyInjection(this WebApplicationBuilder builder)
@@ -33,7 +37,7 @@ public static class BuilderExtension
         builder.Services.AddApplication();
         builder.Services.AddInfrastructure(builder.Configuration, builder.Logging);
     }
-    
+
     private static void AddMiddleware(this WebApplicationBuilder builder)
     {
         builder.Services.AddScoped<SecurityStampMiddleware>();
@@ -70,7 +74,7 @@ public static class BuilderExtension
         {
             options.DefaultPolicy = new RequestTimeoutPolicy { Timeout = TimeSpan.FromMinutes(1) };
             options.AddPolicy("fast", TimeSpan.FromSeconds(15));
-            options.AddPolicy("standard", TimeSpan.FromSeconds(30)); 
+            options.AddPolicy("standard", TimeSpan.FromSeconds(30));
             options.AddPolicy("slow", TimeSpan.FromMinutes(1));
             options.AddPolicy("upload", TimeSpan.FromMinutes(5));
         });
@@ -103,7 +107,7 @@ public static class BuilderExtension
         var refreshToken =
             builder.Configuration.GetSection(nameof(RefreshTokenSettings)).Get<RefreshTokenSettings>()
             ?? throw new InvalidOperationException($"{nameof(RefreshTokenSettings)} configuration not found");
-        
+
         builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
@@ -114,9 +118,8 @@ public static class BuilderExtension
                 options.DefaultAuthenticateScheme = nameof(AccessTokenSettings);
                 options.DefaultChallengeScheme = nameof(AccessTokenSettings);
             })
-            .AddJwtBearer(nameof(AccessTokenSettings), options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
+            .AddJwtBearer(nameof(AccessTokenSettings), options
+                => options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(accessToken.SecretKey)),
@@ -127,14 +130,13 @@ public static class BuilderExtension
                     ValidateLifetime = true, // ← Valida expiração
                     ClockSkew = TimeSpan.Zero, // ← Remove tolerância de tempo
                     RequireExpirationTime = true // ← Exige claim 'exp'
-                };
-            })
-            .AddJwtBearer(nameof(RefreshTokenSettings), options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
+                }
+            )
+            .AddJwtBearer(nameof(RefreshTokenSettings), options
+                => options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(accessToken.SecretKey)),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(refreshToken.SecretKey)),
                     ValidateIssuer = true,
                     ValidIssuer = refreshToken.Issuer,
                     ValidateAudience = true,
@@ -142,25 +144,21 @@ public static class BuilderExtension
                     ValidateLifetime = true,
                     ClockSkew = TimeSpan.Zero,
                     RequireExpirationTime = true
-                };
-            });
-        
+                });
+
         builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
         builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
         builder.Services.AddAuthorization();
     }
-    
+
     private static void AddDocumentationApi(this WebApplicationBuilder builder)
     {
-        builder.Services.AddOpenApi(options =>
-        {
-            options.AddDocumentTransformer((document, _, _) =>
+        builder.Services.AddOpenApi(options
+            => options.AddDocumentTransformer((document, _, _) =>
             {
                 document.Info = new()
                 {
-                    Title = "Riber Documentation API",
-                    Version = "v1",
-                    Description = "API do Riber"
+                    Title = "Riber Documentation API", Version = "v1", Description = "API do Riber"
                 };
 
                 document.Components ??= new();
@@ -179,19 +177,47 @@ public static class BuilderExtension
                 [
                     new OpenApiSecurityRequirement
                     {
-                        [new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                            }
-                        }] = Array.Empty<string>()
+                        [new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" } }] =
+                            Array.Empty<string>()
                     }
                 ];
 
                 return Task.CompletedTask;
-            });
-        });
+            }));
+    }
+
+    private static void AddTelemetry(this WebApplicationBuilder builder)
+    {
+        // Registra o OpenTelemetry no container de DI (Dependency Injection)
+        // Isso "liga" o sistema de observabilidade na aplicação
+        builder.Services.AddOpenTelemetry()
+
+            // Configura metadados globais que identificam seu serviço
+            // Quando você olhar traces/logs, vai saber que vieram de "Riber.Application"
+            .ConfigureResource(resource =>
+                resource.AddService(DiagnosticsConfig.ActivitySourceName)) // Ex: "Riber.Application"
+
+            // Configura o TRACING (rastreamento de requisições/operações)
+            .WithTracing(tracing => tracing
+
+                // Diz ao OpenTelemetry para "escutar" e capturar os Activities 
+                // criados pelo SEU ActivitySource (no LoggingBehavior, por exemplo)
+                // Sem isso, seus Activities customizados seriam ignorados!
+                .AddSource(DiagnosticsConfig.ActivitySourceName)
+
+                // Cria Activities AUTOMATICAMENTE para todas as requisições HTTP
+                // que chegam na sua API (GET, POST, PUT, DELETE, etc)
+                // Você não precisa criar manualmente - ele faz sozinho!
+                .AddAspNetCoreInstrumentation()
+
+                // Cria Activities AUTOMATICAMENTE para todas as chamadas HTTP
+                // que SUA API faz para serviços externos (outras APIs, webhooks, etc)
+                // Também propaga o TraceId automaticamente no header 'traceparent'
+                .AddHttpClientInstrumentation()
+
+                // Envia os traces para o CONSOLE (terminal/logs)
+                // Útil para desenvolvimento - vê os traces em tempo real
+                // Em produção, troque por: Application Insights, Jaeger, AWS X-Ray, etc
+                .AddConsoleExporter());
     }
 }

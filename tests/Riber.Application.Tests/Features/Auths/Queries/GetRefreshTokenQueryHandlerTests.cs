@@ -1,6 +1,5 @@
 using Bogus.Extensions.Brazil;
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
 using Moq;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Exceptions;
@@ -19,7 +18,6 @@ public sealed class GetRefreshTokenQueryHandlerTests : BaseTest
     private readonly Mock<ICurrentUserService> _mockCurrentUserService;
     private readonly Mock<IAuthService> _mockAuthService;
     private readonly Mock<ITokenService> _mockTokenService;
-    private readonly Mock<ILogger<GetRefreshTokenQueryHandler>> _mockLogger;
     private readonly UserDetailsModel _userDetailsTest;
     private readonly GetRefreshTokenQuery _query;
     private readonly GetRefreshTokenQueryHandler _handler;
@@ -30,7 +28,6 @@ public sealed class GetRefreshTokenQueryHandlerTests : BaseTest
         _mockCurrentUserService = new Mock<ICurrentUserService>();
         _mockAuthService = new Mock<IAuthService>();
         _mockTokenService = new Mock<ITokenService>();
-        _mockLogger = new Mock<ILogger<GetRefreshTokenQueryHandler>>();
         
         var userDomain = User.Create(
             _faker.Name.FullName(),
@@ -59,8 +56,7 @@ public sealed class GetRefreshTokenQueryHandlerTests : BaseTest
         _handler = new GetRefreshTokenQueryHandler(
             _mockCurrentUserService.Object,
             _mockAuthService.Object,
-            _mockTokenService.Object,
-            _mockLogger.Object
+            _mockTokenService.Object
         );
     }
 
@@ -108,15 +104,6 @@ public sealed class GetRefreshTokenQueryHandlerTests : BaseTest
         _mockAuthService.Verify(x => x.FindByIdAsync(_userId.ToString()), Times.Once); // Nova verificação
         _mockTokenService.Verify(x => x.GenerateToken(_userDetailsTest), Times.Once);
         _mockTokenService.Verify(x => x.GenerateRefreshToken(_userDetailsTest.Id, _userDetailsTest.SecurityStamp), Times.Once);
-        
-        _mockLogger.Verify(x => x.Log(
-                It.IsAny<LogLevel>(),
-                It.IsAny<EventId>(),
-                It.IsAny<It.IsAnyType>(),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.Never
-        );
     }
 
     #endregion
@@ -145,15 +132,6 @@ public sealed class GetRefreshTokenQueryHandlerTests : BaseTest
         _mockAuthService.Verify(x => x.FindByIdAsync(It.IsAny<string>()), Times.Never);
         _mockTokenService.Verify(x => x.GenerateToken(It.IsAny<UserDetailsModel>()), Times.Never);
         _mockTokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
-        
-        _mockLogger.Verify(
-            x => x.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("InvalidOperationException")),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.Once);
     }
 
     [Fact(DisplayName = "Should log error and rethrow when unexpected exception occurs in RefreshUserSecurityAsync")]
@@ -182,15 +160,6 @@ public sealed class GetRefreshTokenQueryHandlerTests : BaseTest
         _mockAuthService.Verify(x => x.FindByIdAsync(It.IsAny<string>()), Times.Never);
         _mockTokenService.Verify(x => x.GenerateToken(It.IsAny<UserDetailsModel>()), Times.Never);
         _mockTokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
-        
-        _mockLogger.Verify(
-            x => x.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("InvalidOperationException")),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.Once);
     }
 
     [Fact(DisplayName = "Should log error and rethrow when user not found in FindByIdAsync")]
@@ -252,15 +221,6 @@ public sealed class GetRefreshTokenQueryHandlerTests : BaseTest
         _mockAuthService.Verify(x => x.FindByIdAsync(_userId.ToString()), Times.Once);
         _mockTokenService.Verify(x => x.GenerateToken(It.IsAny<UserDetailsModel>()), Times.Never);
         _mockTokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
-        
-        _mockLogger.Verify(
-            x => x.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("InvalidOperationException")),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.Once);
     }
 
     #endregion

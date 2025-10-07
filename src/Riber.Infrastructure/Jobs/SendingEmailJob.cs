@@ -34,12 +34,11 @@ public sealed class SendingEmailJob(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex,
-                "[{ClassName}] exceção inesperada: {ExceptionType} - {ExceptionMessage}",
-                nameof(SendingEmailJob),
-                ex.GetType(),
-                ex.Message);
-            throw;
+            logger.LogError(
+                ex,
+                "Permanent failure sending email to {EmailAddress}. Will NOT retry.",
+                jobDataMap.GetString("emailAddress")
+            );
         }
     }
 }

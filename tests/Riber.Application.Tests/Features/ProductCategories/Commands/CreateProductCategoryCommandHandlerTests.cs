@@ -1,6 +1,5 @@
 using System.Linq.Expressions;
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
 using Moq;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Exceptions;
@@ -21,7 +20,6 @@ public sealed class CreateProductCategoryCommandHandlerTests : BaseTest
 
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly Mock<ICurrentUserService> _mockCurrentUserService;
-    private readonly Mock<ILogger<CreateProductCategoryCommandHandler>> _mockLogger;
     private readonly Mock<IProductRepository> _mockProductRepository;
     private readonly CreateProductCategoryCommandHandler _handler;
     private readonly CreateProductCategoryCommand _command;
@@ -32,7 +30,6 @@ public sealed class CreateProductCategoryCommandHandlerTests : BaseTest
     {
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _mockCurrentUserService = new Mock<ICurrentUserService>();
-        _mockLogger = new Mock<ILogger<CreateProductCategoryCommandHandler>>();
         _mockProductRepository = new Mock<IProductRepository>();
         _companyId = Guid.NewGuid();
 
@@ -41,8 +38,7 @@ public sealed class CreateProductCategoryCommandHandlerTests : BaseTest
 
         _handler = new CreateProductCategoryCommandHandler(
             _mockUnitOfWork.Object,
-            _mockCurrentUserService.Object,
-            _mockLogger.Object
+            _mockCurrentUserService.Object
         );
 
         _command = new CreateProductCategoryCommand(
@@ -177,15 +173,6 @@ public sealed class CreateProductCategoryCommandHandlerTests : BaseTest
 
         _mockUnitOfWork.Verify(x => x.SaveChangesAsync(
             It.IsAny<CancellationToken>()), Times.Never);
-
-        _mockLogger.Verify(
-            x => x.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => true),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.Never);
     }
 
     [Fact(DisplayName = "Creating product category when code validation fails should throw BadRequestException")]
@@ -211,15 +198,6 @@ public sealed class CreateProductCategoryCommandHandlerTests : BaseTest
 
         _mockUnitOfWork.Verify(x => x.SaveChangesAsync(
             It.IsAny<CancellationToken>()), Times.Never);
-
-        _mockLogger.Verify(
-            x => x.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => true),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.Never);
     }
 
     #endregion
@@ -238,8 +216,7 @@ public sealed class CreateProductCategoryCommandHandlerTests : BaseTest
 
         var handlerWithFailingUserService = new CreateProductCategoryCommandHandler(
             _mockUnitOfWork.Object,
-            _mockCurrentUserService.Object,
-            _mockLogger.Object
+            _mockCurrentUserService.Object
         );
 
         // Act
@@ -259,15 +236,6 @@ public sealed class CreateProductCategoryCommandHandlerTests : BaseTest
 
         _mockUnitOfWork.Verify(x => x.SaveChangesAsync(
             It.IsAny<CancellationToken>()), Times.Never);
-
-        _mockLogger.Verify(
-            x => x.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => true),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.Never);
     }
 
     [Fact(DisplayName = "Creating product category when category creation fails should log error and rethrow")]
@@ -299,15 +267,6 @@ public sealed class CreateProductCategoryCommandHandlerTests : BaseTest
 
         _mockUnitOfWork.Verify(x => x.SaveChangesAsync(
             It.IsAny<CancellationToken>()), Times.Never);
-
-        _mockLogger.Verify(
-            x => x.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => true),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.Once);
     }
 
     [Fact(DisplayName = "Creating product category when save changes fails should log error and rethrow")]
@@ -344,15 +303,6 @@ public sealed class CreateProductCategoryCommandHandlerTests : BaseTest
             It.IsAny<CancellationToken>()), Times.Once);
 
         _mockCurrentUserService.Verify(x => x.GetCompanyId(), Times.Once);
-
-        _mockLogger.Verify(
-            x => x.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => true),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.Once);
     }
 
     #endregion

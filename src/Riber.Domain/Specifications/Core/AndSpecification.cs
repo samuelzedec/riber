@@ -3,19 +3,13 @@ using System.Linq.Expressions;
 namespace Riber.Domain.Specifications.Core;
 
 internal sealed class AndSpecification<T>(
-    Specification<T> left, 
-    Specification<T> right) 
+    Specification<T> left,
+    Specification<T> right)
     : Specification<T>
 {
     public override Expression<Func<T, bool>> ToExpression()
     {
-        var leftExpression = left.ToExpression();
-        var rightExpression = right.ToExpression();
-
-        var parameter = Expression.Parameter(typeof(T), "entity");
-        var leftBody = ReplaceParameter(leftExpression.Body, leftExpression.Parameters[0], parameter);
-        var rightBody = ReplaceParameter(rightExpression.Body, rightExpression.Parameters[0], parameter);
-
+        (Expression leftBody, Expression rightBody, ParameterExpression parameter) = UnifyParameters(left, right);
         return Expression.Lambda<Func<T, bool>>(
             Expression.AndAlso(leftBody, rightBody),
             parameter

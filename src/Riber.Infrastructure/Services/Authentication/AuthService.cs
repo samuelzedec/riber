@@ -1,7 +1,6 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Exceptions;
 using Riber.Application.Models;
@@ -12,8 +11,7 @@ namespace Riber.Infrastructure.Services.Authentication;
 
 public sealed class AuthService(
     UserManager<ApplicationUser> userManager,
-    RoleManager<ApplicationRole> roleManager,
-    ILogger<AuthService> logger)
+    RoleManager<ApplicationRole> roleManager)
     : IAuthService
 {
     #region Properties
@@ -27,35 +25,23 @@ public sealed class AuthService(
 
     public async Task CreateAsync(CreateApplicationUserModel applicationUserModel, CancellationToken cancellationToken)
     {
-        try
+        var applicationUser = new ApplicationUser
         {
-            var applicationUser = new ApplicationUser
-            {
-                Name = applicationUserModel.Name,
-                UserName = applicationUserModel.UserName,
-                Email = applicationUserModel.Email,
-                EmailConfirmed = false,
-                PhoneNumber = applicationUserModel.PhoneNumber,
-                UserDomainId = applicationUserModel.UserDomainId
-            };
-            var result = await userManager.CreateAsync(applicationUser, applicationUserModel.Password);
-            if (!result.Succeeded)
-            {
-                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-                throw new InvalidOperationException($"Falha ao criar usuário no Identity: {errors}");
-            }
+            Name = applicationUserModel.Name,
+            UserName = applicationUserModel.UserName,
+            Email = applicationUserModel.Email,
+            EmailConfirmed = false,
+            PhoneNumber = applicationUserModel.PhoneNumber,
+            UserDomainId = applicationUserModel.UserDomainId
+        };
+        var result = await userManager.CreateAsync(applicationUser, applicationUserModel.Password);
+        if (!result.Succeeded)
+        {
+            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+            throw new InvalidOperationException($"Falha ao criar usuário no Identity: {errors}");
+        }
 
-            await userManager.AddToRoleAsync(applicationUser, applicationUserModel.Roles.ToList()[0]);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex,
-                "[{ClassName}] exceção inesperada: {ExceptionType} - {ExceptionMessage}",
-                nameof(AuthService),
-                ex.GetType(),
-                ex.Message);
-            throw;
-        }
+        await userManager.AddToRoleAsync(applicationUser, applicationUserModel.Roles.ToList()[0]);
     }
 
     public async Task<UserDetailsModel?> LoginAsync(string userNameOrEmail, string password)

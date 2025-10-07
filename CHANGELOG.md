@@ -1,5 +1,25 @@
 # Riber - Changelog
 
+## v2.2.0 - 07/10/25
+- **NOVO**: Sistema de diagnósticos e rastreamento distribuído
+- Adiciona configuração centralizada para ActivitySource na camada Application
+- Melhora significativamente o LoggingBehavior com suporte a distributed tracing
+- **REFATORAÇÃO**: Otimização massiva de handlers e services
+- Simplifica handlers de autenticação, empresas, usuários e categorias de produtos
+- Otimiza services da camada Infrastructure (AuthService, PermissionDataService, AmazonSESService)
+- Refatora Domain Specifications para melhor performance
+- **MELHORIAS**: Padronização de código e configurações
+- Melhora formatação XML em arquivos de configuração de pacotes
+- Atualiza configurações de projeto seguindo padrões mais recentes
+- Remove código redundante e melhora legibilidade geral
+- **TESTES**: Cobertura abrangente para novas funcionalidades
+- Adiciona testes completos para Activity tracing no LoggingBehavior
+- Atualiza todos os testes para refletir código refatorado
+- Melhora cenários de teste para tratamento de erros
+- **DOCS**: Atualização da documentação de pacotes e dependências
+
+---
+
 ## v2.1.1 - 05/10/25
 - Adicionado suporte ao SonarQube para análise de qualidade de código
 - Substituídos DTOs por Models no projeto para simplificar a lógica de dados

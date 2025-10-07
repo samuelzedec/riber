@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Logging;
 using Riber.Application.Abstractions.Commands;
 using Riber.Application.Common;
 using Riber.Application.Exceptions;
@@ -13,46 +12,30 @@ using Riber.Domain.ValueObjects.Phone;
 
 namespace Riber.Application.Features.Companies.Commands.UpdateCompany;
 
-internal sealed class UpdateCompanyCommandHandler(
-    IUnitOfWork unitOfWork,
-    ILogger<UpdateCompanyCommandHandler> logger)
+internal sealed class UpdateCompanyCommandHandler(IUnitOfWork unitOfWork)
     : ICommandHandler<UpdateCompanyCommand, UpdateCompanyCommandResponse>
 {
     public async ValueTask<Result<UpdateCompanyCommandResponse>> Handle(UpdateCompanyCommand request,
         CancellationToken cancellationToken)
     {
         var companyRepository = unitOfWork.Companies;
-        try
-        {
-            await unitOfWork.BeginTransactionAsync(cancellationToken);
-            var company = await companyRepository.GetSingleAsync(
-                              new CompanyIdSpecification(request.CompanyId), cancellationToken)
-                          ?? throw new NotFoundException(NotFoundErrors.Company);
+        var company = await companyRepository.GetSingleAsync(
+            new CompanyIdSpecification(request.CompanyId), cancellationToken)
+            ?? throw new NotFoundException(NotFoundErrors.Company);
 
-            await UpdateEmailAsync(company, request.Email, cancellationToken);
-            await UpdatePhoneAsync(company, request.Phone, cancellationToken);
-            UpdateFantasyName(company, request.FantasyName);
+        await UpdateEmailAsync(company, request.Email, cancellationToken);
+        await UpdatePhoneAsync(company, request.Phone, cancellationToken);
+        UpdateFantasyName(company, request.FantasyName);
 
-            companyRepository.Update(company);
-            await unitOfWork.CommitTransactionAsync(cancellationToken);
+        companyRepository.Update(company);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new UpdateCompanyCommandResponse(
-                company.Name,
-                company.Email,
-                company.Phone,
-                company.TaxId.Type.GetDescription()
-            );
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex,
-                "[{ClassName}] exceção inesperada: {ExceptionType} - {ExceptionMessage}",
-                nameof(UpdateCompanyCommandHandler),
-                ex.GetType(),
-                ex.Message);
-            await unitOfWork.RollbackTransactionAsync(cancellationToken);
-            throw;
-        }
+        return new UpdateCompanyCommandResponse(
+            company.Name,
+            company.Email,
+            company.Phone,
+            company.TaxId.Type.GetDescription()
+        );
     }
 
     private async Task UpdateEmailAsync(Company company, string email, CancellationToken cancellationToken = default)

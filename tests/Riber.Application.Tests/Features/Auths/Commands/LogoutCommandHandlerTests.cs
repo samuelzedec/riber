@@ -1,5 +1,4 @@
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
 using Moq;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Features.Auths.Commands.Logout;
@@ -13,7 +12,6 @@ public sealed class LogoutCommandHandlerTests : BaseTest
 
     private readonly Mock<IAuthService> _mockAuthService;
     private readonly Mock<ICurrentUserService> _mockCurrentUserService;
-    private readonly Mock<ILogger<LogoutCommandHandler>> _mockLogger;
     private readonly LogoutCommand _command;
     private readonly LogoutCommandHandler _handler;
     private readonly Guid _userId;
@@ -22,15 +20,13 @@ public sealed class LogoutCommandHandlerTests : BaseTest
     {
         _mockAuthService = new Mock<IAuthService>();
         _mockCurrentUserService = new Mock<ICurrentUserService>();
-        _mockLogger = new Mock<ILogger<LogoutCommandHandler>>();
         
         _userId = Guid.CreateVersion7();
         _command = new LogoutCommand();
 
         _handler = new LogoutCommandHandler(
             _mockAuthService.Object,
-            _mockCurrentUserService.Object,
-            _mockLogger.Object
+            _mockCurrentUserService.Object
         );
     }
 
@@ -57,14 +53,6 @@ public sealed class LogoutCommandHandlerTests : BaseTest
         
         _mockCurrentUserService.Verify(x => x.GetUserId(), Times.Once);
         _mockAuthService.Verify(x => x.RefreshUserSecurityAsync(_userId.ToString()), Times.Once);
-        _mockLogger.Verify(x => x.Log(
-                It.IsAny<LogLevel>(),
-                It.IsAny<EventId>(),
-                It.IsAny<It.IsAnyType>(),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.Never
-        );
     }
 
     #endregion
@@ -94,15 +82,6 @@ public sealed class LogoutCommandHandlerTests : BaseTest
         
         _mockCurrentUserService.Verify(x => x.GetUserId(), Times.Once);
         _mockAuthService.Verify(x => x.RefreshUserSecurityAsync(_userId.ToString()), Times.Once);
-        
-        _mockLogger.Verify(
-            x => x.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("InvalidOperationException")),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.Once);
     }
 
     [Fact(DisplayName = "Should log error and rethrow when unexpected exception occurs in currentUserService")]
@@ -124,15 +103,6 @@ public sealed class LogoutCommandHandlerTests : BaseTest
         
         _mockCurrentUserService.Verify(x => x.GetUserId(), Times.Once);
         _mockAuthService.Verify(x => x.RefreshUserSecurityAsync(It.IsAny<string>()), Times.Never);
-        
-        _mockLogger.Verify(
-            x => x.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("InvalidOperationException")),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.Once);
     }
 
     [Fact(DisplayName = "Should call authService with correct user ID")]

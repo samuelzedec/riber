@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Logging;
 using Riber.Application.Abstractions.Commands;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Common;
@@ -19,9 +18,8 @@ namespace Riber.Application.Features.Companies.Commands.CreateCompanyWithAdmin;
 
 internal sealed class CreateCompanyWithAdminCommandHandler(
     IUnitOfWork unitOfWork,
-    IUserCreationService userCreationService,
-    ILogger<CreateCompanyWithAdminCommandHandler> logger
-) : ICommandHandler<CreateCompanyWithAdminCommand, CreateCompanyWithAdminCommandResponse>
+    IUserCreationService userCreationService) 
+    : ICommandHandler<CreateCompanyWithAdminCommand, CreateCompanyWithAdminCommandResponse>
 {
     public async ValueTask<Result<CreateCompanyWithAdminCommandResponse>> Handle(
         CreateCompanyWithAdminCommand request, CancellationToken cancellationToken)
@@ -71,19 +69,9 @@ internal sealed class CreateCompanyWithAdminCommandHandler(
                 AdminUserName: request.AdminUserName
             );
         }
-        catch (ConflictException)
+        catch (Exception)
         {
             await unitOfWork.RollbackTransactionAsync(cancellationToken);
-            throw;
-        }
-        catch (Exception ex)
-        {
-            await unitOfWork.RollbackTransactionAsync(cancellationToken);
-            logger.LogError(ex,
-                "[{ClassName}] exceção inesperada: {ExceptionType} - {ExceptionMessage}",
-                nameof(CreateCompanyWithAdminCommandHandler),
-                ex.GetType(),
-                ex.Message);
             throw;
         }
     }

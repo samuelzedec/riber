@@ -1,6 +1,5 @@
 using Bogus.Extensions.Brazil;
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
 using Moq;
 using Riber.Application.Exceptions;
 using Riber.Application.Features.Companies.Commands.UpdateCompany;
@@ -20,7 +19,6 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
 
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly Mock<ICompanyRepository> _mockCompanyRepository;
-    private readonly Mock<ILogger<UpdateCompanyCommandHandler>> _mockLogger;
     private readonly UpdateCompanyCommandHandler _commandHandler;
     private readonly Company _baseCompany;
 
@@ -28,12 +26,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
     {
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _mockCompanyRepository = new Mock<ICompanyRepository>();
-        _mockLogger = new Mock<ILogger<UpdateCompanyCommandHandler>>();
-
-        _commandHandler = new UpdateCompanyCommandHandler(
-            _mockUnitOfWork.Object,
-            _mockLogger.Object
-        );
+        _commandHandler = new UpdateCompanyCommandHandler(_mockUnitOfWork.Object);
 
         _baseCompany = Company.Create(
             _faker.Person.FullName,
@@ -59,10 +52,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
             Phone: _faker.Phone.PhoneNumber("(11) 9####-####"),
             FantasyName: _faker.Company.CompanyName()
         );
-
-        _mockUnitOfWork
-            .Setup(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()));
-
+        
         _mockCompanyRepository
             .Setup(x => x.GetSingleAsync(
                 It.IsAny<Specification<Company>>(),
@@ -75,10 +65,10 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
 
         _mockCompanyRepository
             .Setup(x => x.Update(It.IsAny<Company>()));
-
+        
         _mockUnitOfWork
-            .Setup(x => x.CommitTransactionAsync(It.IsAny<CancellationToken>()));
-
+            .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()));
+        
         // Act
         var result = await _commandHandler.Handle(request, CancellationToken.None);
 
@@ -86,9 +76,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
         result.Value.Email.Should().Be(Email.Standardization(request.Email));
         result.Value.Phone.Should().Be(request.Phone);
         result.Value.FantasyName.Should().Be(request.FantasyName);
-
-        _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()), Times.Once);
-
+        
         _mockCompanyRepository.Verify(x => x.GetSingleAsync(
                 It.IsAny<Specification<Company>>(),
                 It.IsAny<CancellationToken>()),
@@ -96,7 +84,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
 
         _mockUnitOfWork.Verify(x => x.Companies, Times.Exactly(2));
         _mockCompanyRepository.Verify(x => x.Update(It.IsAny<Company>()), Times.Once);
-        _mockUnitOfWork.Verify(x => x.CommitTransactionAsync(It.IsAny<CancellationToken>()), Times.Once);
+        _mockUnitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact(DisplayName = "Should update only email when only email is provided")]
@@ -109,10 +97,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
             Phone: string.Empty,
             FantasyName: string.Empty
         );
-
-        _mockUnitOfWork
-            .Setup(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()));
-
+        
         _mockCompanyRepository
             .Setup(x => x.GetSingleAsync(
                 It.IsAny<Specification<Company>>(),
@@ -127,7 +112,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
             .Setup(x => x.Update(It.IsAny<Company>()));
 
         _mockUnitOfWork
-            .Setup(x => x.CommitTransactionAsync(It.IsAny<CancellationToken>()));
+            .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()));
 
         // Act
         var result = await _commandHandler.Handle(request, CancellationToken.None);
@@ -136,9 +121,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
         result.Value.Email.Should().Be(Email.Standardization(request.Email));
         result.Value.Phone.Should().Be(_baseCompany.Phone);
         result.Value.FantasyName.Should().Be(_baseCompany.Name);
-
-        _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()), Times.Once);
-
+        
         _mockCompanyRepository.Verify(x => x.GetSingleAsync(
                 It.IsAny<Specification<Company>>(),
                 It.IsAny<CancellationToken>()),
@@ -146,7 +129,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
 
         _mockUnitOfWork.Verify(x => x.Companies, Times.Once);
         _mockCompanyRepository.Verify(x => x.Update(It.IsAny<Company>()), Times.Once);
-        _mockUnitOfWork.Verify(x => x.CommitTransactionAsync(It.IsAny<CancellationToken>()), Times.Once);
+        _mockUnitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact(DisplayName = "Should update only phone when only phone is provided")]
@@ -159,10 +142,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
             Phone: _faker.Phone.PhoneNumber("(11) 9####-####"),
             FantasyName: string.Empty
         );
-
-        _mockUnitOfWork
-            .Setup(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()));
-
+        
         _mockCompanyRepository
             .Setup(x => x.GetSingleAsync(
                 It.IsAny<Specification<Company>>(),
@@ -177,7 +157,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
             .Setup(x => x.Update(It.IsAny<Company>()));
 
         _mockUnitOfWork
-            .Setup(x => x.CommitTransactionAsync(It.IsAny<CancellationToken>()));
+            .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()));
 
         // Act
         var result = await _commandHandler.Handle(request, CancellationToken.None);
@@ -186,9 +166,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
         result.Value.Email.Should().Be(_baseCompany.Email);
         result.Value.Phone.Should().Be(request.Phone);
         result.Value.FantasyName.Should().Be(_baseCompany.Name);
-
-        _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()), Times.Once);
-
+        
         _mockCompanyRepository.Verify(x => x.GetSingleAsync(
                 It.IsAny<Specification<Company>>(),
                 It.IsAny<CancellationToken>()),
@@ -196,7 +174,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
 
         _mockUnitOfWork.Verify(x => x.Companies, Times.Exactly(2));
         _mockCompanyRepository.Verify(x => x.Update(It.IsAny<Company>()), Times.Once);
-        _mockUnitOfWork.Verify(x => x.CommitTransactionAsync(It.IsAny<CancellationToken>()), Times.Once);
+        _mockUnitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact(DisplayName = "Should update only trade name when only fantasy name is provided")]
@@ -209,10 +187,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
             Phone: string.Empty,
             FantasyName: _faker.Company.CompanyName()
         );
-
-        _mockUnitOfWork
-            .Setup(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()));
-
+        
         _mockCompanyRepository
             .Setup(x => x.GetSingleAsync(
                 It.IsAny<Specification<Company>>(),
@@ -227,7 +202,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
             .Setup(x => x.Update(It.IsAny<Company>()));
 
         _mockUnitOfWork
-            .Setup(x => x.CommitTransactionAsync(It.IsAny<CancellationToken>()));
+            .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()));
 
         // Act
         var result = await _commandHandler.Handle(request, CancellationToken.None);
@@ -236,9 +211,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
         result.Value.Email.Should().Be(_baseCompany.Email);
         result.Value.Phone.Should().Be(_baseCompany.Phone);
         result.Value.FantasyName.Should().Be(request.FantasyName);
-
-        _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()), Times.Once);
-
+        
         _mockCompanyRepository.Verify(x => x.GetSingleAsync(
                 It.IsAny<Specification<Company>>(),
                 It.IsAny<CancellationToken>()),
@@ -246,7 +219,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
 
         _mockUnitOfWork.Verify(x => x.Companies, Times.Once);
         _mockCompanyRepository.Verify(x => x.Update(It.IsAny<Company>()), Times.Once);
-        _mockUnitOfWork.Verify(x => x.CommitTransactionAsync(It.IsAny<CancellationToken>()), Times.Once);
+        _mockUnitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
     #endregion
@@ -277,10 +250,6 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
             .Setup(x => x.Companies)
             .Returns(_mockCompanyRepository.Object);
 
-        _mockUnitOfWork
-            .Setup(x => x.RollbackTransactionAsync(It.IsAny<CancellationToken>()))
-            .Returns(Task.CompletedTask);
-
         // Act
         var result = async () => await _commandHandler.Handle(request, CancellationToken.None);
 
@@ -288,7 +257,6 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
             .ThrowExactlyAsync<NotFoundException>()
             .WithMessage(NotFoundErrors.Company);
 
-        _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()), Times.Once);
         _mockCompanyRepository.Verify(x => x.GetSingleAsync(
                 It.IsAny<Specification<Company>>(),
                 It.IsAny<CancellationToken>()),
@@ -296,17 +264,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
 
         _mockUnitOfWork.Verify(x => x.Companies, Times.Once);
         _mockCompanyRepository.Verify(x => x.Update(It.IsAny<Company>()), Times.Never);
-        _mockUnitOfWork.Verify(x => x.CommitTransactionAsync(It.IsAny<CancellationToken>()), Times.Never);
-        _mockUnitOfWork.Verify(x => x.RollbackTransactionAsync(It.IsAny<CancellationToken>()), Times.Once);
-
-        _mockLogger.Verify(
-            x => x.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains(NotFoundErrors.Company)),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.Once);
+        _mockUnitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
     }
 
     #endregion
@@ -336,10 +294,6 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
             .Setup(x => x.Companies)
             .Returns(_mockCompanyRepository.Object);
 
-        _mockUnitOfWork
-            .Setup(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()))
-            .Returns(Task.CompletedTask);
-
         // Act
         var result = async () => await _commandHandler.Handle(command, mockCancellationToken);
 
@@ -351,12 +305,9 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
                 It.IsAny<Specification<Company>>(),
                 It.Is<CancellationToken>(ct => ct.IsCancellationRequested)),
             Times.Once);
-
-        _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(
-            It.Is<CancellationToken>(ct => ct.IsCancellationRequested)), Times.Once);
-
-        _mockUnitOfWork.Verify(x => x.RollbackTransactionAsync(
-            It.IsAny<CancellationToken>()), Times.Once);
+        
+        _mockUnitOfWork.Verify(x => x.SaveChangesAsync(
+            It.IsAny<CancellationToken>()), Times.Never);
 
         _mockCompanyRepository.Verify(x => x.Update(It.IsAny<Company>()), Times.Never);
         _mockUnitOfWork.Verify(x => x.CommitTransactionAsync(It.IsAny<CancellationToken>()), Times.Never);
@@ -391,11 +342,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
         _mockUnitOfWork
             .Setup(x => x.Companies)
             .Returns(_mockCompanyRepository.Object);
-
-        _mockUnitOfWork
-            .Setup(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()))
-            .Returns(Task.CompletedTask);
-
+        
         // Act
         var result = async () => await _commandHandler.Handle(command, mockCancellationToken);
 
@@ -412,8 +359,8 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
                 It.Is<CancellationToken>(ct => ct.IsCancellationRequested)),
             Times.Once);
 
-        _mockUnitOfWork.Verify(x => x.RollbackTransactionAsync(
-            It.IsAny<CancellationToken>()), Times.Once);
+        _mockUnitOfWork.Verify(x => x.SaveChangesAsync(
+            It.IsAny<CancellationToken>()), Times.Never);
 
         _mockCompanyRepository.Verify(x => x.Update(It.IsAny<Company>()), Times.Never);
         _mockUnitOfWork.Verify(x => x.CommitTransactionAsync(It.IsAny<CancellationToken>()), Times.Never);

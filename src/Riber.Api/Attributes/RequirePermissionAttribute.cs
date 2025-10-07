@@ -9,6 +9,7 @@ namespace Riber.Api.Attributes;
 /// <remarks>
 /// Fluxo: [RequirePermission] → Formata Policy → PermissionPolicyProvider → PermissionAuthorizationHandler → Autoriza/Nega
 /// </remarks>
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true)]
 public sealed class RequirePermissionAttribute : AuthorizeAttribute
 {
     public RequirePermissionAttribute(params string[] permissions)
