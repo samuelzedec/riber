@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Exceptions;
 using Riber.Application.Models;
@@ -12,8 +11,7 @@ namespace Riber.Infrastructure.Services.Authentication;
 
 public sealed class PermissionDataService(
     AppDbContext context,
-    IMemoryCache memoryCache,
-    ILogger<PermissionDataService> logger)
+    IMemoryCache memoryCache)
     : IPermissionDataService
 {
     private readonly DbSet<ApplicationPermission> _permissionTable
@@ -23,76 +21,37 @@ public sealed class PermissionDataService(
 
     public async Task<bool> ValidateAsync(string name)
     {
-        try
-        {
-            var permissions = await GetPermissionsCacheAsync();
-            var permission = permissions
-                                 .FirstOrDefault(p => p.Name == name)
-                             ?? throw new NotFoundException(NotFoundErrors.Permission);
+        var permissions = await GetPermissionsCacheAsync();
+        var permission = permissions.FirstOrDefault(p => p.Name == name)
+                         ?? throw new NotFoundException(NotFoundErrors.Permission);
 
-            return permission.IsActive;
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex,
-                "[{ClassName}] exceção inesperada: {ExceptionType} - {ExceptionMessage}",
-                nameof(PermissionDataService),
-                ex.GetType(),
-                ex.Message);
-            throw;
-        }
+        return permission.IsActive;
     }
 
     public async Task UpdatePermissionStatusAsync(string name)
     {
-        try
-        {
-            var permissions = await GetPermissionsCacheAsync();
-            var permission = permissions
-                                 .FirstOrDefault(p => p.Name == name)
-                             ?? throw new NotFoundException(NotFoundErrors.Permission);
+        var permissions = await GetPermissionsCacheAsync();
+        var permission = permissions.FirstOrDefault(p => p.Name == name)
+                         ?? throw new NotFoundException(NotFoundErrors.Permission);
 
-            permission.IsActive = !permission.IsActive;
-
-            _permissionTable.Update(permission);
-            await context.SaveChangesAsync();
-            InvalidateCache();
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex,
-                "[{ClassName}] exceção inesperada: {ExceptionType} - {ExceptionMessage}",
-                nameof(PermissionDataService),
-                ex.GetType(),
-                ex.Message);
-            throw;
-        }
+        permission.IsActive = !permission.IsActive;
+        _permissionTable.Update(permission);
+        await context.SaveChangesAsync();
+        InvalidateCache();
     }
 
     public async Task<ICollection<PermissionModel>> GetAllWithDescriptionsAsync()
     {
-        try
-        {
-            var permissions = await GetPermissionsCacheAsync();
+        var permissions = await GetPermissionsCacheAsync();
 
-            return
-            [
-                .. permissions.Select(p => new PermissionModel(
-                    Name: p.Name,
-                    Description: p.Description,
-                    IsActive: p.IsActive
-                ))
-            ];
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex,
-                "[{ClassName}] exceção inesperada: {ExceptionType} - {ExceptionMessage}",
-                nameof(PermissionDataService),
-                ex.GetType(),
-                ex.Message);
-            throw;
-        }
+        return
+        [
+            .. permissions.Select(p => new PermissionModel(
+                Name: p.Name,
+                Description: p.Description,
+                IsActive: p.IsActive
+            ))
+        ];
     }
 
     private async Task<IEnumerable<ApplicationPermission>> GetPermissionsCacheAsync()
