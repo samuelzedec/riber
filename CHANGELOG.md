@@ -1,5 +1,21 @@
 # Riber - Changelog
 
+## v2.3.0 - 09/10/25
+- **NOVO**: Integração do SonarQube no ambiente de desenvolvimento
+- Adiciona serviço SonarQube Community no Docker Compose com profile 'analysis'
+- Configura banco de dados PostgreSQL dedicado para SonarQube
+- Script de inicialização automática do banco SonarQube
+- **REFATORAÇÃO**: Melhorias na entidade base e otimizações de código
+- Melhora comparação de igualdade na BaseEntity com verificação de tipos
+- Otimiza serialização JSON na extensão HttpContext
+- Simplifica validações e melhora formatação geral do código
+- **MELHORIAS**: Limpeza e padronização de código
+- Remove código redundante e melhora legibilidade
+- Otimiza imports e espaçamento consistente
+- Pequenas otimizações de performance em behaviors e services
+
+---
+
 ## v2.2.0 - 07/10/25
 - **NOVO**: Sistema de diagnósticos e rastreamento distribuído
 - Adiciona configuração centralizada para ActivitySource na camada Application
