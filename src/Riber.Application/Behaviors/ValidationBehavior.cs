@@ -9,15 +9,15 @@ public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TReq
     : IPipelineBehavior<TRequest, TResponse> where TRequest : IMessage
 {
     public async ValueTask<TResponse> Handle(
-        TRequest request, 
+        TRequest message, 
         MessageHandlerDelegate<TRequest, TResponse> next,
         CancellationToken cancellationToken)
     {
         if (!validators.Any())
-            return await next(request, cancellationToken);
+            return await next(message, cancellationToken);
         
         // ValidationContext prepara a request para ficar num formato aceitável pelo FluentValidation.
-        var context = new ValidationContext<TRequest>(request);
+        var context = new ValidationContext<TRequest>(message);
         var validationErrors = validators
             .Select(x => x.Validate(context))
             .Where(x => !x.IsValid)
@@ -27,6 +27,6 @@ public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TReq
         
         return validationErrors.Count > 0 
             ? throw new Exceptions_ValidationException(validationErrors)
-            : await next(request, cancellationToken);
+            : await next(message, cancellationToken);
     }
 }

@@ -68,9 +68,9 @@ internal sealed class UpdateCompanyCommandHandler(IUnitOfWork unitOfWork)
         company.UpdatePhone(phone);
     }
 
-    private void UpdateFantasyName(Company company, string fantasyName)
+    private static void UpdateFantasyName(Company company, string fantasyName)
     {
-        if (string.IsNullOrWhiteSpace(fantasyName) || company.Name == fantasyName)
+        if (string.IsNullOrWhiteSpace(fantasyName) || fantasyName.Equals(company.Name))
             return;
 
         company.UpdateFantasyName(fantasyName);

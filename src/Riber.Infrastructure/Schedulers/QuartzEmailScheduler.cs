@@ -13,10 +13,10 @@ public sealed class QuartzEmailScheduler(
 {
     public async Task ScheduleEmailAsync(
         EmailAddress emailAddress,
-        object dataEmail,
+        object emailData,
         CancellationToken cancellationToken = default)
     {
-        var dataInString = JsonConvert.SerializeObject(dataEmail);
+        var dataInString = JsonConvert.SerializeObject(emailData);
         var jobData = new JobDataMap
         {
             ["emailAddress"] = emailAddress.GetDescription(),

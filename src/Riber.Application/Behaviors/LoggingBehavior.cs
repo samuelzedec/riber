@@ -58,10 +58,10 @@ public class LoggingBehavior<TRequest, TResponse>(ILogger<TRequest> logger)
             activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
             activity?.SetTag("exception.type", ex.GetType().Name);
             activity?.SetTag("exception.message", ex.Message);
-            
+
             if (!ex.Data.Contains("RequestName"))
                 ex.Data["RequestName"] = messageName;
-    
+
             if (!ex.Data.Contains("ElapsedMs"))
                 ex.Data["ElapsedMs"] = stopwatch.ElapsedMilliseconds;
 
