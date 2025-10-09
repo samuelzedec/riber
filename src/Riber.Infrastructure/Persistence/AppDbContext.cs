@@ -22,13 +22,13 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     /// Procura por todas as classes que implementam a interface <see cref="IEntityTypeConfiguration{T}"/>
     /// e aplica os mapeamentos para o banco!
     /// </summary>
-    /// <param name="modelBuilder"></param>
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    /// <param name="builder"></param>
+    protected override void OnModelCreating(ModelBuilder builder)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
-        modelBuilder.HasPostgresExtension("vector");
-        modelBuilder.ApplyPermissionsSeed();
-        modelBuilder.ApplyRoleSeeder();
-        modelBuilder.ApplyRoleClaimSeeder();
+        builder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+        builder.HasPostgresExtension("vector");
+        builder.ApplyPermissionsSeed();
+        builder.ApplyRoleSeeder();
+        builder.ApplyRoleClaimSeeder();
     }
 }

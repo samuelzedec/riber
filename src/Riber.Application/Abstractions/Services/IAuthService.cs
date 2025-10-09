@@ -19,10 +19,10 @@ public interface IAuthService
     /// <summary>
     /// Realiza a autenticação de um usuário com base nas credenciais fornecidas.
     /// </summary>
-    /// <param name="email">O email associado à conta do usuário.</param>
+    /// <param name="userNameOrEmail">O email ou nome de usuário associado à conta do usuário.</param>
     /// <param name="password">A senha correspondente ao usuário.</param>
     /// <returns>Uma tarefa que representa a operação assíncrona, contendo os detalhes do usuário autenticado ou null se as credenciais forem inválidas.</returns>
-    Task<UserDetailsModel?> LoginAsync(string email, string password);
+    Task<UserDetailsModel?> LoginAsync(string userNameOrEmail, string password);
 
     /// <summary>
     /// Localiza um usuário no sistema com base no ID fornecido.

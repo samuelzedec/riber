@@ -26,12 +26,9 @@ internal sealed class CreateUserCommandValidator : AbstractValidator<CreateUserC
             .IsInEnum()
             .WithMessage("O cargo informado não é válido.");
 
-        When(x => x.CompanyId.HasValue, () =>
-        {
-            RuleFor(x => x.CompanyId)
-                .NotEqual(Guid.Empty)
-                .WithMessage(CompanyErrors.Invalid);
-        });
+        When(x => x.CompanyId.HasValue, () => RuleFor(x => x.CompanyId)
+            .NotEqual(Guid.Empty)
+            .WithMessage(CompanyErrors.Invalid));
 
         RuleFor(x => x.UserName)
             .NotEmpty()
@@ -41,7 +38,8 @@ internal sealed class CreateUserCommandValidator : AbstractValidator<CreateUserC
             .NotEmpty()
             .WithMessage("A senha deve ser preenchida.")
             .Matches(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$")
-            .WithMessage("A senha deve ter no mínimo 8 caracteres, incluindo pelo menos: 1 letra minúscula, 1 maiúscula, 1 número e 1 caractere especial (@$!%*?&).");
+            .WithMessage(
+                "A senha deve ter no mínimo 8 caracteres, incluindo pelo menos: 1 letra minúscula, 1 maiúscula, 1 número e 1 caractere especial (@$!%*?&).");
 
         RuleFor(x => x.Email)
             .NotEmpty()

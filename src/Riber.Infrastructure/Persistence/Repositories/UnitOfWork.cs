@@ -64,7 +64,7 @@ public sealed class UnitOfWork(AppDbContext context, IMediator mediator)
         }
     }
 
-    public async Task RollbackTransactionAsync(CancellationToken cancellationToken = default)
+    public async Task RollbackTransactionAsync(CancellationToken cancellationToken)
     {
         if (_transaction is not null)
         {
