@@ -12,8 +12,9 @@ services:
       - "5432:5432"
     volumes:
       - data-dev:/var/lib/postgresql/data
+      - ./init-sonar-db.sql:/docker-entrypoint-initdb.d/init-sonar-db.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -32,8 +33,30 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
 
+  sonarqube:
+    profiles: [ "analysis" ]
+    image: sonarqube:community
+    container_name: riber-sonarqube-dev
+    ports:
+      - "9000:9000"
+    environment:
+      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+      - SONAR_JDBC_URL=jdbc:postgresql://postgres:5432/sonar
+      - SONAR_JDBC_USERNAME=sonar
+      - SONAR_JDBC_PASSWORD=sonar
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+      
 volumes:
   data-dev:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
 
 networks:
   default:
