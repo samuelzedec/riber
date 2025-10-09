@@ -11,9 +11,9 @@ public abstract class BaseEntity(Guid id) : IEquatable<BaseEntity>
     #region Private Members
 
     private readonly List<IDomainEvent> _events = [];
-    
+
     #endregion
-    
+
     #region Properties
 
     public Guid Id { get; } = id;
@@ -27,43 +27,45 @@ public abstract class BaseEntity(Guid id) : IEquatable<BaseEntity>
 
     public override int GetHashCode()
         => Id.GetHashCode();
-    
+
     public override bool Equals(object? obj)
         => obj is BaseEntity other && Equals(other);
-    
+
     public bool Equals(BaseEntity? other)
-        => other is not null && Id == other.Id;
+        => other is not null
+           && GetType() == other.GetType()
+           && Id == other.Id;
 
     #endregion
-    
-    #region Domain Events 
-    
+
+    #region Domain Events
+
     public IReadOnlyCollection<IDomainEvent> Events()
         => _events.AsReadOnly();
-    
+
     public void ClearEvents()
         => _events.Clear();
-    
+
     public void RaiseEvent(IDomainEvent @event)
         => _events.Add(@event);
-    
+
     #endregion
-    
+
     #region BaseEntity Methods
 
     public void UpdateEntity()
         => UpdatedAt = DateTime.UtcNow;
-    
+
     public void DeleteEntity()
         => DeletedAt = DateTime.UtcNow;
-    
+
     #endregion
 
     #region Operators
 
     public static bool operator ==(BaseEntity? left, BaseEntity? right)
         => EqualityComparer<BaseEntity>.Default.Equals(left, right);
-    
+
     public static bool operator !=(BaseEntity? left, BaseEntity? right)
         => !(left == right);
 
