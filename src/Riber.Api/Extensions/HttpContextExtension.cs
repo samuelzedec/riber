@@ -7,9 +7,15 @@ namespace Riber.Api.Extensions;
 
 public static class HttpContextExtension
 {
+    private static JsonSerializerOptions JsonOptions => new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+    };
+
     public static async Task WriteUnauthorizedResponse(
-        this HttpContext context, 
-        string title, 
+        this HttpContext context,
+        string title,
         string message,
         int code,
         params string[]? errors)
@@ -18,20 +24,10 @@ public static class HttpContextExtension
         var response = new
         {
             isSuccess = result.IsSuccess,
-            error = new
-            {
-                code = result.Error.Code,
-                message = result.Error.Message,
-                details = errors ?? []
-            }
+            error = new { code = result.Error.Code, message = result.Error.Message, details = errors ?? [] }
         };
 
-        var jsonResponse = JsonSerializer.Serialize(response, new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-        });
-
+        var jsonResponse = JsonSerializer.Serialize(response, JsonOptions);
         context.Response.StatusCode = code;
         context.Response.ContentType = "application/json";
         await context.Response.WriteAsync(jsonResponse);
