@@ -49,6 +49,7 @@ docs/
 
 # Coverage reports
 **/coverage/
+**/.sonarqube/
 **/TestResults/
 
 # OS específicos
