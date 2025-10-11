@@ -6,12 +6,17 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Quartz;
 using Serilog;
 using Serilog.Events;
 using Riber.Application.Abstractions.Schedulers;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Abstractions.Services.Email;
+using Riber.Application.Configurations;
 using Riber.Domain.Repositories;
 using Riber.Infrastructure.Jobs;
 using Riber.Infrastructure.Persistence;
@@ -44,6 +49,7 @@ public static class DependencyInjection
         services.AddJsonConfiguration();
         services.AddHealthChecksConfiguration(configuration);
         services.AddSchedulersAndJobs();
+        services.AddTelemetry();
     }
 
     private static void AddLogging(this ILoggingBuilder logging)
@@ -188,5 +194,22 @@ public static class DependencyInjection
             ContractResolver = new CamelCasePropertyNamesContractResolver(),
             TypeNameHandling = TypeNameHandling.Auto
         };
+    }
+    
+    private static void AddTelemetry(this IServiceCollection services)
+    {
+        services.AddOpenTelemetry()
+            .ConfigureResource(resource => resource.AddService(DiagnosticsConfig.ActivitySourceName))
+            .WithMetrics(metrics => metrics
+                .AddAspNetCoreInstrumentation()
+                .AddHttpClientInstrumentation()
+                .AddRuntimeInstrumentation()
+                .AddOtlpExporter())
+            .WithTracing(tracing => tracing
+                .AddAspNetCoreInstrumentation()
+                .AddHttpClientInstrumentation()
+                .AddOtlpExporter())
+            .WithLogging(logging => logging
+                .AddOtlpExporter());
     }
 }

@@ -9,11 +9,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using OpenTelemetry.Resources;
-using OpenTelemetry.Trace;
 using Riber.Api.Authorizations.Permissions;
 using Riber.Api.Middlewares;
-using Riber.Application.Configurations;
 using Riber.Infrastructure.Persistence;
 using Riber.Infrastructure.Persistence.Identity;
 using Riber.Infrastructure.Settings;
@@ -29,7 +26,6 @@ public static class BuilderExtension
         builder.AddConfigurations();
         builder.AddMiddleware();
         builder.AddSecurity();
-        builder.AddTelemetry();
     }
 
     private static void AddDependencyInjection(this WebApplicationBuilder builder)
@@ -184,40 +180,5 @@ public static class BuilderExtension
 
                 return Task.CompletedTask;
             }));
-    }
-
-    private static void AddTelemetry(this WebApplicationBuilder builder)
-    {
-        // Registra o OpenTelemetry no container de DI (Dependency Injection)
-        // Isso "liga" o sistema de observabilidade na aplicação
-        builder.Services.AddOpenTelemetry()
-
-            // Configura metadados globais que identificam seu serviço
-            // Quando você olhar traces/logs, vai saber que vieram de "Riber.Application"
-            .ConfigureResource(resource =>
-                resource.AddService(DiagnosticsConfig.ActivitySourceName)) // Ex: "Riber.Application"
-
-            // Configura o TRACING (rastreamento de requisições/operações)
-            .WithTracing(tracing => tracing
-
-                // Diz ao OpenTelemetry para "escutar" e capturar os Activities 
-                // criados pelo SEU ActivitySource (no LoggingBehavior, por exemplo)
-                // Sem isso, seus Activities customizados seriam ignorados!
-                .AddSource(DiagnosticsConfig.ActivitySourceName)
-
-                // Cria Activities AUTOMATICAMENTE para todas as requisições HTTP
-                // que chegam na sua API (GET, POST, PUT, DELETE, etc)
-                // Você não precisa criar manualmente - ele faz sozinho!
-                .AddAspNetCoreInstrumentation()
-
-                // Cria Activities AUTOMATICAMENTE para todas as chamadas HTTP
-                // que SUA API faz para serviços externos (outras APIs, webhooks, etc)
-                // Também propaga o TraceId automaticamente no header 'traceparent'
-                .AddHttpClientInstrumentation()
-
-                // Envia os traces para o CONSOLE (terminal/logs)
-                // Útil para desenvolvimento - vê os traces em tempo real
-                // Em produção, troque por: Application Insights, Jaeger, AWS X-Ray, etc
-                .AddConsoleExporter());
     }
 }
