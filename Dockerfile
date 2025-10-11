@@ -11,8 +11,12 @@ COPY src/Riber.Application/Riber.Application.csproj ./src/Riber.Application/
 COPY src/Riber.Domain/Riber.Domain.csproj ./src/Riber.Domain/
 COPY src/Riber.Infrastructure/Riber.Infrastructure.csproj ./src/Riber.Infrastructure/
 
-RUN dotnet restore src/Riber.Api/Riber.Api.csproj
-COPY . .
+RUN dotnet restore ./src/Riber.Api/Riber.Api.csproj
+
+COPY src/Riber.Api ./src/Riber.Api/
+COPY src/Riber.Application ./src/Riber.Application/
+COPY src/Riber.Domain ./src/Riber.Domain/
+COPY src/Riber.Infrastructure ./src/Riber.Infrastructure/
 
 RUN dotnet build src/Riber.Api/Riber.Api.csproj -c Release --no-restore
 RUN dotnet publish src/Riber.Api/Riber.Api.csproj -c Release -o /app/publish --no-build --no-restore

@@ -12,6 +12,7 @@ COPY src/Riber.Application/Riber.Application.csproj ./src/Riber.Application/
 COPY src/Riber.Domain/Riber.Domain.csproj ./src/Riber.Domain/
 COPY src/Riber.Infrastructure/Riber.Infrastructure.csproj ./src/Riber.Infrastructure/
 
+COPY tests/Riber.Api.Tests/Riber.Api.Tests.csproj ./tests/Riber.Api.Tests/
 COPY tests/Riber.Application.Tests/Riber.Application.Tests.csproj ./tests/Riber.Application.Tests/
 COPY tests/Riber.Domain.Tests/Riber.Domain.Tests.csproj ./tests/Riber.Domain.Tests/
 COPY tests/Riber.Infrastructure.Tests/Riber.Infrastructure.Tests.csproj ./tests/Riber.Infrastructure.Tests/

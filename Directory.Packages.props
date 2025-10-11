@@ -6,6 +6,8 @@
   <!-- Pacotes que contém somente abstrações -->
   <ItemGroup>
     <PackageVersion Include="Mediator.Abstractions" Version="3.0.1" />
+    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.13.1" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.12.0" />
   </ItemGroup>
   <!-- Pacotes específicos da camada Application -->
   <ItemGroup>
