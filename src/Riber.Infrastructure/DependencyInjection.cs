@@ -17,6 +17,7 @@ using Serilog.Events;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Abstractions.Services.Email;
 using Riber.Application.Configurations;
+using Riber.Application.Exceptions;
 using Riber.Domain.Repositories;
 using Riber.Infrastructure.BackgroundJobs;
 using Riber.Infrastructure.Dispatchers;
@@ -42,14 +43,17 @@ public static class DependencyInjection
     public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration,
         ILoggingBuilder logging)
     {
+        var defaultConnection = configuration.GetConnectionString("DefaultConnection")
+            ?? throw new InternalException("Default connection string is not set.");
+
         logging.AddLogging();
-        services.AddPersistence(configuration);
+        services.AddPersistence(defaultConnection);
         services.AddRepositories();
         services.AddServices(configuration);
         services.AddAwsServices(configuration);
-        services.AddBackgroundJobs(configuration);
+        services.AddBackgroundJobs(defaultConnection);
         services.AddJsonConfiguration();
-        services.AddHealthChecksConfiguration(configuration);
+        services.AddHealthChecksConfiguration(defaultConnection);
         services.AddSchedulersAndJobs();
         services.AddTelemetry();
     }
@@ -83,14 +87,12 @@ public static class DependencyInjection
         logging.AddSerilog();
     }
 
-    private static void AddPersistence(this IServiceCollection services, IConfiguration configuration)
+    private static void AddPersistence(this IServiceCollection services, string defaultConnection)
     {
         services.AddDbContext<AppDbContext>(options =>
         {
             options
-                .UseNpgsql(
-                    configuration.GetConnectionString("DefaultConnection"),
-                    b => b.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName))
+                .UseNpgsql(defaultConnection, b => b.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName))
                 .AddInterceptors(
                     new CaseInsensitiveInterceptor(),
                     new AuditInterceptor());
@@ -144,18 +146,14 @@ public static class DependencyInjection
         services.AddScoped<IEmailDispatcher, EmailDispatcher>();
     }
 
-    private static void AddHealthChecksConfiguration(this IServiceCollection services, IConfiguration configuration)
+    private static void AddHealthChecksConfiguration(this IServiceCollection services, string defaultConnection)
     {
-        var connectionString =
-            configuration.GetConnectionString("DefaultConnection")
-            ?? throw new ArgumentNullException(nameof(configuration));
-
         services
             .AddHealthChecks()
-            .AddNpgSql(connectionString, name: "DefaultConnection");
+            .AddNpgSql(defaultConnection, name: nameof(defaultConnection));
     }
 
-    private static void AddBackgroundJobs(this IServiceCollection services, IConfiguration configuration)
+    private static void AddBackgroundJobs(this IServiceCollection services, string defaultConnection)
     {
         services.Configure<QuartzOptions>(options =>
         {
@@ -172,11 +170,7 @@ public static class DependencyInjection
                 configure.UseProperties = true;
                 configure.RetryInterval = TimeSpan.FromSeconds(15);
                 configure.UseNewtonsoftJsonSerializer();
-                configure.UsePostgres(postgres =>
-                    postgres.ConnectionString =
-                        configuration.GetConnectionString("DefaultConnection")
-                        ?? throw new ArgumentNullException(nameof(configuration),
-                            "QUARTZ - Connection string is null"));
+                configure.UsePostgres(postgres => postgres.ConnectionString = defaultConnection);
             });
 
             CleanupImageBucketScheduler.Configure(quartz);

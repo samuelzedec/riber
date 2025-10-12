@@ -69,14 +69,12 @@ public static class EntityConfigurationExtensions
     public static EntityTypeBuilder<T> ConfigureFullName<T>(this EntityTypeBuilder<T> builder)
         where T : class, IHasFullName
     {
-        builder.OwnsOne(x => x.FullName, fullName =>
-        {
-            fullName.Property(f => f.Value)
-                .HasColumnType("text")
-                .HasColumnName("full_name")
-                .HasMaxLength(FullName.MaxLength)
-                .IsRequired();
-        });
+        builder.OwnsOne(x => x.FullName, fullName => fullName
+            .Property(f => f.Value)
+            .HasColumnType("text")
+            .HasColumnName("full_name")
+            .HasMaxLength(FullName.MaxLength)
+            .IsRequired());
         return builder;
     }
 
@@ -177,14 +175,11 @@ public static class EntityConfigurationExtensions
     public static EntityTypeBuilder<T> ConfigureQuantity<T>(this EntityTypeBuilder<T> builder)
         where T : class, IHasQuantity
     {
-        builder.OwnsOne(x => x.Quantity, quantity =>
-        {
-            quantity
-                .Property(q => q.Value)
-                .HasColumnName("quantity")
-                .HasColumnType("integer")
-                .IsRequired();
-        }).Navigation(x => x.Quantity).IsRequired();
+        builder.OwnsOne(x => x.Quantity, quantity => quantity
+            .Property(q => q.Value)
+            .HasColumnName("quantity")
+            .HasColumnType("integer")
+            .IsRequired()).Navigation(x => x.Quantity).IsRequired();
         return builder;
     }
 

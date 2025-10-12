@@ -236,7 +236,7 @@ public sealed class InvitationTests : BaseTest
    public void SerializePermissions_WhenCalled_ShouldReturnCorrectString(string[] permissions, string expected)
    {
        // Act
-       var result = Invitation.SerializePermissions(permissions.ToList());
+       var result = Invitation.SerializePermissions([..permissions]);
 
        // Assert
        result.Should().Be(expected);
@@ -266,7 +266,7 @@ public sealed class InvitationTests : BaseTest
        var result = Invitation.DeserializePermissions(permissions);
 
        // Assert
-       result.Should().BeEquivalentTo(new[] { "read", "write" });
+       result.Should().BeEquivalentTo("read", "write");
    }
 
    #endregion
@@ -370,7 +370,7 @@ public sealed class InvitationTests : BaseTest
    {
        // Arrange
        var email = _faker.Person.Email;
-       var permissions = new List<string> { "read data", "write data", "admin panel" };
+       List<string> permissions = [ "read data", "write data", "admin panel" ];
 
        // Act
        var invitation = CreateInvitationWithPermissions(email, permissions);
@@ -378,7 +378,7 @@ public sealed class InvitationTests : BaseTest
        // Assert
        invitation.Permissions.Should().Be("read data,write data,admin panel");
        Invitation.DeserializePermissions(invitation.Permissions)
-           .Should().BeEquivalentTo(new[] { "read data", "write data", "admin panel" });
+           .Should().BeEquivalentTo("read data", "write data", "admin panel");
    }
 
    #endregion
@@ -391,7 +391,7 @@ public sealed class InvitationTests : BaseTest
            _faker.Person.Email,
            Guid.NewGuid(),
            _faker.Name.JobTitle(),
-           new List<string> { "read", "write" },
+           ["read", "write"],
            _faker.Random.Enum<BusinessPosition>(),
            Guid.NewGuid());
    }

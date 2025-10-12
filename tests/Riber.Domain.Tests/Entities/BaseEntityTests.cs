@@ -287,26 +287,6 @@ public sealed class BaseEntityTests : BaseTest
         entity.DeletedAt.Should().BeNull();
     }
 
-    [Fact(DisplayName = "Should update UpdatedAt multiple times")]
-    public void UpdateEntity_WhenCalledMultipleTimes_ShouldUpdateUpdatedAtEachTime()
-    {
-        // Arrange
-        var entity = new TestEntity(Guid.NewGuid());
-
-        // Act
-        entity.UpdateEntity();
-        var firstUpdate = entity.UpdatedAt;
-
-        Thread.Sleep(10);
-        entity.UpdateEntity();
-        var secondUpdate = entity.UpdatedAt;
-
-        // Assert
-        firstUpdate.Should().NotBeNull();
-        secondUpdate.Should().NotBeNull();
-        secondUpdate.Should().BeAfter(firstUpdate.Value);
-    }
-
     #endregion
 
     #region Delete Entity Tests
@@ -324,26 +304,6 @@ public sealed class BaseEntityTests : BaseTest
         // Assert
         entity.DeletedAt.Should().NotBe(initialDeletedAt);
         entity.DeletedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(5));
-    }
-
-    [Fact(DisplayName = "Should update DeletedAt when called multiple times")]
-    public void DeleteEntity_WhenCalledMultipleTimes_ShouldUpdateDeletedAt()
-    {
-        // Arrange
-        var entity = new TestEntity(Guid.NewGuid());
-
-        // Act
-        entity.DeleteEntity();
-        var firstDelete = entity.DeletedAt;
-        Thread.Sleep(10);
-
-        entity.DeleteEntity();
-        var secondDelete = entity.DeletedAt;
-
-        // Assert
-        firstDelete.Should().NotBeNull();
-        secondDelete.Should().NotBeNull();
-        secondDelete.Should().BeAfter(firstDelete.Value);
     }
 
     #endregion

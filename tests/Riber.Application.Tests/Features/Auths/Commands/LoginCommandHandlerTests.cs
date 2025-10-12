@@ -42,7 +42,7 @@ public sealed class LoginCommandHandlerTests : BaseTest
                 EmailConfirmed: false,
                 PhoneNumber: string.Empty,
                 SecurityStamp: f.Random.AlphaNumeric(32),
-                Roles: f.Make(2, () => f.Name.JobTitle()).ToList(),
+                Roles: [.. f.Make(2, () => f.Name.JobTitle())],
                 Claims: [],
                 UserDomainId: userDomain.Id,
                 UserDomain: userDomain
