@@ -75,16 +75,9 @@ public interface IProductRepository : IRepository<Product>
         params Expression<Func<ProductCategory, object>>[] includes);
 
     /// <summary>
-    /// Obtém assincronamente uma coleção de produtos que pertencem à categoria especificada.
+    /// Obtém todas as imagens que não estão sendo utilizadas no sistema.
     /// </summary>
-    /// <param name="categoryId">
-    /// O identificador exclusivo da categoria de produto cujos produtos devem ser recuperados.
-    /// </param>
-    /// <param name="cancellationToken">
-    /// Um token de cancelamento para observar enquanto aguarda a conclusão da tarefa.
-    /// </param>
-    /// <returns>
-    /// Uma tarefa que representa a operação assíncrona, contendo uma enumeração dos produtos associados à categoria especificada.
-    /// </returns>
-    Task<IEnumerable<Product>> GetByCategoryAsync(Guid categoryId, CancellationToken cancellationToken = default);
+    /// <param name="cancellationToken">Token para cancelamento da operação assíncrona.</param>
+    /// <returns>Uma coleção de imagens não utilizadas.</returns>
+    Task<IReadOnlyList<Image>> GetUnusedImagesAsync(CancellationToken cancellationToken = default);
 }

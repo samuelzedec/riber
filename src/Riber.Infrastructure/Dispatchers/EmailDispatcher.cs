@@ -1,17 +1,16 @@
 using Newtonsoft.Json;
 using Quartz;
-using Riber.Application.Abstractions.Schedulers;
+using Riber.Application.Abstractions.Dispatchers;
 using Riber.Application.Extensions;
 using Riber.Domain.Enums;
-using Riber.Infrastructure.Jobs;
+using Riber.Infrastructure.BackgroundJobs;
 
-namespace Riber.Infrastructure.Schedulers;
+namespace Riber.Infrastructure.Dispatchers;
 
-public sealed class QuartzEmailScheduler(
-    ISchedulerFactory schedulerFactory)
-    : IEmailScheduler
+public sealed class EmailDispatcher(ISchedulerFactory schedulerFactory)
+    : IEmailDispatcher
 {
-    public async Task ScheduleEmailAsync(
+    public async Task SendAsync(
         EmailAddress emailAddress,
         object emailData,
         CancellationToken cancellationToken = default)

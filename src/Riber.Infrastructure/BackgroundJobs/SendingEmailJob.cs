@@ -4,9 +4,9 @@ using Newtonsoft.Json.Linq;
 using Quartz;
 using Riber.Application.Abstractions.Services.Email;
 
-namespace Riber.Infrastructure.Jobs;
+namespace Riber.Infrastructure.BackgroundJobs;
 
-public sealed class SendingEmailJob(
+internal sealed class SendingEmailJob(
     IEmailService emailService,
     IEmailTemplateRender templateEmailRender,
     IEmailConcurrencyService emailConcurrencyService,
@@ -15,7 +15,7 @@ public sealed class SendingEmailJob(
 {
     public async Task Execute(IJobExecutionContext context)
     {
-        using var semaphoreRelease = await emailConcurrencyService.AcquireAsync();
+        using var _ = await emailConcurrencyService.AcquireAsync();
         var jobDataMap = context.Trigger.JobDataMap;
         try
         {
