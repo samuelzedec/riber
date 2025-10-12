@@ -33,5 +33,5 @@ public abstract class BaseRepository<T>(AppDbContext context)
         => await Table.AnyAsync(specification.ToExpression(), cancellationToken);
     
     public IQueryable<T> Query(Specification<T> specification, params Expression<Func<T, object>>[] includes)
-        => Table.GetQueryWithIncludes(specification, includes);
+        => Table.AsNoTracking().GetQueryWithIncludes(specification, includes);
 }

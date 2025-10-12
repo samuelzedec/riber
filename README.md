@@ -2,7 +2,18 @@
 Olá! Me chamo **Samuel Ribeiro** e este é o backend que estou desenvolvendo para a aplicação de gestão de uma
 **lanchonete local em Manaus-AM**.
 
-O sistema está sendo criado com o objetivo de oferecer à lanchonete um controle mais eficiente das operações e das finanças, permitindo gerenciar receitas, despesas e fluxo de caixa de forma simples e organizada.
+---
+
+## A História do Projeto
+
+
+Este projeto nasceu como uma oportunidade de **aplicar e consolidar conhecimentos** adquiridos ao longo da minha jornada como desenvolvedor backend, além de **explorar novas tecnologias e padrões** de forma prática e autodirecionada.
+
+Desenvolvo este sistema no meu **tempo livre**, com o objetivo de criar uma solução real que possa ser utilizada por uma **pequena lanchonete da minha família** quando finalizado.
+
+O foco está em implementar **boas práticas**, **arquitetura limpa** e **padrões modernos** de desenvolvimento, criando um projeto de portfólio que demonstra capacidade técnica e compromisso com qualidade de código.
+
+---
 
 ## Arquitetura
 
@@ -12,6 +23,8 @@ O projeto segue os princípios de **Clean Architecture**, organizando as depend�
 - **Application**: Casos de uso e orquestração
 - **Infrastructure**: Implementações de persistência e serviços externos
 - **API**: Controladores e configurações web
+
+---
 
 ## Tecnologias Principais
 
@@ -25,14 +38,7 @@ O projeto segue os princípios de **Clean Architecture**, organizando as depend�
 - **Serilog** - Logging estruturado
 - **xUnit** - Testes unitários
 
-## Documentação
-
-Para informações detalhadas sobre desenvolvimento e padrões do projeto, consulte:
-
-- **[Padrões de Codificação](docs/coding-standards.md)** - Convenções de código, CQRS, testes e organização
-- **[Padrões Arquiteturais](docs/design-patterns.md)** - Repository, UnitOfWork, DDD e outros padrões utilizados
-- **[Pacotes e Dependências](docs/packages.md)** - Lista completa de bibliotecas e suas finalidades
-- **[Configuração de Timeout](docs/request-timeout.md)** - Configurações de timeout para requisições
+---
 
 ## Usuários Padrão no banco de dados
 
@@ -44,30 +50,35 @@ Para informações detalhadas sobre desenvolvimento e padrões do projeto, consu
 - UserName = director123 
 - Password = Director@123
 
+---
+
 ## Executando com Docker Compose
 
 ### 3. Executando os serviços
 
 ```bash
 # Subir todos os serviços
-docker-compose up -d
+docker compose up -d
+
+# Subir todos os serviçõs e o SonarQube
+docker compose up -d --profile analysis
 
 # Ver logs em tempo real
-docker-compose logs
+docker compose logs
 
 # Parar os serviços
-docker-compose down --rmi all --volumes
+docker compose down --rmi all --volumes
 ```
 
 ### 4. Comandos úteis
 
 ```bash
 # Rebuildar e subir
-docker-compose up -d --build
+docker compose up -d --build
 
 # Subir apenas o banco
-docker-compose up postgres
+docker compose up postgres
 
 # Ver status dos containers
-docker-compose ps
+docker compose ps
 ```

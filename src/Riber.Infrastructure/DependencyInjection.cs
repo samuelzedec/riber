@@ -11,14 +11,15 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Quartz;
+using Riber.Application.Abstractions.Dispatchers;
 using Serilog;
 using Serilog.Events;
-using Riber.Application.Abstractions.Schedulers;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Abstractions.Services.Email;
 using Riber.Application.Configurations;
 using Riber.Domain.Repositories;
-using Riber.Infrastructure.Jobs;
+using Riber.Infrastructure.BackgroundJobs;
+using Riber.Infrastructure.Dispatchers;
 using Riber.Infrastructure.Persistence;
 using Riber.Infrastructure.Persistence.Interceptors;
 using Riber.Infrastructure.Persistence.Repositories;
@@ -38,7 +39,8 @@ namespace Riber.Infrastructure;
 /// </summary>
 public static class DependencyInjection
 {
-    public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration, ILoggingBuilder logging)
+    public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration,
+        ILoggingBuilder logging)
     {
         logging.AddLogging();
         services.AddPersistence(configuration);
@@ -113,14 +115,14 @@ public static class DependencyInjection
         services.AddTransient<IPermissionDataService, PermissionDataService>();
         services.AddTransient<IAuthService, AuthService>();
         services.AddTransient<ITokenService, JwtTokenService>();
-        services.AddTransient<IUserCreationService,  UserCreationService>();
+        services.AddTransient<IUserCreationService, UserCreationService>();
         services.AddTransient<ICurrentUserService, CurrentUserService>();
 
         if (configuration["ASPNETCORE_ENVIRONMENT"] == "Development")
             services.AddTransient<IImageStorageService, LocalImageStorageService>();
         else
             services.AddTransient<IImageStorageService, AmazonS3Service>();
-        
+
         // Singleton
         services.AddSingleton<IEmailConcurrencyService, EmailConcurrencyService>();
     }
@@ -134,8 +136,12 @@ public static class DependencyInjection
 
     private static void AddSchedulersAndJobs(this IServiceCollection services)
     {
+        // Background jobs
         services.AddTransient<SendingEmailJob>();
-        services.AddScoped<IEmailScheduler, QuartzEmailScheduler>();
+        services.AddTransient<CleanupImageBucketJob>();
+
+        // Dispatchers
+        services.AddScoped<IEmailDispatcher, EmailDispatcher>();
     }
 
     private static void AddHealthChecksConfiguration(this IServiceCollection services, IConfiguration configuration)
@@ -157,10 +163,10 @@ public static class DependencyInjection
             options.Scheduling.IgnoreDuplicates = true;
             options.Scheduling.OverWriteExistingData = false;
         });
-        
-        services.AddQuartz(q =>
+
+        services.AddQuartz(quartz =>
         {
-            q.UsePersistentStore(configure =>
+            quartz.UsePersistentStore(configure =>
             {
                 configure.PerformSchemaValidation = false;
                 configure.UseProperties = true;
@@ -173,16 +179,14 @@ public static class DependencyInjection
                             "QUARTZ - Connection string is null"));
             });
 
-            q.AddJob<SendingEmailJob>(options => options
-                .WithIdentity(new JobKey(nameof(SendingEmailJob)))
-                .WithDescription("Envia de e-mails para notificar o usuário")
-                .StoreDurably());
+            CleanupImageBucketScheduler.Configure(quartz);
+            SendingEmailScheduler.Configure(quartz);
         });
-        
+
         services.AddQuartzHostedService(options =>
             options.WaitForJobsToComplete = true);
     }
-    
+
     private static void AddJsonConfiguration(this IServiceCollection _)
     {
         JsonConvert.DefaultSettings = () => new JsonSerializerSettings
@@ -195,7 +199,7 @@ public static class DependencyInjection
             TypeNameHandling = TypeNameHandling.Auto
         };
     }
-    
+
     private static void AddTelemetry(this IServiceCollection services)
     {
         services.AddOpenTelemetry()
@@ -208,6 +212,7 @@ public static class DependencyInjection
             .WithTracing(tracing => tracing
                 .AddAspNetCoreInstrumentation()
                 .AddHttpClientInstrumentation()
+                .AddQuartzInstrumentation() // -> Beta
                 .AddOtlpExporter())
             .WithLogging(logging => logging
                 .AddOtlpExporter());

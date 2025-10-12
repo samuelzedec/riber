@@ -48,9 +48,8 @@ public sealed class AuthService(
     {
         var normalizedInput = userNameOrEmail.ToUpperInvariant();
         var user = await GetBaseUserQuery
-                       .FirstOrDefaultAsync(u =>
-                           u.NormalizedUserName == normalizedInput || u.NormalizedEmail == normalizedInput)
-                   ?? throw new NotFoundException(NotFoundErrors.User);
+            .FirstOrDefaultAsync(u => u.NormalizedUserName == normalizedInput || u.NormalizedEmail == normalizedInput)
+            ?? throw new NotFoundException(NotFoundErrors.User);
 
         return await userManager.CheckPasswordAsync(user, password)
             ? await MapUserDetailsAsync(user)
@@ -135,8 +134,7 @@ public sealed class AuthService(
         if (!await roleManager.RoleExistsAsync(roleName))
             throw new NotFoundException("Está função não existe.");
     }
-
-
+    
     public async Task RefreshUserSecurityAsync(string userId)
     {
         var user = await userManager.FindByIdAsync(userId);

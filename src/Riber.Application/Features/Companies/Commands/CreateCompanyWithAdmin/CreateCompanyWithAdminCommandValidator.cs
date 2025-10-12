@@ -36,31 +36,33 @@ internal sealed class CreateCompanyWithAdminCommandValidator : AbstractValidator
             .Matches(Phone.RegexPattern)
             .WithMessage(PhoneErrors.Format);
 
-        RuleFor(x => x.Type)
-            .NotNull()
-            .WithMessage(DocumentErrors.Empty)
-            .IsInEnum()
-            .WithMessage(DocumentErrors.Invalid);
-
-        RuleFor(x => x.TaxId)
-            .NotEmpty()
-            .WithMessage(CpfErrors.Empty)
-            .Matches(@"^(?!^(\d)\1{10}$)(\d{3}\.?\d{3}\.?\d{3}-?\d{2})$")
-            .WithMessage(CpfErrors.Length)
-            .When(x => x.Type == TaxIdType.IndividualWithCpf);
-
-        RuleFor(x => x.TaxId)
-            .NotEmpty()
-            .WithMessage(CnpjErrors.Empty)
-            .Matches(@"^(?!^(\d)\1{13}$)(\d{2}\.?\d{3}\.?\d{3}/?\d{4}-?\d{2})$")
-            .WithMessage(CnpjErrors.Length)
-            .When(x => x.Type == TaxIdType.LegalEntityWithCnpj);
+        When(x => x.Type == TaxIdType.IndividualWithCpf, () =>
+        {
+            RuleFor(x => x.TaxId)
+                .NotEmpty()
+                .WithMessage(CpfErrors.Empty);
+                
+            RuleFor(x => x.TaxId)
+                .Matches(@"^(?!^(\d)\1{10}$)(\d{3}\.?\d{3}\.?\d{3}-?\d{2})$")
+                .WithMessage(CpfErrors.Length);
+        });
+        
+        When(x => x.Type == TaxIdType.LegalEntityWithCnpj, () =>
+        {
+            RuleFor(x => x.TaxId)
+                .NotEmpty()
+                .WithMessage(CnpjErrors.Empty);
+                
+            RuleFor(x => x.TaxId)
+                .Matches(@"^(?!^(\d)\1{13}$)(\d{2}\.?\d{3}\.?\d{3}/?\d{4}-?\d{2})$")
+                .WithMessage(CnpjErrors.Length);
+        });
 
         RuleFor(x => x.AdminFullName)
             .NotEmpty()
             .WithMessage(NameErrors.FantasyNameEmpty);
 
-        RuleFor(x => x.TaxId)
+        RuleFor(x => x.AdminTaxId)
             .NotEmpty()
             .WithMessage(CpfErrors.Empty)
             .Matches(@"^(?!^(\d)\1{10}$)(\d{3}\.?\d{3}\.?\d{3}-?\d{2})$")

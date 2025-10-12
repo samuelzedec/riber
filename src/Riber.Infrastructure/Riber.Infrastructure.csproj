@@ -17,8 +17,6 @@
     <PackageReference Include="Microsoft.SemanticKernel.Core"/>
     <PackageReference Include="Newtonsoft.Json"/>
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL"/>
-    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
     <PackageReference Include="Pgvector.EntityFrameworkCore"/>
     <PackageReference Include="Quartz.Extensions.DependencyInjection"/>
     <PackageReference Include="Quartz.Extensions.Hosting"/>
@@ -28,6 +26,9 @@
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
     <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Quartz" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Riber.Application\Riber.Application.csproj"/>
