@@ -71,7 +71,6 @@ public sealed class AmazonS3Service : IImageStorageService
 
     public async Task<Stream> GetImageStreamAsync(string fileName)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(fileName, nameof(fileName));
         try
         {
             var request = new GetObjectRequest { BucketName = _bucketName, Key = fileName };
@@ -106,7 +105,6 @@ public sealed class AmazonS3Service : IImageStorageService
 
     public async Task DeleteAsync(string fileName)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(fileName, nameof(fileName));
         try
         {
             var request = new DeleteObjectRequest { BucketName = _bucketName, Key = fileName };

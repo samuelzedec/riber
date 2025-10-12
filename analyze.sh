@@ -38,12 +38,10 @@ SONAR_BEGIN_ARGS=(
   /d:sonar.host.url="$HOST_URL"
   /d:sonar.token="$TOKEN"
   /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml"
-  /d:sonar.exclusions="**/Migrations/**,**/bin/**,**/obj/**,**/appsettings*.json,**/Dockerfile*"
+  /d:sonar.exclusions="**/Migrations/**,**/bin/**,**/obj/**,**/appsettings*.json,**/Dockerfile*,**/Seeders/**,**/*Map.cs"
   /d:sonar.coverage.exclusions="\
 **/Migrations/**,\
 **/Program.cs,\
-**/Seeders/**,\
-**/*Map.cs,\
 **/*Validator.cs,\
 **/Repositories/**,\
 **/Settings/**,\

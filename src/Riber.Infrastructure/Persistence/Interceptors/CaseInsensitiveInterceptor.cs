@@ -40,7 +40,7 @@ public sealed class CaseInsensitiveInterceptor : DbCommandInterceptor
         );
     }
     
-    private void ApplyCaseInsensitive(DbCommand command)
+    private static void ApplyCaseInsensitive(DbCommand command)
     {
         if (command.CommandText.Contains("LIKE"))
             command.CommandText = command.CommandText.Replace("LIKE", "ILIKE");

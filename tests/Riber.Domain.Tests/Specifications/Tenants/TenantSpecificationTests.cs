@@ -198,8 +198,7 @@ public sealed class TenantSpecificationTests : BaseTest
         string? description = null,
         decimal? price = null,
         Guid? categoryId = null,
-        Guid? companyId = null,
-        string? imageUrl = null)
+        Guid? companyId = null)
         => Entity.Product.Create(
             name ?? _faker.Commerce.ProductName(),
             description ?? _faker.Commerce.ProductDescription(),

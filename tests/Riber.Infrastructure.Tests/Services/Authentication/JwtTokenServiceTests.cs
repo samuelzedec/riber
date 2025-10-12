@@ -57,7 +57,7 @@ public sealed class JwtTokenServiceTests : BaseTest
                 SecurityStamp: f.Random.AlphaNumeric(32),
                 UserDomainId: Guid.CreateVersion7(),
                 UserDomain: userDomain,
-                Roles: f.Make(2, () => f.Name.JobTitle()).ToList(),
+                Roles: [.. f.Make(2, () => f.Name.JobTitle())],
                 Claims: [.. f.Make(2, () => new ClaimModel(
                     Type: f.Random.Word(),
                     Value: f.Random.Word()

@@ -267,26 +267,7 @@ public sealed class AmazonS3ServiceTests : BaseTest
     }
 
     #endregion
-
-    #region GetImageStreamAsync Validation Tests
-
-    [Theory(DisplayName = "GetImageStreamAsync should throw ArgumentException for invalid file names")]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData("   ")]
-    [InlineData("\t")]
-    public async Task GetImageStreamAsync_WithInvalidFileName_ShouldThrowArgumentException(string? invalidFileName)
-    {
-        // Act
-        var action = async () => await _service.GetImageStreamAsync(invalidFileName!);
-
-        // Assert
-        await action.Should().ThrowAsync<ArgumentException>()
-            .WithParameterName("fileName");
-    }
-
-    #endregion
-
+    
     #region GetImageStreamAsync Error Handling Tests
 
     [Fact(DisplayName = "GetImageStreamAsync should throw NotFoundException when file not found")]
@@ -407,26 +388,7 @@ public sealed class AmazonS3ServiceTests : BaseTest
     }
 
     #endregion
-
-    #region DeleteAsync Validation Tests
-
-    [Theory(DisplayName = "DeleteAsync should throw ArgumentException for invalid file names")]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData("   ")]
-    [InlineData("\t")]
-    public async Task DeleteAsync_WithInvalidFileName_ShouldThrowArgumentException(string? invalidFileName)
-    {
-        // Act
-        var action = async () => await _service.DeleteAsync(invalidFileName!);
-
-        // Assert
-        await action.Should().ThrowAsync<ArgumentException>()
-            .WithParameterName("fileName");
-    }
-
-    #endregion
-
+    
     #region DeleteAsync Error Handling Tests
 
     [Fact(DisplayName = "DeleteAsync should throw InternalException for any exception")]

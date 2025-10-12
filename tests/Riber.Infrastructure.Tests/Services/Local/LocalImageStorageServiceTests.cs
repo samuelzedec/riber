@@ -16,7 +16,7 @@ public sealed class LocalImageStorageServiceTests : BaseTest, IDisposable
     private readonly Mock<ILogger<LocalImageStorageService>> _mockLogger;
     private readonly LocalImageStorageService _service;
     private readonly string _storagePath;
-    private readonly List<string> _createdFiles = new();
+    private readonly List<string> _createdFiles = [];
 
     public LocalImageStorageServiceTests()
     {
