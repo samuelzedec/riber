@@ -3,6 +3,7 @@
 ## v.2.3.1 - 12/10/2025
 - **NOVO**: Adiciona um novo job para limpeza de imagens não usadas na Bucket
 - **CORREÇÃO**: Ajuste no validator de Criação de empresa com administrador
+- Usar SHA da action em vez da versão
 - **REFATORAÇÃO**: Padronização no cadastro dos Jobs
 - Remoção das docs do projeto, centralizado tudo no README
 
