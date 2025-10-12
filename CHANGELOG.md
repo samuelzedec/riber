@@ -1,5 +1,13 @@
 # Riber - Changelog
 
+## v.2.3.1 - 12/10/2025
+- **NOVO**: Adiciona um novo job para limpeza de imagens não usadas na Bucket
+- **CORREÇÃO**: Ajuste no validator de Criação de empresa com administrador
+- **REFATORAÇÃO**: Padronização no cadastro dos Jobs
+- Remoção das docs do projeto, centralizado tudo no README
+
+---
+
 ## v2.3.0 - 09/10/25
 - **NOVO**: Integração do SonarQube no ambiente de desenvolvimento
 - Adiciona serviço SonarQube Community no Docker Compose com profile 'analysis'
