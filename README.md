@@ -1,4 +1,10 @@
 # Riber - Backend
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=samuelzedec_riber&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=samuelzedec_riber)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=samuelzedec_riber&metric=coverage)](https://sonarcloud.io/summary/new_code?id=samuelzedec_riber)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=samuelzedec_riber&metric=bugs)](https://sonarcloud.io/summary/new_code?id=samuelzedec_riber)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=samuelzedec_riber&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=samuelzedec_riber)
+
 Olá! Me chamo **Samuel Ribeiro** e este é o backend que estou desenvolvendo para a aplicação de gestão de uma
 **lanchonete local em Manaus-AM**.
 
