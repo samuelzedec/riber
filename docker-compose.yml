@@ -2,7 +2,7 @@ name: riber
 
 services:
   postgres:
-    image: pgvector/pgvector:pg17
+    image: pgvector/pgvector:pg18
     container_name: riber-pgsql-dev
     environment:
       POSTGRES_DB: riber_db
