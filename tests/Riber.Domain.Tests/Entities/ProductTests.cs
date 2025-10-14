@@ -8,6 +8,7 @@ public sealed class ProductTests : BaseTest
 {
     #region Creation Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should create product successfully with valid data")]
     public void Create_WhenValidData_ShouldCreateSuccessfully()
     {
@@ -42,6 +43,7 @@ public sealed class ProductTests : BaseTest
         result.IsActive.Should().BeTrue();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should create product successfully without image")]
     public void Create_WhenValidDataWithoutImage_ShouldCreateSuccessfully()
     {
@@ -74,6 +76,7 @@ public sealed class ProductTests : BaseTest
         result.IsActive.Should().BeTrue();
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw exception when name is invalid")]
     [InlineData("")]
     [InlineData("   ")]
@@ -97,6 +100,7 @@ public sealed class ProductTests : BaseTest
         act.Should().Throw<ProductNameNullException>();
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw exception when description is invalid")]
     [InlineData("")]
     [InlineData("   ")]
@@ -120,6 +124,7 @@ public sealed class ProductTests : BaseTest
         act.Should().Throw<ProductDescriptionNullException>();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw exception when category id is empty")]
     public void Create_WhenEmptyCategoryId_ShouldThrowIdentifierNullException()
     {
@@ -142,6 +147,7 @@ public sealed class ProductTests : BaseTest
         act.Should().Throw<IdentifierNullException>();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw exception when company id is empty")]
     public void Create_WhenEmptyCompanyId_ShouldThrowIdentifierNullException()
     {
@@ -168,6 +174,7 @@ public sealed class ProductTests : BaseTest
 
     #region Update Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should update details successfully")]
     public void UpdateDetails_WhenValidData_ShouldUpdateSuccessfully()
     {
@@ -193,6 +200,7 @@ public sealed class ProductTests : BaseTest
         product.UnitPrice.Value.Should().Be(newPrice);
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw exception when updating with invalid name")]
     [InlineData("")]
     [InlineData("   ")]
@@ -216,6 +224,7 @@ public sealed class ProductTests : BaseTest
         act.Should().Throw<ProductNameNullException>();
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw exception when updating with invalid description")]
     [InlineData("")]
     [InlineData("   ")]
@@ -240,6 +249,7 @@ public sealed class ProductTests : BaseTest
         act.Should().Throw<ProductDescriptionNullException>();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should change category successfully")]
     public void ChangeCategory_WhenValidCategoryId_ShouldChangeSuccessfully()
     {
@@ -261,6 +271,7 @@ public sealed class ProductTests : BaseTest
         product.CategoryId.Should().Be(newCategoryId);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw exception when changing to empty category id")]
     public void ChangeCategory_WhenEmptyCategoryId_ShouldThrowIdentifierNullException()
     {
@@ -279,6 +290,7 @@ public sealed class ProductTests : BaseTest
         act.Should().Throw<IdentifierNullException>();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should update image successfully")]
     public void UpdateImage_WhenValidImageUrl_ShouldUpdateSuccessfully()
     {
@@ -300,6 +312,7 @@ public sealed class ProductTests : BaseTest
         product.ImageId.Should().Be(newImageId);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should update image to null successfully")]
     public void UpdateImage_WhenNullImageUrl_ShouldUpdateSuccessfully()
     {
@@ -324,6 +337,7 @@ public sealed class ProductTests : BaseTest
 
     #region Activation Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should activate product successfully")]
     public void Activate_WhenCalled_ShouldSetIsActiveToTrue()
     {
@@ -345,6 +359,7 @@ public sealed class ProductTests : BaseTest
         product.IsActive.Should().BeTrue();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should deactivate product successfully")]
     public void Deactivate_WhenCalled_ShouldSetIsActiveToFalse()
     {
@@ -364,6 +379,7 @@ public sealed class ProductTests : BaseTest
         product.IsActive.Should().BeFalse();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should maintain activation state when activating already active product")]
     public void Activate_WhenAlreadyActive_ShouldMaintainActiveState()
     {
@@ -386,6 +402,7 @@ public sealed class ProductTests : BaseTest
         product.IsActive.Should().BeTrue();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should maintain deactivation state when deactivating already inactive product")]
     public void Deactivate_WhenAlreadyInactive_ShouldMaintainInactiveState()
     {

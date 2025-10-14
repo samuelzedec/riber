@@ -47,6 +47,7 @@ public sealed class GetCompanyByIdQueryHandlerTests : BaseTest
 
     #region Success Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return company successfully when company exists")]
     public async Task Handle_WhenCompanyExists_ShouldReturnCompanySuccessfully()
     {
@@ -84,6 +85,7 @@ public sealed class GetCompanyByIdQueryHandlerTests : BaseTest
 
     #region Not Found Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw not found exception when company does not exist")]
     public async Task Handle_WhenCompanyDoesNotExist_ShouldThrowNotFoundException()
     {
@@ -112,6 +114,7 @@ public sealed class GetCompanyByIdQueryHandlerTests : BaseTest
             It.IsAny<CancellationToken>()), Times.Once);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw not found exception when company id is empty")]
     public async Task Handle_WhenCompanyIdIsEmpty_ShouldThrowNotFoundException()
     {
@@ -146,6 +149,7 @@ public sealed class GetCompanyByIdQueryHandlerTests : BaseTest
 
     #region Cancellation Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should respect cancellation token during repository call")]
     public async Task Handle_WhenCancellationTokenDuringRepositoryCall_ShouldRespectCancellationToken()
     {
@@ -179,6 +183,7 @@ public sealed class GetCompanyByIdQueryHandlerTests : BaseTest
 
     #region Response Mapping Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should map all company properties correctly to response")]
     public async Task Handle_WhenCompanyExists_ShouldMapAllPropertiesCorrectly()
     {

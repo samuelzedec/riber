@@ -63,6 +63,7 @@ public sealed class UserCreationServiceTests : BaseTest
             .Generate();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should validate existing user when creating a complete user")]
     public async Task CreateCompleteUserAsync_ShouldValidateExistingUser_WhenUserAlreadyExists()
     {
@@ -108,6 +109,7 @@ public sealed class UserCreationServiceTests : BaseTest
             Times.Once);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Creating user when email already exists should throw ConflictException")]
     public async Task Handle_WhenEmailAlreadyExists_ShouldThrowConflictException()
     {
@@ -134,6 +136,7 @@ public sealed class UserCreationServiceTests : BaseTest
             Times.Never);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Creating user when username already exists should throw ConflictException")]
     public async Task Handle_WhenUserNameAlreadyExists_ShouldThrowConflictException()
     {
@@ -164,6 +167,7 @@ public sealed class UserCreationServiceTests : BaseTest
             Times.Never);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Creating user when phone already exists should throw ConflictException")]
     public async Task Handle_WhenPhoneAlreadyExists_ShouldThrowConflictException()
     {
@@ -198,6 +202,7 @@ public sealed class UserCreationServiceTests : BaseTest
             Times.Never);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Creating user when tax ID already exists should throw ConflictException")]
     public async Task Handle_WhenTaxIdAlreadyExists_ShouldThrowConflictException()
     {

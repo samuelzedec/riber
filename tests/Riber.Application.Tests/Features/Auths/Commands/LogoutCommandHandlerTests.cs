@@ -34,6 +34,7 @@ public sealed class LogoutCommandHandlerTests : BaseTest
 
     #region Success Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should logout successfully when valid user is provided")]
     public async Task Handle_WhenValidUser_ShouldReturnSuccessResult()
     {
@@ -58,7 +59,8 @@ public sealed class LogoutCommandHandlerTests : BaseTest
     #endregion
 
     #region Exception Tests
-    
+
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should log error and rethrow when unexpected exception occurs in authService")]
     public async Task Handle_WhenAuthServiceThrowsUnexpectedException_ShouldLogErrorAndRethrow()
     {
@@ -84,6 +86,7 @@ public sealed class LogoutCommandHandlerTests : BaseTest
         _mockAuthService.Verify(x => x.RefreshUserSecurityAsync(_userId.ToString()), Times.Once);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should log error and rethrow when unexpected exception occurs in currentUserService")]
     public async Task Handle_WhenCurrentUserServiceThrowsUnexpectedException_ShouldLogErrorAndRethrow()
     {
@@ -105,6 +108,7 @@ public sealed class LogoutCommandHandlerTests : BaseTest
         _mockAuthService.Verify(x => x.RefreshUserSecurityAsync(It.IsAny<string>()), Times.Never);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should call authService with correct user ID")]
     public async Task Handle_WhenCalled_ShouldCallAuthServiceWithCorrectUserId()
     {

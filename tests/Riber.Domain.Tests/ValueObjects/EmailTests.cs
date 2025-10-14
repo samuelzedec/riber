@@ -9,6 +9,7 @@ public sealed class EmailTests : BaseTest
 {
     #region Valid Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return true for valid email")]
     public void Create_WhenValidEmail_ShouldReturnTrue()
     {
@@ -27,6 +28,7 @@ public sealed class EmailTests : BaseTest
 
     #region Invalid Tests
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw EmailNullOrEmptyException for null or empty email")]
     [InlineData("")]
     [InlineData("   ")]
@@ -39,6 +41,7 @@ public sealed class EmailTests : BaseTest
         act.Should().Throw<EmailNullOrEmptyException>().WithMessage(EmailErrors.Empty);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw EmailFormatInvalidException for invalid email")]
     public void Create_WhenInvalidEmail_ShouldThrowEmailFormatInvalidException()
     {
@@ -56,6 +59,7 @@ public sealed class EmailTests : BaseTest
 
     #region Operators Test
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should convert Email to string using implicit operator")]
     public void ImplicitOperator_WhenConvertingToString_ShouldReturnEmailValue()
     {

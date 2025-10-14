@@ -9,6 +9,7 @@ namespace Riber.Domain.Tests.Specifications.Company;
 
 public sealed class CompanyTaxIdSpecificationTests : BaseTest
 {
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return true for valid tax id")]
     public void Should_ReturnTrue_ForValidTaxId()
     {
@@ -25,6 +26,7 @@ public sealed class CompanyTaxIdSpecificationTests : BaseTest
         result.Should().BeTrue();
     }
     
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return false for different tax id")]
     public void Should_ReturnFalse_ForDifferentTaxId()
     {
@@ -42,6 +44,7 @@ public sealed class CompanyTaxIdSpecificationTests : BaseTest
         result.Should().BeFalse();
     }
     
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return false for empty tax id")]
     public void Should_ReturnFalse_ForEmptyTaxId()
     {
@@ -56,6 +59,7 @@ public sealed class CompanyTaxIdSpecificationTests : BaseTest
         result.Should().BeFalse();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "ToExpression should be compilable")]
     public void ToExpression_Should_BeCompilable()
     {
@@ -72,6 +76,7 @@ public sealed class CompanyTaxIdSpecificationTests : BaseTest
         compiledExpression.Should().NotBeNull();
     }
     
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Compiled expression should work same as IsSatisfiedBy")]
     public void CompiledExpression_Should_WorkSameAs_IsSatisfiedBy()
     {
@@ -91,6 +96,7 @@ public sealed class CompanyTaxIdSpecificationTests : BaseTest
     }
     
     
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should work with expression compilation")]
     public void Should_WorkWith_ExpressionCompilation()
     {
@@ -113,6 +119,7 @@ public sealed class CompanyTaxIdSpecificationTests : BaseTest
         result2.Should().BeFalse();
     }
     
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should handle tax id with whitespace")]
     public void Should_HandleTaxId_WithWhitespace()
     {

@@ -47,6 +47,7 @@ public class SendingEmailJobTests
         _mockConcurrencyService.Setup(x => x.AcquireAsync(It.IsAny<CancellationToken>())).ReturnsAsync(_mockDisposable.Object);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should send email successfully with valid data")]
     public async Task Execute_WithValidData_ShouldSendEmailSuccessfully()
     {
@@ -91,6 +92,7 @@ public class SendingEmailJobTests
         );
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should acquire concurrency lock before processing")]
     public async Task Execute_ShouldAcquireConcurrencyLockBeforeProcessing()
     {
@@ -119,6 +121,7 @@ public class SendingEmailJobTests
         );
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should dispose concurrency lock after execution")]
     public async Task Execute_ShouldDisposeConcurrencyLockAfterExecution()
     {
@@ -144,6 +147,7 @@ public class SendingEmailJobTests
         _mockDisposable.Verify(x => x.Dispose(), Times.Once);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should render email template with correct payload")]
     public async Task Execute_ShouldRenderEmailTemplateWithCorrectPayload()
     {
@@ -183,6 +187,7 @@ public class SendingEmailJobTests
         );
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should log error when email sending fails")]
     public async Task Execute_WhenEmailSendingFails_ShouldLogError()
     {
@@ -227,6 +232,7 @@ public class SendingEmailJobTests
         );
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should not throw exception when sending fails")]
     public async Task Execute_WhenEmailSendingFails_ShouldNotThrowException()
     {
@@ -260,6 +266,7 @@ public class SendingEmailJobTests
         await act.Should().NotThrowAsync();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should log error when template rendering fails")]
     public async Task Execute_WhenTemplateRenderingFails_ShouldLogError()
     {
@@ -294,6 +301,7 @@ public class SendingEmailJobTests
         );
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should dispose concurrency lock even when exception occurs")]
     public async Task Execute_WhenExceptionOccurs_ShouldStillDisposeConcurrencyLock()
     {
@@ -319,6 +327,7 @@ public class SendingEmailJobTests
         _mockDisposable.Verify(x => x.Dispose(), Times.Once);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should extract correct values from JobDataMap")]
     public async Task Execute_ShouldExtractCorrectValuesFromJobDataMap()
     {
@@ -351,6 +360,7 @@ public class SendingEmailJobTests
         );
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should pass emailAddress as sender parameter")]
     public async Task Execute_ShouldPassEmailAddressAsSenderParameter()
     {

@@ -47,6 +47,7 @@ public sealed class CreateUserCommandHandlerTests : BaseTest
 
     #region Success Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Creating user with valid data should return success response")]
     public async Task Handle_WhenValidData_ShouldReturnSuccessResponse()
     {
@@ -99,6 +100,7 @@ public sealed class CreateUserCommandHandlerTests : BaseTest
 
     #region Conflict Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Creating user when user creation service throws ConflictException should rollback and rethrow")]
     public async Task Handle_WhenUserCreationServiceThrowsConflictException_ShouldRollbackAndRethrow()
     {
@@ -139,6 +141,7 @@ public sealed class CreateUserCommandHandlerTests : BaseTest
 
     #region Exception Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Creating user when user creation service fails should log error and rethrow")]
     public async Task Handle_WhenUserCreationServiceFails_ShouldLogErrorAndRethrow()
     {
@@ -177,6 +180,7 @@ public sealed class CreateUserCommandHandlerTests : BaseTest
             It.IsAny<CancellationToken>()), Times.Never);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Creating user when commit transaction fails should log error and rethrow")]
     public async Task Handle_WhenCommitTransactionFails_ShouldLogErrorAndRethrow()
     {
@@ -222,6 +226,7 @@ public sealed class CreateUserCommandHandlerTests : BaseTest
 
     #region Cancellation Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should respect cancellation token during user creation")]
     public async Task Handle_WhenCancellationTokenDuringUserCreation_ShouldRespectCancellationToken()
     {
@@ -261,6 +266,7 @@ public sealed class CreateUserCommandHandlerTests : BaseTest
             It.IsAny<CancellationToken>()), Times.Never);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should respect cancellation token during commit transaction")]
     public async Task Handle_WhenCancellationTokenDuringCommitTransaction_ShouldRespectCancellationToken()
     {

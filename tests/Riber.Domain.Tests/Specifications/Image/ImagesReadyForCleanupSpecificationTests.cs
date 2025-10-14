@@ -7,6 +7,7 @@ public sealed class ImagesReadyForCleanupSpecificationTests : BaseTest
 {
     private readonly ImagesReadyForCleanupSpecification _specification = new();
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return true when image is marked for deletion and not deleted yet")]
     public void Should_ReturnTrue_When_MarkedForDeletion_And_NotDeleted()
     {
@@ -21,6 +22,7 @@ public sealed class ImagesReadyForCleanupSpecificationTests : BaseTest
         result.Should().BeTrue();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return false when image has been deleted")]
     public void Should_ReturnFalse_When_DeletedAtHasValue()
     {
@@ -36,6 +38,7 @@ public sealed class ImagesReadyForCleanupSpecificationTests : BaseTest
         result.Should().BeFalse();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return false when image has not been marked for deletion")]
     public void Should_ReturnFalse_When_NotMarkedForDeletion()
     {

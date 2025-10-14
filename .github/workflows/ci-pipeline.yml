@@ -15,11 +15,21 @@ jobs:
         with:
           dotnet-version: '9.0.x'
 
+      - uses: actions/cache@v3
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
       - name: Restore NuGet packages
         run: dotnet restore
 
       - name: Build in Release mode
         run: dotnet build -c Release --no-restore
 
-      - name: Run all tests
-        run: dotnet test -c Release --no-build --verbosity minimal
+      - name: Run Unit tests
+        run: dotnet test -c Release --no-build --verbosity minimal --filter Category=Unit
+      
+      - name: Run Integration tests
+        run: dotnet test -c Release --no-build --verbosity minimal --filter Category=Integration

@@ -8,6 +8,7 @@ namespace Riber.Domain.Tests.Specifications.Tenants;
 
 public sealed class NoTenantSpecificationTests : BaseTest
 {
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return true for user with no tenant")]
     public void Should_ReturnTrue_ForUserWithNoTenant()
     {
@@ -22,6 +23,7 @@ public sealed class NoTenantSpecificationTests : BaseTest
         result.Should().BeTrue();
     }
     
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return false for user with tenant")]
     public void Should_ReturnFalse_ForUserWithTenant()
     {
@@ -37,6 +39,7 @@ public sealed class NoTenantSpecificationTests : BaseTest
         result.Should().BeFalse();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "ToExpression should be compilable")]
     public void ToExpression_Should_BeCompilable()
     {
@@ -52,6 +55,7 @@ public sealed class NoTenantSpecificationTests : BaseTest
         compiledExpression.Should().NotBeNull();
     }
     
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Compiled expression should work same as IsSatisfiedBy")]
     public void CompiledExpression_Should_WorkSameAs_IsSatisfiedBy()
     {
@@ -68,6 +72,7 @@ public sealed class NoTenantSpecificationTests : BaseTest
         resultFromMethod.Should().Be(resultFromExpression);
     }
     
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should work with expression compilation")]
     public void Should_WorkWith_ExpressionCompilation()
     {
@@ -86,6 +91,7 @@ public sealed class NoTenantSpecificationTests : BaseTest
         resultWithTenant.Should().BeFalse();
     }
     
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should distinguish between null and valid tenant")]
     public void Should_DistinguishBetween_NullAndValidTenant()
     {
@@ -106,6 +112,7 @@ public sealed class NoTenantSpecificationTests : BaseTest
         resultEmptyGuid.Should().BeFalse();
     }
     
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should work with users from different positions")]
     public void Should_WorkWith_UsersFromDifferentPositions()
     {
@@ -126,6 +133,7 @@ public sealed class NoTenantSpecificationTests : BaseTest
         resultEmployee.Should().BeTrue();
     }
     
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should work with mixed tenant scenarios")]
     public void Should_WorkWith_MixedTenantScenarios()
     {
@@ -149,6 +157,7 @@ public sealed class NoTenantSpecificationTests : BaseTest
         resultTenant2.Should().BeFalse();
     }
     
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should work consistently across multiple calls")]
     public void Should_WorkConsistently_AcrossMultipleCalls()
     {

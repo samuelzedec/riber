@@ -15,6 +15,7 @@ public sealed class CpfValidatorTests : BaseTest
 
     #region Valid CPF Tests
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should return true for valid CPF")]
     [InlineData("11144477735")]
     [InlineData("111.444.777-35")]
@@ -30,6 +31,7 @@ public sealed class CpfValidatorTests : BaseTest
 
     #region Invalid CPF Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw InvalidCpfException for invalid CPF")]
     public void IsValid_WhenInvalidCpf_ShouldThrowInvalidCpfException()
     {
@@ -43,6 +45,7 @@ public sealed class CpfValidatorTests : BaseTest
 
     #region Length Validation Tests
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw InvalidCpfException for incorrect CPF length")]
     [InlineData("123")]
     [InlineData("12345")]
@@ -62,6 +65,7 @@ public sealed class CpfValidatorTests : BaseTest
 
     #region Null or Empty Tests
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw InvalidCpfException for null or empty CPF")]
     [InlineData("")]
     [InlineData("   ")]
@@ -79,6 +83,7 @@ public sealed class CpfValidatorTests : BaseTest
 
     #region Repeated Digits Tests
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw InvalidCpfException for CPF with all same digits")]
     [InlineData("11111111111")]
     [InlineData("000.000.000-00")]
@@ -102,6 +107,7 @@ public sealed class CpfValidatorTests : BaseTest
 
     #region Formatting Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should validate CPF successfully regardless of formatting")]
     public void Format_WhenCpfWithoutFormat_ShouldReturnFormattedCpf()
     {

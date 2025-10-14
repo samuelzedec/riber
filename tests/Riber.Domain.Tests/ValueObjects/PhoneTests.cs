@@ -9,6 +9,7 @@ public sealed class PhoneTests : BaseTest
 {
     #region Valid Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return true for valid phone")]
     public void Create_WhenValidPhone_ShouldReturnTrue()
     {
@@ -23,6 +24,7 @@ public sealed class PhoneTests : BaseTest
         result.Value.Should().Be(phone);
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should accept phone with valid formatting variations")]
     [InlineData("(11) 98765-4321")]
     [InlineData("11 98765-4321")]
@@ -38,6 +40,7 @@ public sealed class PhoneTests : BaseTest
         result.Value.Should().MatchRegex(@"^\d{11}$");
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should accept different DDDs")]
     [InlineData("21987654321")]
     [InlineData("85987654321")]
@@ -55,6 +58,7 @@ public sealed class PhoneTests : BaseTest
 
     #region Invalid Tests
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw PhoneNullOrEmptyException for null or empty phone")]
     [InlineData("")]
     [InlineData("   ")]
@@ -70,6 +74,7 @@ public sealed class PhoneTests : BaseTest
         act.Should().Throw<PhoneNullOrEmptyException>().WithMessage(PhoneErrors.Empty);
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw PhoneFormatInvalidException for invalid phone formats")]
     [InlineData("123")]
     [InlineData("abcdefghij")]
@@ -84,6 +89,7 @@ public sealed class PhoneTests : BaseTest
         act.Should().ThrowExactly<PhoneFormatInvalidException>().WithMessage(PhoneErrors.Format);
     }
     
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw for phone not starting with 9")]
     [InlineData("1188654321")]
     [InlineData("1178654321")]
@@ -96,6 +102,7 @@ public sealed class PhoneTests : BaseTest
         act.Should().ThrowExactly<PhoneFormatInvalidException>();
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw for phone with letters mixed with numbers")]
     [InlineData("11987a54321")]
     [InlineData("119876543b1")]
@@ -112,6 +119,7 @@ public sealed class PhoneTests : BaseTest
 
     #region Operators Test
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should convert Phone to string using implicit operator")]
     public void ImplicitOperator_WhenConvertingToString_ShouldReturnFormattedPhone()
     {
@@ -132,6 +140,7 @@ public sealed class PhoneTests : BaseTest
 
     #region ToString Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should format 11-digit phone correctly")]
     public void ToString_When11Digits_ShouldFormatCorrectly()
     {
@@ -149,6 +158,7 @@ public sealed class PhoneTests : BaseTest
 
     #region RemoveFormatting Tests
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should remove all formatting characters")]
     [InlineData("(11) 98765-4321", "11987654321")]
     [InlineData("11 9 8765-4321", "11987654321")]
@@ -166,6 +176,7 @@ public sealed class PhoneTests : BaseTest
 
     #region Equality Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should be equal when values are the same")]
     public void Equals_WhenSameValue_ShouldBeTrue()
     {
@@ -178,6 +189,7 @@ public sealed class PhoneTests : BaseTest
         (phone1 == phone2).Should().BeTrue();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should not be equal when values are different")]
     public void Equals_WhenDifferentValue_ShouldBeFalse()
     {
@@ -194,6 +206,7 @@ public sealed class PhoneTests : BaseTest
 
     #region Edge Cases
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should trim whitespace before validation")]
     public void Create_WhenPhoneWithWhitespace_ShouldTrimAndValidate()
     {

@@ -59,6 +59,7 @@ public sealed class CreateProductCategoryCommandHandlerTests : BaseTest
 
     #region Success Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Creating product category with valid data should return success response")]
     public async Task Handle_WhenValidData_ShouldReturnSuccessResponse()
     {
@@ -109,6 +110,7 @@ public sealed class CreateProductCategoryCommandHandlerTests : BaseTest
         _mockCurrentUserService.Verify(x => x.GetCompanyId(), Times.Once);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Creating product category should normalize code to uppercase")]
     public async Task Handle_WhenCodeIsLowercase_ShouldNormalizeToUppercase()
     {
@@ -143,6 +145,7 @@ public sealed class CreateProductCategoryCommandHandlerTests : BaseTest
 
     #region Bad Request Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Creating product category when code already exists should throw BadRequestException")]
     public async Task Handle_WhenCodeAlreadyExists_ShouldThrowBadRequestException()
     {
@@ -175,6 +178,7 @@ public sealed class CreateProductCategoryCommandHandlerTests : BaseTest
             It.IsAny<CancellationToken>()), Times.Never);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Creating product category when code validation fails should throw BadRequestException")]
     public async Task Handle_WhenCodeValidationFails_ShouldThrowBadRequestException()
     {
@@ -204,6 +208,7 @@ public sealed class CreateProductCategoryCommandHandlerTests : BaseTest
 
     #region Exception Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Creating product category when current user service fails should log error and rethrow")]
     public async Task Handle_WhenCurrentUserServiceFails_ShouldLogErrorAndRethrow()
     {
@@ -238,6 +243,7 @@ public sealed class CreateProductCategoryCommandHandlerTests : BaseTest
             It.IsAny<CancellationToken>()), Times.Never);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Creating product category when category creation fails should log error and rethrow")]
     public async Task Handle_WhenCategoryCreationFails_ShouldLogErrorAndRethrow()
     {
@@ -269,6 +275,7 @@ public sealed class CreateProductCategoryCommandHandlerTests : BaseTest
             It.IsAny<CancellationToken>()), Times.Never);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Creating product category when save changes fails should log error and rethrow")]
     public async Task Handle_WhenSaveChangesFails_ShouldLogErrorAndRethrow()
     {
@@ -309,6 +316,7 @@ public sealed class CreateProductCategoryCommandHandlerTests : BaseTest
 
     #region Cancellation Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should respect cancellation token during code validation")]
     public async Task Handle_WhenCancellationTokenDuringCodeValidation_ShouldRespectCancellationToken()
     {
@@ -336,6 +344,7 @@ public sealed class CreateProductCategoryCommandHandlerTests : BaseTest
             It.IsAny<CancellationToken>()), Times.Never);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should respect cancellation token during category creation")]
     public async Task Handle_WhenCancellationTokenDuringCategoryCreation_ShouldRespectCancellationToken()
     {
@@ -372,6 +381,7 @@ public sealed class CreateProductCategoryCommandHandlerTests : BaseTest
         _mockCurrentUserService.Verify(x => x.GetCompanyId(), Times.Once);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should respect cancellation token during save changes")]
     public async Task Handle_WhenCancellationTokenDuringSaveChanges_ShouldRespectCancellationToken()
     {

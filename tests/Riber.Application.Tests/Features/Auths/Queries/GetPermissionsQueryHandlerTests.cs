@@ -28,6 +28,7 @@ public sealed class GetPermissionsQueryHandlerTests : BaseTest
 
     #region Success Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return authenticated user with permissions successfully")]
     public async Task Handle_WhenCalled_ShouldReturnSuccessResult()
     {
@@ -49,6 +50,7 @@ public sealed class GetPermissionsQueryHandlerTests : BaseTest
         _mockCurrentUserService.Verify(x => x.GetPermissions(), Times.Once);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return empty permissions when user has no permissions")]
     public async Task Handle_WhenUserHasNoPermissions_ShouldReturnEmptyPermissions()
     {
@@ -70,6 +72,7 @@ public sealed class GetPermissionsQueryHandlerTests : BaseTest
         _mockCurrentUserService.Verify(x => x.GetPermissions(), Times.Once);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should call currentUserService exactly once")]
     public async Task Handle_WhenCalled_ShouldCallCurrentUserServiceOnce()
     {

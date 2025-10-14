@@ -7,6 +7,7 @@ public sealed class RandomTokenTests : BaseTest
 {
    #region Valid Tests
 
+   [Trait("Category", "Unit")]
    [Fact(DisplayName = "Should create random token with valid base64 value")]
    public void Create_WhenCalled_ShouldCreateRandomTokenWithValidBase64()
    {
@@ -22,6 +23,7 @@ public sealed class RandomTokenTests : BaseTest
        act.Should().NotThrow();
    }
 
+   [Trait("Category", "Unit")]
    [Fact(DisplayName = "Should create tokens with expected length")]
    public void Create_WhenCalled_ShouldCreateTokenWithCorrectLength()
    {
@@ -34,6 +36,7 @@ public sealed class RandomTokenTests : BaseTest
        result.Value.Length.Should().BeLessThan(50);
    }
 
+   [Trait("Category", "Unit")]
    [Fact(DisplayName = "Should create unique tokens")]
    public void Create_WhenCalledMultipleTimes_ShouldCreateUniqueTokens()
    {
@@ -48,6 +51,7 @@ public sealed class RandomTokenTests : BaseTest
        token2.Value.Should().NotBe(token3.Value);
    }
 
+   [Trait("Category", "Unit")]
    [Fact(DisplayName = "Should generate cryptographically secure tokens")]
    public void Create_WhenCalledManyTimes_ShouldNotGeneratePredictablePatterns()
    {
@@ -69,6 +73,7 @@ public sealed class RandomTokenTests : BaseTest
 
    #region Operators Tests
 
+   [Trait("Category", "Unit")]
    [Fact(DisplayName = "Should convert RandomToken to string using implicit operator")]
    public void ImplicitOperator_WhenConvertingToString_ShouldReturnTokenValue()
    {
@@ -86,6 +91,7 @@ public sealed class RandomTokenTests : BaseTest
 
    #region Override Tests
 
+   [Trait("Category", "Unit")]
    [Fact(DisplayName = "Should return token value when calling ToString")]
    public void ToString_WhenCalled_ShouldReturnTokenValue()
    {
@@ -103,6 +109,7 @@ public sealed class RandomTokenTests : BaseTest
 
    #region Equality Tests
 
+   [Trait("Category", "Unit")]
    [Fact(DisplayName = "Should not be equal when tokens have different values")]
    public void Equality_WhenDifferentValues_ShouldNotBeEqual()
    {

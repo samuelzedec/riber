@@ -9,6 +9,7 @@ public sealed class MoneyTests : BaseTest
 {
     #region Valid Tests
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should create money for valid positive values")]
     [InlineData(0)]
     [InlineData(10.50)]
@@ -26,6 +27,7 @@ public sealed class MoneyTests : BaseTest
         result.Currency.Should().Be("BRL");
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should create money with custom currency")]
     public void Create_WhenValidValueWithCustomCurrency_ShouldCreateMoneyWithCorrectCurrency()
     {
@@ -42,6 +44,7 @@ public sealed class MoneyTests : BaseTest
         result.Currency.Should().Be(currency);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should create zero money")]
     public void Zero_WhenCalled_ShouldReturnMoneyWithZeroValue()
     {
@@ -58,6 +61,7 @@ public sealed class MoneyTests : BaseTest
 
     #region Invalid Tests
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw InvalidMoneyException for negative values")]
     [InlineData(-0.01)]
     [InlineData(-1)]
@@ -77,6 +81,7 @@ public sealed class MoneyTests : BaseTest
 
     #region Operators Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should convert Money to decimal using implicit operator")]
     public void ImplicitOperator_WhenConvertingToDecimal_ShouldReturnMoneyValue()
     {
@@ -92,6 +97,7 @@ public sealed class MoneyTests : BaseTest
         result.Should().Be(value);
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should add two money values with same currency correctly")]
     [InlineData(10.50, 5.25, 15.75)]
     [InlineData(100, 50, 150)]
@@ -111,6 +117,7 @@ public sealed class MoneyTests : BaseTest
         result.Currency.Should().Be("BRL");
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw InvalidSumException when adding different currencies")]
     public void AddOperator_WhenDifferentCurrencies_ShouldThrowInvalidSumException()
     {
@@ -126,6 +133,7 @@ public sealed class MoneyTests : BaseTest
            .WithMessage(MoneyErrors.Sum);
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should subtract two money values with same currency correctly")]
     [InlineData(100, 25, 75)]
     [InlineData(50.75, 10.25, 40.50)]
@@ -145,6 +153,7 @@ public sealed class MoneyTests : BaseTest
         result.Currency.Should().Be("BRL");
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw InvalidSubtractionException when subtracting different currencies")]
     public void SubtractOperator_WhenDifferentCurrencies_ShouldThrowInvalidSubtractionException()
     {
@@ -160,6 +169,7 @@ public sealed class MoneyTests : BaseTest
            .WithMessage(MoneyErrors.Subtraction);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw InvalidMoneyException when subtraction results in negative value")]
     public void SubtractOperator_WhenResultIsNegative_ShouldThrowInvalidMoneyException()
     {
@@ -175,6 +185,7 @@ public sealed class MoneyTests : BaseTest
            .WithMessage(MoneyErrors.NegativeValue);
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should multiply money by int correctly")]
     [InlineData(10.50, 2, 21.00)]
     [InlineData(25, 4, 100)]
@@ -193,6 +204,7 @@ public sealed class MoneyTests : BaseTest
         result.Currency.Should().Be("BRL");
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should multiply money by decimal correctly")]
     [InlineData(100, 0.5, 50)]
     [InlineData(25, 1.5, 37.5)]
@@ -211,6 +223,7 @@ public sealed class MoneyTests : BaseTest
         result.Currency.Should().Be("BRL");
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw InvalidMoneyException when multiplying by negative int")]
     [InlineData(-1)]
     [InlineData(-5)]
@@ -227,6 +240,7 @@ public sealed class MoneyTests : BaseTest
            .WithMessage(MoneyErrors.NegativeValue);
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw InvalidMoneyException when multiplying by negative decimal")]
     [InlineData(-0.5)]
     [InlineData(-2.5)]
@@ -247,6 +261,7 @@ public sealed class MoneyTests : BaseTest
 
     #region Methods Tests
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should multiply correctly using Multiply method with int")]
     [InlineData(25, 2, 50)]
     [InlineData(10.50, 3, 31.50)]
@@ -265,6 +280,7 @@ public sealed class MoneyTests : BaseTest
         result.Currency.Should().Be("BRL");
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should multiply correctly using Multiply method with decimal")]
     [InlineData(100, 0.25, 25)]
     [InlineData(50, 1.5, 75)]
@@ -287,6 +303,7 @@ public sealed class MoneyTests : BaseTest
 
     #region Equality Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should be equal when two money have same value and currency")]
     public void Equality_WhenSameValueAndCurrency_ShouldBeEqual()
     {
@@ -302,6 +319,7 @@ public sealed class MoneyTests : BaseTest
         money1.GetHashCode().Should().Be(money2.GetHashCode());
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should not be equal when two money have different values")]
     public void Equality_WhenDifferentValues_ShouldNotBeEqual()
     {
@@ -314,6 +332,7 @@ public sealed class MoneyTests : BaseTest
         (money1 == money2).Should().BeFalse();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should not be equal when two money have different currencies")]
     public void Equality_WhenDifferentCurrencies_ShouldNotBeEqual()
     {

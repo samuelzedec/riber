@@ -41,6 +41,7 @@ public class CleanupImageBucketJobTests
         _mockJobContext.Setup(x => x.CancellationToken).Returns(CancellationToken.None);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should complete without processing when there are no unused images")]
     public async Task Execute_WhenNoUnusedImages_ShouldCompleteWithoutProcessing()
     {
@@ -70,6 +71,7 @@ public class CleanupImageBucketJobTests
         );
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should delete all unused images successfully")]
     public async Task Execute_WhenUnusedImagesExist_ShouldDeleteAllSuccessfully()
     {
@@ -111,6 +113,7 @@ public class CleanupImageBucketJobTests
         );
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should log information when starting cleanup with image count")]
     public async Task Execute_WhenStartingCleanup_ShouldLogImageCount()
     {
@@ -135,6 +138,7 @@ public class CleanupImageBucketJobTests
         );
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should continue processing even when deleting one image fails")]
     public async Task Execute_WhenDeletingOneImageFails_ShouldContinueProcessing()
     {
@@ -174,6 +178,7 @@ public class CleanupImageBucketJobTests
         );
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should log error when image deletion fails")]
     public async Task Execute_WhenImageDeletionFails_ShouldLogError()
     {
@@ -204,6 +209,7 @@ public class CleanupImageBucketJobTests
         );
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should log debug for each successfully deleted image")]
     public async Task Execute_WhenImageIsDeletedSuccessfully_ShouldLogDebug()
     {
@@ -232,6 +238,7 @@ public class CleanupImageBucketJobTests
         );
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should pass correct CancellationToken when fetching unused images")]
     public async Task Execute_ShouldPassCancellationTokenToRepository()
     {
@@ -255,6 +262,7 @@ public class CleanupImageBucketJobTests
         );
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should process multiple failures and count correctly")]
     public async Task Execute_WhenMultipleFailuresOccur_ShouldCountCorrectly()
     {

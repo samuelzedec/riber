@@ -9,6 +9,7 @@ public sealed class QuantityTests : BaseTest
 {
     #region Valid Tests
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should create quantity for valid positive values")]
     [InlineData(1)]
     [InlineData(5)]
@@ -25,6 +26,7 @@ public sealed class QuantityTests : BaseTest
         result.Value.Should().Be(value);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should create quantity One with value 1")]
     public void One_WhenCalled_ShouldReturnQuantityWithValueOne()
     {
@@ -36,6 +38,7 @@ public sealed class QuantityTests : BaseTest
         result.Value.Should().Be(1);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should create quantity Zero with value 0")]
     public void Zero_WhenCalled_ShouldReturnQuantityWithValueZero()
     {
@@ -51,6 +54,7 @@ public sealed class QuantityTests : BaseTest
 
     #region Invalid Tests
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw InvalidQuantityException for zero or negative values")]
     [InlineData(0)]
     [InlineData(-1)]
@@ -70,6 +74,7 @@ public sealed class QuantityTests : BaseTest
 
     #region Operators Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should convert Quantity to int using implicit operator")]
     public void ImplicitOperator_WhenConvertingToInt_ShouldReturnQuantityValue()
     {
@@ -85,6 +90,7 @@ public sealed class QuantityTests : BaseTest
         result.Should().Be(value);
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should add two quantities correctly")]
     [InlineData(5, 3, 8)]
     [InlineData(10, 15, 25)]
@@ -103,6 +109,7 @@ public sealed class QuantityTests : BaseTest
         result.Value.Should().Be(expected);
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should subtract two quantities correctly")]
     [InlineData(10, 3, 7)]
     [InlineData(15, 5, 10)]
@@ -121,6 +128,7 @@ public sealed class QuantityTests : BaseTest
         result.Value.Should().Be(expected);
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should multiply quantity by int correctly")]
     [InlineData(5, 3, 15)]
     [InlineData(10, 2, 20)]
@@ -138,6 +146,7 @@ public sealed class QuantityTests : BaseTest
         result.Value.Should().Be(expected);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw InvalidQuantityException when subtraction results in zero or negative")]
     public void SubtractOperator_WhenResultIsZeroOrNegative_ShouldThrowInvalidQuantityException()
     {
@@ -156,6 +165,7 @@ public sealed class QuantityTests : BaseTest
 
     #region Methods Tests
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should add amount correctly using Add method")]
     [InlineData(5, 3, 8)]
     [InlineData(10, 1, 11)]
@@ -173,6 +183,7 @@ public sealed class QuantityTests : BaseTest
         result.Value.Should().Be(expected);
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should subtract amount correctly using Subtract method")]
     [InlineData(10, 3, 7)]
     [InlineData(5, 2, 3)]
@@ -190,6 +201,7 @@ public sealed class QuantityTests : BaseTest
         result.Value.Should().Be(expected);
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should multiply correctly using Multiply method")]
     [InlineData(5, 2, 10)]
     [InlineData(3, 4, 12)]
@@ -207,6 +219,7 @@ public sealed class QuantityTests : BaseTest
         result.Value.Should().Be(expected);
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should return true when quantity is greater than value")]
     [InlineData(10, 5, true)]
     [InlineData(5, 10, false)]
@@ -223,6 +236,7 @@ public sealed class QuantityTests : BaseTest
         result.Should().Be(expected);
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should return true when quantity is less than value")]
     [InlineData(5, 10, true)]
     [InlineData(10, 5, false)]
@@ -239,6 +253,7 @@ public sealed class QuantityTests : BaseTest
         result.Should().Be(expected);
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should return true when quantity equals value")]
     [InlineData(5, 5, true)]
     [InlineData(10, 5, false)]
@@ -255,6 +270,7 @@ public sealed class QuantityTests : BaseTest
         result.Should().Be(expected);
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw InvalidQuantityException when Add results in zero or negative")]
     [InlineData(5, -5)]
     [InlineData(5, -10)]
@@ -270,6 +286,7 @@ public sealed class QuantityTests : BaseTest
         act.Should().Throw<InvalidQuantityException>();
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw InvalidQuantityException when Subtract results in zero or negative")]
     [InlineData(5, 5)]
     [InlineData(5, 10)]
@@ -285,6 +302,7 @@ public sealed class QuantityTests : BaseTest
         act.Should().Throw<InvalidQuantityException>();
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw InvalidQuantityException when Multiply results in zero or negative")]
     [InlineData(5, 0)]
     [InlineData(5, -1)]
@@ -305,6 +323,7 @@ public sealed class QuantityTests : BaseTest
 
     #region Equality Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should be equal when two quantities have same value")]
     public void Equality_WhenTwoQuantitiesHaveSameValue_ShouldBeEqual()
     {
@@ -319,6 +338,7 @@ public sealed class QuantityTests : BaseTest
         quantity1.GetHashCode().Should().Be(quantity2.GetHashCode());
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should not be equal when two quantities have different values")]
     public void Equality_WhenTwoQuantitiesHaveDifferentValues_ShouldNotBeEqual()
     {

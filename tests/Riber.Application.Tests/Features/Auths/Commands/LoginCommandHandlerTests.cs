@@ -64,6 +64,7 @@ public sealed class LoginCommandHandlerTests : BaseTest
 
     #region Success Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should login successfully when valid credentials are provided")]
     public async Task Handle_WhenValidCredentials_ShouldReturnSuccessResult()
     {
@@ -99,6 +100,7 @@ public sealed class LoginCommandHandlerTests : BaseTest
 
     #region Exception Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw NotFoundException when user is not found")]
     public async Task Handle_WhenUserNotFound_ShouldThrowNotFoundException()
     {
@@ -117,6 +119,7 @@ public sealed class LoginCommandHandlerTests : BaseTest
         _mockTokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw UnauthorizedException when password is incorrect")]
     public async Task Handle_WhenInvalidPassword_ShouldThrowUnauthorizedException()
     {
@@ -135,6 +138,7 @@ public sealed class LoginCommandHandlerTests : BaseTest
         _mockTokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should log error and rethrow when unexpected exception occurs")]
     public async Task Handle_WhenUnexpectedExceptionOccurs_ShouldLogErrorAndRethrow()
     {
