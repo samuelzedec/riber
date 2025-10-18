@@ -4,7 +4,7 @@ set -e
 
 # Detectar ambiente e configurar variáveis
 if [[ -n "$CI" || -n "$GITHUB_ACTIONS" ]]; then
-  if [ -z "$SONAR_TOKEN" ]; then
+  if [[ -z "$SONAR_TOKEN" ]]; then
     echo "Erro: SONAR_TOKEN não definido"
     exit 1
   fi
@@ -17,7 +17,7 @@ if [[ -n "$CI" || -n "$GITHUB_ACTIONS" ]]; then
   USE_ORG_FLAG=true
 else
   # Local - SonarQube
-  if [ -z "$1" ]; then
+  if [[ -z "$1" ]]; then
     echo "Erro: Token não fornecido"
     echo "Uso: ./analyze.sh SEU_TOKEN"
     exit 1
@@ -66,7 +66,7 @@ SONAR_BEGIN_ARGS=(
 )
 
 # Adicionar /o: apenas se for SonarCloud
-if [ "$USE_ORG_FLAG" = true ]; then
+if [[ "$USE_ORG_FLAG" = true ]]; then
   SONAR_BEGIN_ARGS=(/o:"$ORGANIZATION" "${SONAR_BEGIN_ARGS[@]}")
 fi
 
