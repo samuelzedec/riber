@@ -1,12 +1,12 @@
 ﻿using System.Text;
 using System.Text.Json.Serialization;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Riber.Application;
 using Riber.Infrastructure;
 using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Riber.Api.Authorizations.Permissions;
@@ -87,7 +87,7 @@ public static class BuilderExtension
                 new QueryStringApiVersionReader("version"), // via query: ?version=1.0
                 new HeaderApiVersionReader("X-Version") // via header: X-Version: 1.0
             );
-        }).AddVersionedApiExplorer(setup =>
+        }).AddApiExplorer(setup =>
         {
             setup.GroupNameFormat = "'v'VVV";
             setup.SubstituteApiVersionInUrl = true;

@@ -3,8 +3,7 @@
 set -e
 
 # Detectar ambiente e configurar variáveis
-if [ -n "$CI" ] || [ -n "$GITHUB_ACTIONS" ]; then  
-  # CI/CD - SonarCloud
+if [[ -n "$CI" || -n "$GITHUB_ACTIONS" ]]; then
   if [ -z "$SONAR_TOKEN" ]; then
     echo "Erro: SONAR_TOKEN não definido"
     exit 1

@@ -9,6 +9,7 @@ using Riber.Application.Features.Auths.Commands.Login;
 using Riber.Infrastructure.Persistence;
 using Riber.Infrastructure.Persistence.Interceptors;
 using Testcontainers.PostgreSql;
+using Xunit;
 
 namespace Riber.Api.Tests;
 
