@@ -9,21 +9,18 @@ public sealed class CreateProductCategoryCommandValidator : AbstractValidator<Cr
     {
         RuleFor(x => x.Name)
             .NotEmpty()
-            .NotNull()
             .WithMessage(CategoryErrors.NameEmpty)
             .MaximumLength(255)
             .WithMessage(CategoryErrors.NameLength);
 
         RuleFor(x => x.Code)
             .NotEmpty()
-            .NotNull()
             .WithMessage(CategoryErrors.CodeEmpty)
             .Length(5)
             .WithMessage(CategoryErrors.CodeLength);
 
         RuleFor(x => x.Description)
             .NotEmpty()
-            .NotNull()
             .WithMessage(CategoryErrors.DescriptionEmpty)
             .MaximumLength(255)
             .WithMessage(CategoryErrors.DescriptionLength);
