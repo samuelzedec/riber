@@ -1,6 +1,15 @@
 # Riber - Changelog
 
-## v.2.3.1 - 12/10/2025
+## v3.0.0 - 17/10/2025
+- **REFATORAÇÃO**: Mudança na resposta da API, ajustando o Result Pattern
+- Remoção da propriedade Details usada para mensagens de validação do FluentValidation
+- Remoção da propriedade Message usada para mensagens resumidas
+- Unificação dessas duas propriedades de erro para propriedade Messages
+- **CORREÇÃO**: Ajustando as versões dos pacotes da aplicação
+
+---
+
+## v2.3.1 - 12/10/2025
 - **NOVO**: Adiciona um novo job para limpeza de imagens não usadas na Bucket
 - **CORREÇÃO**: Ajuste no validator de Criação de empresa com administrador
 - Usar SHA da action em vez da versão
