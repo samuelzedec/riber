@@ -1,3 +1,4 @@
+using System.Text;
 using Newtonsoft.Json.Linq;
 using Riber.Application.Abstractions.Services.Email;
 
@@ -25,15 +26,15 @@ public sealed class EmailTemplateRender : IEmailTemplateRender
     
     private static string ReplaceTemplatePlaceholders(string templateContent, JObject data)
     {
+        var sb = new StringBuilder(templateContent);
         foreach (var property in data.Properties())
         {
             if (property.Name is "templatePath")
                 continue;
 
-            var placeholder = $"{{{{{property.Name}}}}}";
             var value = property.Value.ToString();
-            templateContent = templateContent.Replace(placeholder, value);
+            sb.Replace($"{{{{{property.Name}}}}}", value);
         }
-        return templateContent;
+        return sb.ToString();
     }
 }
