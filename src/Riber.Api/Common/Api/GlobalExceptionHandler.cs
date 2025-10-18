@@ -20,24 +20,19 @@ public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logge
         logger.LogError(exception, "Exception occurred: {ExceptionType} - {Message}", 
             exception.GetType().Name, exception.Message);
         
-        (string? message, int statusCode, List<string>? errors) = exception switch
+        (int statusCode, string[] messages) = exception switch
         {
-            RequestTimeoutException timeoutEx => (timeoutEx.Message, timeoutEx.Code, null),
-            ValidationException validationEx => (
-                validationEx.Message, 
-                validationEx.Code, 
-                validationEx.Errors.Select(e => e.ErrorMessage).ToList()
-            ),
-            Layer.ApplicationException applicationEx => (applicationEx.Message, applicationEx.Code, null),
-            DomainException domainEx => (domainEx.Message, StatusCodes.Status422UnprocessableEntity, null),
-            _ => ("An unexpected error occurred", StatusCodes.Status500InternalServerError, null)
+            RequestTimeoutException timeoutEx => (timeoutEx.Code, [timeoutEx.Message]),
+            ValidationException validationEx => (ValidationException.Code, validationEx.Messages.Select(e => e.ErrorMessage).ToArray()),
+            Layer.ApplicationException applicationEx => (applicationEx.Code, [applicationEx.Message]),
+            DomainException domainEx => (StatusCodes.Status422UnprocessableEntity, [domainEx.Message]),
+            _ => (StatusCodes.Status500InternalServerError, ["Erro inesperado no servidor!"])
         };
         
         await httpContext.WriteUnauthorizedResponse(
             title: GetErrorCode(statusCode),
-            message: message,
             code: statusCode,
-            errors: errors?.ToArray() ?? []
+            messages: messages
         );
         return true;
     }

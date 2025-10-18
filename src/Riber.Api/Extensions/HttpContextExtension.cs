@@ -16,15 +16,14 @@ public static class HttpContextExtension
     public static async Task WriteUnauthorizedResponse(
         this HttpContext context,
         string title,
-        string message,
         int code,
-        params string[]? errors)
+        params string[] messages)
     {
-        var result = Result.Failure(new Error(title, message));
+        var result = Result.Failure(new Error(title, messages));
         var response = new
         {
             isSuccess = result.IsSuccess,
-            error = new { code = result.Error.Code, message = result.Error.Message, details = errors ?? [] }
+            error = new { code = result.Error.Code, messages }
         };
 
         var jsonResponse = JsonSerializer.Serialize(response, JsonOptions);

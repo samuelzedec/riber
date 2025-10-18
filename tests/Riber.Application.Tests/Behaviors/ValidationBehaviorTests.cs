@@ -99,10 +99,10 @@ public sealed class ValidationBehaviorTests : BaseTest
         await exception.Should().ThrowExactlyAsync<ApplicationLayer.ValidationException>();
 
         var thrownException = await exception.Should().ThrowExactlyAsync<ApplicationLayer.ValidationException>();
-        thrownException.Which.Errors.Should().HaveCount(2);
-        thrownException.Which.Errors.Should()
+        thrownException.Which.Messages.Should().HaveCount(2);
+        thrownException.Which.Messages.Should()
             .Contain(e => e.PropertyName == "Name" && e.ErrorMessage == "Name is required");
-        thrownException.Which.Errors.Should()
+        thrownException.Which.Messages.Should()
             .Contain(e => e.PropertyName == "Age" && e.ErrorMessage == "Age must be between 20 and 50");
 
         _mockValidator.Verify(x => x.Validate(It.IsAny<ValidationContext<RequestTest>>()), Times.Exactly(2));
@@ -141,12 +141,12 @@ public sealed class ValidationBehaviorTests : BaseTest
         await exception.Should().ThrowExactlyAsync<ApplicationLayer.ValidationException>();
 
         var thrownException = await exception.Should().ThrowExactlyAsync<ApplicationLayer.ValidationException>();
-        thrownException.Which.Errors.Should().HaveCount(3);
-        thrownException.Which.Errors.Should()
+        thrownException.Which.Messages.Should().HaveCount(3);
+        thrownException.Which.Messages.Should()
             .Contain(e => e.PropertyName == "Name" && e.ErrorMessage == "Name is required");
-        thrownException.Which.Errors.Should()
+        thrownException.Which.Messages.Should()
             .Contain(e => e.PropertyName == "Age" && e.ErrorMessage == "Age must be positive");
-        thrownException.Which.Errors.Should()
+        thrownException.Which.Messages.Should()
             .Contain(e => e.PropertyName == "Name" && e.ErrorMessage == "Name must be unique");
 
         mockValidator1.Verify(x => x.Validate(It.IsAny<ValidationContext<RequestTest>>()), Times.Exactly(2));
@@ -190,10 +190,10 @@ public sealed class ValidationBehaviorTests : BaseTest
         await exception.Should().ThrowExactlyAsync<ApplicationLayer.ValidationException>();
 
         var thrownException = await exception.Should().ThrowExactlyAsync<ApplicationLayer.ValidationException>();
-        thrownException.Which.Errors.Should().HaveCount(2);
-        thrownException.Which.Errors.Should()
+        thrownException.Which.Messages.Should().HaveCount(2);
+        thrownException.Which.Messages.Should()
             .Contain(e => e.PropertyName == "Name" && e.ErrorMessage == "Name is required");
-        thrownException.Which.Errors.Should()
+        thrownException.Which.Messages.Should()
             .Contain(e => e.PropertyName == "Age" && e.ErrorMessage == "Age must be positive");
 
         mockValidator1.Verify(x => x.Validate(It.IsAny<ValidationContext<RequestTest>>()), Times.Exactly(2));

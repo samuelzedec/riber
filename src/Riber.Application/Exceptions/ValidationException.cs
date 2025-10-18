@@ -3,8 +3,8 @@ using Riber.Application.Common;
 
 namespace Riber.Application.Exceptions;
 
-public sealed class ValidationException(IEnumerable<ValidationError> errors) 
-    : ApplicationException("One or more validation errors occurred", (int)HttpStatusCode.BadRequest)
+public sealed class ValidationException(IEnumerable<ValidationError> messages) : Exception
 {
-    public IEnumerable<ValidationError> Errors => errors;
+    public IEnumerable<ValidationError> Messages => messages;
+    public static int Code => (int)HttpStatusCode.BadRequest;
 }
