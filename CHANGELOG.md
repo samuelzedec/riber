@@ -1,5 +1,12 @@
 # Riber - Changelog
 
+## v3.0.1 - 18/10/2025
+- CORREÇÃO: Troca do pacote de versionamento da API
+- Ajuste no setup de testes da camada Api para testes de integração
+- Ajuste no analyze.sh para ficar mais consistente a validação de ambiente
+
+---
+
 ## v3.0.0 - 17/10/2025
 - **REFATORAÇÃO**: Mudança na resposta da API, ajustando o Result Pattern
 - Remoção da propriedade Details usada para mensagens de validação do FluentValidation
