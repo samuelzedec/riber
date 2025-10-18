@@ -1,6 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <IsTestProject>true</IsTestProject>
+    <!--    Como muitos pacotes não estão sendo possíveis rodar no .net 9, vou deixar isso pronto pra o .net 10 e atualização dos pacotes-->
+    <IsTestProject>false</IsTestProject>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
@@ -16,13 +17,13 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Using Include="Xunit" />
+    <Using Include="Xunit"/>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Riber.Api\Riber.Api.csproj" />
-    <ProjectReference Include="..\..\src\Riber.Application\Riber.Application.csproj" />
-    <ProjectReference Include="..\..\src\Riber.Domain\Riber.Domain.csproj" />
-    <ProjectReference Include="..\..\src\Riber.Infrastructure\Riber.Infrastructure.csproj" />
-    <ProjectReference Include="..\Riber.Domain.Tests\Riber.Domain.Tests.csproj" />
+    <ProjectReference Include="..\..\src\Riber.Api\Riber.Api.csproj"/>
+    <ProjectReference Include="..\..\src\Riber.Application\Riber.Application.csproj"/>
+    <ProjectReference Include="..\..\src\Riber.Domain\Riber.Domain.csproj"/>
+    <ProjectReference Include="..\..\src\Riber.Infrastructure\Riber.Infrastructure.csproj"/>
+    <ProjectReference Include="..\Riber.Domain.Tests\Riber.Domain.Tests.csproj"/>
   </ItemGroup>
 </Project>

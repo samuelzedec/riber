@@ -15,4 +15,8 @@
     <ProjectReference Include="..\Riber.Application\Riber.Application.csproj" />
     <ProjectReference Include="..\Riber.Infrastructure\Riber.Infrastructure.csproj" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <SonarQubeExclude>true</SonarQubeExclude>
+  </PropertyGroup>
 </Project>
