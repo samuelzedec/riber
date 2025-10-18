@@ -5,7 +5,7 @@ using Moq;
 using Riber.Domain.Tests;
 using Riber.Infrastructure.Services.AWS.Email;
 
-namespace Riber.Infrastructure.Tests.Services.AWS;
+namespace Riber.Infrastructure.Tests.Services.AWS.Email;
 
 public sealed class AmazonSESServiceTests : BaseTest
 {
