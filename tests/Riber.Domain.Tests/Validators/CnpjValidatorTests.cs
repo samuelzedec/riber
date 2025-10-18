@@ -15,6 +15,7 @@ public sealed class CnpjValidatorTests : BaseTest
 
     #region Valid CNPJ Tests
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should return true for valid CNPJ")]
     [InlineData("11222333000181")]
     [InlineData("11.222.333/0001-81")]
@@ -32,6 +33,7 @@ public sealed class CnpjValidatorTests : BaseTest
 
     #region Invalid CNPJ Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw InvalidCnpjException for invalid CNPJ")]
     public void IsValid_WhenInvalidCnpj_ShouldThrowInvalidCnpjException()
     {
@@ -45,6 +47,7 @@ public sealed class CnpjValidatorTests : BaseTest
 
     #region Length Validation Tests
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw InvalidCnpjException for incorrect CNPJ length")]
     [InlineData("123")]
     [InlineData("12345678")]
@@ -64,6 +67,7 @@ public sealed class CnpjValidatorTests : BaseTest
 
     #region Null or Empty Tests
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw InvalidCnpjException for null or empty CNPJ")]
     [InlineData("")]
     [InlineData("   ")]
@@ -81,6 +85,7 @@ public sealed class CnpjValidatorTests : BaseTest
 
     #region Formatting Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should validate CNPJ successfully regardless of formatting")]
     public void Format_WhenCnpjWithoutFormat_ShouldReturnFormattedCnpj()
     {

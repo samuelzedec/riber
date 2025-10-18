@@ -31,6 +31,7 @@ public sealed class AuditInterceptorTests : BaseTest
 
     #region Update Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Saving changes when entity is modified should call UpdateEntity")]
     public void SaveChanges_WhenEntityIsModified_ShouldCallUpdateEntity()
     {
@@ -54,6 +55,7 @@ public sealed class AuditInterceptorTests : BaseTest
 
     #region Delete Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Saving changes when entity is deleted should set DeletedAt and keep entity")]
     public void SaveChanges_WhenEntityIsDeleted_ShouldSetDeletedAtAndKeepEntity()
     {
@@ -83,6 +85,7 @@ public sealed class AuditInterceptorTests : BaseTest
 
     #region Query Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Querying entity when entity is deleted should not return entity")]
     public void Query_WhenEntityIsDeleted_ShouldNotReturnEntity()
     {

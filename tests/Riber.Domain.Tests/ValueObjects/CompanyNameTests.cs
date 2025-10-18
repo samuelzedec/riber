@@ -10,6 +10,7 @@ public sealed class CompanyNameTests : BaseTest
 {
     #region Valid Creation Scenarios
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should create CompanyName with Name and FantasyName")]
     public void Create_WhenNameAndFantasyName_ShouldCreateCompanyName()
     {
@@ -27,6 +28,7 @@ public sealed class CompanyNameTests : BaseTest
         result.Fantasy.Should().Be(fantasyName);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should create CompanyName with minimum valid length")]
     public void Create_WhenMinimumValidLength_ShouldCreateCompanyName()
     {
@@ -44,6 +46,7 @@ public sealed class CompanyNameTests : BaseTest
         result.Fantasy.Should().HaveLength(CompanyName.MinLength);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should create CompanyName with maximum valid length")]
     public void Create_WhenMaximumValidLength_ShouldCreateCompanyName()
     {
@@ -61,6 +64,7 @@ public sealed class CompanyNameTests : BaseTest
         result.Fantasy.Should().HaveLength(CompanyName.FantasyMaxLength);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should trim whitespace from name and fantasy name")]
     public void Create_WhenWhitespaceInNames_ShouldTrimWhitespace()
     {
@@ -86,6 +90,7 @@ public sealed class CompanyNameTests : BaseTest
 
     #region Null and Empty Tests
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw InvalidFantasyNameException for empty or null fantasy names")]
     [InlineData("")]
     [InlineData("   ")]
@@ -105,6 +110,7 @@ public sealed class CompanyNameTests : BaseTest
         act.Should().ThrowExactly<InvalidFantasyNameException>().WithMessage(NameErrors.FantasyNameEmpty);
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw InvalidNameException for empty or null names")]
     [InlineData("")]
     [InlineData("   ")]
@@ -128,6 +134,7 @@ public sealed class CompanyNameTests : BaseTest
 
     #region Name Property Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw exception when name exceeds maximum length")]
     public void Create_WhenNameExceedsMaximumLength_ShouldThrowException()
     {
@@ -144,6 +151,7 @@ public sealed class CompanyNameTests : BaseTest
             .WithMessage(NameErrors.CorporateNameLength(CompanyName.MinLength, CompanyName.CorporateMaxLength));
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw exception when name exceeds minimum length")]
     public void Create_WhenNameExceedsMinimumLength_ShouldThrowException()
     {
@@ -160,6 +168,7 @@ public sealed class CompanyNameTests : BaseTest
             .WithMessage(NameErrors.CorporateNameLength(CompanyName.MinLength, CompanyName.CorporateMaxLength));
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw exception when name is empty")]
     public void Create_WhenNameIsEmpty_ShouldThrowException()
     {
@@ -179,6 +188,7 @@ public sealed class CompanyNameTests : BaseTest
 
     #region FantasyName Property Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw exception when fantasy name exceeds maximum length")]
     public void Create_WhenFantasyNameExceedsMaximumLength_ShouldThrowException()
     {
@@ -195,6 +205,7 @@ public sealed class CompanyNameTests : BaseTest
             NameErrors.FantasyNameLength(CompanyName.MinLength, CompanyName.FantasyMaxLength));
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw exception when fantasy name exceeds minimum length")]
     public void Create_WhenFantasyNameExceedsMinimumLength_ShouldThrowException()
     {
@@ -211,6 +222,7 @@ public sealed class CompanyNameTests : BaseTest
             NameErrors.FantasyNameLength(CompanyName.MinLength, CompanyName.FantasyMaxLength));
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw exception when fantasy name is empty")]
     public void Create_WhenFantasyNameIsEmpty_ShouldThrowException()
     {
@@ -226,6 +238,7 @@ public sealed class CompanyNameTests : BaseTest
         result.Should().ThrowExactly<InvalidFantasyNameException>().WithMessage(NameErrors.FantasyNameEmpty);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return fantasy name value when implicitly converted to string")]
     public void ImplicitConversion_WhenConvertedToString_ShouldReturnFantasyNameValue()
     {

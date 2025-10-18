@@ -24,6 +24,7 @@ public sealed class BaseEntityTests : BaseTest
 
     #region Creation Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should create entity successfully with valid id")]
     public void Create_WhenValidId_ShouldCreateSuccessfully()
     {
@@ -42,6 +43,7 @@ public sealed class BaseEntityTests : BaseTest
         entity.Events().Should().BeEmpty();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should create entity with unique id when different guids provided")]
     public void Create_WhenDifferentIds_ShouldCreateWithUniqueIds()
     {
@@ -62,6 +64,7 @@ public sealed class BaseEntityTests : BaseTest
 
     #region Equality Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should be equal when entities have same id")]
     public void Equals_WhenSameId_ShouldBeEqual()
     {
@@ -77,6 +80,7 @@ public sealed class BaseEntityTests : BaseTest
         (entity1 != entity2).Should().BeFalse();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should not be equal when entities have different ids")]
     public void Equals_WhenDifferentIds_ShouldNotBeEqual()
     {
@@ -91,6 +95,7 @@ public sealed class BaseEntityTests : BaseTest
         (entity1 != entity2).Should().BeTrue();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should not be equal when comparing with null")]
     public void Equals_WhenComparingWithNull_ShouldNotBeEqual()
     {
@@ -107,6 +112,7 @@ public sealed class BaseEntityTests : BaseTest
         (entity != nullEntity).Should().BeTrue();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should be equal when both entities are null")]
     public void Equals_WhenBothNull_ShouldBeEqual()
     {
@@ -119,6 +125,7 @@ public sealed class BaseEntityTests : BaseTest
         (entity1 != entity2).Should().BeFalse();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should not be equal when comparing with different type")]
     public void Equals_WhenDifferentType_ShouldNotBeEqual()
     {
@@ -137,6 +144,7 @@ public sealed class BaseEntityTests : BaseTest
 
     #region GetHashCode Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should have same hash code when entities have same id")]
     public void GetHashCode_WhenSameId_ShouldHaveSameHashCode()
     {
@@ -153,6 +161,7 @@ public sealed class BaseEntityTests : BaseTest
         hashCode1.Should().Be(hashCode2);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should have different hash codes when entities have different ids")]
     public void GetHashCode_WhenDifferentIds_ShouldHaveDifferentHashCodes()
     {
@@ -168,6 +177,7 @@ public sealed class BaseEntityTests : BaseTest
         hashCode1.Should().NotBe(hashCode2);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should work correctly in HashSet")]
     public void GetHashCode_InHashSet_ShouldWorkCorrectly()
     {
@@ -191,6 +201,7 @@ public sealed class BaseEntityTests : BaseTest
 
     #region Domain Events Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should start with empty events collection")]
     public void Events_WhenCreated_ShouldBeEmpty()
     {
@@ -202,6 +213,7 @@ public sealed class BaseEntityTests : BaseTest
         entity.Events().Should().NotBeNull();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should add domain event successfully")]
     public void RaiseEvent_WhenValidEvent_ShouldAddEvent()
     {
@@ -217,6 +229,7 @@ public sealed class BaseEntityTests : BaseTest
         entity.Events().Should().Contain(domainEvent);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should add multiple domain events successfully")]
     public void RaiseEvent_WhenMultipleEvents_ShouldAddAllEvents()
     {
@@ -236,6 +249,7 @@ public sealed class BaseEntityTests : BaseTest
         entity.Events().Should().Contain([event1, event2, event3]);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should clear events successfully")]
     public void ClearEvents_WhenHasEvents_ShouldClearAllEvents()
     {
@@ -251,6 +265,7 @@ public sealed class BaseEntityTests : BaseTest
         entity.Events().Should().BeEmpty();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return readonly collection of events")]
     public void Events_WhenCalled_ShouldReturnReadOnlyCollection()
     {
@@ -271,6 +286,7 @@ public sealed class BaseEntityTests : BaseTest
 
     #region Update Entity Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should update UpdatedAt when UpdateEntity is called")]
     public void UpdateEntity_WhenCalled_ShouldSetUpdatedAt()
     {
@@ -291,6 +307,7 @@ public sealed class BaseEntityTests : BaseTest
 
     #region Delete Entity Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should set DeletedAt when DeleteEntity is called")]
     public void DeleteEntity_WhenCalled_ShouldSetDeletedAt()
     {
@@ -310,6 +327,7 @@ public sealed class BaseEntityTests : BaseTest
 
     #region Integration Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should work correctly with Dictionary as key")]
     public void BaseEntity_InDictionary_ShouldWorkCorrectly()
     {
@@ -331,6 +349,7 @@ public sealed class BaseEntityTests : BaseTest
         dictionary[entity3].Should().Be("Value3");
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should maintain immutable Id")]
     public void Id_WhenAccessed_ShouldBeImmutable()
     {

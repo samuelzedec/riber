@@ -55,6 +55,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
 
     #region Success Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should create company with admin successfully when all data is valid")]
     public async Task Handle_WhenAllDataIsValid_ShouldCreateCompanyWithAdminSuccessfully()
     {
@@ -122,6 +123,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
 
     #region Conflict Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw conflict exception when company name already exists")]
     public async Task Handle_WhenCompanyNameAlreadyExists_ShouldThrowConflictException()
     {
@@ -173,6 +175,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
             It.IsAny<CancellationToken>()), Times.Never);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw conflict exception when tax id already exists")]
     public async Task Handle_WhenTaxIdAlreadyExists_ShouldThrowConflictException()
     {
@@ -224,6 +227,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
             It.IsAny<CancellationToken>()), Times.Never);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw conflict exception when email already exists")]
     public async Task Handle_WhenEmailAlreadyExists_ShouldThrowConflictException()
     {
@@ -275,6 +279,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
             It.IsAny<CancellationToken>()), Times.Never);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw conflict exception when phone already exists")]
     public async Task Handle_WhenPhoneAlreadyExists_ShouldThrowConflictException()
     {
@@ -330,6 +335,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
 
     #region Exception Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should rollback transaction and log error when unexpected exception occurs")]
     public async Task Handle_WhenUnexpectedExceptionOccurs_ShouldRollbackTransactionAndLogError()
     {
@@ -382,6 +388,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
 
     #region Cancellation Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should respect cancellation token during validation")]
     public async Task Handle_WhenCancellationTokenDuringValidation_ShouldRespectCancellationToken()
     {
@@ -432,6 +439,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
             It.IsAny<CancellationToken>()), Times.Never);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should respect cancellation token during commit transaction")]
     public async Task Handle_WhenCancellationTokenDuringCommitTransaction_ShouldRespectCancellationToken()
     {

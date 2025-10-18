@@ -8,6 +8,7 @@ public sealed class Image : BaseTest
 {
     #region Create
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should create image when parameters are valid")]
     public void CreateImage_WhenParametersAreValid_ShouldCreateSuccessfully()
     {
@@ -33,6 +34,7 @@ public sealed class Image : BaseTest
         result.Key.Should().NotBeNullOrWhiteSpace();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw exception when length is less or equal to zero")]
     public void CreateImage_WhenLengthIsInvalid_ShouldThrowException()
     {
@@ -51,6 +53,7 @@ public sealed class Image : BaseTest
         result.Should().ThrowExactly<InvalidLengthImageException>(ImageErrors.Length);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw exception when content type is not allowed")]
     public void CreateImage_WhenContentTypeIsInvalid_ShouldThrowException()
     {
@@ -69,6 +72,7 @@ public sealed class Image : BaseTest
         result.Should().ThrowExactly<InvalidTypeImageException>(ImageErrors.Type);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw exception when original name is null or empty")]
     public void CreateImage_WhenOriginalNameIsEmpty_ShouldThrowException()
     {
@@ -86,6 +90,7 @@ public sealed class Image : BaseTest
         result.Should().ThrowExactly<InvalidImageException>(ImageErrors.NameEmpty);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw exception when original name has no extension")]
     public void CreateImage_WhenOriginalNameHasNoExtension_ShouldThrowException()
     {
@@ -107,6 +112,7 @@ public sealed class Image : BaseTest
 
     #region MarkForDeletion
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should mark image for deletion and set properties")]
     public void MarkForDeletion_WhenCalled_ShouldSetDeletionFlags()
     {
@@ -127,6 +133,7 @@ public sealed class Image : BaseTest
     }
 
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return true when image is marked for deletion")]
     public void IsMarkedForDeletion_WhenMarked_ShouldReturnTrue()
     {
@@ -150,6 +157,7 @@ public sealed class Image : BaseTest
 
     #region Validation
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return true when content type is allowed")]
     public void IsValidImageType_WhenTypeIsAllowed_ShouldReturnTrue()
     {
@@ -164,6 +172,7 @@ public sealed class Image : BaseTest
     }
 
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return false when content type is not allowed")]
     public void IsValidImageType_WhenTypeIsNotAllowed_ShouldReturnFalse()
     {
@@ -181,6 +190,7 @@ public sealed class Image : BaseTest
 
     #region ToString & Implicit
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return correct string representation")]
     public void ToString_WhenCalled_ShouldReturnKeyWithExtension()
     {
@@ -199,6 +209,7 @@ public sealed class Image : BaseTest
         result.Should().Be($"{image.Key}{image.Extension}");
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should convert to string implicitly with correct format")]
     public void ImplicitOperatorString_WhenCalled_ShouldReturnCorrectString()
     {

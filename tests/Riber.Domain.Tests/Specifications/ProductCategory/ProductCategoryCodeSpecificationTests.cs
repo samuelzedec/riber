@@ -6,6 +6,7 @@ namespace Riber.Domain.Tests.Specifications.ProductCategory;
 
 public sealed class ProductCategoryCodeSpecificationTests : BaseTest
 {
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return true for matching category code")]
     public void Should_ReturnTrue_ForMatchingCategoryCode()
     {
@@ -21,6 +22,7 @@ public sealed class ProductCategoryCodeSpecificationTests : BaseTest
         result.Should().BeTrue();
     }
     
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return false for different category code")]
     public void Should_ReturnFalse_ForDifferentCategoryCode()
     {
@@ -36,6 +38,7 @@ public sealed class ProductCategoryCodeSpecificationTests : BaseTest
         result.Should().BeFalse();
     }
     
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return false for empty string")]
     public void Should_ReturnFalse_ForEmptyString()
     {
@@ -50,6 +53,7 @@ public sealed class ProductCategoryCodeSpecificationTests : BaseTest
         result.Should().BeFalse();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should be case sensitive")]
     public void Should_BeCaseSensitive()
     {
@@ -65,6 +69,7 @@ public sealed class ProductCategoryCodeSpecificationTests : BaseTest
         result.Should().BeFalse();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "ToExpression should be compilable")]
     public void ToExpression_Should_BeCompilable()
     {
@@ -81,6 +86,7 @@ public sealed class ProductCategoryCodeSpecificationTests : BaseTest
         compiledExpression.Should().NotBeNull();
     }
     
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Compiled expression should work same as IsSatisfiedBy")]
     public void CompiledExpression_Should_WorkSameAs_IsSatisfiedBy()
     {

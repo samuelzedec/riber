@@ -9,6 +9,7 @@ public sealed class DiscountTests : BaseTest
 {
     #region Valid Tests
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should create percentage discount for valid values")]
     [InlineData(0.1, "Desconto mínimo")]
     [InlineData(5, "Desconto cliente")]
@@ -27,6 +28,7 @@ public sealed class DiscountTests : BaseTest
         result.Reason.Should().Be(reason);
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should create fixed amount discount for valid values")]
     [InlineData(0.01, "Desconto mínimo")]
     [InlineData(10, "Desconto funcionário")]
@@ -44,6 +46,7 @@ public sealed class DiscountTests : BaseTest
         result.Reason.Should().Be(reason);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should create percentage discount without reason")]
     public void CreateByPercentage_WhenNoReason_ShouldCreateDiscountWithNullReason()
     {
@@ -59,6 +62,7 @@ public sealed class DiscountTests : BaseTest
         result.Reason.Should().BeNull();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should create fixed amount discount without reason")]
     public void CreateByFixedAmount_WhenNoReason_ShouldCreateDiscountWithNullReason()
     {
@@ -74,6 +78,7 @@ public sealed class DiscountTests : BaseTest
         result.Reason.Should().BeNull();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should create none discount")]
     public void None_WhenCalled_ShouldReturnDiscountWithZeroValues()
     {
@@ -92,6 +97,7 @@ public sealed class DiscountTests : BaseTest
 
     #region Invalid Tests
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw InvalidPercentageException for invalid percentage values")]
     [InlineData(-0.01)]
     [InlineData(-10)]
@@ -107,6 +113,7 @@ public sealed class DiscountTests : BaseTest
            .WithMessage(DiscountErrors.Percentage);
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw InvalidFixedAmountException for invalid fixed amount values")]
     [InlineData(0)]
     [InlineData(-0.01)]
@@ -126,6 +133,7 @@ public sealed class DiscountTests : BaseTest
 
     #region Calculate Discount Tests
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should calculate percentage discount correctly")]
     [InlineData(100, 10, 10)]    // 10% de R$ 100 = R$ 10
     [InlineData(50, 20, 10)]     // 20% de R$ 50 = R$ 10
@@ -143,6 +151,7 @@ public sealed class DiscountTests : BaseTest
         result.Should().BeApproximately(expected, 0.001m);
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should calculate fixed amount discount correctly")]
     [InlineData(100, 20, 20)]    // Desconto R$ 20 em R$ 100 = R$ 20
     [InlineData(50, 30, 30)]     // Desconto R$ 30 em R$ 50 = R$ 30
@@ -160,6 +169,7 @@ public sealed class DiscountTests : BaseTest
         result.Should().Be(expected);
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should return zero when subtotal is zero or negative")]
     [InlineData(0)]
     [InlineData(-10)]
@@ -179,6 +189,7 @@ public sealed class DiscountTests : BaseTest
         fixedResult.Should().Be(0);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return zero when no discount is applied")]
     public void CalculateDiscount_WhenNoDiscount_ShouldReturnZero()
     {
@@ -197,6 +208,7 @@ public sealed class DiscountTests : BaseTest
 
     #region Methods Tests
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should return true when has percentage discount")]
     [InlineData(0.01)]
     [InlineData(10)]
@@ -214,6 +226,7 @@ public sealed class DiscountTests : BaseTest
         result.Should().BeTrue();
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should return true when has fixed amount discount")]
     [InlineData(0.01)]
     [InlineData(10)]
@@ -231,6 +244,7 @@ public sealed class DiscountTests : BaseTest
         result.Should().BeTrue();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return false when has no discount")]
     public void HasDiscount_WhenNoDiscount_ShouldReturnFalse()
     {
@@ -244,6 +258,7 @@ public sealed class DiscountTests : BaseTest
         result.Should().BeFalse();
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should return true when is percentage discount")]
     [InlineData(5)]
     [InlineData(25)]
@@ -261,6 +276,7 @@ public sealed class DiscountTests : BaseTest
         discount.IsFixedAmount().Should().BeFalse();
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should return true when is fixed amount discount")]
     [InlineData(10)]
     [InlineData(50.75)]
@@ -278,6 +294,7 @@ public sealed class DiscountTests : BaseTest
         discount.IsPercentage().Should().BeFalse();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return false for both when no discount")]
     public void IsPercentageAndIsFixedAmount_WhenNoDiscount_ShouldReturnFalse()
     {
@@ -293,6 +310,7 @@ public sealed class DiscountTests : BaseTest
 
     #region Edge Cases Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should handle very small subtotal values")]
     public void CalculateDiscount_WhenVerySmallSubTotal_ShouldHandleCorrectly()
     {
@@ -307,6 +325,7 @@ public sealed class DiscountTests : BaseTest
         result.Should().Be(0.001m);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should handle very large subtotal values")]
     public void CalculateDiscount_WhenVeryLargeSubTotal_ShouldHandleCorrectly()
     {
@@ -325,6 +344,7 @@ public sealed class DiscountTests : BaseTest
 
     #region Equality Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should be equal when two discounts have same values")]
     public void Equality_WhenSameValues_ShouldBeEqual()
     {
@@ -338,6 +358,7 @@ public sealed class DiscountTests : BaseTest
         discount1.GetHashCode().Should().Be(discount2.GetHashCode());
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should not be equal when discounts have different values")]
     public void Equality_WhenDifferentValues_ShouldNotBeEqual()
     {
@@ -350,6 +371,7 @@ public sealed class DiscountTests : BaseTest
         (discount1 == discount2).Should().BeFalse();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should not be equal when discounts have different reasons")]
     public void Equality_WhenDifferentReasons_ShouldNotBeEqual()
     {

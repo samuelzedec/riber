@@ -6,6 +6,7 @@ namespace Riber.Domain.Tests.Specifications.Product;
 
 public sealed class ProductByCategoryIdSpecificationTests : BaseTest
 {
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return true for matching category id")]
     public void Should_ReturnTrue_ForMatchingCategoryId()
     {
@@ -21,6 +22,7 @@ public sealed class ProductByCategoryIdSpecificationTests : BaseTest
         result.Should().BeTrue();
     }
     
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return false for different category id")]
     public void Should_ReturnFalse_ForDifferentCategoryId()
     {
@@ -36,6 +38,7 @@ public sealed class ProductByCategoryIdSpecificationTests : BaseTest
         result.Should().BeFalse();
     }
     
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return false for empty guid")]
     public void Should_ReturnFalse_ForEmptyGuid()
     {
@@ -50,6 +53,7 @@ public sealed class ProductByCategoryIdSpecificationTests : BaseTest
         result.Should().BeFalse();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "ToExpression should be compilable")]
     public void ToExpression_Should_BeCompilable()
     {
@@ -66,6 +70,7 @@ public sealed class ProductByCategoryIdSpecificationTests : BaseTest
         compiledExpression.Should().NotBeNull();
     }
     
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Compiled expression should work same as IsSatisfiedBy")]
     public void CompiledExpression_Should_WorkSameAs_IsSatisfiedBy()
     {

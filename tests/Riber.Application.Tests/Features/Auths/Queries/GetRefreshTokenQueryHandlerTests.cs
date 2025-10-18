@@ -64,6 +64,7 @@ public sealed class GetRefreshTokenQueryHandlerTests : BaseTest
 
     #region Success Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should generate refresh token successfully when valid user is provided")]
     public async Task Handle_WhenValidUser_ShouldReturnSuccessResult()
     {
@@ -108,6 +109,7 @@ public sealed class GetRefreshTokenQueryHandlerTests : BaseTest
 
     #endregion
 
+    [Trait("Category", "Unit")]
     #region Exception Tests
 
     [Fact(DisplayName = "Should log error and rethrow when unexpected exception occurs in currentUserService")]
@@ -134,6 +136,7 @@ public sealed class GetRefreshTokenQueryHandlerTests : BaseTest
         _mockTokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should log error and rethrow when unexpected exception occurs in RefreshUserSecurityAsync")]
     public async Task Handle_WhenRefreshUserSecurityAsyncThrowsUnexpectedException_ShouldLogErrorAndRethrow()
     {
@@ -162,6 +165,7 @@ public sealed class GetRefreshTokenQueryHandlerTests : BaseTest
         _mockTokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should log error and rethrow when user not found in FindByIdAsync")]
     public async Task Handle_WhenUserNotFound_ShouldLogErrorAndRethrow()
     {
@@ -191,6 +195,7 @@ public sealed class GetRefreshTokenQueryHandlerTests : BaseTest
         _mockTokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should log error and rethrow when unexpected exception occurs in FindByIdAsync")]
     public async Task Handle_WhenFindByIdAsyncThrowsUnexpectedException_ShouldLogErrorAndRethrow()
     {
@@ -227,6 +232,7 @@ public sealed class GetRefreshTokenQueryHandlerTests : BaseTest
 
     #region Parameter Validation Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should call services with correct parameters")]
     public async Task Handle_WhenCalled_ShouldCallServicesWithCorrectParameters()
     {

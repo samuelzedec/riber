@@ -26,6 +26,7 @@ public sealed class CurrentUserServiceTests : BaseTest
 
     #endregion
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw exception when user id claim is null")]
     public void GetUserId_WhenUserIdClaimIsNull_ShouldThrowException()
     {
@@ -45,6 +46,7 @@ public sealed class CurrentUserServiceTests : BaseTest
         act.Should().Throw<NullReferenceException>();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw exception when user id is invalid guid")]
     public void GetUserId_WhenUserIdIsInvalidGuid_ShouldThrowException()
     {
@@ -64,6 +66,7 @@ public sealed class CurrentUserServiceTests : BaseTest
         act.Should().Throw<FormatException>();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return company id when user has valid company guid")]
     public void GetCompanyId_WhenUserHasValidCompanyGuid_ShouldReturnCompanyId()
     {
@@ -88,6 +91,7 @@ public sealed class CurrentUserServiceTests : BaseTest
         result.Should().Be(companyId);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw exception when company id claim is null")]
     public void GetCompanyId_WhenCompanyIdClaimIsNull_ShouldThrowException()
     {
@@ -108,6 +112,7 @@ public sealed class CurrentUserServiceTests : BaseTest
         act.Should().Throw<NullReferenceException>();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw BadRequestException when company id is invalid guid")]
     public void GetCompanyId_WhenCompanyIdIsInvalidGuid_ShouldThrowBadRequestException()
     {

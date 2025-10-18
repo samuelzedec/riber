@@ -29,6 +29,7 @@ public sealed class LocalImageStorageServiceTests : BaseTest, IDisposable
 
     #region UploadAsync Success Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "UploadAsync should save file successfully")]
     public async Task UploadAsync_WithValidStream_ShouldSaveFile()
     {
@@ -53,6 +54,7 @@ public sealed class LocalImageStorageServiceTests : BaseTest, IDisposable
         savedContent.Should().BeEquivalentTo(content);
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "UploadAsync should handle different file types")]
     [InlineData("test.jpg", "image/jpeg")]
     [InlineData("test.png", "image/png")]
@@ -72,6 +74,7 @@ public sealed class LocalImageStorageServiceTests : BaseTest, IDisposable
         _createdFiles.Add(fileName);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "UploadAsync should overwrite existing file")]
     public async Task UploadAsync_WhenFileExists_ShouldOverwrite()
     {
@@ -98,6 +101,7 @@ public sealed class LocalImageStorageServiceTests : BaseTest, IDisposable
 
     #region GetImageStreamAsync Success Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "GetImageStreamAsync should return stream when file exists")]
     public async Task GetImageStreamAsync_WhenFileExists_ShouldReturnStream()
     {
@@ -122,6 +126,7 @@ public sealed class LocalImageStorageServiceTests : BaseTest, IDisposable
         memoryStream.ToArray().Should().BeEquivalentTo(content);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "GetImageStreamAsync should return async FileStream")]
     public async Task GetImageStreamAsync_ShouldReturnAsyncFileStream()
     {
@@ -143,6 +148,7 @@ public sealed class LocalImageStorageServiceTests : BaseTest, IDisposable
 
     #region GetImageStreamAsync Error Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "GetImageStreamAsync should throw NotFoundException when file does not exist")]
     public async Task GetImageStreamAsync_WhenFileNotFound_ShouldThrowNotFoundException()
     {
@@ -157,6 +163,7 @@ public sealed class LocalImageStorageServiceTests : BaseTest, IDisposable
             .WithMessage(StorageErrors.RetrieveFailed);
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "GetImageStreamAsync should throw for various non-existent files")]
     [InlineData("invalid-file.png")]
     [InlineData("another-missing.jpg")]
@@ -174,6 +181,7 @@ public sealed class LocalImageStorageServiceTests : BaseTest, IDisposable
 
     #region DeleteAsync Success Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "DeleteAsync should delete file successfully")]
     public async Task DeleteAsync_WhenFileExists_ShouldDeleteFile()
     {
@@ -197,6 +205,7 @@ public sealed class LocalImageStorageServiceTests : BaseTest, IDisposable
 
     #region DeleteAsync Error Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "DeleteAsync should throw NotFoundException when file does not exist")]
     public async Task DeleteAsync_WhenFileNotFound_ShouldThrowNotFoundException()
     {
@@ -215,6 +224,7 @@ public sealed class LocalImageStorageServiceTests : BaseTest, IDisposable
 
     #region Integration Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Complete workflow should work end-to-end")]
     public async Task CompleteWorkflow_UploadGetDelete_ShouldWorkEndToEnd()
     {
@@ -248,6 +258,7 @@ public sealed class LocalImageStorageServiceTests : BaseTest, IDisposable
         await getAfterDelete.Should().ThrowAsync<NotFoundException>();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should handle concurrent uploads correctly")]
     public async Task ConcurrentUploads_ShouldAllSucceed()
     {
@@ -284,6 +295,7 @@ public sealed class LocalImageStorageServiceTests : BaseTest, IDisposable
         }
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should handle large file upload")]
     public async Task UploadAsync_WithLargeFile_ShouldWork()
     {
@@ -309,6 +321,7 @@ public sealed class LocalImageStorageServiceTests : BaseTest, IDisposable
         savedContent.Should().BeEquivalentTo(largeContent);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should handle empty file upload")]
     public async Task UploadAsync_WithEmptyFile_ShouldWork()
     {
@@ -330,47 +343,9 @@ public sealed class LocalImageStorageServiceTests : BaseTest, IDisposable
 
     #endregion
 
-    #region Helper Methods
-
-    private void VerifyLogCalled(LogLevel level)
-    {
-        _mockLogger.Verify(
-            x => x.Log(
-                level,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => true),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.AtLeastOnce);
-    }
-
-    #endregion
-
-    #region Cleanup
-
-    public void Dispose()
-    {
-        foreach (var fileName in _createdFiles)
-        {
-            try
-            {
-                var filePath = Path.Combine(_storagePath, fileName);
-                if (File.Exists(filePath))
-                {
-                    File.Delete(filePath);
-                }
-            }
-            catch
-            {
-                // Ignore cleanup errors
-            }
-        }
-    }
-
-    #endregion
-
     #region UploadAsync Error Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "UploadAsync should throw InternalException when stream is disposed")]
     public async Task UploadAsync_WhenStreamDisposed_ShouldThrowInternalException()
     {
@@ -387,6 +362,7 @@ public sealed class LocalImageStorageServiceTests : BaseTest, IDisposable
             .WithMessage(StorageErrors.UploadFailed);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "UploadAsync should log error when exception occurs")]
     public async Task UploadAsync_WhenExceptionOccurs_ShouldLogError()
     {
@@ -416,6 +392,7 @@ public sealed class LocalImageStorageServiceTests : BaseTest, IDisposable
             Times.Once);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "UploadAsync should throw when path is invalid")]
     public async Task UploadAsync_WhenInvalidFileName_ShouldThrowInternalException()
     {
@@ -429,6 +406,41 @@ public sealed class LocalImageStorageServiceTests : BaseTest, IDisposable
         // Assert
         await action.Should().ThrowAsync<InternalException>()
             .WithMessage(StorageErrors.UploadFailed);
+    }
+
+    #endregion
+
+    #region Helper Methods
+
+    private void VerifyLogCalled(LogLevel level)
+    {
+        _mockLogger.Verify(
+            x => x.Log(
+                level,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, t) => true),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.AtLeastOnce);
+    }
+
+    public void Dispose()
+    {
+        foreach (var fileName in _createdFiles)
+        {
+            try
+            {
+                var filePath = Path.Combine(_storagePath, fileName);
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
+            }
+            catch
+            {
+                // Ignore cleanup errors
+            }
+        }
     }
 
     #endregion

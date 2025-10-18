@@ -11,6 +11,7 @@ public sealed class InvitationTests : BaseTest
    #region Valid Tests
 
    [Fact(DisplayName = "Should create invitation with valid parameters")]
+   [Trait("Category", "Unit")]
    public void Create_WhenValidParameters_ShouldCreateInvitation()
    {
        // Arrange
@@ -41,6 +42,7 @@ public sealed class InvitationTests : BaseTest
    }
 
    [Theory(DisplayName = "Should create invitation with different business positions")]
+   [Trait("Category", "Unit")]
    [InlineData(BusinessPosition.Manager)]
    [InlineData(BusinessPosition.Employee)]
    [InlineData(BusinessPosition.Director)]
@@ -62,6 +64,7 @@ public sealed class InvitationTests : BaseTest
    }
 
    [Fact(DisplayName = "Should create invitation with empty permissions list")]
+   [Trait("Category", "Unit")]
    public void Create_WhenEmptyPermissions_ShouldCreateInvitationWithEmptyPermissions()
    {
        // Arrange
@@ -81,6 +84,7 @@ public sealed class InvitationTests : BaseTest
    }
 
    [Fact(DisplayName = "Should generate unique invite tokens for different invitations")]
+   [Trait("Category", "Unit")]
    public void Create_WhenMultipleInvitations_ShouldGenerateUniqueTokens()
    {
        // Arrange
@@ -107,6 +111,7 @@ public sealed class InvitationTests : BaseTest
    #region Invalid Tests
 
    [Theory(DisplayName = "Should throw exception when creating with invalid email")]
+   [Trait("Category", "Unit")]
    [InlineData("")]
    [InlineData("   ")]
    [InlineData("invalid-email")]
@@ -133,6 +138,7 @@ public sealed class InvitationTests : BaseTest
    #region Status Methods Tests
 
    [Fact(DisplayName = "Should mark invitation as used")]
+   [Trait("Category", "Unit")]
    public void MarkAsUsed_WhenCalled_ShouldSetIsUsedToTrue()
    {
        // Arrange
@@ -147,6 +153,7 @@ public sealed class InvitationTests : BaseTest
    }
 
    [Fact(DisplayName = "Should return false when invitation is not expired")]
+   [Trait("Category", "Unit")]
    public void IsExpired_WhenNotExpired_ShouldReturnFalse()
    {
        // Arrange
@@ -160,6 +167,7 @@ public sealed class InvitationTests : BaseTest
    }
 
    [Fact(DisplayName = "Should return true when invitation is expired")]
+   [Trait("Category", "Unit")]
    public void IsExpired_WhenExpired_ShouldReturnTrue()
    {
        // Arrange
@@ -178,6 +186,7 @@ public sealed class InvitationTests : BaseTest
    }
 
    [Fact(DisplayName = "Should return true when invitation is valid")]
+   [Trait("Category", "Unit")]
    public void IsValid_WhenNotUsedAndNotExpired_ShouldReturnTrue()
    {
        // Arrange
@@ -193,6 +202,7 @@ public sealed class InvitationTests : BaseTest
    }
 
    [Fact(DisplayName = "Should return false when invitation is used")]
+   [Trait("Category", "Unit")]
    public void IsValid_WhenUsed_ShouldReturnFalse()
    {
        // Arrange
@@ -207,6 +217,7 @@ public sealed class InvitationTests : BaseTest
    }
 
    [Fact(DisplayName = "Should return false when invitation is expired")]
+   [Trait("Category", "Unit")]
    public void IsValid_WhenExpired_ShouldReturnFalse()
    {
        // Arrange
@@ -229,6 +240,7 @@ public sealed class InvitationTests : BaseTest
    #region Permissions Tests
 
    [Theory(DisplayName = "Should serialize permissions correctly")]
+   [Trait("Category", "Unit")]
    [InlineData(new[] { "read" }, "read")]
    [InlineData(new[] { "read", "write" }, "read,write")]
    [InlineData(new[] { "read", "write", "admin" }, "read,write,admin")]
@@ -243,6 +255,7 @@ public sealed class InvitationTests : BaseTest
    }
 
    [Theory(DisplayName = "Should deserialize permissions correctly")]
+   [Trait("Category", "Unit")]
    [InlineData("read", new[] { "read" })]
    [InlineData("read,write", new[] { "read", "write" })]
    [InlineData("read,write,admin", new[] { "read", "write", "admin" })]
@@ -257,6 +270,7 @@ public sealed class InvitationTests : BaseTest
    }
 
    [Fact(DisplayName = "Should handle permissions with extra commas")]
+   [Trait("Category", "Unit")]
    public void DeserializePermissions_WhenExtraCommas_ShouldIgnoreEmptyEntries()
    {
        // Arrange
@@ -274,6 +288,7 @@ public sealed class InvitationTests : BaseTest
    #region Token Tests
 
    [Fact(DisplayName = "Should generate valid RandomToken")]
+   [Trait("Category", "Unit")]
    public void InviteToken_WhenGenerated_ShouldBeValidRandomToken()
    {
        // Arrange
@@ -296,6 +311,7 @@ public sealed class InvitationTests : BaseTest
    #region Implicit Operator Tests
 
    [Fact(DisplayName = "Should convert invitation to string using implicit operator")]
+   [Trait("Category", "Unit")]
    public void ImplicitOperator_WhenConvertingToString_ShouldReturnInviteTokenValue()
    {
        // Arrange
@@ -309,6 +325,7 @@ public sealed class InvitationTests : BaseTest
    }
 
    [Fact(DisplayName = "Should return invite token value when calling ToString")]
+   [Trait("Category", "Unit")]
    public void ToString_WhenCalled_ShouldReturnInviteTokenValue()
    {
        // Arrange
@@ -326,6 +343,7 @@ public sealed class InvitationTests : BaseTest
    #region Interface Implementation Tests
 
    [Fact(DisplayName = "Should implement IHasEmail correctly")]
+   [Trait("Category", "Unit")]
    public void Invitation_ShouldImplementIHasEmailCorrectly()
    {
        // Arrange
@@ -337,6 +355,7 @@ public sealed class InvitationTests : BaseTest
    }
 
    [Fact(DisplayName = "Should implement IAggregateRoot correctly")]
+   [Trait("Category", "Unit")]
    public void Invitation_ShouldImplementIAggregateRootCorrectly()
    {
        // Arrange
@@ -351,6 +370,7 @@ public sealed class InvitationTests : BaseTest
    #region Edge Cases
 
    [Fact(DisplayName = "Should handle single permission correctly")]
+   [Trait("Category", "Unit")]
    public void Create_WhenSinglePermission_ShouldSerializeCorrectly()
    {
        // Arrange
@@ -366,6 +386,7 @@ public sealed class InvitationTests : BaseTest
    }
 
    [Fact(DisplayName = "Should handle permissions with spaces correctly")]
+   [Trait("Category", "Unit")]
    public void Create_WhenPermissionsWithSpaces_ShouldSerializeCorrectly()
    {
        // Arrange

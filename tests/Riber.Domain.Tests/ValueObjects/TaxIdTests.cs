@@ -20,6 +20,7 @@ public sealed class TaxIdTests : BaseTest
 
     #region Valid Creation Scenarios
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should return TaxId instance when creating with CPF regardless of formatting")]
     [InlineData(true)]
     [InlineData(false)]
@@ -38,6 +39,7 @@ public sealed class TaxIdTests : BaseTest
         result.Type.Should().Be(taxIdType);
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should return TaxId instance when creating with CNPJ regardless of formatting")]
     [InlineData(true)]
     [InlineData(false)]
@@ -56,6 +58,7 @@ public sealed class TaxIdTests : BaseTest
         result.Type.Should().Be(taxIdType);
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should return TaxId instance when creating with CPF only")]
     [InlineData(true)]
     [InlineData(false)]
@@ -73,6 +76,7 @@ public sealed class TaxIdTests : BaseTest
         result.Type.Should().Be(TaxIdType.IndividualWithCpf);
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should return TaxId instance when creating with CNPJ only")]
     [InlineData(true)]
     [InlineData(false)]
@@ -94,6 +98,7 @@ public sealed class TaxIdTests : BaseTest
 
     #region Invalid CPF Tests
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw exception when creating with invalid CPF")]
     [InlineData("00000000000")]
     [InlineData("11111111111")]
@@ -111,6 +116,7 @@ public sealed class TaxIdTests : BaseTest
         act.Should().ThrowExactly<InvalidCpfException>().WithMessage(CpfErrors.OnlyRepeatedDigits);
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw exception when creating with CPF having invalid verification digits")]
     [InlineData("12345678901")]
     [InlineData("98765432101")]
@@ -125,6 +131,7 @@ public sealed class TaxIdTests : BaseTest
         act.Should().ThrowExactly<InvalidCpfException>().WithMessage(CpfErrors.Invalid);
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw exception when creating with CPF having invalid length")]
     [InlineData("123456789")]
     [InlineData("1234567890")]
@@ -141,6 +148,7 @@ public sealed class TaxIdTests : BaseTest
         act.Should().ThrowExactly<InvalidLengthCpfException>().WithMessage(CpfErrors.Length);
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw exception when creating with empty or whitespace CPF")]
     [InlineData("")]
     [InlineData(" ")]
@@ -162,6 +170,7 @@ public sealed class TaxIdTests : BaseTest
 
     #region Invalid CNPJ Tests
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw exception when creating with invalid CNPJ")]
     [InlineData("00000000000000")]
     [InlineData("11111111111111")]
@@ -179,6 +188,7 @@ public sealed class TaxIdTests : BaseTest
         act.Should().ThrowExactly<InvalidCnpjException>().WithMessage(CnpjErrors.OnlyRepeatedDigits);
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw exception when creating with CNPJ having invalid verification digits")]
     [InlineData("12345678000101")]
     [InlineData("98765432000101")]
@@ -193,6 +203,7 @@ public sealed class TaxIdTests : BaseTest
         act.Should().ThrowExactly<InvalidCnpjException>().WithMessage(CnpjErrors.Invalid);
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw exception when creating with CNPJ having invalid length")]
     [InlineData("12345678901")]
     [InlineData("123456789012")]
@@ -209,6 +220,7 @@ public sealed class TaxIdTests : BaseTest
         act.Should().ThrowExactly<InvalidLengthCnpjException>().WithMessage(CnpjErrors.Length);
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw exception when creating with empty or whitespace CNPJ")]
     [InlineData("")]
     [InlineData(" ")]
@@ -230,6 +242,7 @@ public sealed class TaxIdTests : BaseTest
 
     #region Overrides Tests
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should format documents correctly with proper punctuation")]
     [InlineData("12345678909", "123.456.789-09", TaxIdType.IndividualWithCpf)]
     [InlineData("11222333000181", "11.222.333/0001-81", TaxIdType.LegalEntityWithCnpj)]

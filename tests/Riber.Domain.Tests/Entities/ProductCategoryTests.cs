@@ -9,6 +9,7 @@ public sealed class ProductCategoryTests : BaseTest
 {
     #region Creation Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should create product category successfully with valid data")]
     public void Create_WhenValidData_ShouldCreateSuccessfully()
     {
@@ -32,6 +33,7 @@ public sealed class ProductCategoryTests : BaseTest
         result.IsActive.Should().BeTrue();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should trim name when creating product category")]
     public void Create_WhenNameHasWhitespaces_ShouldTrimName()
     {
@@ -48,6 +50,7 @@ public sealed class ProductCategoryTests : BaseTest
         result.Name.Should().Be(nameWithSpaces.Trim());
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should convert code to uppercase when creating product category")]
     public void Create_WhenCodeIsLowercase_ShouldConvertToUppercase()
     {
@@ -64,6 +67,7 @@ public sealed class ProductCategoryTests : BaseTest
         result.Code.Should().Be(lowercaseCode.ToUpperInvariant());
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw exception when name is null or empty")]
     [InlineData("")]
     [InlineData("   ")]
@@ -84,6 +88,7 @@ public sealed class ProductCategoryTests : BaseTest
            .WithMessage(CategoryErrors.NameEmpty);
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw exception when code is null or empty")]
     [InlineData("")]
     [InlineData("   ")]
@@ -104,6 +109,7 @@ public sealed class ProductCategoryTests : BaseTest
            .WithMessage(CategoryErrors.NameEmpty);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw exception when company id is empty")]
     public void Create_WhenCompanyIdIsEmpty_ShouldThrowException()
     {
@@ -125,6 +131,7 @@ public sealed class ProductCategoryTests : BaseTest
 
     #region Update Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should update details successfully with valid data")]
     public void UpdateDetails_WhenValidData_ShouldUpdateSuccessfully()
     {
@@ -147,6 +154,7 @@ public sealed class ProductCategoryTests : BaseTest
         category.Description.Should().Be(newDescription);
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw exception when updating with null or empty name")]
     [InlineData("")]
     [InlineData("   ")]
@@ -173,6 +181,7 @@ public sealed class ProductCategoryTests : BaseTest
 
     #region Status Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should activate product category successfully")]
     public void Activate_WhenCalled_ShouldSetIsActiveToTrue()
     {
@@ -192,6 +201,7 @@ public sealed class ProductCategoryTests : BaseTest
         category.IsActive.Should().BeTrue();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should deactivate product category successfully")]
     public void Deactivate_WhenCalled_ShouldSetIsActiveToFalse()
     {
@@ -214,6 +224,7 @@ public sealed class ProductCategoryTests : BaseTest
 
     #region Properties Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should have empty products collection when created")]
     public void ProductsReadOnly_WhenCategoryIsCreated_ShouldBeEmpty()
     {
@@ -229,6 +240,7 @@ public sealed class ProductCategoryTests : BaseTest
         category.ProductsReadOnly.Should().BeEmpty();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return read-only collection of products")]
     public void ProductsReadOnly_WhenAccessed_ShouldReturnReadOnlyCollection()
     {

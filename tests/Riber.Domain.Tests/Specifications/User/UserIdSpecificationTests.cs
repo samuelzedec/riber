@@ -8,6 +8,7 @@ namespace Riber.Domain.Tests.Specifications.User;
 
 public sealed class UserIdSpecificationTests : BaseTest
 {
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return true for valid id")]
     public void Should_ReturnTrue_ForValidId()
     {
@@ -23,6 +24,7 @@ public sealed class UserIdSpecificationTests : BaseTest
         result.Should().BeTrue();
     }
     
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return false for empty guid")]
     public void Should_ReturnFalse_ForEmptyGuid()
     {
@@ -37,6 +39,7 @@ public sealed class UserIdSpecificationTests : BaseTest
         result.Should().BeFalse();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "ToExpression should be compilable")]
     public void ToExpression_Should_BeCompilable()
     {
@@ -53,6 +56,7 @@ public sealed class UserIdSpecificationTests : BaseTest
         compiledExpression.Should().NotBeNull();
     }
     
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Compiled expression should work same as IsSatisfiedBy")]
     public void CompiledExpression_Should_WorkSameAs_IsSatisfiedBy()
     {

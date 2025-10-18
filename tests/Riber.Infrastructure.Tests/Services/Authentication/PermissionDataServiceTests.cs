@@ -36,6 +36,7 @@ public sealed class PermissionDataServiceTests : BaseTest
 
     #endregion
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Validating permission when permission exists and is active should return true")]
     public async Task ValidateAsync_WhenPermissionExistsAndIsActive_ShouldReturnTrue()
     {
@@ -67,6 +68,7 @@ public sealed class PermissionDataServiceTests : BaseTest
         result.Should().BeTrue();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Validating permission when permission exists and is inactive should return false")]
     public async Task ValidateAsync_WhenPermissionExistsAndIsInactive_ShouldReturnFalse()
     {
@@ -98,6 +100,7 @@ public sealed class PermissionDataServiceTests : BaseTest
         result.Should().BeFalse();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Validating permission when permission does not exist should throw NotFoundException")]
     public async Task ValidateAsync_WhenPermissionDoesNotExist_ShouldThrowNotFoundException()
     {
@@ -127,6 +130,7 @@ public sealed class PermissionDataServiceTests : BaseTest
             .WithMessage(NotFoundErrors.Permission);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Updating permission status when permission exists should toggle IsActive")]
     public async Task UpdatePermissionStatusAsync_WhenPermissionExists_ShouldToggleIsActive()
     {
@@ -163,6 +167,7 @@ public sealed class PermissionDataServiceTests : BaseTest
         updatedPermission.IsActive.Should().BeTrue();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Updating permission status when permission does not exist should throw NotFoundException")]
     public async Task UpdatePermissionStatusAsync_WhenPermissionDoesNotExist_ShouldThrowNotFoundException()
     {
@@ -195,6 +200,7 @@ public sealed class PermissionDataServiceTests : BaseTest
             .WithMessage(NotFoundErrors.Permission);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Getting all permissions should return mapped PermissionDTO collection")]
     public async Task GetAllWithDescriptionsAsync_WhenCalled_ShouldReturnMappedPermissionDTOCollection()
     {

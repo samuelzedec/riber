@@ -13,6 +13,7 @@ public sealed class CompanyTests : BaseTest
 {
     #region Creation Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should create company successfully with valid primitive data")]
     public void Create_WhenValidPrimitiveData_ShouldCreateSuccessfully()
     {
@@ -45,6 +46,7 @@ public sealed class CompanyTests : BaseTest
         result.Phone.ToString().Should().Be(phone);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should create company successfully with valid value objects")]
     public void Create_WhenValidValueObjects_ShouldCreateSuccessfully()
     {
@@ -85,6 +87,7 @@ public sealed class CompanyTests : BaseTest
 
     #region Update Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should update email successfully")]
     public void UpdateEmail_WhenValidEmail_ShouldUpdateSuccessfully()
     {
@@ -107,6 +110,7 @@ public sealed class CompanyTests : BaseTest
         company.Email.Value.Should().Be(newEmail.ToLower());
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should update phone successfully")]
     public void UpdatePhone_WhenValidPhone_ShouldUpdateSuccessfully()
     {
@@ -129,6 +133,7 @@ public sealed class CompanyTests : BaseTest
         company.Phone.ToString().Should().Be(newPhone);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should update fantasy name successfully")]
     public void UpdateFantasyName_WhenValidFantasyName_ShouldUpdateSuccessfully()
     {
@@ -152,6 +157,7 @@ public sealed class CompanyTests : BaseTest
         company.Name.Fantasy.Should().Be(newFantasyName);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should preserve original name when updating fantasy name")]
     public void UpdateFantasyName_WhenUpdatingFantasyName_ShouldPreserveOriginalName()
     {

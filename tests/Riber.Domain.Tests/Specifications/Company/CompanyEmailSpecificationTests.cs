@@ -9,6 +9,7 @@ namespace Riber.Domain.Tests.Specifications.Company;
 
 public sealed class CompanyEmailSpecificationTests : BaseTest
 {
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return true for valid email")]
     public void Should_ReturnTrue_ForValidEmail()
     {
@@ -24,6 +25,7 @@ public sealed class CompanyEmailSpecificationTests : BaseTest
         result.Should().BeTrue();
     }
     
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return false for different email")]
     public void Should_ReturnFalse_ForDifferentEmail()
     {
@@ -40,6 +42,7 @@ public sealed class CompanyEmailSpecificationTests : BaseTest
         result.Should().BeFalse();
     }
     
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return false for empty email")]
     public void Should_ReturnFalse_ForEmptyEmail()
     {
@@ -62,6 +65,7 @@ public sealed class CompanyEmailSpecificationTests : BaseTest
         result.Should().BeFalse();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "ToExpression should be compilable")]
     public void ToExpression_Should_BeCompilable()
     {
@@ -78,6 +82,7 @@ public sealed class CompanyEmailSpecificationTests : BaseTest
         compiledExpression.Should().NotBeNull();
     }
     
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Compiled expression should work same as IsSatisfiedBy")]
     public void CompiledExpression_Should_WorkSameAs_IsSatisfiedBy()
     {
@@ -95,6 +100,7 @@ public sealed class CompanyEmailSpecificationTests : BaseTest
         resultFromMethod.Should().Be(resultFromExpression);
     }
     
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should work with different email formats")]
     [InlineData("user@domain.com")]
     [InlineData("user.name@domain.com")]
@@ -113,6 +119,7 @@ public sealed class CompanyEmailSpecificationTests : BaseTest
         result.Should().BeTrue();
     }
     
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should be case sensitive")]
     public void Should_BeCaseSensitive()
     {
@@ -129,6 +136,7 @@ public sealed class CompanyEmailSpecificationTests : BaseTest
         result.Should().BeFalse();
     }
     
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should work with various business email formats")]
     [InlineData("admin@business.com")]
     [InlineData("contact@startup.io")]
@@ -148,6 +156,7 @@ public sealed class CompanyEmailSpecificationTests : BaseTest
         result.Should().BeTrue();
     }
     
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should handle email with whitespace")]
     public void Should_HandleEmail_WithWhitespace()
     {
@@ -164,6 +173,7 @@ public sealed class CompanyEmailSpecificationTests : BaseTest
         result.Should().BeFalse(); // Assumindo que não faz trim automático
     }
     
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should work with international domains")]
     public void Should_WorkWith_InternationalDomains()
     {

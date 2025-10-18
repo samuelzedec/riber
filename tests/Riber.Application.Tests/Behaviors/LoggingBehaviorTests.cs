@@ -30,6 +30,7 @@ public sealed class LoggingBehaviorTests : BaseTest
             .CustomInstantiator(f => new ResponseTest(f.Person.FullName));
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should log request start with correct message name")]
     public async Task Handle_WhenRequestStarts_ShouldLogRequestName()
     {
@@ -48,6 +49,7 @@ public sealed class LoggingBehaviorTests : BaseTest
         );
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should log request completion with elapsed time")]
     public async Task Handle_WhenRequestCompletes_ShouldLogCompletionWithDuration()
     {
@@ -68,6 +70,7 @@ public sealed class LoggingBehaviorTests : BaseTest
         );
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw RequestTimeoutException when request is cancelled")]
     public async Task Handle_WhenCancellationRequested_ShouldThrowRequestTimeoutException()
     {
@@ -89,6 +92,7 @@ public sealed class LoggingBehaviorTests : BaseTest
             .WithMessage($"*{nameof(RequestTest)}*");
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should log warning when request is cancelled")]
     public async Task Handle_WhenCancellationRequested_ShouldLogWarningWithElapsedTime()
     {
@@ -117,6 +121,7 @@ public sealed class LoggingBehaviorTests : BaseTest
         );
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should log error and re-throw when handler throws exception")]
     public async Task Handle_WhenHandlerThrowsException_ShouldLogErrorAndReThrow()
     {
@@ -146,6 +151,7 @@ public sealed class LoggingBehaviorTests : BaseTest
         );
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should preserve exception details when logging error")]
     public async Task Handle_WhenHandlerThrowsException_ShouldLogExceptionDetails()
     {
@@ -180,6 +186,7 @@ public sealed class LoggingBehaviorTests : BaseTest
         );
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should create activity with correct name")]
     public async Task Handle_WhenRequestProcessed_ShouldCreateActivityWithCorrectName()
     {

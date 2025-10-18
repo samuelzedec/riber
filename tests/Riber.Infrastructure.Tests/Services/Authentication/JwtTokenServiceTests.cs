@@ -80,6 +80,7 @@ public sealed class JwtTokenServiceTests : BaseTest
 
     #region GenerateToken Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Generating access token should create valid JWT with correct claims")]
     public void GenerateToken_WhenCalled_ShouldCreateValidJwtWithCorrectClaims()
     {
@@ -119,6 +120,7 @@ public sealed class JwtTokenServiceTests : BaseTest
         }
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Generating access token with empty roles should not include role claims")]
     public void GenerateToken_WhenUserHasNoRoles_ShouldNotIncludeRoleClaims()
     {
@@ -135,6 +137,7 @@ public sealed class JwtTokenServiceTests : BaseTest
         jsonToken.Claims.Should().NotContain(c => c.Type == "role");
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Generating access token with empty claims should not include custom claims")]
     public void GenerateToken_WhenUserHasNoClaims_ShouldNotIncludeCustomClaims()
     {
@@ -158,6 +161,7 @@ public sealed class JwtTokenServiceTests : BaseTest
         customClaims.Count().Should().Be(expectedClaims);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Generating access token should include correct number of claims")]
     public void GenerateToken_WhenCalled_ShouldIncludeCorrectNumberOfClaims()
     {
@@ -178,6 +182,7 @@ public sealed class JwtTokenServiceTests : BaseTest
         customClaims.Count().Should().Be(totalExpected);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Generating access token should have correct expiration time")]
     public void GenerateToken_WhenCalled_ShouldHaveCorrectExpirationTime()
     {
@@ -199,6 +204,7 @@ public sealed class JwtTokenServiceTests : BaseTest
 
     #region GenerateRefreshToken Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Generating refresh token should create valid JWT with correct claims")]
     public void GenerateRefreshToken_WhenCalled_ShouldCreateValidJwtWithCorrectClaims()
     {
@@ -234,6 +240,7 @@ public sealed class JwtTokenServiceTests : BaseTest
         customClaims.Count().Should().Be(3);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Generating refresh token should have correct expiration time")]
     public void GenerateRefreshToken_WhenCalled_ShouldHaveCorrectExpirationTime()
     {
@@ -253,6 +260,7 @@ public sealed class JwtTokenServiceTests : BaseTest
         jsonToken.ValidTo.Should().BeCloseTo(expectedExpiration, TimeSpan.FromSeconds(5));
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Generating refresh token should use different settings than access token")]
     public void GenerateRefreshToken_WhenCalled_ShouldUseDifferentSettingsThanAccessToken()
     {

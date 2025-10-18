@@ -1,4 +1,13 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="docker-compose.yml" />
+    <File Path="Dockerfile" />
+    <File Path="Dockerfile.dev" />
+    <File Path=".dockerignore"/>
+    <File Path="CHANGELOG.md"/>
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src\Riber.Api\Riber.Api.csproj" />
     <Project Path="src\Riber.Application\Riber.Application.csproj" />

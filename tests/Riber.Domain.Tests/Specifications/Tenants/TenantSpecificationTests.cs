@@ -6,6 +6,7 @@ namespace Riber.Domain.Tests.Specifications.Tenants;
 
 public sealed class TenantSpecificationTests : BaseTest
 {
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return true for valid tenant id")]
     public void Should_ReturnTrue_ForValidTenantId()
     {
@@ -22,6 +23,7 @@ public sealed class TenantSpecificationTests : BaseTest
         result.Should().BeTrue();
     }
     
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return false for different tenant id")]
     public void Should_ReturnFalse_ForDifferentTenantId()
     {
@@ -39,6 +41,7 @@ public sealed class TenantSpecificationTests : BaseTest
         result.Should().BeFalse();
     }
     
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should return false for empty guid")]
     public void Should_ReturnFalse_ForEmptyGuid()
     {
@@ -53,6 +56,7 @@ public sealed class TenantSpecificationTests : BaseTest
         result.Should().BeFalse();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "ToExpression should be compilable")]
     public void ToExpression_Should_BeCompilable()
     {
@@ -69,6 +73,7 @@ public sealed class TenantSpecificationTests : BaseTest
         compiledExpression.Should().NotBeNull();
     }
     
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Compiled expression should work same as IsSatisfiedBy")]
     public void CompiledExpression_Should_WorkSameAs_IsSatisfiedBy()
     {
@@ -87,6 +92,7 @@ public sealed class TenantSpecificationTests : BaseTest
         resultFromMethod.Should().Be(resultFromExpression);
     }
     
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should work with expression compilation")]
     public void Should_WorkWith_ExpressionCompilation()
     {
@@ -109,6 +115,7 @@ public sealed class TenantSpecificationTests : BaseTest
         result2.Should().BeFalse();
     }
     
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should work with specific guid patterns")]
     [InlineData("00000000-0000-0000-0000-000000000001")]
     [InlineData("ffffffff-ffff-ffff-ffff-ffffffffffff")]
@@ -128,6 +135,7 @@ public sealed class TenantSpecificationTests : BaseTest
         result.Should().BeTrue();
     }
     
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should handle guid comparison correctly")]
     public void Should_HandleGuidComparison_Correctly()
     {
@@ -149,6 +157,7 @@ public sealed class TenantSpecificationTests : BaseTest
         resultDifferent.Should().BeFalse();
     }
     
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should work with active and inactive products")]
     public void Should_WorkWith_ActiveAndInactiveProducts()
     {
@@ -171,6 +180,7 @@ public sealed class TenantSpecificationTests : BaseTest
         resultInactive.Should().BeTrue();
     }
     
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should work with products from different categories")]
     public void Should_WorkWith_ProductsFromDifferentCategories()
     {

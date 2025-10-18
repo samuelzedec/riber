@@ -42,6 +42,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
 
     #region Success Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should update company successfully when all data is valid")]
     public async Task Handle_WhenAllDataIsValid_ShouldUpdateCompanySuccessfully()
     {
@@ -87,6 +88,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
         _mockUnitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should update only email when only email is provided")]
     public async Task Handle_WhenOnlyEmailProvided_ShouldUpdateOnlyEmail()
     {
@@ -132,6 +134,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
         _mockUnitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should update only phone when only phone is provided")]
     public async Task Handle_WhenOnlyPhoneProvided_ShouldUpdateOnlyPhone()
     {
@@ -177,6 +180,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
         _mockUnitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should update only trade name when only fantasy name is provided")]
     public async Task Handle_WhenOnlyFantasyNameProvided_ShouldUpdateOnlyFantasyName()
     {
@@ -226,6 +230,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
 
     #region Not Found Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw NotFoundException when company is not found")]
     public async Task Handle_WhenCompanyNotFound_ShouldThrowNotFoundException()
     {
@@ -271,6 +276,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
 
     #region Cancellation Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should respect cancellation token during company search")]
     public async Task Handle_WhenCancellationTokenDuringCompanySearch_ShouldRespectCancellationToken()
     {
@@ -313,6 +319,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
         _mockUnitOfWork.Verify(x => x.CommitTransactionAsync(It.IsAny<CancellationToken>()), Times.Never);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should respect cancellation token during conflict check")]
     public async Task Handle_WhenCancellationTokenDuringConflictCheck_ShouldRespectCancellationToken()
     {

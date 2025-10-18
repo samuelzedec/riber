@@ -11,6 +11,7 @@ public sealed class OrderItemTests : BaseTest
 {
     #region Valid Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should create order item with valid parameters")]
     public void Create_WhenValidParameters_ShouldCreateOrderItem()
     {
@@ -36,6 +37,7 @@ public sealed class OrderItemTests : BaseTest
         result.HasDiscount().Should().BeFalse();
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should calculate subtotal correctly")]
     [InlineData(10.50, 2, 21.00)]
     [InlineData(25, 4, 100)]
@@ -53,6 +55,7 @@ public sealed class OrderItemTests : BaseTest
         result.Should().Be(expected);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should calculate total price correctly without discount")]
     public void TotalPrice_WhenNoDiscount_ShouldEqualSubTotal()
     {
@@ -70,6 +73,7 @@ public sealed class OrderItemTests : BaseTest
         orderItem.DiscountAmount.Should().Be(0);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should limit fixed discount to subtotal making product free")]
     public void ApplyDiscount_WhenFixedDiscountGreaterThanSubTotal_ShouldLimitDiscountAndMakeProductFree()
     {
@@ -91,6 +95,7 @@ public sealed class OrderItemTests : BaseTest
 
     #region Invalid Tests
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw exception when creating with invalid unit price")]
     [InlineData(-1)]
     [InlineData(-100)]
@@ -104,6 +109,7 @@ public sealed class OrderItemTests : BaseTest
         act.Should().Throw<Exception>(); // Ajuste conforme sua exception específica
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should throw exception when creating with invalid quantity")]
     [InlineData(0)]
     [InlineData(-1)]
@@ -121,6 +127,7 @@ public sealed class OrderItemTests : BaseTest
 
     #region Discount Tests
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should apply percentage discount correctly")]
     [InlineData(100, 10, 10)] // 10% de R$ 100 = R$ 10 desconto
     [InlineData(50, 20, 10)]  // 20% de R$ 50 = R$ 10 desconto
@@ -141,6 +148,7 @@ public sealed class OrderItemTests : BaseTest
         orderItem.TotalPrice.Should().Be(subTotal - expectedDiscount);
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Should apply fixed amount discount correctly")]
     [InlineData(100, 20, 20)]  // Desconto R$ 20 em R$ 100
     [InlineData(50, 30, 30)]   // Desconto R$ 30 em R$ 50
@@ -161,6 +169,7 @@ public sealed class OrderItemTests : BaseTest
         orderItem.TotalPrice.Should().Be(subTotal - expectedDiscount);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw exception when applying invalid discount")]
     public void ApplyDiscount_WhenInvalidDiscount_ShouldThrowInvalidDiscountException()
     {
@@ -176,6 +185,7 @@ public sealed class OrderItemTests : BaseTest
            .WithMessage(DiscountErrors.FixedAmount);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should remove discount correctly")]
     public void RemoveDiscount_WhenDiscountExists_ShouldRemoveDiscount()
     {
@@ -194,6 +204,7 @@ public sealed class OrderItemTests : BaseTest
         orderItem.TotalPrice.Should().Be(orderItem.SubTotal);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should do nothing when removing discount that doesn't exist")]
     public void RemoveDiscount_WhenNoDiscount_ShouldDoNothing()
     {
@@ -212,6 +223,7 @@ public sealed class OrderItemTests : BaseTest
 
     #region Edge Cases
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should handle multiple discount applications correctly")]
     public void ApplyDiscount_WhenAppliedMultipleTimes_ShouldReplaceDiscount()
     {
@@ -230,6 +242,7 @@ public sealed class OrderItemTests : BaseTest
         orderItem.TotalPrice.Should().Be(80);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should handle very small amounts correctly")]
     public void OrderItem_WhenVerySmallAmounts_ShouldHandleCorrectly()
     {
@@ -241,6 +254,7 @@ public sealed class OrderItemTests : BaseTest
         orderItem.TotalPrice.Should().Be(0.01m);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should handle large amounts correctly")]
     public void OrderItem_WhenLargeAmounts_ShouldHandleCorrectly()
     {
@@ -256,6 +270,7 @@ public sealed class OrderItemTests : BaseTest
 
     #region Interface Implementation Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should implement IHasDiscount correctly")]
     public void OrderItem_ShouldImplementIHasDiscountCorrectly()
     {
@@ -267,6 +282,7 @@ public sealed class OrderItemTests : BaseTest
         orderItem.HasDiscount().Should().BeFalse();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should implement IHasQuantity correctly")]
     public void OrderItem_ShouldImplementIHasQuantityCorrectly()
     {
@@ -278,6 +294,7 @@ public sealed class OrderItemTests : BaseTest
         orderItem.Quantity.Value.Should().Be(5);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should implement IHasUnitPrice correctly")]
     public void OrderItem_ShouldImplementIHasUnitPriceCorrectly()
     {

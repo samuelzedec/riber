@@ -41,6 +41,7 @@ public sealed class AmazonS3ServiceTests : BaseTest
 
     #region Constructor Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Constructor should throw ArgumentNullException when configuration returns null")]
     public void Constructor_WithNullBucketName_ShouldThrowArgumentNullException()
     {
@@ -59,6 +60,7 @@ public sealed class AmazonS3ServiceTests : BaseTest
             .WithParameterName("configuration");
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "Constructor should throw InvalidOperationException when bucket name is empty or whitespace")]
     [InlineData("")]
     [InlineData("   ")]
@@ -84,6 +86,7 @@ public sealed class AmazonS3ServiceTests : BaseTest
 
     #region UploadAsync Success Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "UploadAsync should upload image successfully")]
     public async Task UploadAsync_WithValidImage_ShouldUploadSuccessfully()
     {
@@ -116,6 +119,7 @@ public sealed class AmazonS3ServiceTests : BaseTest
         VerifyLogCalled(LogLevel.Debug, "Successfully uploaded image");
     }
 
+    [Trait("Category", "Unit")]
     [Theory(DisplayName = "UploadAsync should handle different image types correctly")]
     [InlineData("test.jpg", "image/jpeg")]
     [InlineData("test.png", "image/png")]
@@ -145,6 +149,7 @@ public sealed class AmazonS3ServiceTests : BaseTest
 
     #region UploadAsync Error Handling Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "UploadAsync should throw InternalException when AccessDenied")]
     public async Task UploadAsync_WhenAccessDenied_ShouldThrowInternalException()
     {
@@ -167,6 +172,7 @@ public sealed class AmazonS3ServiceTests : BaseTest
         VerifyLogCalled(LogLevel.Error);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "UploadAsync should throw InternalException when bucket not found")]
     public async Task UploadAsync_WhenBucketNotFound_ShouldThrowInternalException()
     {
@@ -189,6 +195,7 @@ public sealed class AmazonS3ServiceTests : BaseTest
         VerifyLogCalled(LogLevel.Error);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "UploadAsync should throw InternalException for other S3 exceptions")]
     public async Task UploadAsync_WhenOtherS3Exception_ShouldThrowInternalException()
     {
@@ -211,6 +218,7 @@ public sealed class AmazonS3ServiceTests : BaseTest
         VerifyLogCalled(LogLevel.Error);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "UploadAsync should throw InternalException for unexpected exceptions")]
     public async Task UploadAsync_WhenUnexpectedException_ShouldThrowInternalException()
     {
@@ -237,6 +245,7 @@ public sealed class AmazonS3ServiceTests : BaseTest
 
     #region GetImageStreamAsync Success Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "GetImageStreamAsync should return stream when image exists")]
     public async Task GetImageStreamAsync_WhenImageExists_ShouldReturnStream()
     {
@@ -270,6 +279,7 @@ public sealed class AmazonS3ServiceTests : BaseTest
     
     #region GetImageStreamAsync Error Handling Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "GetImageStreamAsync should throw NotFoundException when file not found")]
     public async Task GetImageStreamAsync_WhenFileNotFound_ShouldThrowNotFoundException()
     {
@@ -292,6 +302,7 @@ public sealed class AmazonS3ServiceTests : BaseTest
         VerifyLogCalled(LogLevel.Error);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "GetImageStreamAsync should throw InternalException when AccessDenied")]
     public async Task GetImageStreamAsync_WhenAccessDenied_ShouldThrowInternalException()
     {
@@ -314,6 +325,7 @@ public sealed class AmazonS3ServiceTests : BaseTest
         VerifyLogCalled(LogLevel.Error);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "GetImageStreamAsync should throw InternalException for other S3 exceptions")]
     public async Task GetImageStreamAsync_WhenOtherS3Exception_ShouldThrowInternalException()
     {
@@ -336,6 +348,7 @@ public sealed class AmazonS3ServiceTests : BaseTest
         VerifyLogCalled(LogLevel.Error);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "GetImageStreamAsync should throw InternalException for unexpected exceptions")]
     public async Task GetImageStreamAsync_WhenUnexpectedException_ShouldThrowInternalException()
     {
@@ -362,6 +375,7 @@ public sealed class AmazonS3ServiceTests : BaseTest
 
     #region DeleteAsync Success Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "DeleteAsync should delete image successfully")]
     public async Task DeleteAsync_WhenImageExists_ShouldDeleteSuccessfully()
     {
@@ -391,6 +405,7 @@ public sealed class AmazonS3ServiceTests : BaseTest
     
     #region DeleteAsync Error Handling Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "DeleteAsync should throw InternalException for any exception")]
     public async Task DeleteAsync_WhenExceptionOccurs_ShouldThrowInternalException()
     {
@@ -413,6 +428,7 @@ public sealed class AmazonS3ServiceTests : BaseTest
         VerifyLogCalled(LogLevel.Error);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "DeleteAsync should throw InternalException for S3 exceptions")]
     public async Task DeleteAsync_WhenS3Exception_ShouldThrowInternalException()
     {

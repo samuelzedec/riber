@@ -5,7 +5,7 @@ using Moq;
 using Riber.Domain.Tests;
 using Riber.Infrastructure.Services.AWS.Email;
 
-namespace Riber.Infrastructure.Tests.Services.AWS;
+namespace Riber.Infrastructure.Tests.Services.AWS.Email;
 
 public sealed class AmazonSESServiceTests : BaseTest
 {
@@ -27,6 +27,7 @@ public sealed class AmazonSESServiceTests : BaseTest
         _emailAddress = _faker.Internet.Email();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should send email successfully when AWS SES returns success")]
     public async Task SendAsync_WhenAwsReturnsSuccess_ShouldCompleteSuccessfully()
     {
@@ -42,6 +43,7 @@ public sealed class AmazonSESServiceTests : BaseTest
         await act.Should().NotThrowAsync();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should call AWS SES exactly once")]
     public async Task SendAsync_WhenCalled_ShouldCallAwsSesOnce()
     {
@@ -60,6 +62,7 @@ public sealed class AmazonSESServiceTests : BaseTest
         );
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should create request with correct source email address")]
     public async Task SendAsync_WhenCalled_ShouldSetCorrectSourceEmail()
     {
@@ -81,6 +84,7 @@ public sealed class AmazonSESServiceTests : BaseTest
         );
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should create request with correct destination email")]
     public async Task SendAsync_WhenCalled_ShouldSetCorrectDestinationEmail()
     {
@@ -105,6 +109,7 @@ public sealed class AmazonSESServiceTests : BaseTest
         );
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should create request with correct subject")]
     public async Task SendAsync_WhenCalled_ShouldSetCorrectSubject()
     {
@@ -129,6 +134,7 @@ public sealed class AmazonSESServiceTests : BaseTest
         );
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should create request with HTML body")]
     public async Task SendAsync_WhenCalled_ShouldSetHtmlBody()
     {
@@ -154,6 +160,7 @@ public sealed class AmazonSESServiceTests : BaseTest
         );
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should create request with all parameters correctly")]
     public async Task SendAsync_WhenCalled_ShouldCreateCompleteRequest()
     {
@@ -182,6 +189,7 @@ public sealed class AmazonSESServiceTests : BaseTest
         );
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw AmazonSimpleEmailServiceException when AWS service fails")]
     public async Task SendAsync_WhenAwsServiceFails_ShouldThrowAmazonException()
     {
@@ -202,6 +210,7 @@ public sealed class AmazonSESServiceTests : BaseTest
             .WithMessage("AWS SES service error");
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw MessageRejectedException when email is rejected")]
     public async Task SendAsync_WhenEmailIsRejected_ShouldThrowMessageRejectedException()
     {
@@ -222,6 +231,7 @@ public sealed class AmazonSESServiceTests : BaseTest
             .WithMessage("Email rejected by AWS SES");
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should throw MailFromDomainNotVerifiedException when sender domain not verified")]
     public async Task SendAsync_WhenSenderNotVerified_ShouldThrowMailFromDomainNotVerifiedException()
     {
@@ -242,6 +252,7 @@ public sealed class AmazonSESServiceTests : BaseTest
             .WithMessage("Sender domain not verified");
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should handle long email body")]
     public async Task SendAsync_WhenBodyIsLong_ShouldSendSuccessfully()
     {
@@ -268,6 +279,7 @@ public sealed class AmazonSESServiceTests : BaseTest
         );
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should handle special characters in subject and body")]
     public async Task SendAsync_WhenContainsSpecialCharacters_ShouldSendSuccessfully()
     {

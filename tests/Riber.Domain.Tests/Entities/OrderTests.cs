@@ -7,6 +7,7 @@ public sealed class OrderTests : BaseTest
 {
     #region Creation Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should create order successfully with valid data")]
     public void Create_WhenValidData_ShouldCreateSuccessfully()
     {
@@ -31,6 +32,7 @@ public sealed class OrderTests : BaseTest
         result.ItemsReadOnly.Should().BeEmpty();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should create order with unique token")]
     public void Create_WhenCreatingMultipleOrders_ShouldHaveUniqueTokens()
     {
@@ -46,6 +48,7 @@ public sealed class OrderTests : BaseTest
         order1.Token.Value.Should().NotBe(order2.Token.Value);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should create order with unique id")]
     public void Create_WhenCreatingMultipleOrders_ShouldHaveUniqueIds()
     {
@@ -61,6 +64,7 @@ public sealed class OrderTests : BaseTest
         order1.Id.Should().NotBe(order2.Id);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should create order with empty items collection")]
     public void Create_WhenCreated_ShouldHaveEmptyItemsCollection()
     {
@@ -77,6 +81,7 @@ public sealed class OrderTests : BaseTest
         result.ItemsReadOnly.Count.Should().Be(0);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should create order with readonly items collection")]
     public void Create_WhenCreated_ShouldHaveReadOnlyItemsCollection()
     {
@@ -95,6 +100,7 @@ public sealed class OrderTests : BaseTest
 
     #region Calculated Properties Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should calculate subtotal as zero when no items")]
     public void SubTotal_WhenNoItems_ShouldReturnZero()
     {
@@ -108,6 +114,7 @@ public sealed class OrderTests : BaseTest
         result.Should().Be(0);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should calculate total discounts as zero when no items")]
     public void TotalDiscounts_WhenNoItems_ShouldReturnZero()
     {
@@ -121,6 +128,7 @@ public sealed class OrderTests : BaseTest
         result.Should().Be(0);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should calculate total amount as zero when no items")]
     public void TotalAmount_WhenNoItems_ShouldReturnZero()
     {
@@ -134,6 +142,7 @@ public sealed class OrderTests : BaseTest
         result.Should().Be(0);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should calculate total amount as subtotal minus discounts")]
     public void TotalAmount_Always_ShouldEqualSubTotalMinusDiscounts()
     {
@@ -152,6 +161,7 @@ public sealed class OrderTests : BaseTest
 
     #region Token Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should have valid random token after creation")]
     public void Token_WhenOrderCreated_ShouldHaveValidRandomToken()
     {
@@ -168,6 +178,7 @@ public sealed class OrderTests : BaseTest
         result.Token.Value.Length.Should().BeGreaterThan(0);
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should generate different tokens for different orders")]
     public void Token_WhenCreatingMultipleOrders_ShouldGenerateDifferentTokens()
     {
@@ -191,6 +202,7 @@ public sealed class OrderTests : BaseTest
 
     #region Navigation Properties Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should have company navigation property")]
     public void Company_WhenAccessed_ShouldHaveNavigationProperty()
     {
@@ -203,6 +215,7 @@ public sealed class OrderTests : BaseTest
         company.Should().BeNull(); // Will be null until loaded by EF
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should have attendant navigation property")]
     public void Attendant_WhenAccessed_ShouldHaveNavigationProperty()
     {
@@ -219,6 +232,7 @@ public sealed class OrderTests : BaseTest
 
     #region Edge Cases Tests
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should handle empty guid for company id")]
     public void Create_WhenEmptyCompanyId_ShouldCreateWithEmptyGuid()
     {
@@ -234,6 +248,7 @@ public sealed class OrderTests : BaseTest
         result.Should().NotBeNull();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should handle empty guid for attendant id")]
     public void Create_WhenEmptyAttendantId_ShouldCreateWithEmptyGuid()
     {
@@ -249,6 +264,7 @@ public sealed class OrderTests : BaseTest
         result.Should().NotBeNull();
     }
 
+    [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should handle both empty guids")]
     public void Create_WhenBothIdsEmpty_ShouldCreateWithEmptyGuids()
     {
