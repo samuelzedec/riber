@@ -1,5 +1,16 @@
 # Riber - Changelog
 
+## v4.0.1 - 19/10/2025
+- **BREAKING CHANGE**: Reestruturação completa da resposta de erros da API
+    - Adicionada propriedade `type` para identificar o tipo do erro
+    - Alterada propriedade `messages` (array) para `message` (string única)
+    - Adicionada propriedade `details` (objeto) para erros de validação agrupados por campo
+    - Novo formato: `{ "type": "ERROR_TYPE", "message": "...", "details": { "Field": ["error1", "error2"] } }`
+- **MELHORIA**: Erros de validação agora agrupam múltiplas mensagens por campo
+- **MELHORIA**: Formato de erros mais alinhado com padrões modernos de API (inspirado em FastEndpoints)
+
+---
+
 ## v3.0.1 - 18/10/2025
 - CORREÇÃO: Troca do pacote de versionamento da API
 - Ajuste no setup de testes da camada Api para testes de integração
