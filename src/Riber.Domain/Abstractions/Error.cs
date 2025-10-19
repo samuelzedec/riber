@@ -9,21 +9,29 @@ public sealed class Error
 {
     #region Properties
 
-    public string Code { get; init; } = string.Empty;
-    public string[] Messages { get; init; } = [];
+    public string Type { get; init; } = string.Empty;
+    public string Message { get; init; } = string.Empty;
+    public Dictionary<string, string[]> Details { get; set; } = [];
 
     #endregion
 
     #region Constructors
 
     [JsonConstructor]
-    public Error() {}
-    
-    public Error(string code, params string[] messages)
+    public Error() { }
+
+    public Error(string type, string message)
     {
-        Code = code;
-        Messages = messages;
+        Type = type;
+        Message = message;
     }
-    
+
+    public Error(string type, Dictionary<string, string[]> details)
+    {
+        Type = type;
+        Message = "Dados Inválidos.";
+        Details = details;
+    }
+
     #endregion
 }

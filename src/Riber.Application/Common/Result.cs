@@ -27,9 +27,17 @@ public class Result
 
     #region Static Methods
 
-    public static Result<object> Success() => new(null, true, new Error());
-    public static Result<T> Success<T>(T value) => new(value, true, new Error());
-    public static Result<T> Failure<T>(Error error) => new(default, false, error);
+    public static Result<object> Success()
+        => new(null, true, new Error());
+
+    public static Result<T> Success<T>(T value)
+        => new(value, true, new Error());
+
+    public static Result<T> Failure<T>(Error error)
+        => new(default, false, error);
+
+    public static Result<T> Failure<T>(string type, Dictionary<string, string[]> details)
+        => new(default, false, new Error(type, details));
 
     protected static Result<T> Create<T>(T? value) =>
         value is not null ? Success(value) : Failure<T>(new Error());

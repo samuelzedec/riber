@@ -13,14 +13,18 @@ public static class HttpContextExtension
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
     };
 
-    public static async Task WriteUnauthorizedResponse(
+    public static async Task WriteErrorResponse(
         this HttpContext context,
         int code,
-        params string[] messages)
+        string message,
+        Dictionary<string, string[]> details)
     {
-        var jsonResponse = JsonSerializer.Serialize(
-            Result.Failure<object>(new Error(GetErrorCode(code), messages)), JsonOptions);
+        var errorType = GetErrorCode(code);
+        var response = details.Count == 0
+            ? Result.Failure<object>(new Error(errorType, message))
+            : Result.Failure<object>(new Error(errorType, details));
 
+        var jsonResponse = JsonSerializer.Serialize(response, JsonOptions);
         context.Response.StatusCode = code;
         context.Response.ContentType = "application/json";
 

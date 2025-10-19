@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using Mediator;
-using Riber.Application.Common;
-using Exceptions_ValidationException = Riber.Application.Exceptions.ValidationException;
+using LayerValidationException = Riber.Application.Exceptions.ValidationException;
 
 namespace Riber.Application.Behaviors;
 
@@ -22,11 +21,14 @@ public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TReq
             .Select(x => x.Validate(context))
             .Where(x => !x.IsValid)
             .SelectMany(x => x.Errors)
-            .Select(x => new ValidationError(x.PropertyName, x.ErrorMessage))
-            .ToList();
+            .GroupBy(x => x.PropertyName)
+            .ToDictionary(
+                g => g.Key,
+                g => g.Select(x => x.ErrorMessage).ToArray()
+            );
         
         return validationErrors.Count > 0 
-            ? throw new Exceptions_ValidationException(validationErrors)
+            ? throw new LayerValidationException(validationErrors)
             : await next(message, cancellationToken);
     }
 }

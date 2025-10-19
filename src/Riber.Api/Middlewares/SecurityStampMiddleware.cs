@@ -23,9 +23,10 @@ public sealed class SecurityStampMiddleware(
         if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(tokenSecurityStamp))
         {
             logger.LogError("Valores: userId = {UserId}, securityStamp = {TokenSecurityStamp}", userId, tokenSecurityStamp);
-            await context.WriteUnauthorizedResponse(
+            await context.WriteErrorResponse(
                 StatusCodes.Status401Unauthorized,
-                "Token do usuário inválido ou mal formado."
+                "Token do usuário inválido ou mal formado.",
+                details: []
             );
             return;
         }
@@ -34,9 +35,10 @@ public sealed class SecurityStampMiddleware(
         var user = await authService.FindByIdAsync(userId);
         if (user is null || user.SecurityStamp != tokenSecurityStamp)
         {
-            await context.WriteUnauthorizedResponse(
+            await context.WriteErrorResponse(
                 code: StatusCodes.Status401Unauthorized,
-                messages: "Security stamp inválido ou usuário não encontrado."
+                message: "Security stamp inválido ou usuário não encontrado.",
+                details: []
             );
             return;
         }

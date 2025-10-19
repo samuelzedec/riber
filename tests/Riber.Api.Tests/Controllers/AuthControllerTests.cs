@@ -48,8 +48,9 @@ public sealed class AuthControllerTests(WebAppFixture webAppFixture, DatabaseFix
         loginResponse.Should().NotBeNull();
         loginResponse.IsSuccess.Should().BeFalse();
         loginResponse.Value.Should().BeNull();
-        loginResponse.Error.Code.Should().Be("NOT_FOUND");
-        loginResponse.Error.Messages.Should().HaveCountGreaterThan(0);
+        loginResponse.Error.Type.Should().Be("NOT_FOUND");
+        loginResponse.Error.Message.Should().NotBeNullOrEmpty();
+        loginResponse.Error.Details.Should().BeNullOrEmpty();
     }
     
     #endregion
