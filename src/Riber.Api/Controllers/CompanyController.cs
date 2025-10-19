@@ -28,7 +28,7 @@ public sealed class CompanyController(IMediator mediator) : ControllerBase
         CancellationToken cancellationToken)
     {
         var response = await mediator.Send(withAdminCommand, cancellationToken);
-        return Created($"/api/company/{response.Value.CompanyId}", response);
+        return Created($"/api/company/{response.Value?.CompanyId}", response);
     }
     
     [HttpPut]

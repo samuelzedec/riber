@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
@@ -21,6 +22,7 @@ public static class BuilderExtension
 {
     public static void AddPipeline(this WebApplicationBuilder builder)
     {
+        builder.AddJsonConfiguration();
         builder.AddDocumentationApi();
         builder.AddDependencyInjection();
         builder.AddConfigurations();
@@ -42,7 +44,6 @@ public static class BuilderExtension
     private static void AddConfigurations(this WebApplicationBuilder builder)
     {
         builder.Configuration.AddEnvironmentVariables();
-        builder.Services.AddControllers();
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddProblemDetails();
         builder.Services.AddMemoryCache();
@@ -180,5 +181,26 @@ public static class BuilderExtension
 
                 return Task.CompletedTask;
             }));
+    }
+
+    private static void AddJsonConfiguration(this WebApplicationBuilder builder)
+    {
+        builder.Services.ConfigureHttpJsonOptions(options =>
+        {
+            options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            options.SerializerOptions.PropertyNameCaseInsensitive = true;
+            options.SerializerOptions.ReadCommentHandling = JsonCommentHandling.Skip;
+            options.SerializerOptions.AllowTrailingCommas = true;
+            options.SerializerOptions.WriteIndented = true;
+            options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.Never;
+        });
+
+        builder.Services.AddControllers()
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+                options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.Never;
+            });
     }
 }

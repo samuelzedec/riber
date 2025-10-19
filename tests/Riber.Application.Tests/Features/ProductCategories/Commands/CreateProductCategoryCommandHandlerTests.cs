@@ -134,6 +134,7 @@ public sealed class CreateProductCategoryCommandHandlerTests : BaseTest
         // Assert
         result.Should().NotBeNull();
         result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeNull();
         result.Value.Code.Should().Be(expectedCodeNormalized);
 
         _mockProductRepository.Verify(x => x.CreateCategoryAsync(

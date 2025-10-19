@@ -23,7 +23,6 @@
     <PackageReference Include="Quartz.Extensions.DependencyInjection" />
     <PackageReference Include="Quartz.Extensions.Hosting" />
     <PackageReference Include="Quartz.Serialization.Json" />
-    <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
     <PackageReference Include="Microsoft.SemanticKernel.Connectors.Ollama" />
     <PackageReference Include="Microsoft.SemanticKernel.Core" />

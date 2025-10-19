@@ -1,66 +1,59 @@
 using System.Net.Http.Json;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+using Riber.Api.Tests.Fixtures;
 using Riber.Application.Common;
 using Riber.Application.Features.Auths.Commands.Login;
 using Riber.Infrastructure.Persistence;
-using Riber.Infrastructure.Persistence.Interceptors;
-using Testcontainers.PostgreSql;
 using Xunit;
 
 namespace Riber.Api.Tests;
 
-public abstract class IntegrationTestBase : IAsyncLifetime
+/* 
+ * A interface IAsyncLifeTime define dois métodos um para executar
+ * antes dos testes e outro para executar depois dos testes rodarem.
+ *
+ * Já a interface IClassFixture<T> cria essa fixture 1 vez e compartilha entre os testes
+ */
+
+public abstract class IntegrationTestBase : 
+    IClassFixture<WebAppFixture>,
+    IClassFixture<DatabaseFixture>, 
+    IAsyncLifetime
 {
-    #region Fields
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true, 
+        IncludeFields = true
+    };
 
-    private readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder()
-        .WithImage("postgres:14.1-alpine")
-        .WithDatabase("riber_test")
-        .WithUsername("postgres")
-        .WithPassword("root")
-        .Build();
+    private readonly WebAppFixture _webAppFixture;
+    private WebApplicationFactory<Program> Factory => _webAppFixture.GetFactory();
+    protected HttpClient Client { get; private set; } = null!;
 
-    private WebApplicationFactory<Program> Factory { get; set; } = null!;
-    private HttpClient Client { get; set; } = null!;
-
-    #endregion
-
-    #region Methods
+    protected IntegrationTestBase(WebAppFixture webAppFixture, DatabaseFixture databaseFixture)
+    {
+        _webAppFixture = webAppFixture;
+        _webAppFixture.SetConnectionString(databaseFixture.ConnectionString);
+    }
 
     public async Task InitializeAsync()
     {
-        await _dbContainer.StartAsync();
-        Factory = new WebApplicationFactory<Program>()
-            .WithWebHostBuilder(builder => builder
-                .ConfigureTestServices(services =>
-                {
-                    // Irá remover as injeções inseridas no contexto de banco de dados
-                    services.RemoveAll<DbContextOptions<AppDbContext>>();
-                    services.RemoveAll<Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckService>();
-
-                    // Inserindo as injeções de banco de dados para testes
-                    services.AddDbContext<AppDbContext>(options =>
-                        options
-                            .UseNpgsql(_dbContainer.GetConnectionString())
-                            .AddInterceptors(new CaseInsensitiveInterceptor(), new AuditInterceptor())
-                    );
-                }));
-
         Client = Factory.CreateClient();
+
         using var scope = Factory.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
         await context.Database.MigrateAsync();
+        await DatabaseFixture.ResetDatabaseAsync(context);
     }
 
     public async Task DisposeAsync()
     {
-        await _dbContainer.DisposeAsync();
-        await Factory.DisposeAsync();
         Client.Dispose();
+        await Task.CompletedTask;
     }
 
     protected AppDbContext GetDbContext()
@@ -69,31 +62,11 @@ public abstract class IntegrationTestBase : IAsyncLifetime
         return scope.ServiceProvider.GetRequiredService<AppDbContext>();
     }
 
-    protected async Task ResetDatabaseAsync()
+    protected static async Task<Result<TResponse>?> ReadResultValueAsync<TResponse>(HttpResponseMessage response)
+        where TResponse : class
     {
-        using var scope = Factory.Services.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-        /*
-         * Isso fará que seja desabilitado no postgres temporiamente as restrições de integridade
-         * como: foreign key, unique key, check, etc.
-         */
-        await context.Database.ExecuteSqlRawAsync("SET session_replication_role = 'replica';");
-        var tables = await context.Database
-            .SqlQueryRaw<string>("""
-                                      SELECT tablename 
-                                      FROM pg_tables 
-                                      WHERE schemaname='public' 
-                                      AND tablename != '__EFMigrationsHistory';
-                                 """)
-            .ToListAsync();
-
-#pragma warning disable EF1002
-        foreach (var table in tables)
-            await context.Database.ExecuteSqlRawAsync($"TRUNCATE TABLE \"{table}\" RESTART IDENTITY CASCADE;");
-#pragma warning restore EF1002
-
-        await context.Database.ExecuteSqlRawAsync("SET session_replication_role = 'origin';");
+        var jsonString = await response.Content.ReadAsStringAsync();
+        return JsonSerializer.Deserialize<Result<TResponse>>(jsonString, JsonOptions);
     }
 
     protected async Task AuthenticateAsync()
@@ -110,8 +83,6 @@ public abstract class IntegrationTestBase : IAsyncLifetime
 
         loginResponse.EnsureSuccessStatusCode();
         var result = await loginResponse.Content.ReadFromJsonAsync<Result<LoginCommandResponse>>();
-        return result?.Value.Token ?? string.Empty;
+        return result?.Value?.Token ?? string.Empty;
     }
-
-    #endregion
 }

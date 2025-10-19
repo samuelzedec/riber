@@ -30,22 +30,9 @@ public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logge
         };
         
         await httpContext.WriteUnauthorizedResponse(
-            title: GetErrorCode(statusCode),
             code: statusCode,
             messages: messages
         );
         return true;
     }
-    
-    private static string GetErrorCode(int statusCode) => statusCode switch
-    {
-        400 => "BAD_REQUEST",
-        401 => "UNAUTHORIZED",
-        404 => "NOT_FOUND", 
-        408 => "REQUEST_TIMEOUT",
-        409 => "CONFLICT",
-        422 => "UNPROCESSABLE_ENTITY",
-        500 => "INTERNAL_SERVER_ERROR",
-        _ => "APPLICATION_ERROR"
-    };
 }

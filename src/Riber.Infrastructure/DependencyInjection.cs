@@ -4,8 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -52,7 +50,6 @@ public static class DependencyInjection
         services.AddServices(configuration);
         services.AddAwsServices(configuration);
         services.AddBackgroundJobs(defaultConnection);
-        services.AddJsonConfiguration();
         services.AddHealthChecksConfiguration(defaultConnection);
         services.AddSchedulersAndJobs();
         services.AddTelemetry();
@@ -179,19 +176,6 @@ public static class DependencyInjection
 
         services.AddQuartzHostedService(options =>
             options.WaitForJobsToComplete = true);
-    }
-
-    private static void AddJsonConfiguration(this IServiceCollection _)
-    {
-        JsonConvert.DefaultSettings = () => new JsonSerializerSettings
-        {
-            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-            Formatting = Formatting.Indented,
-            NullValueHandling = NullValueHandling.Ignore,
-            DefaultValueHandling = DefaultValueHandling.Ignore,
-            ContractResolver = new CamelCasePropertyNamesContractResolver(),
-            TypeNameHandling = TypeNameHandling.Auto
-        };
     }
 
     private static void AddTelemetry(this IServiceCollection services)
