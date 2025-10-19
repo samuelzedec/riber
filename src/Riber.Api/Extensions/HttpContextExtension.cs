@@ -15,20 +15,27 @@ public static class HttpContextExtension
 
     public static async Task WriteUnauthorizedResponse(
         this HttpContext context,
-        string title,
         int code,
         params string[] messages)
     {
-        var result = Result.Failure(new Error(title, messages));
-        var response = new
-        {
-            isSuccess = result.IsSuccess,
-            error = new { code = result.Error.Code, messages }
-        };
+        var jsonResponse = JsonSerializer.Serialize(
+            Result.Failure<object>(new Error(GetErrorCode(code), messages)), JsonOptions);
 
-        var jsonResponse = JsonSerializer.Serialize(response, JsonOptions);
         context.Response.StatusCode = code;
         context.Response.ContentType = "application/json";
+
         await context.Response.WriteAsync(jsonResponse);
     }
+
+    private static string GetErrorCode(int statusCode) => statusCode switch
+    {
+        400 => "BAD_REQUEST",
+        401 => "UNAUTHORIZED",
+        404 => "NOT_FOUND",
+        408 => "REQUEST_TIMEOUT",
+        409 => "CONFLICT",
+        422 => "UNPROCESSABLE_ENTITY",
+        500 => "INTERNAL_SERVER_ERROR",
+        _ => "APPLICATION_ERROR"
+    };
 }

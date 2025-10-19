@@ -110,7 +110,7 @@ public abstract class IntegrationTestBase : IAsyncLifetime
 
         loginResponse.EnsureSuccessStatusCode();
         var result = await loginResponse.Content.ReadFromJsonAsync<Result<LoginCommandResponse>>();
-        return result?.Value.Token ?? string.Empty;
+        return result?.Value?.Token ?? string.Empty;
     }
 
     #endregion

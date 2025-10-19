@@ -24,7 +24,6 @@ public sealed class SecurityStampMiddleware(
         {
             logger.LogError("Valores: userId = {UserId}, securityStamp = {TokenSecurityStamp}", userId, tokenSecurityStamp);
             await context.WriteUnauthorizedResponse(
-                "Acesso não autorizado",
                 StatusCodes.Status401Unauthorized,
                 "Token do usuário inválido ou mal formado."
             );
@@ -36,7 +35,6 @@ public sealed class SecurityStampMiddleware(
         if (user is null || user.SecurityStamp != tokenSecurityStamp)
         {
             await context.WriteUnauthorizedResponse(
-                title: "Acesso não autorizado",
                 code: StatusCodes.Status401Unauthorized,
                 messages: "Security stamp inválido ou usuário não encontrado."
             );

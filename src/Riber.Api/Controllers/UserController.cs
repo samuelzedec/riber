@@ -24,6 +24,6 @@ public sealed class UserController(IMediator mediator) : ControllerBase
         CancellationToken cancellationToken)
     {
         var response = await mediator.Send(command, cancellationToken);
-        return Created($"/api/user/{response.Value.Email}", response);
+        return Created($"/api/user/{response.Value?.Email}", response);
     }
 }

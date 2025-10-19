@@ -74,6 +74,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
         var result = await _commandHandler.Handle(request, CancellationToken.None);
 
         // Assert
+        result.Value.Should().NotBeNull();
         result.Value.Email.Should().Be(Email.Standardization(request.Email));
         result.Value.Phone.Should().Be(request.Phone);
         result.Value.FantasyName.Should().Be(request.FantasyName);
@@ -120,6 +121,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
         var result = await _commandHandler.Handle(request, CancellationToken.None);
 
         // Assert
+        result.Value.Should().NotBeNull();
         result.Value.Email.Should().Be(Email.Standardization(request.Email));
         result.Value.Phone.Should().Be(_baseCompany.Phone);
         result.Value.FantasyName.Should().Be(_baseCompany.Name);
@@ -166,6 +168,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
         var result = await _commandHandler.Handle(request, CancellationToken.None);
 
         // Assert
+        result.Value.Should().NotBeNull();
         result.Value.Email.Should().Be(_baseCompany.Email);
         result.Value.Phone.Should().Be(request.Phone);
         result.Value.FantasyName.Should().Be(_baseCompany.Name);
@@ -212,6 +215,7 @@ public sealed class UpdateCompanyCommandHandlerTests : BaseTest
         var result = await _commandHandler.Handle(request, CancellationToken.None);
 
         // Assert
+        result.Value.Should().NotBeNull();
         result.Value.Email.Should().Be(_baseCompany.Email);
         result.Value.Phone.Should().Be(_baseCompany.Phone);
         result.Value.FantasyName.Should().Be(request.FantasyName);
