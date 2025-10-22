@@ -11,16 +11,13 @@ namespace Riber.Application.Features.Companies.Queries.GetCompanyById;
 internal sealed class GetCompanyByIdQueryHandler(IUnitOfWork unitOfWork)
     : IQueryHandler<GetCompanyByIdQuery, GetCompanyByIdQueryResponse>
 {
-    public async ValueTask<Result<GetCompanyByIdQueryResponse>> Handle(GetCompanyByIdQuery request, CancellationToken cancellationToken)
+    public async ValueTask<Result<GetCompanyByIdQueryResponse>> Handle(GetCompanyByIdQuery request,
+        CancellationToken cancellationToken)
     {
-        var companyRepository = unitOfWork.Companies;
-        var company = await companyRepository.GetSingleAsync(
+        var company = await unitOfWork.Companies.GetSingleAsync(
             new CompanyIdSpecification(request.CompanyId),
             cancellationToken
-        );
-
-        if (company is null)
-            throw new NotFoundException(NotFoundErrors.Company);
+        ) ?? throw new NotFoundException(NotFoundErrors.Company);
 
         return new GetCompanyByIdQueryResponse(
             CorporateName: company.Name.Corporate,

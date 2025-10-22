@@ -6,9 +6,7 @@ namespace Riber.Domain.Entities;
 /// Representa uma entidade base abstrata que fornece funcionalidades comuns para entidades de domínio.
 /// Esta classe inclui um identificador, gerenciamento de eventos de domínio e mecanismos de comparação de igualdade.
 /// </summary>
-#pragma warning disable CA1067
 public abstract class BaseEntity(Guid id) : IEquatable<BaseEntity>
-#pragma warning restore CA1067
 {
     #region Private Members
 
