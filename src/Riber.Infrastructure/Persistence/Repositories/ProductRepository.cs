@@ -43,4 +43,7 @@ public sealed class ProductRepository(AppDbContext context)
             .AsNoTracking()
             .Where(new ImagesReadyForCleanupSpecification())
             .ToListAsync(cancellationToken);
+    
+    public void DeleteImage(Image image)
+        => _images.Remove(image);
 }

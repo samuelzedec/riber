@@ -53,13 +53,20 @@ public sealed class LocalImageStorageService
             );
     }
 
-    public Task DeleteAsync(string fileName)
+    public Task<IEnumerable<string>> DeleteAllAsync(List<string> fileKeys)
     {
-        var imagePath = Path.Combine(_storagePath, fileName);
-        if (!File.Exists(imagePath))
-            throw new NotFoundException(StorageErrors.ImageNotFound);
+        List<string> deletedKeys = [];
+        foreach (var fileKey in fileKeys)
+        {
+            var imagePath = Path.Combine(_storagePath, fileKey);
+            if (!File.Exists(imagePath))
+                continue;
 
-        File.Delete(imagePath);
-        return Task.CompletedTask;
+            File.Delete(imagePath);
+            deletedKeys.Add(fileKey);
+        }
+        
+        _logger.LogInformation("Deleted {Count} file(s)", deletedKeys.Count);
+        return Task.FromResult(deletedKeys.AsEnumerable());
     }
 }
