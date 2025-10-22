@@ -16,4 +16,8 @@ using (var scope = app.Services.CreateScope())
 
 await app.RunAsync();
 
-public partial class Program;
+/// <summary>
+/// Ponto de entrada da aplicação Riber API.
+/// Esta classe é utilizada como referência de tipo para testes de integração.
+/// </summary>
+public partial class Program { protected Program() { }}
