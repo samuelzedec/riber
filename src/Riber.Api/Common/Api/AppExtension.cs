@@ -30,6 +30,15 @@ public static class AppExtension
     private static void UseConfigurations(this WebApplication app)
     {
         app.UseExceptionHandler();
+        app.Use(async (context, next) =>
+        {
+            context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
+            context.Response.Headers.Append("Referrer-Policy", "no-referrer");
+            context.Response.Headers.Append("X-XSS-Protection", "1; mode=block");
+            context.Response.Headers.Append("X-Frame-Options", "DENY");
+            await next();
+        });
+        
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();

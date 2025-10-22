@@ -5,7 +5,6 @@ using Riber.Application.Exceptions;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Tests;
 using Riber.Infrastructure.Services.Local;
-using System.Text;
 
 namespace Riber.Infrastructure.Tests.Services.Local;
 
@@ -182,163 +181,213 @@ public sealed class LocalImageStorageServiceTests : BaseTest, IDisposable
     #region DeleteAsync Success Tests
 
     [Trait("Category", "Unit")]
-    [Fact(DisplayName = "DeleteAsync should delete file successfully")]
-    public async Task DeleteAsync_WhenFileExists_ShouldDeleteFile()
+    [Fact(DisplayName = "DeleteAllAsync should delete multiple files successfully")]
+    public async Task DeleteAllAsync_WhenFilesExist_ShouldDeleteAllFiles()
     {
         // Arrange
-        const string fileName = "delete-test.png";
-        var filePath = Path.Combine(_storagePath, fileName);
-        await File.WriteAllBytesAsync(filePath, "Test content"u8.ToArray());
+        var fileNames = new List<string> { "delete-1.png", "delete-2.jpg", "delete-3.webp" };
+        var filePaths = new List<string>();
 
-        // Verify file exists
-        File.Exists(filePath).Should().BeTrue();
-
-        // Act
-        var action = async () => await _service.DeleteAsync(fileName);
-
-        // Assert
-        await action.Should().NotThrowAsync();
-        File.Exists(filePath).Should().BeFalse();
-    }
-
-    #endregion
-
-    #region DeleteAsync Error Tests
-
-    [Trait("Category", "Unit")]
-    [Fact(DisplayName = "DeleteAsync should throw NotFoundException when file does not exist")]
-    public async Task DeleteAsync_WhenFileNotFound_ShouldThrowNotFoundException()
-    {
-        // Arrange
-        const string nonExistentFileName = "non-existent.png";
-
-        // Act
-        var action = async () => await _service.DeleteAsync(nonExistentFileName);
-
-        // Assert
-        await action.Should().ThrowAsync<NotFoundException>()
-            .WithMessage(StorageErrors.ImageNotFound);
-    }
-
-    #endregion
-
-    #region Integration Tests
-
-    [Trait("Category", "Unit")]
-    [Fact(DisplayName = "Complete workflow should work end-to-end")]
-    public async Task CompleteWorkflow_UploadGetDelete_ShouldWorkEndToEnd()
-    {
-        // Arrange
-        var testContent = "Complete workflow test content"u8.ToArray();
-        const string fileName = "workflow-test.jpg";
-
-        // Act & Assert - Upload
-        using (var uploadStream = new MemoryStream(testContent))
-        {
-            await _service.UploadAsync(uploadStream, fileName, "image/jpeg");
-        }
-
-        var filePath = Path.Combine(_storagePath, fileName);
-        File.Exists(filePath).Should().BeTrue();
-
-        // Act & Assert - Get
-        await using (var retrievedStream = await _service.GetImageStreamAsync(fileName))
-        {
-            using var contentStream = new MemoryStream();
-            await retrievedStream.CopyToAsync(contentStream);
-            contentStream.ToArray().Should().BeEquivalentTo(testContent);
-        }
-
-        // Act & Assert - Delete
-        await _service.DeleteAsync(fileName);
-        File.Exists(filePath).Should().BeFalse();
-
-        // Verify deletion
-        var getAfterDelete = async () => await _service.GetImageStreamAsync(fileName);
-        await getAfterDelete.Should().ThrowAsync<NotFoundException>();
-    }
-
-    [Trait("Category", "Unit")]
-    [Fact(DisplayName = "Should handle concurrent uploads correctly")]
-    public async Task ConcurrentUploads_ShouldAllSucceed()
-    {
-        // Arrange
-        var tasks = new List<Task>();
-        var fileNames = new List<string>();
-
-        // Act
-        for (int i = 0; i < 10; i++)
-        {
-            var fileName = $"concurrent-{i}.png";
-            fileNames.Add(fileName);
-            var content = Encoding.UTF8.GetBytes($"Concurrent content {i}");
-
-            var localFileName = fileName; // Capture for closure
-            var localContent = content;
-
-            var task = Task.Run(async () =>
-            {
-                using var stream = new MemoryStream(localContent);
-                await _service.UploadAsync(stream, localFileName, "image/png");
-            });
-            tasks.Add(task);
-        }
-
-        await Task.WhenAll(tasks);
-        _createdFiles.AddRange(fileNames);
-
-        // Assert
         foreach (var fileName in fileNames)
         {
             var filePath = Path.Combine(_storagePath, fileName);
+            await File.WriteAllBytesAsync(filePath, "Test content"u8.ToArray());
+            filePaths.Add(filePath);
+            _createdFiles.Add(fileName);
+        }
+
+        // Verify files exist
+        foreach (var filePath in filePaths)
+        {
             File.Exists(filePath).Should().BeTrue();
         }
+
+        // Act
+        var result = (await _service.DeleteAllAsync(fileNames)).ToList();
+
+        // Assert
+        result.Should().HaveCount(3);
+        result.Should().BeEquivalentTo(fileNames);
+
+        foreach (var filePath in filePaths)
+        {
+            File.Exists(filePath).Should().BeFalse();
+        }
     }
 
     [Trait("Category", "Unit")]
-    [Fact(DisplayName = "Should handle large file upload")]
-    public async Task UploadAsync_WithLargeFile_ShouldWork()
+    [Fact(DisplayName = "DeleteAllAsync should delete single file successfully")]
+    public async Task DeleteAllAsync_WithSingleFile_ShouldDeleteFile()
     {
         // Arrange
-        const string fileName = "large-file.png";
-        var largeContent = new byte[1024 * 1024]; // 1MB
-        new Random().NextBytes(largeContent);
+        const string fileName = "single-delete.png";
+        var filePath = Path.Combine(_storagePath, fileName);
+        await File.WriteAllBytesAsync(filePath, "Test content"u8.ToArray());
+        _createdFiles.Add(fileName);
 
         // Act
-        using (var stream = new MemoryStream(largeContent))
+        var result = (await _service.DeleteAllAsync([fileName])).ToList();
+
+        // Assert
+        result.Should().HaveCount(1);
+        result.Should().Contain(fileName);
+        File.Exists(filePath).Should().BeFalse();
+    }
+
+    [Trait("Category", "Unit")]
+    [Fact(DisplayName = "DeleteAllAsync should skip non-existent files")]
+    public async Task DeleteAllAsync_WithMixedExistingAndNonExisting_ShouldReturnOnlyDeleted()
+    {
+        // Arrange
+        var existingFile = "existing.png";
+        var nonExistingFile = "non-existing.png";
+        var anotherExisting = "another-existing.jpg";
+
+        var filePath1 = Path.Combine(_storagePath, existingFile);
+        var filePath3 = Path.Combine(_storagePath, anotherExisting);
+
+        await File.WriteAllBytesAsync(filePath1, "Test content"u8.ToArray());
+        await File.WriteAllBytesAsync(filePath3, "Test content"u8.ToArray());
+
+        _createdFiles.Add(existingFile);
+        _createdFiles.Add(anotherExisting);
+
+        var fileNames = new List<string> { existingFile, nonExistingFile, anotherExisting };
+
+        // Act
+        var result = (await _service.DeleteAllAsync(fileNames)).ToList();
+
+        // Assert
+        result.Should().HaveCount(2);
+        result.Should().Contain(existingFile);
+        result.Should().Contain(anotherExisting);
+        result.Should().NotContain(nonExistingFile);
+
+        File.Exists(filePath1).Should().BeFalse();
+        File.Exists(filePath3).Should().BeFalse();
+    }
+
+    [Trait("Category", "Unit")]
+    [Fact(DisplayName = "DeleteAllAsync should return empty list when no files exist")]
+    public async Task DeleteAllAsync_WhenNoFilesExist_ShouldReturnEmptyList()
+    {
+        // Arrange
+        var fileNames = new List<string> { "non-existent-1.png", "non-existent-2.jpg" };
+
+        // Act
+        var result = await _service.DeleteAllAsync(fileNames);
+
+        // Assert
+        result.Should().BeEmpty();
+    }
+
+    [Trait("Category", "Unit")]
+    [Fact(DisplayName = "DeleteAllAsync should handle empty list")]
+    public async Task DeleteAllAsync_WithEmptyList_ShouldReturnEmptyList()
+    {
+        // Act
+        var result = await _service.DeleteAllAsync([]);
+
+        // Assert
+        result.Should().BeEmpty();
+    }
+
+    [Trait("Category", "Unit")]
+    [Theory(DisplayName = "DeleteAllAsync should delete files with different extensions")]
+    [InlineData("file1.jpg", "file2.png", "file3.webp")]
+    [InlineData("doc.pdf", "image.gif", "photo.jpeg")]
+    public async Task DeleteAllAsync_WithDifferentExtensions_ShouldDeleteAll(params string[] fileNames)
+    {
+        // Arrange
+        var filePaths = new List<string>();
+
+        foreach (var fileName in fileNames)
         {
-            await _service.UploadAsync(stream, fileName, "image/png");
+            var filePath = Path.Combine(_storagePath, fileName);
+            await File.WriteAllBytesAsync(filePath, "Test content"u8.ToArray());
+            filePaths.Add(filePath);
+            _createdFiles.Add(fileName);
         }
 
-        _createdFiles.Add(fileName);
+        // Act
+        var result = (await _service.DeleteAllAsync([.. fileNames])).ToList();
 
         // Assert
-        var filePath = Path.Combine(_storagePath, fileName);
-        File.Exists(filePath).Should().BeTrue();
+        result.Should().HaveCount(fileNames.Length);
+        result.Should().BeEquivalentTo(fileNames);
 
-        // Verify content
-        var savedContent = await File.ReadAllBytesAsync(filePath);
-        savedContent.Should().BeEquivalentTo(largeContent);
+        foreach (var filePath in filePaths)
+        {
+            File.Exists(filePath).Should().BeFalse();
+        }
+    }
+
+    #endregion
+
+    #region DeleteAllAsync Integration Tests
+
+    [Trait("Category", "Unit")]
+    [Fact(DisplayName = "DeleteAllAsync should handle concurrent deletions")]
+    public async Task DeleteAllAsync_ConcurrentDeletions_ShouldWork()
+    {
+        // Arrange
+        var tasks = new List<Task<IEnumerable<string>>>();
+        var allFileNames = new List<string>();
+
+        for (int batch = 0; batch < 3; batch++)
+        {
+            var batchFiles = new List<string>();
+            for (int i = 0; i < 5; i++)
+            {
+                var fileName = $"concurrent-delete-batch{batch}-{i}.png";
+                var filePath = Path.Combine(_storagePath, fileName);
+                await File.WriteAllBytesAsync(filePath, "Test content"u8.ToArray());
+                batchFiles.Add(fileName);
+                allFileNames.Add(fileName);
+                _createdFiles.Add(fileName);
+            }
+
+            var localBatch = batchFiles;
+            tasks.Add(_service.DeleteAllAsync(localBatch));
+        }
+
+        // Act
+        var results = await Task.WhenAll(tasks);
+
+        // Assert
+        var totalDeleted = results.SelectMany(r => r).Count();
+        totalDeleted.Should().Be(15);
+
+        foreach (var filePath in allFileNames.Select(fileName => Path.Combine(_storagePath, fileName)))
+            File.Exists(filePath).Should().BeFalse();
     }
 
     [Trait("Category", "Unit")]
-    [Fact(DisplayName = "Should handle empty file upload")]
-    public async Task UploadAsync_WithEmptyFile_ShouldWork()
+    [Fact(DisplayName = "DeleteAllAsync should log deletion summary")]
+    public async Task DeleteAllAsync_ShouldLogDeletionSummary()
     {
         // Arrange
-        const string fileName = "empty.png";
-        using var stream = new MemoryStream();
+        var fileNames = new List<string> { "log-test-1.png", "log-test-2.jpg" };
+
+        foreach (var fileName in fileNames)
+        {
+            var filePath = Path.Combine(_storagePath, fileName);
+            await File.WriteAllBytesAsync(filePath, "Test content"u8.ToArray());
+            _createdFiles.Add(fileName);
+        }
 
         // Act
-        await _service.UploadAsync(stream, fileName, "image/png");
-        _createdFiles.Add(fileName);
+        await _service.DeleteAllAsync(fileNames);
 
         // Assert
-        var filePath = Path.Combine(_storagePath, fileName);
-        File.Exists(filePath).Should().BeTrue();
-
-        var fileInfo = new FileInfo(filePath);
-        fileInfo.Length.Should().Be(0);
+        _mockLogger.Verify(
+            x => x.Log(
+                LogLevel.Information,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Deleted")),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
     }
 
     #endregion

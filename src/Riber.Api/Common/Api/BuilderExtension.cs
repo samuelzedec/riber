@@ -43,6 +43,7 @@ public static class BuilderExtension
 
     private static void AddConfigurations(this WebApplicationBuilder builder)
     {
+        builder.WebHost.ConfigureKestrel(options => options.AddServerHeader = false);
         builder.Configuration.AddEnvironmentVariables();
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddProblemDetails();

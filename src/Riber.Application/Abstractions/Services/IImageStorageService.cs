@@ -23,9 +23,9 @@ public interface IImageStorageService
     Task<Stream> GetImageStreamAsync(string fileName);
 
     /// <summary>
-    /// Remove uma imagem do serviço de armazenamento.
+    /// Remove uma ou mais imagens do serviço de armazenamento.
     /// </summary>
-    /// <param name="fileName">O nome do arquivo da imagem a ser removida.</param>
-    /// <returns>Uma task representando a operação assíncrona.</returns>
-    Task DeleteAsync(string fileName);
+    /// <param name="fileKeys">As chaves dos arquivos das imagens que devem ser removidas.</param>
+    /// <returns>Um IEnumerable contendo as chaves dos arquivos que foram excluídos.</returns>
+    Task<IEnumerable<string>> DeleteAllAsync(List<string> fileKeys);
 }

@@ -13,6 +13,7 @@ using Riber.Infrastructure.Settings;
 namespace Riber.Api.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/v{version:apiVersion}/company")]
 [ApiVersion("1.0")]
 [Produces("application/json")]
@@ -32,7 +33,6 @@ public sealed class CompanyController(IMediator mediator) : ControllerBase
     }
     
     [HttpPut]
-    [Authorize(AuthenticationSchemes = nameof(AccessTokenSettings))]
     [ProducesResponseType<Result<UpdateCompanyCommandResponse>>(StatusCodes.Status200OK)]
     [RequirePermission(PermissionsSettings.Companies.Read, PermissionsSettings.Companies.Update)]
     [RequestTimeout("standard")] 
@@ -45,7 +45,6 @@ public sealed class CompanyController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
-    [Authorize]
     [ProducesResponseType<Result<GetCompanyByIdQueryResponse>>(StatusCodes.Status200OK)]
     [RequirePermission(PermissionsSettings.Companies.Read)]
     [RequestTimeout("standard")]

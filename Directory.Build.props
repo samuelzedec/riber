@@ -4,7 +4,7 @@
     <Companies>Samuel Zedec</Companies>
     <Copyright>Copyright © $([System.DateTime]::Now.Year)</Copyright>
     <Description>Sistema de gestão financeira para um lanchonete local</Description>
-    <Version>4.0.0</Version>
+    <Version>4.0.1</Version>
   </PropertyGroup>
 
   <!-- Repositório e Documentação -->

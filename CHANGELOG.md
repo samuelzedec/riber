@@ -1,17 +1,26 @@
 # Riber - Changelog
 
-## v4.0.1 - 19/10/2025
+# v4.0.1 - 22/10/2025
+
+- **CORREÇÃO**: Mudança no Job de limpeza de imagens na Bucket
+- **MELHORIA**: Nova propriedade para mapear StatusCode no Result
+
+---
+
+## v4.0.0 - 19/10/2025
+
 - **BREAKING CHANGE**: Reestruturação completa da resposta de erros da API
-    - Adicionada propriedade `type` para identificar o tipo do erro
-    - Alterada propriedade `messages` (array) para `message` (string única)
-    - Adicionada propriedade `details` (objeto) para erros de validação agrupados por campo
-    - Novo formato: `{ "type": "ERROR_TYPE", "message": "...", "details": { "Field": ["error1", "error2"] } }`
+- Adicionada propriedade `type` para identificar o tipo do erro
+- Alterada propriedade `messages` (array) para `message` (string única)
+- Adicionada propriedade `details` (objeto) para erros de validação agrupados por campo
+- Novo formato: `{ "type": "ERROR_TYPE", "message": "...", "details": { "Field": ["error1", "error2"] } }`
 - **MELHORIA**: Erros de validação agora agrupam múltiplas mensagens por campo
 - **MELHORIA**: Formato de erros mais alinhado com padrões modernos de API (inspirado em FastEndpoints)
 
 ---
 
 ## v3.0.1 - 18/10/2025
+
 - CORREÇÃO: Troca do pacote de versionamento da API
 - Ajuste no setup de testes da camada Api para testes de integração
 - Ajuste no analyze.sh para ficar mais consistente a validação de ambiente
@@ -19,6 +28,7 @@
 ---
 
 ## v3.0.0 - 17/10/2025
+
 - **REFATORAÇÃO**: Mudança na resposta da API, ajustando o Result Pattern
 - Remoção da propriedade Details usada para mensagens de validação do FluentValidation
 - Remoção da propriedade Message usada para mensagens resumidas
@@ -28,6 +38,7 @@
 ---
 
 ## v2.3.1 - 12/10/2025
+
 - **NOVO**: Adiciona um novo job para limpeza de imagens não usadas na Bucket
 - **CORREÇÃO**: Ajuste no validator de Criação de empresa com administrador
 - Usar SHA da action em vez da versão
@@ -37,6 +48,7 @@
 ---
 
 ## v2.3.0 - 09/10/25
+
 - **NOVO**: Integração do SonarQube no ambiente de desenvolvimento
 - Adiciona serviço SonarQube Community no Docker Compose com profile 'analysis'
 - Configura banco de dados PostgreSQL dedicado para SonarQube
@@ -53,6 +65,7 @@
 ---
 
 ## v2.2.0 - 07/10/25
+
 - **NOVO**: Sistema de diagnósticos e rastreamento distribuído
 - Adiciona configuração centralizada para ActivitySource na camada Application
 - Melhora significativamente o LoggingBehavior com suporte a distributed tracing
@@ -73,17 +86,20 @@
 ---
 
 ## v2.1.1 - 05/10/25
+
 - Adicionado suporte ao SonarQube para análise de qualidade de código
 - Substituídos DTOs por Models no projeto para simplificar a lógica de dados
 
 ---
 
 ## v2.0.1 - 05/10/25
+
 - **TEMPORÁRIO**: Deploy na AWS suspenso temporariamente
 
 ---
 
 ## v2.0.0 - 05/10/25
+
 - **BREAKING CHANGE**: Reestruturação das mensagens de erro em módulos organizados
 - Remove classe monolítica `ErrorMessage.cs` e substitui por estrutura modular
 - Cria subdiretórios organizados: `Common/`, `Entities/` e `ValueObjects/`
@@ -100,6 +116,7 @@
 ---
 
 ## v1.0.3 - 29/09/25
+
 - Retira os IsFailure do Result Pattern
 - Ajustes os testes para remover o Result Pattern
 - Correção no token de acesso do GHCR
@@ -107,11 +124,13 @@
 ---
 
 ## v1.0.2 - 29/09/25
+
 - Ajusta o CD para usar tags
 - Adiciona CHANGELOG.md
 
 ---
 
 ## v1.0.1 - 28/09/25
+
 - Adiciona validação na criação de produto
 - Adiciona testes que faltavam

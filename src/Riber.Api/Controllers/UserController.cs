@@ -9,6 +9,7 @@ using Riber.Application.Features.Users.Commands.CreateUser;
 namespace Riber.Api.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/v{version:apiVersion}/user")]
 [ApiVersion("1.0")]
 [Produces("application/json")]

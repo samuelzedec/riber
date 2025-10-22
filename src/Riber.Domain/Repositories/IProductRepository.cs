@@ -80,4 +80,10 @@ public interface IProductRepository : IRepository<Product>
     /// <param name="cancellationToken">Token para cancelamento da operação assíncrona.</param>
     /// <returns>Uma coleção de imagens não utilizadas.</returns>
     Task<IReadOnlyList<Image>> GetUnusedImagesAsync(CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Remove uma imagem específica do serviço de armazenamento.
+    /// </summary>
+    /// <param name="image">A imagem que deve ser removida.</param>
+    void DeleteImage(Image image);
 }

@@ -12,6 +12,7 @@ namespace Riber.Infrastructure.Tests.BackgroundJobs;
 public class CleanupImageBucketJobTests
 {
     private readonly Mock<IImageStorageService> _mockImageStorageService;
+    private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly Mock<IProductRepository> _mockProductRepository;
     private readonly Mock<ILogger<CleanupImageBucketJob>> _mockLogger;
     private readonly Mock<IJobExecutionContext> _mockJobContext;
@@ -22,12 +23,15 @@ public class CleanupImageBucketJobTests
     {
         _mockImageStorageService = new Mock<IImageStorageService>();
         _mockProductRepository = new Mock<IProductRepository>();
+        _mockUnitOfWork = new Mock<IUnitOfWork>();
         _mockLogger = new Mock<ILogger<CleanupImageBucketJob>>();
         _mockJobContext = new Mock<IJobExecutionContext>();
 
+        _mockUnitOfWork.Setup(x => x.Products).Returns(_mockProductRepository.Object);
+
         _job = new CleanupImageBucketJob(
             _mockImageStorageService.Object,
-            _mockProductRepository.Object,
+            _mockUnitOfWork.Object,
             _mockLogger.Object
         );
 
@@ -42,7 +46,7 @@ public class CleanupImageBucketJobTests
     }
 
     [Trait("Category", "Unit")]
-    [Fact(DisplayName = "Should complete without processing when there are no unused images")]
+    [Fact(DisplayName = "Execute should complete without processing when there are no unused images")]
     public async Task Execute_WhenNoUnusedImages_ShouldCompleteWithoutProcessing()
     {
         // Arrange
@@ -56,7 +60,7 @@ public class CleanupImageBucketJobTests
 
         // Assert
         _mockImageStorageService.Verify(
-            x => x.DeleteAsync(It.IsAny<string>()), 
+            x => x.DeleteAllAsync(It.IsAny<List<string>>()),
             Times.Never
         );
 
@@ -72,56 +76,64 @@ public class CleanupImageBucketJobTests
     }
 
     [Trait("Category", "Unit")]
-    [Fact(DisplayName = "Should delete all unused images successfully")]
+    [Fact(DisplayName = "Execute should delete all unused images successfully")]
     public async Task Execute_WhenUnusedImagesExist_ShouldDeleteAllSuccessfully()
     {
         // Arrange
         var unusedImages = _imageFaker.Generate(5);
+        var deletedKeys = unusedImages.Select(x => x.ToString()).ToList();
+
         _mockProductRepository
             .Setup(x => x.GetUnusedImagesAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(unusedImages);
 
         _mockImageStorageService
-            .Setup(x => x.DeleteAsync(It.IsAny<string>()))
-            .Returns(Task.CompletedTask);
+            .Setup(x => x.DeleteAllAsync(It.IsAny<List<string>>()))
+            .ReturnsAsync(deletedKeys.AsEnumerable());
+
+        _mockUnitOfWork
+            .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(1);
 
         // Act
         await _job.Execute(_mockJobContext.Object);
 
         // Assert
         _mockImageStorageService.Verify(
-            x => x.DeleteAsync(It.IsAny<string>()), 
+            x => x.DeleteAllAsync(It.Is<List<string>>(list => list.Count == 5)),
+            Times.Once
+        );
+
+        _mockProductRepository.Verify(
+            x => x.DeleteImage(It.IsAny<Image>()),
             Times.Exactly(5)
         );
 
-        foreach (var image in unusedImages)
-        {
-            _mockImageStorageService.Verify(
-                x => x.DeleteAsync(image.ToString()), 
-                Times.Once
-            );
-        }
-
-        _mockLogger.Verify(
-            x => x.Log(
-                LogLevel.Information,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Image cleanup completed")),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+        _mockUnitOfWork.Verify(
+            x => x.SaveChangesAsync(It.IsAny<CancellationToken>()),
             Times.Once
         );
     }
 
     [Trait("Category", "Unit")]
-    [Fact(DisplayName = "Should log information when starting cleanup with image count")]
+    [Fact(DisplayName = "Execute should log information when starting cleanup with image count")]
     public async Task Execute_WhenStartingCleanup_ShouldLogImageCount()
     {
         // Arrange
         var unusedImages = _imageFaker.Generate(3);
+        var deletedKeys = unusedImages.Select(x => x.ToString()).ToList();
+
         _mockProductRepository
             .Setup(x => x.GetUnusedImagesAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(unusedImages);
+
+        _mockImageStorageService
+            .Setup(x => x.DeleteAllAsync(It.IsAny<List<string>>()))
+            .ReturnsAsync(deletedKeys.AsEnumerable());
+
+        _mockUnitOfWork
+            .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(1);
 
         // Act
         await _job.Execute(_mockJobContext.Object);
@@ -139,48 +151,53 @@ public class CleanupImageBucketJobTests
     }
 
     [Trait("Category", "Unit")]
-    [Fact(DisplayName = "Should continue processing even when deleting one image fails")]
-    public async Task Execute_WhenDeletingOneImageFails_ShouldContinueProcessing()
+    [Fact(DisplayName = "Execute should mark only successfully deleted images for deletion")]
+    public async Task Execute_WhenPartialDeletion_ShouldMarkOnlySuccessfulOnes()
     {
         // Arrange
         var unusedImages = _imageFaker.Generate(3);
-        var imageWithError = unusedImages[1];
+        var deletedKeys = new List<string> { unusedImages[0].ToString(), unusedImages[2].ToString() };
 
         _mockProductRepository
             .Setup(x => x.GetUnusedImagesAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(unusedImages);
 
         _mockImageStorageService
-            .Setup(x => x.DeleteAsync(imageWithError.ToString()))
-            .ThrowsAsync(new Exception("Error deleting image from storage"));
+            .Setup(x => x.DeleteAllAsync(It.IsAny<List<string>>()))
+            .ReturnsAsync(deletedKeys.AsEnumerable());
 
-        _mockImageStorageService
-            .Setup(x => x.DeleteAsync(It.Is<string>(s => s != imageWithError.ToString())))
-            .Returns(Task.CompletedTask);
+        _mockUnitOfWork
+            .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(1);
 
         // Act
         await _job.Execute(_mockJobContext.Object);
 
         // Assert
-        _mockImageStorageService.Verify(
-            x => x.DeleteAsync(It.IsAny<string>()), 
-            Times.Exactly(3)
+        _mockProductRepository.Verify(
+            x => x.DeleteImage(unusedImages[0]),
+            Times.Once
         );
 
-        _mockLogger.Verify(
-            x => x.Log(
-                LogLevel.Information,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Successfully deleted: 2, Failed: 1")),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+        _mockProductRepository.Verify(
+            x => x.DeleteImage(unusedImages[1]),
+            Times.Never
+        );
+
+        _mockProductRepository.Verify(
+            x => x.DeleteImage(unusedImages[2]),
+            Times.Once
+        );
+
+        _mockUnitOfWork.Verify(
+            x => x.SaveChangesAsync(It.IsAny<CancellationToken>()),
             Times.Once
         );
     }
 
     [Trait("Category", "Unit")]
-    [Fact(DisplayName = "Should log error when image deletion fails")]
-    public async Task Execute_WhenImageDeletionFails_ShouldLogError()
+    [Fact(DisplayName = "Execute should log error when deletion fails")]
+    public async Task Execute_WhenDeletionFails_ShouldLogError()
     {
         // Arrange
         var unusedImages = _imageFaker.Generate(1);
@@ -191,7 +208,7 @@ public class CleanupImageBucketJobTests
             .ReturnsAsync(unusedImages);
 
         _mockImageStorageService
-            .Setup(x => x.DeleteAsync(It.IsAny<string>()))
+            .Setup(x => x.DeleteAllAsync(It.IsAny<List<string>>()))
             .ThrowsAsync(expectedException);
 
         // Act
@@ -202,50 +219,26 @@ public class CleanupImageBucketJobTests
             x => x.Log(
                 LogLevel.Error,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Failed to delete image")),
+                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Failed to delete images from storage service")),
                 expectedException,
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once
         );
-    }
 
-    [Trait("Category", "Unit")]
-    [Fact(DisplayName = "Should log debug for each successfully deleted image")]
-    public async Task Execute_WhenImageIsDeletedSuccessfully_ShouldLogDebug()
-    {
-        // Arrange
-        var unusedImages = _imageFaker.Generate(2);
-        _mockProductRepository
-            .Setup(x => x.GetUnusedImagesAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(unusedImages);
-
-        _mockImageStorageService
-            .Setup(x => x.DeleteAsync(It.IsAny<string>()))
-            .Returns(Task.CompletedTask);
-
-        // Act
-        await _job.Execute(_mockJobContext.Object);
-
-        // Assert
-        _mockLogger.Verify(
-            x => x.Log(
-                LogLevel.Debug,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Successfully deleted image")),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.Exactly(2)
+        _mockProductRepository.Verify(
+            x => x.DeleteImage(It.IsAny<Image>()),
+            Times.Never
         );
     }
 
     [Trait("Category", "Unit")]
-    [Fact(DisplayName = "Should pass correct CancellationToken when fetching unused images")]
+    [Fact(DisplayName = "Execute should pass correct CancellationToken when fetching unused images")]
     public async Task Execute_ShouldPassCancellationTokenToRepository()
     {
         // Arrange
         var cancellationTokenSource = new CancellationTokenSource();
         var cancellationToken = cancellationTokenSource.Token;
-        
+
         _mockJobContext.Setup(x => x.CancellationToken).Returns(cancellationToken);
 
         _mockProductRepository
@@ -257,58 +250,39 @@ public class CleanupImageBucketJobTests
 
         // Assert
         _mockProductRepository.Verify(
-            x => x.GetUnusedImagesAsync(cancellationToken), 
+            x => x.GetUnusedImagesAsync(cancellationToken),
             Times.Once
         );
     }
 
     [Trait("Category", "Unit")]
-    [Fact(DisplayName = "Should process multiple failures and count correctly")]
-    public async Task Execute_WhenMultipleFailuresOccur_ShouldCountCorrectly()
+    [Fact(DisplayName = "Execute should not save changes when no images are deleted successfully")]
+    public async Task Execute_WhenNoImagesDeletedSuccessfully_ShouldNotSaveChanges()
     {
         // Arrange
-        var unusedImages = _imageFaker.Generate(5);
-        
+        var unusedImages = _imageFaker.Generate(2);
+        var emptyDeletedKeys = new List<string>();
+
         _mockProductRepository
             .Setup(x => x.GetUnusedImagesAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(unusedImages);
 
         _mockImageStorageService
-            .Setup(x => x.DeleteAsync(unusedImages[1].ToString()))
-            .ThrowsAsync(new Exception("Error 1"));
-
-        _mockImageStorageService
-            .Setup(x => x.DeleteAsync(unusedImages[3].ToString()))
-            .ThrowsAsync(new Exception("Error 2"));
-
-        _mockImageStorageService
-            .Setup(x => x.DeleteAsync(It.Is<string>(s => 
-                s != unusedImages[1].ToString() && 
-                s != unusedImages[3].ToString())))
-            .Returns(Task.CompletedTask);
+            .Setup(x => x.DeleteAllAsync(It.IsAny<List<string>>()))
+            .ReturnsAsync(emptyDeletedKeys.AsEnumerable());
 
         // Act
         await _job.Execute(_mockJobContext.Object);
 
         // Assert
-        _mockLogger.Verify(
-            x => x.Log(
-                LogLevel.Information,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Successfully deleted: 3, Failed: 2")),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.Once
+        _mockProductRepository.Verify(
+            x => x.DeleteImage(It.IsAny<Image>()),
+            Times.Never
         );
 
-        _mockLogger.Verify(
-            x => x.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Failed to delete image")),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.Exactly(2)
+        _mockUnitOfWork.Verify(
+            x => x.SaveChangesAsync(It.IsAny<CancellationToken>()),
+            Times.Never
         );
     }
 }
