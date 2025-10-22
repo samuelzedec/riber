@@ -5,7 +5,7 @@ using Riber.Domain.ValueObjects.RandomToken;
 
 namespace Riber.Domain.Entities;
 
-public sealed class Order 
+public sealed class Order
     : TenantEntity, IAggregateRoot, IHasRandomToken
 {
     #region Properties
@@ -16,27 +16,24 @@ public sealed class Order
     public decimal SubTotal => _items.Sum(x => x.SubTotal);
     public decimal TotalDiscounts => _items.Sum(x => x.DiscountAmount);
     public decimal TotalAmount => SubTotal - TotalDiscounts;
-    
+
     #endregion
-    
+
     #region Navigation Properties
-    
+
     public Company Company { get; private set; } = null!;
     public User Attendant { get; private set; } = null!;
     public IReadOnlyCollection<OrderItem> ItemsReadOnly => _items.AsReadOnly();
-    
+
     #endregion
-    
+
     #region Constructors
 
-    private Order() : base(Guid.Empty)
-    {
-        Token = null!;
-        CompanyId = Guid.Empty;
-        AttendantId = Guid.Empty;
-    }
+#pragma warning disable CS8618, CA1823
+    private Order() : base(Guid.Empty) { }
+#pragma warning restore CS8618, CA1823
 
-    private Order(Guid companyId, Guid attendantId) 
+    private Order(Guid companyId, Guid attendantId)
         : base(Guid.CreateVersion7())
     {
         CompanyId = companyId;
@@ -45,11 +42,11 @@ public sealed class Order
     }
 
     #endregion
-    
+
     #region Factories
 
     public static Order Create(Guid companyId, Guid attendantId)
         => new(companyId, attendantId);
-    
+
     #endregion
 }

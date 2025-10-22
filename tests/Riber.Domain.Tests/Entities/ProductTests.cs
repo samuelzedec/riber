@@ -1,4 +1,5 @@
 using FluentAssertions;
+using Riber.Domain.Constants.Messages.Entities;
 using Riber.Domain.Entities;
 using Riber.Domain.Exceptions;
 
@@ -167,7 +168,7 @@ public sealed class ProductTests : BaseTest
             companyId
         );
 
-        act.Should().Throw<IdentifierNullException>();
+        act.Should().Throw<IdentifierNullException>().WithMessage(ProductErrors.InvalidCompany);
     }
 
     #endregion

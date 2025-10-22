@@ -26,14 +26,9 @@ public sealed class ProductCategory
 
     #region Constructors
 
-    private ProductCategory() : base(Guid.Empty)
-    {
-        Name = string.Empty;
-        Description = string.Empty;
-        Code = string.Empty;
-        IsActive = false;
-        CompanyId = Guid.Empty;
-    }
+#pragma warning disable CS8618, CA1823
+    private ProductCategory() : base(Guid.Empty) { }
+#pragma warning restore CS8618, CA1823
 
     private ProductCategory(
         string name,
@@ -64,10 +59,9 @@ public sealed class ProductCategory
         if (string.IsNullOrWhiteSpace(code))
             throw new ProductCategoryCodeNullException(CategoryErrors.CodeEmpty);
 
-        if (companyId == Guid.Empty)
-            throw new IdentifierNullException(CompanyErrors.Invalid);
-
-        return new ProductCategory(name, description, code, companyId);
+        return companyId == Guid.Empty
+            ? throw new IdentifierNullException(CompanyErrors.Invalid)
+            : new ProductCategory(name, description, code, companyId);
     }
 
     #endregion
@@ -80,7 +74,7 @@ public sealed class ProductCategory
             throw new ProductCategoryNameNullException(CategoryErrors.NameEmpty);
 
         Name = name;
-        if(description is not null)
+        if (description is not null)
             Description = description;
     }
 

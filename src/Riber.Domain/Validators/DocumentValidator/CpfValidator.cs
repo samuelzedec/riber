@@ -21,9 +21,7 @@ public sealed record CpfValidator : IDocumentValidator
         if (cpf.Distinct().Count() == 1)
             throw new InvalidCpfException(CpfErrors.OnlyRepeatedDigits);
 
-        int[] digits = cpf
-            .Select(c => c - '0')
-            .ToArray();
+        int[] digits = [.. cpf.Select(c => c - '0')];
 
         int sum = 0;
         for (int i = 0; i < 9; i++)
@@ -60,7 +58,7 @@ public sealed record CpfValidator : IDocumentValidator
     }
 
     public static string Format(string document)
-        => $"{document.Substring(0, 3)}.{document.Substring(3, 3)}.{document.Substring(6, 3)}-{document.Substring(9, 2)}";
+        => $"{document[..3]}.{document.Substring(3, 3)}.{document.Substring(6, 3)}-{document.Substring(9, 2)}";
 
     #endregion
 }

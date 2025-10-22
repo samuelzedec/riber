@@ -25,18 +25,9 @@ public sealed class Invitation
 
     #region Constructors
 
-    private Invitation() : base(Guid.CreateVersion7())
-    {
-        Email = null!;
-        CompanyId = Guid.Empty;
-        Role = null!;
-        IsUsed = false;
-        Position = default;
-        Permissions = string.Empty;
-        CreatedByUserId = Guid.Empty;
-        ExpiresAt = default;
-        Token = null!;
-    }
+#pragma warning disable CS8618, CA1823
+    private Invitation() : base(Guid.CreateVersion7()) { }
+#pragma warning restore CS8618, CA1823
 
     private Invitation(
         Email email,

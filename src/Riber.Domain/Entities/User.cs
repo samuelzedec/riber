@@ -29,13 +29,9 @@ public sealed class User
 
     #region Constructors
 
-    public User() : base(Guid.Empty)
-    {
-        FullName = null!;
-        TaxId = null!;
-        CompanyId = null!;
-        IsActive = false;
-    }
+#pragma warning disable CS8618, CA1823
+    public User() : base(Guid.Empty) { }
+#pragma warning restore CS8618, CA1823
 
     private User(
         FullName fullName,

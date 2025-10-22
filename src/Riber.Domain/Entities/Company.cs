@@ -22,13 +22,9 @@ public sealed class Company
 
     #region Constructors
     
-    private Company() : base(Guid.Empty) 
-    {
-        Name = null!;
-        TaxId = null!;
-        Email = null!;
-        Phone = null!;
-    }
+#pragma warning disable CS8618, CA1823
+    private Company() : base(Guid.Empty) { }
+#pragma warning restore CS8618, CA1823
 
     private Company(
         CompanyName name,

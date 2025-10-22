@@ -21,12 +21,10 @@ public sealed record CnpjValidator : IDocumentValidator
         if (cnpj.Distinct().Count() == 1)
             throw new InvalidCnpjException(CnpjErrors.OnlyRepeatedDigits);
 
-        int[] digits = cnpj
-            .Select(c => c - '0')
-            .ToArray();
+        int[] digits = [.. cnpj.Select(c => c - '0')];
 
         // Cálculo do primeiro dígito verificador
-        int[] multiplier1 = { 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2 };
+        int[] multiplier1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
         int sum = 0;
 
         for (int i = 0; i < 12; i++)
@@ -39,7 +37,7 @@ public sealed record CnpjValidator : IDocumentValidator
             throw new InvalidCnpjException(CnpjErrors.Invalid);
 
         // Cálculo do segundo dígito verificador
-        int[] multiplier2 = { 6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2 };
+        int[] multiplier2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
         sum = 0;
 
         for (int i = 0; i < 13; i++)
@@ -66,7 +64,7 @@ public sealed record CnpjValidator : IDocumentValidator
     }
 
     public static string Format(string document)
-        => $"{document.Substring(0, 2)}.{document.Substring(2, 3)}.{document.Substring(5, 3)}/{document.Substring(8, 4)}-{document.Substring(12, 2)}";
+        => $"{document[..2]}.{document.Substring(2, 3)}.{document.Substring(5, 3)}/{document.Substring(8, 4)}-{document.Substring(12, 2)}";
 
     #endregion
 }

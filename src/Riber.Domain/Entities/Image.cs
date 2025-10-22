@@ -33,16 +33,10 @@ public sealed class Image : BaseEntity
 
     #region Constructors
 
-    private Image() : base(Guid.Empty)
-    {
-        Length = 0;
-        ContentType = string.Empty;
-        OriginalName = string.Empty;
-        Key = string.Empty;
-        Extension = string.Empty;
-        ShouldDelete = false;
-        MarkedForDeletionAt = null;
-    }
+#pragma warning disable CS8618, CA1823
+    private Image() : base(Guid.Empty) { }
+#pragma warning restore CS8618, CA1823
+
     private Image(long length, string contentType, string originalName, string key, string extension)
         : base(Guid.CreateVersion7())
     {

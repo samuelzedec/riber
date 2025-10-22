@@ -32,15 +32,9 @@ public sealed class Product
 
     #region Constructors
 
-    private Product() : base(Guid.Empty)
-    {
-        Name = string.Empty;
-        Description = string.Empty;
-        UnitPrice = null!;
-        CategoryId = Guid.Empty;
-        IsActive = false;
-        CompanyId = Guid.Empty;
-    }
+#pragma warning disable CS8618, CA1823
+    private Product() : base(Guid.Empty) { }
+#pragma warning restore CS8618, CA1823
 
     private Product(
         string name,
@@ -57,6 +51,7 @@ public sealed class Product
         CompanyId = companyId;
         ImageId = imageId;
         IsActive = true;
+        Image = null;
     }
 
     #endregion
@@ -80,10 +75,9 @@ public sealed class Product
         if (categoryId == Guid.Empty)
             throw new IdentifierNullException(ProductErrors.InvalidCategory);
 
-        if (companyId == Guid.Empty)
-            throw new IdentifierNullException(ProductErrors.InvalidCategory);
-
-        return new Product(name, description, price, categoryId, companyId, imageId);
+        return companyId == Guid.Empty
+            ? throw new IdentifierNullException(ProductErrors.InvalidCompany)
+            : new Product(name, description, price, categoryId, companyId, imageId);
     }
 
     #endregion
