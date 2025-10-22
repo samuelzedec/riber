@@ -13,6 +13,7 @@ using Riber.Infrastructure.Settings;
 namespace Riber.Api.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/v{version:apiVersion}/auth")] 
 [ApiVersion("1.0")]
 [Produces("application/json")]
@@ -32,7 +33,6 @@ public sealed class AuthController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("permissions")]
-    [Authorize]
     [RequestTimeout(("fast"))]
     [ProducesResponseType<Result<GetPermissionsQueryResponse>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetPermissionsByAuthenticatedUser(CancellationToken cancellationToken)
@@ -52,7 +52,6 @@ public sealed class AuthController(IMediator mediator) : ControllerBase
     }
     
     [HttpPost("logout")]
-    [Authorize]
     [RequestTimeout(("fast"))]
     [ProducesResponseType<Result>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Logout(CancellationToken cancellationToken)
