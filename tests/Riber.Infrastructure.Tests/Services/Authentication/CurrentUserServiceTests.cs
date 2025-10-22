@@ -132,4 +132,25 @@ public sealed class CurrentUserServiceTests : BaseTest
         var act = () => _currentUserService.GetCompanyId();
         act.Should().Throw<BadRequestException>().WithMessage(CompanyErrors.Invalid);
     }
+
+    [Trait("Category", "Unit")]
+    [Fact(DisplayName = "Should throw BadRequestException when company id is string empty")]
+    public void GetCompanyId_WhenCompanyIdIStringEmpty_ShouldThrowBadRequestException()
+    {
+        // Arrange
+        Claim[] claims =
+        [
+            new(ClaimTypes.NameIdentifier, Guid.CreateVersion7().ToString()),
+            new("companyId", ""),
+            new(ClaimTypes.Email, _faker.Person.Email)
+        ];
+        var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(claims, "Bearer"));
+
+        _mockHttpContextAccessor.Setup(x => x.HttpContext)
+            .Returns(new DefaultHttpContext { User = claimsPrincipal });
+
+        // Act & Assert
+        var act = () => _currentUserService.GetCompanyId();
+        act.Should().Throw<BadRequestException>().WithMessage(CompanyErrors.Invalid);
+    }
 }

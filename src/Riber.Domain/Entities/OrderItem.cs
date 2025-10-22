@@ -33,14 +33,9 @@ public sealed class OrderItem
 
     #region Constructors
 
-    private OrderItem() : base(Guid.Empty)
-    {
-        OrderId = Guid.Empty;
-        ProductId = Guid.Empty;
-        ProductName = string.Empty;
-        UnitPrice = Money.Zero();
-        Quantity = Quantity.Zero();
-    }
+#pragma warning disable CS8618, CA1823
+    private OrderItem() : base(Guid.Empty) { }
+#pragma warning restore CS8618, CA1823
 
     private OrderItem(
         Guid orderId,

@@ -29,9 +29,8 @@ public sealed class CurrentUserService(IHttpContextAccessor httpContextAccessor)
     public Guid GetCompanyId()
     {
         var companyIdClaim = CurrentUser.FindFirst("companyId")!;
-        if (!Guid.TryParse(companyIdClaim.Value, out var companyId))
-            throw new BadRequestException(CompanyErrors.Invalid);
-
-        return companyId;
+        return !Guid.TryParse(companyIdClaim.Value, out var companyId) 
+            ? throw new BadRequestException(CompanyErrors.Invalid) 
+            : companyId;
     }
 }

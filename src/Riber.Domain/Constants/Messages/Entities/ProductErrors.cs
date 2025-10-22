@@ -9,4 +9,5 @@ public static class ProductErrors
     public const string PriceEmpty = "O produto deve ter um preço.";
     public const string PriceGreaterThanZero = "O preço do produto deve ser maior que zero.";
     public const string InvalidCategory = "O produto deve pertencer a uma categoria.";
+    public const string InvalidCompany = "O produto deve pertencer a uma empresa.";
 }

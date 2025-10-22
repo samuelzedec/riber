@@ -42,7 +42,7 @@ public static class DependencyInjection
         ILoggingBuilder logging)
     {
         var defaultConnection = configuration.GetConnectionString("DefaultConnection")
-            ?? throw new InternalException("Default connection string is not set.");
+                                ?? throw new InternalException("Default connection string is not set.");
 
         logging.AddLogging();
         services.AddPersistence(defaultConnection);
@@ -86,14 +86,11 @@ public static class DependencyInjection
 
     private static void AddPersistence(this IServiceCollection services, string defaultConnection)
     {
-        services.AddDbContext<AppDbContext>(options =>
-        {
-            options
-                .UseNpgsql(defaultConnection, b => b.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName))
-                .AddInterceptors(
-                    new CaseInsensitiveInterceptor(),
-                    new AuditInterceptor());
-        });
+        services.AddDbContext<AppDbContext>(options => options
+            .UseNpgsql(defaultConnection, b => b.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName))
+            .AddInterceptors(
+                new CaseInsensitiveInterceptor(),
+                new AuditInterceptor()));
     }
 
     private static void AddRepositories(this IServiceCollection services)
