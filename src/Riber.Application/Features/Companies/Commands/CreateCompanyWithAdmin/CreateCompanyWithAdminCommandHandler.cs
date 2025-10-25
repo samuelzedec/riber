@@ -4,6 +4,7 @@ using Riber.Application.Common;
 using Riber.Application.Exceptions;
 using Riber.Application.Extensions;
 using Riber.Application.Models;
+using Riber.Application.Models.User;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Entities;
 using Riber.Domain.Enums;

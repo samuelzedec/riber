@@ -1,6 +1,8 @@
-﻿namespace Riber.Application.Exceptions;
+﻿using System.Net;
 
-public abstract class ApplicationException(string message, int code) : Exception(message)
+namespace Riber.Application.Exceptions;
+
+public abstract class ApplicationException(string message, HttpStatusCode code) : Exception(message)
 {
-    public int Code => code;
+    public HttpStatusCode Code => code;
 }

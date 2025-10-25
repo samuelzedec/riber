@@ -5,6 +5,7 @@ using Riber.Application.Abstractions.Services;
 using Riber.Application.Exceptions;
 using Riber.Application.Features.Auths.Commands.Login;
 using Riber.Application.Models;
+using Riber.Application.Models.User;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Entities;
 using Riber.Domain.Enums;

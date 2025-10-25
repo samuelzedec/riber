@@ -3,6 +3,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Exceptions;
 using Riber.Application.Models;
+using Riber.Application.Models.Auth;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Infrastructure.Persistence;
 using Riber.Infrastructure.Persistence.Identity;

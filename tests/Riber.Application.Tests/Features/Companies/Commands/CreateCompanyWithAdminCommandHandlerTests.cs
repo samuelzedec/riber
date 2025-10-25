@@ -6,6 +6,7 @@ using Riber.Application.Exceptions;
 using Riber.Application.Extensions;
 using Riber.Application.Features.Companies.Commands.CreateCompanyWithAdmin;
 using Riber.Application.Models;
+using Riber.Application.Models.User;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Entities;
 using Riber.Domain.Enums;

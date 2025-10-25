@@ -5,6 +5,7 @@ using Riber.Application.Abstractions.Services;
 using Riber.Application.Exceptions;
 using Riber.Application.Features.Auths.Queries.GetRefreshToken;
 using Riber.Application.Models;
+using Riber.Application.Models.User;
 using Riber.Domain.Entities;
 using Riber.Domain.Enums;
 using Riber.Domain.Tests;

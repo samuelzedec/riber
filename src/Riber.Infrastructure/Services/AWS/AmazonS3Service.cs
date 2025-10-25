@@ -28,14 +28,14 @@ public sealed class AmazonS3Service : IImageStorageService
             throw new InvalidOperationException("AWS S3 bucket name is not configured. Please set 'AWS:S3:BucketImagesName' in configuration.");
     }
 
-    public async Task UploadAsync(Stream stream, string fileName, string contentType)
+    public async Task UploadAsync(Stream stream, string imageKey, string contentType)
     {
         try
         {
             var request = new PutObjectRequest
             {
                 BucketName = _bucketName,
-                Key = fileName,
+                Key = imageKey,
                 InputStream = stream,
                 ContentType = contentType,
                 ServerSideEncryptionMethod = ServerSideEncryptionMethod.AES256,
@@ -44,7 +44,7 @@ public sealed class AmazonS3Service : IImageStorageService
 
             await _amazonS3.PutObjectAsync(request);
             _logger.LogDebug("Successfully uploaded image {FileName} to S3 bucket {BucketName}",
-                fileName, _bucketName);
+                imageKey, _bucketName);
         }
         catch (AmazonS3Exception s3Ex) when (s3Ex.ErrorCode == "AccessDenied")
         {
@@ -68,15 +68,15 @@ public sealed class AmazonS3Service : IImageStorageService
         }
     }
 
-    public async Task<Stream> GetImageStreamAsync(string fileName)
+    public async Task<Stream> GetImageStreamAsync(string imageKey)
     {
         try
         {
-            var request = new GetObjectRequest { BucketName = _bucketName, Key = fileName };
+            var request = new GetObjectRequest { BucketName = _bucketName, Key = imageKey };
             var response = await _amazonS3.GetObjectAsync(request);
 
             _logger.LogDebug("Successfully retrieved image {FileName} from S3 bucket {BucketName}",
-                fileName, _bucketName);
+                imageKey, _bucketName);
 
             return response.ResponseStream;
         }
@@ -102,7 +102,7 @@ public sealed class AmazonS3Service : IImageStorageService
         }
     }
 
-    public async Task<IEnumerable<string>> DeleteAllAsync(List<string> fileKeys)
+    public async Task<IEnumerable<string>> DeleteAllAsync(params List<string> fileKeys)
     {
         try
         {

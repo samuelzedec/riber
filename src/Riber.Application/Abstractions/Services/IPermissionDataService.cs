@@ -1,4 +1,5 @@
 using Riber.Application.Models;
+using Riber.Application.Models.Auth;
 
 namespace Riber.Application.Abstractions.Services;
 

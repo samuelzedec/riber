@@ -5,6 +5,8 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Moq;
 using Riber.Application.Models;
+using Riber.Application.Models.Auth;
+using Riber.Application.Models.User;
 using Riber.Domain.Entities;
 using Riber.Domain.Enums;
 using Riber.Domain.Tests;

@@ -12,15 +12,15 @@ using Riber.Infrastructure.Persistence;
 namespace Riber.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251005202940_CreateImageTableWithProductRelationship")]
-    partial class CreateImageTableWithProductRelationship
+    [Migration("20251023011529_CreateImageTable")]
+    partial class CreateImageTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.6")
+                .HasAnnotation("ProductVersion", "9.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "vector");
@@ -58,11 +58,6 @@ namespace Riber.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<string>("ContentType")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("content_type");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamptz")
                         .HasColumnName("created_at");
@@ -75,11 +70,6 @@ namespace Riber.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("extension");
-
-                    b.Property<string>("Key")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("key");
 
                     b.Property<long>("Length")
                         .HasColumnType("bigint")
@@ -1482,6 +1472,31 @@ namespace Riber.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("TaxId")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Riber.Domain.Entities.Image", b =>
+                {
+                    b.OwnsOne("Riber.Domain.ValueObjects.ContentType.ContentType", "ContentType", b1 =>
+                        {
+                            b1.Property<Guid>("ImageId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(255)
+                                .HasColumnType("text")
+                                .HasColumnName("content_type");
+
+                            b1.HasKey("ImageId");
+
+                            b1.ToTable("image");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ImageId");
+                        });
+
+                    b.Navigation("ContentType")
                         .IsRequired();
                 });
 

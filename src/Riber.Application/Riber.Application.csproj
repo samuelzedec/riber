@@ -18,7 +18,4 @@
   <ItemGroup>
     <ProjectReference Include="..\Riber.Domain\Riber.Domain.csproj"/>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Events\"/>
-  </ItemGroup>
 </Project>

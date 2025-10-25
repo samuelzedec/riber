@@ -8,6 +8,7 @@ using Riber.Infrastructure;
 using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Riber.Api.Authorizations.Permissions;
@@ -43,7 +44,13 @@ public static class BuilderExtension
 
     private static void AddConfigurations(this WebApplicationBuilder builder)
     {
-        builder.WebHost.ConfigureKestrel(options => options.AddServerHeader = false);
+        builder.WebHost.ConfigureKestrel(options =>
+        {
+            options.AddServerHeader = false;
+            options.ConfigureEndpointDefaults(endpoint
+                => endpoint.Protocols = HttpProtocols.Http1AndHttp2AndHttp3);
+        });
+
         builder.Configuration.AddEnvironmentVariables();
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddProblemDetails();
@@ -196,7 +203,8 @@ public static class BuilderExtension
             options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.Never;
         });
 
-        builder.Services.AddControllers()
+        builder.Services
+            .AddControllers()
             .AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;

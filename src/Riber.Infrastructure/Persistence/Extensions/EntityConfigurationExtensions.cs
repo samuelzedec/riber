@@ -195,4 +195,18 @@ public static class EntityConfigurationExtensions
 
         return builder;
     }
+
+    public static EntityTypeBuilder<T> ConfigureContentType<T>(this EntityTypeBuilder<T> builder)
+        where T : class, IHasContentType
+    {
+        builder.OwnsOne(x => x.ContentType, contentType => contentType
+            .Property(c => c.Value)
+            .HasColumnName("content_type")
+            .HasColumnType("text")
+            .HasMaxLength(255)
+            .IsRequired()
+        ).Navigation(x => x.ContentType).IsRequired();
+
+        return builder;
+    }
 }

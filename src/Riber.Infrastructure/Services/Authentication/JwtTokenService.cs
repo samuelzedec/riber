@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Models;
+using Riber.Application.Models.User;
 using Riber.Infrastructure.Settings;
 
 namespace Riber.Infrastructure.Services.Authentication;

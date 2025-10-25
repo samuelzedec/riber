@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Riber.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateImageTableWithProductRelationship : Migration
+    public partial class CreateImageTable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -36,10 +36,9 @@ namespace Riber.Infrastructure.Persistence.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     should_delete = table.Column<bool>(type: "boolean", nullable: false),
                     length = table.Column<long>(type: "bigint", nullable: false),
-                    content_type = table.Column<string>(type: "text", nullable: false),
+                    content_type = table.Column<string>(type: "text", maxLength: 255, nullable: false),
                     marked_for_deletion_at = table.Column<DateTimeOffset>(type: "timestamptz", nullable: true),
                     original_name = table.Column<string>(type: "text", nullable: false),
-                    key = table.Column<string>(type: "text", nullable: false),
                     extension = table.Column<string>(type: "text", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamptz", nullable: false),
                     modified_at = table.Column<DateTime>(type: "timestamptz", nullable: true),

@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
 using Riber.Api.Tests.Fixtures;
@@ -48,7 +49,7 @@ public sealed class AuthControllerTests(WebAppFixture webAppFixture, DatabaseFix
         loginResponse.Should().NotBeNull();
         loginResponse.IsSuccess.Should().BeFalse();
         loginResponse.Value.Should().BeNull();
-        loginResponse.Error.Type.Should().Be("NOT_FOUND");
+        loginResponse.Error.Type.Should().Be(nameof(HttpStatusCode.NotFound));
         loginResponse.Error.Message.Should().NotBeNullOrEmpty();
         loginResponse.Error.Details.Should().BeNullOrEmpty();
     }

@@ -5,6 +5,8 @@ using Riber.Infrastructure.Services;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Exceptions;
 using Riber.Application.Models;
+using Riber.Application.Models.Auth;
+using Riber.Application.Models.User;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Entities;
 using Riber.Domain.Repositories;

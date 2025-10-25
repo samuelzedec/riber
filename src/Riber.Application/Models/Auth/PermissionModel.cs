@@ -1,4 +1,4 @@
-namespace Riber.Application.Models.Shared;
+namespace Riber.Application.Models.Auth;
 
 public sealed record PermissionModel(
     string Name,

@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Exceptions;
 using Riber.Application.Models;
+using Riber.Application.Models.Auth;
+using Riber.Application.Models.User;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Infrastructure.Persistence.Identity;
 

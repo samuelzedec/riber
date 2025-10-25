@@ -51,7 +51,7 @@ public static class DependencyInjection
         services.AddAwsServices(configuration);
         services.AddBackgroundJobs(defaultConnection);
         services.AddHealthChecksConfiguration(defaultConnection);
-        services.AddSchedulersAndJobs();
+        services.AddDispachersAndJobs();
         services.AddTelemetry();
     }
 
@@ -130,14 +130,16 @@ public static class DependencyInjection
         services.AddAWSService<IAmazonS3>();
     }
 
-    private static void AddSchedulersAndJobs(this IServiceCollection services)
+    private static void AddDispachersAndJobs(this IServiceCollection services)
     {
         // Background jobs
         services.AddTransient<SendingEmailJob>();
         services.AddTransient<CleanupImageBucketJob>();
+        services.AddTransient<DeleteImageFromStorageJob>();
 
         // Dispatchers
         services.AddScoped<IEmailDispatcher, EmailDispatcher>();
+        services.AddScoped<IDeleteImageFromStorageDispatcher, DeleteImageFromStorageDispatcher>();
     }
 
     private static void AddHealthChecksConfiguration(this IServiceCollection services, string defaultConnection)
@@ -169,6 +171,7 @@ public static class DependencyInjection
 
             CleanupImageBucketScheduler.Configure(quartz);
             SendingEmailScheduler.Configure(quartz);
+            DeleteImageFromStorageScheduler.Configure(quartz);
         });
 
         services.AddQuartzHostedService(options =>

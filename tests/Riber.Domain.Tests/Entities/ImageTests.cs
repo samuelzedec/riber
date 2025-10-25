@@ -6,7 +6,7 @@ using Riber.Domain.ValueObjects.ContentType.Exceptions;
 
 namespace Riber.Domain.Tests.Entities;
 
-public sealed class Image : BaseTest
+public sealed class ImageTests : BaseTest
 {
     #region Create
 
@@ -28,7 +28,7 @@ public sealed class Image : BaseTest
         // Assert
         result.MarkedForDeletionAt.Should().BeNull();
         result.ShouldDelete.Should().BeFalse();
-        result.ContentType.Should().BeOneOf("image/png", "image/jpeg", "image/webp");
+        result.ContentType.ToString().Should().BeOneOf("image/png", "image/jpeg", "image/webp");
         result.Length.Should().BeInRange(1_000L, 10_000_000L);
         result.OriginalName.Should().NotBeNullOrWhiteSpace();
         result.Id.Should().NotBeEmpty();

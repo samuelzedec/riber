@@ -1,6 +1,7 @@
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Exceptions;
 using Riber.Application.Models;
+using Riber.Application.Models.User;
 using Riber.Domain.Abstractions;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Entities;

@@ -1,4 +1,5 @@
 using Riber.Application.Models;
+using Riber.Application.Models.User;
 
 namespace Riber.Application.Abstractions.Services;
 

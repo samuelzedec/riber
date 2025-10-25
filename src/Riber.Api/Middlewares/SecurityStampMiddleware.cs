@@ -1,3 +1,4 @@
+using System.Net;
 using System.Security.Claims;
 using Riber.Api.Extensions;
 using Riber.Application.Abstractions.Services;
@@ -24,8 +25,8 @@ public sealed class SecurityStampMiddleware(
         {
             logger.LogError("Valores: userId = {UserId}, securityStamp = {TokenSecurityStamp}", userId, tokenSecurityStamp);
             await context.WriteErrorResponse(
-                StatusCodes.Status401Unauthorized,
-                "Token do usuário inválido ou mal formado.",
+                code: HttpStatusCode.Unauthorized,
+                message: "Token do usuário inválido ou mal formado.",
                 details: []
             );
             return;
@@ -36,7 +37,7 @@ public sealed class SecurityStampMiddleware(
         if (user is null || user.SecurityStamp != tokenSecurityStamp)
         {
             await context.WriteErrorResponse(
-                code: StatusCodes.Status401Unauthorized,
+                code: HttpStatusCode.Unauthorized,
                 message: "Security stamp inválido ou usuário não encontrado.",
                 details: []
             );
