@@ -1,6 +1,6 @@
 using Riber.Domain.Entities;
 
-namespace Riber.Application.Models;
+namespace Riber.Application.Models.Shared;
 
 public sealed record UserDetailsModel(
     Guid Id,

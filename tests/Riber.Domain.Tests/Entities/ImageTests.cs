@@ -1,6 +1,8 @@
 using FluentAssertions;
 using Riber.Domain.Constants.Messages.Entities;
+using Riber.Domain.Constants.Messages.ValueObjects;
 using Riber.Domain.Exceptions;
+using Riber.Domain.ValueObjects.ContentType.Exceptions;
 
 namespace Riber.Domain.Tests.Entities;
 
@@ -31,7 +33,6 @@ public sealed class Image : BaseTest
         result.OriginalName.Should().NotBeNullOrWhiteSpace();
         result.Id.Should().NotBeEmpty();
         result.Extension.Should().BeOneOf(".png", ".jpeg", ".webp");
-        result.Key.Should().NotBeNullOrWhiteSpace();
     }
 
     [Trait("Category", "Unit")]
@@ -69,7 +70,7 @@ public sealed class Image : BaseTest
         var result = () => image.Generate();
 
         // Assert
-        result.Should().ThrowExactly<InvalidTypeImageException>(ImageErrors.Type);
+        result.Should().ThrowExactly<InvalidContentTypeException>(ContentTypeErrors.Type);
     }
 
     [Trait("Category", "Unit")]
@@ -155,39 +156,6 @@ public sealed class Image : BaseTest
 
     #endregion
 
-    #region Validation
-
-    [Trait("Category", "Unit")]
-    [Fact(DisplayName = "Should return true when content type is allowed")]
-    public void IsValidImageType_WhenTypeIsAllowed_ShouldReturnTrue()
-    {
-        // Arrange
-        string[] allowedTypes = ["image/png", "image/jpg", "image/jpeg", "image/webp"];
-
-        // Act
-        var result = allowedTypes.Any(Domain.Entities.Image.IsValidImageType);
-
-        // Assert
-        result.Should().BeTrue();
-    }
-
-
-    [Trait("Category", "Unit")]
-    [Fact(DisplayName = "Should return false when content type is not allowed")]
-    public void IsValidImageType_WhenTypeIsNotAllowed_ShouldReturnFalse()
-    {
-        // Arrange
-        string allowedType = "image/gif";
-
-        // Act
-        var result = Domain.Entities.Image.IsValidImageType(allowedType);
-
-        // Assert
-        result.Should().BeFalse();
-    }
-
-    #endregion
-
     #region ToString & Implicit
 
     [Trait("Category", "Unit")]
@@ -201,12 +169,12 @@ public sealed class Image : BaseTest
                 contentType: f.PickRandom("image/png", "image/jpeg", "image/webp"),
                 originalName: f.System.FileName("png"))
             ).Generate();
-        
+
         // Act
         var result = image.ToString();
-        
+
         // Assert
-        result.Should().Be($"{image.Key}{image.Extension}");
+        result.Should().Be($"{image.Id}{image.Extension}");
     }
 
     [Trait("Category", "Unit")]
@@ -220,13 +188,13 @@ public sealed class Image : BaseTest
                 contentType: f.PickRandom("image/png", "image/jpeg", "image/webp"),
                 originalName: f.System.FileName("png"))
             ).Generate();
-        
+
         // Act
         string result = image;
-        
+
         // Assert
-        result.Should().Be($"{image.Key}{image.Extension}");
+        result.Should().Be($"{image.Id}{image.Extension}");
     }
-    
+
     #endregion
 }

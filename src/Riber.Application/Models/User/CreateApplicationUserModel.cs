@@ -1,4 +1,4 @@
-namespace Riber.Application.Models;
+namespace Riber.Application.Models.Shared;
 
 public sealed record CreateApplicationUserModel(
     string UserName,

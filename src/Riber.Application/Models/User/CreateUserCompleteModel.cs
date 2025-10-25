@@ -1,6 +1,6 @@
 using Riber.Domain.Enums;
 
-namespace Riber.Application.Models;
+namespace Riber.Application.Models.Shared;
 
 public sealed record CreateUserCompleteModel(
     string FullName,
