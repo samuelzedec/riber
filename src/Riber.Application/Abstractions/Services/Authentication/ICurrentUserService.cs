@@ -1,4 +1,4 @@
-namespace Riber.Application.Abstractions.Services;
+namespace Riber.Application.Abstractions.Services.Authentication;
 
 /// <summary>
 /// Define um serviço para acessar informações relacionadas ao usuário atual.

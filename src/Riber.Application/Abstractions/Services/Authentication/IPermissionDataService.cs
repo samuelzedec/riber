@@ -1,7 +1,6 @@
-using Riber.Application.Models;
 using Riber.Application.Models.Auth;
 
-namespace Riber.Application.Abstractions.Services;
+namespace Riber.Application.Abstractions.Services.Authentication;
 
 /// <summary>
 /// Interface que define operações relacionadas ao gerenciamento de dados de permissões.
@@ -26,5 +25,5 @@ public interface IPermissionDataService
     /// Obtém todas as permissões juntamente com suas descrições.
     /// </summary>
     /// <returns>Uma tarefa que representa a operação assíncrona. O resultado da tarefa é uma coleção de objetos PermissionDTO contendo os dados das permissões.</returns>
-    Task<ICollection<PermissionModel>> GetAllWithDescriptionsAsync();
+    Task<IReadOnlyCollection<PermissionModel>> GetAllWithDescriptionsAsync();
 }
