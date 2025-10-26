@@ -3,6 +3,7 @@ using FluentAssertions;
 using Mediator;
 using Moq;
 using Riber.Application.Abstractions.Services;
+using Riber.Application.Abstractions.Services.Authentication;
 using Riber.Application.Exceptions;
 using Riber.Application.Features.Products.Commands;
 using Riber.Application.Features.Products.Events;

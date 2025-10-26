@@ -79,7 +79,7 @@ public abstract class IntegrationTestBase :
     private async Task<string> GetTokenAsync()
     {
         var loginResponse = await Client.PostAsJsonAsync("api/v1/auth/login",
-            new { Username = "admin123", Password = "Admin@123" });
+            new LoginCommand("admin123", "Admin@123"));
 
         loginResponse.EnsureSuccessStatusCode();
         var result = await loginResponse.Content.ReadFromJsonAsync<Result<LoginCommandResponse>>();

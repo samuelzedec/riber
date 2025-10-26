@@ -20,7 +20,6 @@ public sealed class WebAppFixture : IAsyncLifetime
     public async Task InitializeAsync()
         => await Task.CompletedTask;
 
-
     public async Task DisposeAsync()
     {
         if (_factory is not null)
@@ -38,7 +37,7 @@ public sealed class WebAppFixture : IAsyncLifetime
         _factory = new WebApplicationFactory<Program>()
             .WithWebHostBuilder(builder =>
             {
-                builder.UseEnvironment("Testing");
+                builder.UseEnvironment("Development");
                 builder.ConfigureAppConfiguration((_, config) =>
                     config.AddInMemoryCollection(new Dictionary<string, string>
                     {

@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using FluentAssertions;
 using Moq;
 using Riber.Application.Abstractions.Services;
+using Riber.Application.Abstractions.Services.Authentication;
 using Riber.Application.Exceptions;
 using Riber.Application.Features.ProductCategories.Commands;
 using Riber.Domain.Constants.Messages.Common;
