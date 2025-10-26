@@ -1,18 +1,18 @@
 using Riber.Application.Abstractions.Commands;
 using Riber.Application.Abstractions.Services;
+using Riber.Application.Abstractions.Services.Authentication;
 using Riber.Application.Common;
 
 namespace Riber.Application.Features.Auths.Commands.Logout;
 
 internal sealed class LogoutCommandHandler(
-    IAuthService authService,
+    IAuthenticationService authenticationService,
     ICurrentUserService currentUserService)
-    : ICommandHandler<LogoutCommand>
+    : ICommandHandler<LogoutCommand, EmptyResult>
 {
-    public async ValueTask<Result> Handle(LogoutCommand command, CancellationToken cancellationToken)
+    public async ValueTask<Result<EmptyResult>> Handle(LogoutCommand command, CancellationToken cancellationToken)
     {
         var userId = currentUserService.GetUserId().ToString();
-        await authService.RefreshUserSecurityAsync(userId);
-        return Result.Success();
+        return await authenticationService.RefreshSecurityStampAsync(userId);
     }
 }

@@ -1,5 +1,6 @@
 using Riber.Application.Abstractions.Commands;
 using Riber.Application.Abstractions.Services;
+using Riber.Application.Abstractions.Services.Authentication;
 using Riber.Application.Common;
 using Riber.Application.Exceptions;
 using Riber.Domain.Constants.Messages.Common;

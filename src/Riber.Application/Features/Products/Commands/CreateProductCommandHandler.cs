@@ -1,6 +1,7 @@
 using System.Net;
 using Mediator;
 using Riber.Application.Abstractions.Services;
+using Riber.Application.Abstractions.Services.Authentication;
 using Riber.Application.Common;
 using Riber.Application.Exceptions;
 using Riber.Application.Features.Products.Events;
@@ -50,13 +51,13 @@ internal sealed class CreateProductCommandHandler(
 
             await unitOfWork.Products.CreateAsync(product, cancellationToken);
             await unitOfWork.CommitTransactionAsync(cancellationToken);
-            return new CreateProductCommandResponse(
+            return Result.Success(new CreateProductCommandResponse(
                 ProductId: product.Id,
                 Name: product.Name,
                 Description: product.Description,
                 Price: product.UnitPrice,
                 ImageName: imageKeyInBucket
-            );
+            ), HttpStatusCode.Created);
         }
         catch (Exception ex) when (ex is not NotFoundException or InternalException)
         {

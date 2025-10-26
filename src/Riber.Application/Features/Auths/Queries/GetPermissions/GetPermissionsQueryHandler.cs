@@ -1,5 +1,6 @@
 using Riber.Application.Abstractions.Queries;
 using Riber.Application.Abstractions.Services;
+using Riber.Application.Abstractions.Services.Authentication;
 using Riber.Application.Common;
 
 namespace Riber.Application.Features.Auths.Queries.GetPermissions;

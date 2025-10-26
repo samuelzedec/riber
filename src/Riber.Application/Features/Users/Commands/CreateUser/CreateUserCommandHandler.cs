@@ -1,7 +1,6 @@
 using Riber.Application.Abstractions.Commands;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Common;
-using Riber.Application.Models;
 using Riber.Application.Models.User;
 using Riber.Domain.Repositories;
 
