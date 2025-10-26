@@ -1,29 +1,30 @@
+using Riber.Application.Common;
 using Riber.Application.Models.Auth;
 
 namespace Riber.Application.Abstractions.Services.Authentication;
 
 /// <summary>
-/// Interface que define operações relacionadas ao gerenciamento de dados de permissões.
+/// Serviço para gerenciamento e consulta de dados de permissões do sistema.
 /// </summary>
 public interface IPermissionDataService
 {
     /// <summary>
-    /// Valida a permissão com base no nome fornecido.
+    /// Verifica se uma permissão existe e está ativa no sistema.
     /// </summary>
-    /// <param name="name">O nome da permissão a ser validada.</param>
-    /// <returns>Uma tarefa que representa a operação assíncrona. O resultado da tarefa indica se a permissão é válida.</returns>
-    Task<bool> ValidateAsync(string name);
+    /// <param name="name">Nome da permissão a ser verificada.</param>
+    /// <returns>Resultado da validação da permissão.</returns>
+    Task<Result<EmptyResult>> ValidateAsync(string name);
 
     /// <summary>
-    /// Atualiza o status da permissão com base no nome fornecido.
+    /// Alterna o status ativo/inativo de uma permissão.
     /// </summary>
-    /// <param name="name">O nome da permissão cujo status será atualizado.</param>
-    /// <returns>Uma tarefa que representa a operação assíncrona.</returns>
-    Task UpdatePermissionStatusAsync(string name);
+    /// <param name="name">Nome da permissão a ser atualizada.</param>
+    /// <returns>Resultado da operação de atualização.</returns>
+    Task<Result<EmptyResult>> UpdatePermissionStatusAsync(string name);
 
     /// <summary>
-    /// Obtém todas as permissões juntamente com suas descrições.
+    /// Retorna todas as permissões disponíveis com suas descrições.
     /// </summary>
-    /// <returns>Uma tarefa que representa a operação assíncrona. O resultado da tarefa é uma coleção de objetos PermissionDTO contendo os dados das permissões.</returns>
-    Task<IReadOnlyCollection<PermissionModel>> GetAllWithDescriptionsAsync();
+    /// <returns>Coleção de permissões com detalhes e descrições.</returns>
+    Task<Result<IReadOnlyCollection<PermissionModel>>> GetAllWithDescriptionsAsync();
 }
