@@ -28,18 +28,32 @@ public class Result
 
     #endregion
 
-    #region Static Methods
+    #region Success Methods
 
-    public static Result<object> Success()
-        => new(null, true, new Error(), HttpStatusCode.OK);
+    public static Result<EmptyResult> Success()
+        => new(new EmptyResult(), true, new Error(), HttpStatusCode.OK);
 
-    public static Result<T> Success<T>(T value, HttpStatusCode statusCode = HttpStatusCode.OK)
+    public static Result<T> Success<T>(
+        T value,
+        HttpStatusCode statusCode = HttpStatusCode.OK)
         => new(value, true, new Error(), statusCode);
 
-    public static Result<T> Failure<T>(string message, HttpStatusCode statusCode = HttpStatusCode.BadRequest)
+    #endregion
+
+    #region Failure Methods
+
+    public static Result<EmptyResult> Failure(
+        string message,
+        HttpStatusCode statusCode = HttpStatusCode.BadRequest)
+        => new(new EmptyResult(), false, new Error(message, statusCode), statusCode);
+
+    public static Result<T> Failure<T>(
+        string message,
+        HttpStatusCode statusCode = HttpStatusCode.BadRequest)
         => new(default, false, new Error(message, statusCode), statusCode);
 
-    public static Result<T> Failure<T>(Dictionary<string, string[]> details,
+    public static Result<T> Failure<T>(
+        Dictionary<string, string[]> details,
         HttpStatusCode statusCode = HttpStatusCode.BadRequest)
         => new(default, false, new Error(details, statusCode), statusCode);
 
