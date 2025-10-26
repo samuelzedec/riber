@@ -8,6 +8,6 @@ public static class ResultExtension
 {
     public static IActionResult ToHttpResult<T>(this Result<T> result, string location = "")
         => result.StatusCode is HttpStatusCode.Created
-            ? new CreatedResult(location, result.Value)
+            ? new CreatedResult(location, result)
             : new ObjectResult(result) { StatusCode = (int)result.StatusCode };
 }
