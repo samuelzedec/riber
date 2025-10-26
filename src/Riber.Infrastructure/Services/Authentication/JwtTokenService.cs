@@ -3,8 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Riber.Application.Abstractions.Services;
-using Riber.Application.Models;
+using Riber.Application.Abstractions.Services.Authentication;
 using Riber.Application.Models.User;
 using Riber.Infrastructure.Settings;
 

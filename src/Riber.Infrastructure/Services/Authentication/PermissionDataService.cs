@@ -1,8 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
-using Riber.Application.Abstractions.Services;
+using Riber.Application.Abstractions.Services.Authentication;
 using Riber.Application.Exceptions;
-using Riber.Application.Models;
 using Riber.Application.Models.Auth;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Infrastructure.Persistence;
@@ -41,24 +40,19 @@ public sealed class PermissionDataService(
         InvalidateCache();
     }
 
-    public async Task<ICollection<PermissionModel>> GetAllWithDescriptionsAsync()
+    public async Task<IReadOnlyCollection<PermissionModel>> GetAllWithDescriptionsAsync()
     {
         var permissions = await GetPermissionsCacheAsync();
-
-        return
-        [
-            .. permissions.Select(p => new PermissionModel(
-                Name: p.Name,
-                Description: p.Description,
-                IsActive: p.IsActive
-            ))
-        ];
+        return permissions.Select(p => new PermissionModel(
+            Name: p.Name,
+            Description: p.Description,
+            IsActive: p.IsActive
+        )).ToList();
     }
 
     private async Task<IEnumerable<ApplicationPermission>> GetPermissionsCacheAsync()
     {
-        if (memoryCache.TryGetValue(CacheKey, out IEnumerable<ApplicationPermission>? permissions) &&
-            permissions is not null)
+        if (memoryCache.TryGetValue(CacheKey, out IEnumerable<ApplicationPermission>? permissions) && permissions is not null)
             return [.. permissions];
 
         var permissionsDatabase = await _permissionTable

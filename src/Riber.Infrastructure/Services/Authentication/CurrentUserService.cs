@@ -1,9 +1,6 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
-using Riber.Application.Abstractions.Services;
-using Riber.Application.Exceptions;
-using Riber.Domain.Constants.Messages.Entities;
-
+using Riber.Application.Abstractions.Services.Authentication;
 
 namespace Riber.Infrastructure.Services.Authentication;
 
@@ -14,11 +11,10 @@ public sealed class CurrentUserService(IHttpContextAccessor httpContextAccessor)
         => httpContextAccessor.HttpContext?.User!;
 
     public string[] GetPermissions()
-        => [..
-            CurrentUser.Claims
+        => CurrentUser.Claims
             .Where(x => x.Type == "permission")
             .Select(x => x.Value)
-        ];
+            .ToArray();
 
     public Guid GetUserId()
     {
@@ -29,8 +25,7 @@ public sealed class CurrentUserService(IHttpContextAccessor httpContextAccessor)
     public Guid GetCompanyId()
     {
         var companyIdClaim = CurrentUser.FindFirst("companyId")!;
-        return !Guid.TryParse(companyIdClaim.Value, out var companyId) 
-            ? throw new BadRequestException(CompanyErrors.Invalid) 
-            : companyId;
+        return Guid.TryParse(companyIdClaim.Value, out var companyId)
+            ? companyId : Guid.Empty;
     }
 }

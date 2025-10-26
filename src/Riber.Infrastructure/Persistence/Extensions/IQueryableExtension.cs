@@ -13,13 +13,16 @@ public static class IQueryableExtension
     /// <param name="queryable">The queryable representing the source data.</param>
     /// <param name="specification">The specification to apply to the queryable. If null, the queryable is returned as-is.</param>
     /// <param name="includes">Expressions defining related entities to be included in the query.</param>
-    /// <returns>An <see cref="IQueryable{T}"/> that includes the applied specification and related entities as specified.</returns>
+    /// <returns>An <see cref="IQueryable&lt;T&gt;"/> that includes the applied specification and related entities as specified.</returns>
     public static IQueryable<T> GetQueryWithIncludes<T>(
         this IQueryable<T> queryable,
         Specification<T>? specification,
         params Expression<Func<T, object>>[] includes) where T : class
     {
-        var query = specification?.Apply(queryable) ?? queryable;
+        var query = specification is not null
+            ? queryable.Where(specification)
+            : queryable;
+
         return includes.Length > 0
             ? includes.Aggregate(query, (current, include) => current.Include(include))
             : query;

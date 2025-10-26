@@ -19,7 +19,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
 {
 
     /// <summary>
-    /// Procura por todas as classes que implementam a interface <see cref="IEntityTypeConfiguration{T}"/>
+    /// Procura por todas as classes que implementam a interface <see cref="IEntityTypeConfiguration&lt;T&gt;"/>
     /// e aplica os mapeamentos para o banco!
     /// </summary>
     /// <param name="builder"></param>
