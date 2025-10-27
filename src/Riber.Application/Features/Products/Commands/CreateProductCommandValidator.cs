@@ -22,7 +22,6 @@ public sealed class CreateProductCommandValidator : AbstractValidator<CreateProd
             .WithMessage(ProductErrors.DescriptionLength);
 
         RuleFor(x => x.Price)
-            .NotEmpty()
             .NotNull()
             .WithMessage(ProductErrors.PriceEmpty)
             .GreaterThan(0)

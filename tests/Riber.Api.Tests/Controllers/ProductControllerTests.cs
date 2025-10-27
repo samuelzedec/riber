@@ -157,11 +157,13 @@ public sealed class ProductControllerTests(WebAppFixture webAppFixture, Database
         byte[]? imageBytes = null,
         string? imageName = null)
     {
-        var formData = new MultipartFormDataContent();
-        formData.Add(new StringContent(name), "Name");
-        formData.Add(new StringContent(description), "Description");
-        formData.Add(new StringContent(price.ToString(CultureInfo.InvariantCulture)), "Price");
-        formData.Add(new StringContent(categoryId.ToString()), "CategoryId");
+        var formData = new MultipartFormDataContent
+        {
+            { new StringContent(name), "Name" },
+            { new StringContent(description), "Description" },
+            { new StringContent(price.ToString(CultureInfo.InvariantCulture)), "Price" },
+            { new StringContent(categoryId.ToString()), "CategoryId" }
+        };
 
         if (imageBytes != null && imageName != null)
         {

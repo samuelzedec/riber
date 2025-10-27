@@ -18,8 +18,8 @@ internal sealed class GetCompanyByIdQueryHandler(IUnitOfWork unitOfWork)
             new CompanyIdSpecification(request.CompanyId),
             cancellationToken
         );
-        
-        if(company is null)
+
+        if (company is null)
             return Result.Failure<GetCompanyByIdQueryResponse>(NotFoundErrors.Company, HttpStatusCode.NotFound);
 
         return new GetCompanyByIdQueryResponse(

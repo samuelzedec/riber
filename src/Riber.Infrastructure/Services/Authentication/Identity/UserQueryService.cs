@@ -41,10 +41,5 @@ public sealed class UserQueryService(
     }
 
     private async Task<UserDetailsModel?> BuildUserDetailsAsync(ApplicationUser? user)
-    {
-        if (user is null)
-            return null;
-
-        return await userMappingService.BuildUserDetailsAsync(user);
-    }
+        => user is null ? null : await userMappingService.BuildUserDetailsAsync(user);
 }
