@@ -1,6 +1,6 @@
-using Riber.Domain.Entities;
+using Riber.Application.Models.Auth;
 
-namespace Riber.Application.Models;
+namespace Riber.Application.Models.User;
 
 public sealed record UserDetailsModel(
     Guid Id,
@@ -12,5 +12,5 @@ public sealed record UserDetailsModel(
     ICollection<string> Roles,
     ICollection<ClaimModel> Claims,
     Guid UserDomainId,
-    User UserDomain
+    Domain.Entities.User UserDomain
 );
