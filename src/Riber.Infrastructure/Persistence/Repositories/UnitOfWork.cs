@@ -44,6 +44,9 @@ public sealed class UnitOfWork(AppDbContext context, IMediator mediator)
 
     #region Default Methods
     
+    public bool HasActiveTransaction()
+        => _transaction is not null;
+    
     public async Task SaveAsync(CancellationToken cancellationToken = default)
         => await SaveChangesAndPublishEventsAsync(cancellationToken);
     

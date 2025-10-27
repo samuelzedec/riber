@@ -2,10 +2,10 @@ using Bogus.Extensions.Brazil;
 using FluentAssertions;
 using Moq;
 using Riber.Application.Abstractions.Services;
-using Riber.Application.Exceptions;
+using Riber.Application.Common;
 using Riber.Application.Extensions;
 using Riber.Application.Features.Companies.Commands.CreateCompanyWithAdmin;
-using Riber.Application.Models;
+using Riber.Application.Models.User;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Entities;
 using Riber.Domain.Enums;
@@ -77,7 +77,8 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
         _mockUserCreationService
             .Setup(x => x.CreateCompleteUserAsync(
                 It.IsAny<CreateUserCompleteModel>(),
-                It.IsAny<CancellationToken>()));
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success<EmptyResult>());
 
         _mockUnitOfWork
             .Setup(x => x.Companies)
@@ -88,6 +89,10 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
 
         _mockUnitOfWork
             .Setup(x => x.CommitTransactionAsync(It.IsAny<CancellationToken>()));
+
+        _mockUnitOfWork
+            .Setup(x => x.HasActiveTransaction())
+            .Returns(false);
 
         // Act
         var result = await _commandHandler.Handle(_command, CancellationToken.None);
@@ -124,8 +129,8 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
     #region Conflict Tests
 
     [Trait("Category", "Unit")]
-    [Fact(DisplayName = "Should throw conflict exception when company name already exists")]
-    public async Task Handle_WhenCompanyNameAlreadyExists_ShouldThrowConflictException()
+    [Fact(DisplayName = "Should return conflict when company name already exists")]
+    public async Task Handle_WhenCompanyNameAlreadyExists_ShouldReturnConflict()
     {
         // Arrange
         _mockCompanyRepository
@@ -148,13 +153,17 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
         _mockUnitOfWork
             .Setup(x => x.RollbackTransactionAsync(It.IsAny<CancellationToken>()));
 
+        _mockUnitOfWork
+            .Setup(x => x.HasActiveTransaction())
+            .Returns(true);
+
         // Act
-        var result = async () => await _commandHandler.Handle(_command, CancellationToken.None);
+        var result = await _commandHandler.Handle(_command, CancellationToken.None);
 
         // Assert
-        await result.Should()
-            .ThrowAsync<ConflictException>()
-            .WithMessage(ConflictErrors.CorporateName);
+        result.IsSuccess.Should().BeFalse();
+        result.StatusCode.Should().Be(System.Net.HttpStatusCode.Conflict);
+        result.Error.Message.Should().Be(ConflictErrors.CorporateName);
 
         _mockCompanyRepository.Verify(x => x.ExistsAsync(
             It.IsAny<Specification<Company>>(), It.IsAny<CancellationToken>()), Times.Once);
@@ -176,8 +185,8 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
     }
 
     [Trait("Category", "Unit")]
-    [Fact(DisplayName = "Should throw conflict exception when tax id already exists")]
-    public async Task Handle_WhenTaxIdAlreadyExists_ShouldThrowConflictException()
+    [Fact(DisplayName = "Should return conflict when tax id already exists")]
+    public async Task Handle_WhenTaxIdAlreadyExists_ShouldReturnConflict()
     {
         // Arrange
         _mockCompanyRepository
@@ -200,13 +209,17 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
         _mockUnitOfWork
             .Setup(x => x.RollbackTransactionAsync(It.IsAny<CancellationToken>()));
 
+        _mockUnitOfWork
+            .Setup(x => x.HasActiveTransaction())
+            .Returns(true);
+
         // Act
-        var result = async () => await _commandHandler.Handle(_command, CancellationToken.None);
+        var result = await _commandHandler.Handle(_command, CancellationToken.None);
 
         // Assert
-        await result.Should()
-            .ThrowAsync<ConflictException>()
-            .WithMessage(ConflictErrors.TaxId);
+        result.IsSuccess.Should().BeFalse();
+        result.StatusCode.Should().Be(System.Net.HttpStatusCode.Conflict);
+        result.Error.Message.Should().Be(ConflictErrors.TaxId);
 
         _mockCompanyRepository.Verify(x => x.ExistsAsync(
             It.IsAny<Specification<Company>>(), It.IsAny<CancellationToken>()), Times.Exactly(2));
@@ -228,8 +241,8 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
     }
 
     [Trait("Category", "Unit")]
-    [Fact(DisplayName = "Should throw conflict exception when email already exists")]
-    public async Task Handle_WhenEmailAlreadyExists_ShouldThrowConflictException()
+    [Fact(DisplayName = "Should return conflict when email already exists")]
+    public async Task Handle_WhenEmailAlreadyExists_ShouldReturnConflict()
     {
         // Arrange
         _mockCompanyRepository
@@ -252,13 +265,17 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
         _mockUnitOfWork
             .Setup(x => x.RollbackTransactionAsync(It.IsAny<CancellationToken>()));
 
+        _mockUnitOfWork
+            .Setup(x => x.HasActiveTransaction())
+            .Returns(true);
+
         // Act
-        var result = async () => await _commandHandler.Handle(_command, CancellationToken.None);
+        var result = await _commandHandler.Handle(_command, CancellationToken.None);
 
         // Assert
-        await result.Should()
-            .ThrowAsync<ConflictException>()
-            .WithMessage(ConflictErrors.Email);
+        result.IsSuccess.Should().BeFalse();
+        result.StatusCode.Should().Be(System.Net.HttpStatusCode.Conflict);
+        result.Error.Message.Should().Be(ConflictErrors.Email);
 
         _mockCompanyRepository.Verify(x => x.ExistsAsync(
             It.IsAny<Specification<Company>>(), It.IsAny<CancellationToken>()), Times.Exactly(3));
@@ -280,8 +297,8 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
     }
 
     [Trait("Category", "Unit")]
-    [Fact(DisplayName = "Should throw conflict exception when phone already exists")]
-    public async Task Handle_WhenPhoneAlreadyExists_ShouldThrowConflictException()
+    [Fact(DisplayName = "Should return conflict when phone already exists")]
+    public async Task Handle_WhenPhoneAlreadyExists_ShouldReturnConflict()
     {
         // Arrange
         _mockCompanyRepository
@@ -304,13 +321,17 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
         _mockUnitOfWork
             .Setup(x => x.RollbackTransactionAsync(It.IsAny<CancellationToken>()));
 
+        _mockUnitOfWork
+            .Setup(x => x.HasActiveTransaction())
+            .Returns(true);
+
         // Act
-        var result = async () => await _commandHandler.Handle(_command, CancellationToken.None);
+        var result = await _commandHandler.Handle(_command, CancellationToken.None);
 
         // Assert
-        await result.Should()
-            .ThrowAsync<ConflictException>()
-            .WithMessage(ConflictErrors.Phone);
+        result.IsSuccess.Should().BeFalse();
+        result.StatusCode.Should().Be(System.Net.HttpStatusCode.Conflict);
+        result.Error.Message.Should().Be(ConflictErrors.Phone);
 
         _mockCompanyRepository.Verify(x => x.ExistsAsync(
             It.IsAny<Specification<Company>>(), It.IsAny<CancellationToken>()), Times.Exactly(4));
@@ -327,6 +348,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
         _mockUnitOfWork.Verify(x => x.RollbackTransactionAsync(
             It.IsAny<CancellationToken>()), Times.Once);
 
+
         _mockUnitOfWork.Verify(x => x.CommitTransactionAsync(
             It.IsAny<CancellationToken>()), Times.Never);
     }
@@ -336,8 +358,8 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
     #region Exception Tests
 
     [Trait("Category", "Unit")]
-    [Fact(DisplayName = "Should rollback transaction and log error when unexpected exception occurs")]
-    public async Task Handle_WhenUnexpectedExceptionOccurs_ShouldRollbackTransactionAndLogError()
+    [Fact(DisplayName = "Should rollback transaction when unexpected exception occurs")]
+    public async Task Handle_WhenUnexpectedExceptionOccurs_ShouldRollbackTransaction()
     {
         // Arrange
         var expectedException = new InvalidOperationException("Test exception");
@@ -365,6 +387,10 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
 
         _mockUnitOfWork
             .Setup(x => x.RollbackTransactionAsync(It.IsAny<CancellationToken>()));
+
+        _mockUnitOfWork
+            .Setup(x => x.HasActiveTransaction())
+            .Returns(true);
 
         // Act
         var result = async () => await _commandHandler.Handle(_command, CancellationToken.None);
@@ -410,6 +436,10 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
 
         _mockUnitOfWork
             .Setup(x => x.RollbackTransactionAsync(It.IsAny<CancellationToken>()));
+
+        _mockUnitOfWork
+            .Setup(x => x.HasActiveTransaction())
+            .Returns(true);
 
         // Act
         var result = async () => await _commandHandler.Handle(_command, mockCancellationToken);
@@ -462,7 +492,8 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
         _mockUserCreationService
             .Setup(x => x.CreateCompleteUserAsync(
                 It.IsAny<CreateUserCompleteModel>(),
-                It.IsAny<CancellationToken>()));
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success<EmptyResult>());
 
         _mockUnitOfWork
             .Setup(x => x.Companies)
@@ -477,6 +508,10 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
 
         _mockUnitOfWork
             .Setup(x => x.RollbackTransactionAsync(It.IsAny<CancellationToken>()));
+
+        _mockUnitOfWork
+            .Setup(x => x.HasActiveTransaction())
+            .Returns(true);
 
         // Act
         var result = async () => await _commandHandler.Handle(_command, mockCancellationToken);

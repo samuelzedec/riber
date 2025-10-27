@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Riber.Domain.Specifications.Core;
-using Riber.Infrastructure.Persistence.Extensions;
+using Riber.Infrastructure.Extensions;
 
 namespace Riber.Infrastructure.Persistence.Repositories;
 

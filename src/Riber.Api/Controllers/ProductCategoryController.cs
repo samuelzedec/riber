@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Mvc;
 using Riber.Api.Attributes;
+using Riber.Api.Extensions;
 using Riber.Application.Common;
 using Riber.Application.Features.ProductCategories.Commands;
 using Riber.Infrastructure.Settings;
@@ -27,6 +28,6 @@ public sealed class ProductCategoryController(IMediator mediator) : ControllerBa
         CancellationToken cancellationToken)
     {
         var response = await mediator.Send(request, cancellationToken);
-        return Ok(response);
+        return response.ToHttpResult($"api/product-category/{response.Value?.ProductCategoryId}");
     }
 }

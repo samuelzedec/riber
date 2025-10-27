@@ -1,6 +1,6 @@
 using FluentAssertions;
 using Moq;
-using Riber.Application.Abstractions.Services;
+using Riber.Application.Abstractions.Services.Authentication;
 using Riber.Application.Features.Auths.Queries.GetPermissions;
 using Riber.Domain.Tests;
 

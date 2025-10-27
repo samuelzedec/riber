@@ -1,7 +1,8 @@
+using System.Net;
 using Riber.Application.Abstractions.Commands;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Common;
-using Riber.Application.Models;
+using Riber.Application.Models.User;
 using Riber.Domain.Repositories;
 
 namespace Riber.Application.Features.Users.Commands.CreateUser;
@@ -18,7 +19,7 @@ internal sealed class CreateUserCommandHandler(
         await unitOfWork.BeginTransactionAsync(cancellationToken);
         try
         {
-            await userCreationService.CreateCompleteUserAsync(
+            var result = await userCreationService.CreateCompleteUserAsync(
                 new CreateUserCompleteModel(
                     FullName: command.FullName,
                     UserName: command.UserName,
@@ -33,16 +34,19 @@ internal sealed class CreateUserCommandHandler(
                 cancellationToken
             );
 
+            if (!result.IsSuccess)
+                return Result.Failure<CreateUserCommandResponse>(result.Error.Message, result.StatusCode);
+
             await unitOfWork.CommitTransactionAsync(cancellationToken);
-            return new CreateUserCommandResponse(
-                command.UserName,
-                command.Email
+            return Result.Success(
+                new CreateUserCommandResponse(command.UserName, command.Email),
+                HttpStatusCode.Created
             );
         }
-        catch (Exception)
+        finally
         {
-            await unitOfWork.RollbackTransactionAsync(cancellationToken);
-            throw;
+            if (unitOfWork.HasActiveTransaction())
+                await unitOfWork.RollbackTransactionAsync(cancellationToken);
         }
     }
 }

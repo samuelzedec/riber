@@ -1,4 +1,5 @@
-using Riber.Application.Models;
+using Riber.Application.Common;
+using Riber.Application.Models.User;
 
 namespace Riber.Application.Abstractions.Services;
 
@@ -8,10 +9,10 @@ namespace Riber.Application.Abstractions.Services;
 public interface IUserCreationService
 {
     /// <summary>
-    /// Cria de forma assíncrona uma entidade de usuário completa com base nas informações fornecidas.
+    /// Cria um usuário completo no sistema, incluindo entidade de domínio e conta de aplicação.
     /// </summary>
-    /// <param name="model">O objeto de transferência de dados contendo as informações necessárias para criar o usuário.</param>
-    /// <param name="cancellationToken">Um token para observar solicitações de cancelamento.</param>
-    /// <returns>Uma tarefa que representa a operação assíncrona.</returns>
-    Task CreateCompleteUserAsync(CreateUserCompleteModel model, CancellationToken cancellationToken = default);
+    /// <param name="model">Dados necessários para criação do usuário completo.</param>
+    /// <param name="cancellationToken">Token para cancelamento da operação.</param>
+    /// <returns>Resultado da operação de criação do usuário.</returns>
+    Task<Result<EmptyResult>> CreateCompleteUserAsync(CreateUserCompleteModel model, CancellationToken cancellationToken = default);
 }

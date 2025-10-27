@@ -1,5 +1,23 @@
 # Riber - Changelog
 
+## v4.1.0 - 26/10/2025
+
+- **NOVO**: Sistema modular de serviços de autenticação com separação de responsabilidades
+- Adiciona `IAuthenticationService` para operações de login e autenticação
+- Adiciona `IRoleManagementService` para gerenciamento de roles
+- Adiciona `IUserManagementService` para gerenciamento de usuários
+- Adiciona `IUserQueryService` para consultas de usuários
+- Implementa serviços de Identity: `AuthenticationService`, `RoleManagementService`, `UserManagementService`, `UserQueryService`, `UserMappingService` e `UserCreationService`
+- **NOVO**: `EmptyResult` para operações sem retorno de valor
+- **REFATORAÇÃO**: Reorganização das interfaces de serviços para pasta `Authentication`
+- **REFATORAÇÃO**: Atualização de toda a aplicação (handlers, controllers, middlewares) para usar novos serviços
+- **REFATORAÇÃO**: Melhorias no `PermissionDataService` e repositórios
+- Remove serviços obsoletos: `IAuthService`, `AuthService`, `UserCreationService` (versão antiga)
+- Remove `SpecificationExtension` não utilizada
+- Atualiza todos os testes para refletir as mudanças arquiteturais
+
+---
+
 # v4.0.1 - 22/10/2025
 
 - **CORREÇÃO**: Mudança no Job de limpeza de imagens na Bucket

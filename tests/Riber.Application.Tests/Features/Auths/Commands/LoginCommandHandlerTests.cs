@@ -1,10 +1,9 @@
 using Bogus.Extensions.Brazil;
 using FluentAssertions;
 using Moq;
-using Riber.Application.Abstractions.Services;
-using Riber.Application.Exceptions;
+using Riber.Application.Abstractions.Services.Authentication;
 using Riber.Application.Features.Auths.Commands.Login;
-using Riber.Application.Models;
+using Riber.Application.Models.User;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Entities;
 using Riber.Domain.Enums;
@@ -16,7 +15,7 @@ public sealed class LoginCommandHandlerTests : BaseTest
 {
     #region Setup
 
-    private readonly Mock<IAuthService> _mockAuthService;
+    private readonly Mock<IAuthenticationService> _mockAuthService;
     private readonly Mock<ITokenService> _mockTokenService;
     private readonly UserDetailsModel _userDetailsTest;
     private readonly LoginCommand _command;
@@ -24,7 +23,7 @@ public sealed class LoginCommandHandlerTests : BaseTest
 
     public LoginCommandHandlerTests()
     {
-        _mockAuthService = new Mock<IAuthService>();
+        _mockAuthService = new Mock<IAuthenticationService>();
         _mockTokenService = new Mock<ITokenService>();
 
         var userDomain = User.Create(
@@ -85,8 +84,10 @@ public sealed class LoginCommandHandlerTests : BaseTest
         var result = await _handler.Handle(_command, CancellationToken.None);
 
         // Assert
+        result.Should().NotBeNull();
+        result.IsSuccess.Should().BeTrue();
         result.Value.Should().NotBeNull();
-        result.Value.RefreshToken.Should().NotBeNullOrEmpty();
+        result.Value!.RefreshToken.Should().NotBeNullOrEmpty();
         result.Value.Token.Should().NotBeNullOrEmpty();
         result.Value.UserApplicationId.Should().Be(_userDetailsTest.Id);
         result.Value.UserDomainId.Should().Be(_userDetailsTest.UserDomainId);
@@ -101,46 +102,56 @@ public sealed class LoginCommandHandlerTests : BaseTest
     #region Exception Tests
 
     [Trait("Category", "Unit")]
-    [Fact(DisplayName = "Should throw NotFoundException when user is not found")]
-    public async Task Handle_WhenUserNotFound_ShouldThrowNotFoundException()
+    [Fact(DisplayName = "Should return failure when user is not found")]
+    public async Task Handle_WhenUserNotFound_ShouldReturnFailure()
     {
         // Arrange
         _mockAuthService
             .Setup(x => x.LoginAsync(It.IsAny<string>(), It.IsAny<string>()))
-            .ThrowsAsync(new NotFoundException(NotFoundErrors.User));
+            .ReturnsAsync((UserDetailsModel?)null);
 
         // Act
-        var result = async () => await _handler.Handle(_command, CancellationToken.None);
+        var result = await _handler.Handle(_command, CancellationToken.None);
 
         // Assert
-        await result.Should().ThrowExactlyAsync<NotFoundException>().WithMessage(NotFoundErrors.User);
+        result.Should().NotBeNull();
+        result.IsSuccess.Should().BeFalse();
+        result.Value.Should().BeNull();
+        result.Error.Should().NotBeNull();
+        result.Error.Message.Should().Be(AuthenticationErrors.InvalidCredentials);
+        
         _mockAuthService.Verify(x => x.LoginAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         _mockTokenService.Verify(x => x.GenerateToken(It.IsAny<UserDetailsModel>()), Times.Never);
         _mockTokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
     }
 
     [Trait("Category", "Unit")]
-    [Fact(DisplayName = "Should throw UnauthorizedException when password is incorrect")]
-    public async Task Handle_WhenInvalidPassword_ShouldThrowUnauthorizedException()
+    [Fact(DisplayName = "Should return failure when password is incorrect")]
+    public async Task Handle_WhenInvalidPassword_ShouldReturnFailure()
     {
         // Arrange
         _mockAuthService
             .Setup(x => x.LoginAsync(It.IsAny<string>(), It.IsAny<string>()))
-            .ReturnsAsync(null as UserDetailsModel);
+            .ReturnsAsync((UserDetailsModel?)null);
 
         // Act
-        var result = async () => await _handler.Handle(_command, CancellationToken.None);
+        var result = await _handler.Handle(_command, CancellationToken.None);
 
         // Assert
-        await result.Should().ThrowExactlyAsync<UnauthorizedException>().WithMessage(PasswordErrors.Invalid);
+        result.Should().NotBeNull();
+        result.IsSuccess.Should().BeFalse();
+        result.Value.Should().BeNull();
+        result.Error.Should().NotBeNull();
+        result.Error.Message.Should().Be(AuthenticationErrors.InvalidCredentials);
+        
         _mockAuthService.Verify(x => x.LoginAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         _mockTokenService.Verify(x => x.GenerateToken(It.IsAny<UserDetailsModel>()), Times.Never);
         _mockTokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
     }
 
     [Trait("Category", "Unit")]
-    [Fact(DisplayName = "Should log error and rethrow when unexpected exception occurs")]
-    public async Task Handle_WhenUnexpectedExceptionOccurs_ShouldLogErrorAndRethrow()
+    [Fact(DisplayName = "Should propagate exception when unexpected exception occurs")]
+    public async Task Handle_WhenUnexpectedExceptionOccurs_ShouldPropagateException()
     {
         // Arrange
         var exception = new InvalidOperationException("Database connection failed");
@@ -149,10 +160,10 @@ public sealed class LoginCommandHandlerTests : BaseTest
             .ThrowsAsync(exception);
 
         // Act
-        var result = async () => await _handler.Handle(_command, CancellationToken.None);
+        var act = async () => await _handler.Handle(_command, CancellationToken.None);
 
         // Assert
-        await result.Should().ThrowExactlyAsync<InvalidOperationException>()
+        await act.Should().ThrowExactlyAsync<InvalidOperationException>()
             .WithMessage("Database connection failed");
 
         _mockAuthService.Verify(x => x.LoginAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Once);

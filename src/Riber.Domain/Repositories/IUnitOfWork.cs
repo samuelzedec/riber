@@ -23,6 +23,12 @@ public interface IUnitOfWork : IAsyncDisposable, IDisposable
     #region Default Methods
 
     /// <summary>
+    /// Verifica se existe uma transação ativa no contexto atual.
+    /// </summary>
+    /// <returns><c>true</c> se houver uma transação ativa; caso contrário, <c>false</c>.</returns>
+    bool HasActiveTransaction();
+
+    /// <summary>
     /// Salva todas as mudanças feitas no contexto de forma assíncrona.
     /// Esta operação também garante que quaisquer eventos de domínio sejam publicados após a persistência bem-sucedida.
     /// </summary>

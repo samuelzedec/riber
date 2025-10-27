@@ -28,19 +28,34 @@ public class Result
 
     #endregion
 
-    #region Static Methods
+    #region Success Methods
 
-    public static Result<object> Success()
-        => new(null, true, new Error(), HttpStatusCode.OK);
+    public static Result<EmptyResult> Success()
+        => new(new EmptyResult(), true, new Error(), HttpStatusCode.OK);
 
-    public static Result<T> Success<T>(T value, HttpStatusCode statusCode = HttpStatusCode.OK)
+    public static Result<T> Success<T>(
+        T? value = default,
+        HttpStatusCode statusCode = HttpStatusCode.OK)
         => new(value, true, new Error(), statusCode);
 
-    public static Result<T> Failure<T>(Error error, HttpStatusCode statusCode = HttpStatusCode.BadRequest)
-        => new(default, false, error, statusCode);
+    #endregion
 
-    protected static Result<T> Create<T>(T? value) =>
-        value is not null ? Success(value) : Failure<T>(new Error());
+    #region Failure Methods
+
+    public static Result<EmptyResult> Failure(
+        string message,
+        HttpStatusCode statusCode = HttpStatusCode.BadRequest)
+        => new(new EmptyResult(), false, new Error(message, statusCode), statusCode);
+
+    public static Result<T> Failure<T>(
+        string message,
+        HttpStatusCode statusCode = HttpStatusCode.BadRequest)
+        => new(default, false, new Error(message, statusCode), statusCode);
+
+    public static Result<T> Failure<T>(
+        Dictionary<string, string[]> details,
+        HttpStatusCode statusCode = HttpStatusCode.BadRequest)
+        => new(default, false, new Error(details, statusCode), statusCode);
 
     #endregion
 }
@@ -60,7 +75,7 @@ public class Result<T> : Result
     [JsonConstructor]
     protected Result() { }
 
-    protected internal Result(T? value, bool isSuccess, Error error, HttpStatusCode statusCode) 
+    protected internal Result(T? value, bool isSuccess, Error error, HttpStatusCode statusCode)
         : base(isSuccess, error, statusCode)
         => Value = value;
 
@@ -68,8 +83,8 @@ public class Result<T> : Result
 
     #region Overrides
 
-    public static implicit operator Result<T>(T? value)
-        => Create(value);
+    public static implicit operator Result<T>(T value)
+        => Success(value);
 
     #endregion
 }

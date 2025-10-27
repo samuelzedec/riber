@@ -2,8 +2,6 @@ using System.Security.Claims;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Moq;
-using Riber.Application.Exceptions;
-using Riber.Domain.Constants.Messages.Entities;
 using Riber.Domain.Tests;
 using Riber.Infrastructure.Services.Authentication;
 
@@ -113,8 +111,8 @@ public sealed class CurrentUserServiceTests : BaseTest
     }
 
     [Trait("Category", "Unit")]
-    [Fact(DisplayName = "Should throw BadRequestException when company id is invalid guid")]
-    public void GetCompanyId_WhenCompanyIdIsInvalidGuid_ShouldThrowBadRequestException()
+    [Fact(DisplayName = "Should return null when company id is invalid guid")]
+    public void GetCompanyId_WhenCompanyIdIsInvalidGuid_ShouldReturnGuidEmpty()
     {
         // Arrange
         Claim[] claims =
@@ -128,14 +126,16 @@ public sealed class CurrentUserServiceTests : BaseTest
         _mockHttpContextAccessor.Setup(x => x.HttpContext)
             .Returns(new DefaultHttpContext { User = claimsPrincipal });
 
-        // Act & Assert
-        var act = () => _currentUserService.GetCompanyId();
-        act.Should().Throw<BadRequestException>().WithMessage(CompanyErrors.Invalid);
+        // Act
+        var result = _currentUserService.GetCompanyId();
+
+        // Assert
+        result.Should().Be(null);
     }
 
     [Trait("Category", "Unit")]
-    [Fact(DisplayName = "Should throw BadRequestException when company id is string empty")]
-    public void GetCompanyId_WhenCompanyIdIStringEmpty_ShouldThrowBadRequestException()
+    [Fact(DisplayName = "Should return null when company id is string empty")]
+    public void GetCompanyId_WhenCompanyIdIStringEmpty_ShouldReturnGuidEmpty()
     {
         // Arrange
         Claim[] claims =
@@ -149,8 +149,10 @@ public sealed class CurrentUserServiceTests : BaseTest
         _mockHttpContextAccessor.Setup(x => x.HttpContext)
             .Returns(new DefaultHttpContext { User = claimsPrincipal });
 
-        // Act & Assert
-        var act = () => _currentUserService.GetCompanyId();
-        act.Should().Throw<BadRequestException>().WithMessage(CompanyErrors.Invalid);
+        // Act
+        var result = _currentUserService.GetCompanyId();
+
+        // Assert
+        result.Should().Be(null);
     }
 }

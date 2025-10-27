@@ -1,34 +1,21 @@
-using System.Security.Cryptography;
-using System.Text;
+using Riber.Domain.Abstractions.ValueObjects;
 using Riber.Domain.Constants.Messages.Entities;
 using Riber.Domain.Exceptions;
+using Riber.Domain.ValueObjects.ContentType;
 
 namespace Riber.Domain.Entities;
 
-public sealed class Image : BaseEntity
+public sealed class Image : BaseEntity, IHasContentType
 {
-    #region Private properties
-
-    private static readonly HashSet<string> AllowedImageTypes = new(StringComparer.OrdinalIgnoreCase)
-    {
-        "image/png",
-        "image/jpg", 
-        "image/jpeg",
-        "image/webp"
-    };
-
-    #endregion
-
     #region Properties
 
     public bool ShouldDelete { get; private set; }
     public long Length { get; private init; }
-    public string ContentType { get; private init; }
+    public ContentType ContentType { get; init; }
     public DateTimeOffset? MarkedForDeletionAt { get; private set; }
     public string OriginalName { get; init; }
-    public string Key { get; private init; }
     public string Extension { get; init; }
-    
+
     #endregion
 
     #region Constructors
@@ -37,13 +24,12 @@ public sealed class Image : BaseEntity
     private Image() : base(Guid.Empty) { }
 #pragma warning restore CS8618, CA1823
 
-    private Image(long length, string contentType, string originalName, string key, string extension)
+    private Image(long length, string contentType, string originalName, string extension)
         : base(Guid.CreateVersion7())
     {
         Length = length;
-        ContentType = contentType;
+        ContentType = ContentType.Create(contentType);
         OriginalName = originalName;
-        Key = key;
         Extension = extension;
         ShouldDelete = false;
     }
@@ -52,26 +38,18 @@ public sealed class Image : BaseEntity
 
     #region Factories
 
-    public static Image Create(long length, string contentType, string originalName)
+    public static Image Create(long length, string originalName, string contentType)
     {
         if (length <= 0)
             throw new InvalidLengthImageException(ImageErrors.Length);
-
-        if (!IsValidImageType(contentType))
-            throw new InvalidTypeImageException(ImageErrors.Type);
 
         if (string.IsNullOrWhiteSpace(originalName))
             throw new InvalidImageException(ImageErrors.NameEmpty);
 
         var extension = Path.GetExtension(originalName);
-        if (string.IsNullOrEmpty(extension))
-            throw new InvalidImageException(ImageErrors.ExtensionEmpty);
-        
-        var fileNameInBytes = Encoding.UTF8.GetBytes(originalName);
-        var hashBytes = SHA256.HashData(fileNameInBytes);
-        var key = Convert.ToHexString(hashBytes).ToLowerInvariant();
-
-        return new Image(length, contentType, originalName, key, extension);
+        return string.IsNullOrEmpty(extension)
+            ? throw new InvalidImageException(ImageErrors.ExtensionEmpty)
+            : new Image(length, contentType, originalName, extension);
     }
 
     #endregion
@@ -84,11 +62,8 @@ public sealed class Image : BaseEntity
         MarkedForDeletionAt = DateTimeOffset.UtcNow;
     }
 
-    public bool IsMarkedForDeletion() 
+    public bool IsMarkedForDeletion()
         => ShouldDelete && MarkedForDeletionAt.HasValue;
-
-    public static bool IsValidImageType(string contentType) 
-        => AllowedImageTypes.Contains(contentType);
 
     #endregion
 
@@ -101,8 +76,8 @@ public sealed class Image : BaseEntity
 
     #region Overrides
 
-    public override string ToString() 
-        => $"{Key}{Extension}";
+    public override string ToString()
+        => $"{Id}{Extension}";
 
     #endregion
 }

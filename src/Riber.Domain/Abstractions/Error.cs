@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Net;
+using System.Text.Json.Serialization;
 
 namespace Riber.Domain.Abstractions;
 
@@ -20,17 +21,17 @@ public sealed class Error
     [JsonConstructor]
     public Error() { }
 
-    public Error(string type, string message)
+    public Error(string message, HttpStatusCode statusCode)
     {
-        Type = type;
         Message = message;
+        Type = statusCode.ToString();
     }
 
-    public Error(string type, Dictionary<string, string[]> details)
+    public Error(Dictionary<string, string[]> details, HttpStatusCode statusCode)
     {
-        Type = type;
         Message = "Dados Inválidos.";
         Details = details;
+        Type = statusCode.ToString();
     }
 
     #endregion

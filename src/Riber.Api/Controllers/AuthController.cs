@@ -3,6 +3,7 @@ using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Mvc;
+using Riber.Api.Extensions;
 using Riber.Application.Common;
 using Riber.Application.Features.Auths.Commands.Login;
 using Riber.Application.Features.Auths.Commands.Logout;
@@ -29,7 +30,7 @@ public sealed class AuthController(IMediator mediator) : ControllerBase
         CancellationToken cancellationToken)
     {
         var response = await mediator.Send(command, cancellationToken);
-        return Ok(response);
+        return response.ToHttpResult();
     }
 
     [HttpGet("permissions")]
@@ -38,7 +39,7 @@ public sealed class AuthController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetPermissionsByAuthenticatedUser(CancellationToken cancellationToken)
     {
         var response = await mediator.Send(new GetPermissionsQuery(), cancellationToken);
-        return Ok(response);
+        return response.ToHttpResult();
     }
     
     [HttpGet("refresh")]
@@ -48,7 +49,7 @@ public sealed class AuthController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetRefreshToken(CancellationToken cancellationToken)
     {
         var response = await mediator.Send(new GetRefreshTokenQuery(), cancellationToken);
-        return Ok(response);
+        return response.ToHttpResult();
     }
     
     [HttpPost("logout")]
@@ -57,6 +58,6 @@ public sealed class AuthController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Logout(CancellationToken cancellationToken)
     {
         var response = await mediator.Send(new LogoutCommand(), cancellationToken);
-        return Ok(response);
+        return response.ToHttpResult();
     }
 }

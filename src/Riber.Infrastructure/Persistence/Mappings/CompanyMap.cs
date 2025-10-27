@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Riber.Domain.Entities;
-using Riber.Infrastructure.Persistence.Extensions;
+using Riber.Infrastructure.Extensions;
 
 namespace Riber.Infrastructure.Persistence.Mappings;
 
