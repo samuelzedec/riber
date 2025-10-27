@@ -1,6 +1,6 @@
+using System.Net;
 using Riber.Application.Abstractions.Commands;
 using Riber.Application.Common;
-using Riber.Application.Exceptions;
 using Riber.Application.Extensions;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Entities;
@@ -19,17 +19,24 @@ internal sealed class UpdateCompanyCommandHandler(IUnitOfWork unitOfWork)
         CancellationToken cancellationToken)
     {
         var companyRepository = unitOfWork.Companies;
-        var company = await companyRepository.GetSingleAsync(
-            new CompanyIdSpecification(request.CompanyId), cancellationToken)
-            ?? throw new NotFoundException(NotFoundErrors.Company);
+        var company = await companyRepository
+            .GetSingleAsync(new CompanyIdSpecification(request.CompanyId), cancellationToken);
 
-        await UpdateEmailAsync(company, request.Email, cancellationToken);
-        await UpdatePhoneAsync(company, request.Phone, cancellationToken);
-        UpdateFantasyName(company, request.FantasyName);
+        if (company is null)
+            return Result.Failure<UpdateCompanyCommandResponse>(NotFoundErrors.Company, HttpStatusCode.NotFound);
 
-        companyRepository.Update(company);
+        var validationResult = await ValidateAsync(
+            company,
+            request.Email,
+            request.Phone,
+            request.FantasyName,
+            cancellationToken
+        );
+
+        if (!validationResult.IsSuccess)
+            return validationResult;
+
         await unitOfWork.SaveChangesAsync(cancellationToken);
-
         return new UpdateCompanyCommandResponse(
             company.Name,
             company.Email,
@@ -38,34 +45,53 @@ internal sealed class UpdateCompanyCommandHandler(IUnitOfWork unitOfWork)
         );
     }
 
-    private async Task UpdateEmailAsync(Company company, string email, CancellationToken cancellationToken = default)
+    private async Task<Result<UpdateCompanyCommandResponse>> ValidateAsync(
+        Company company,
+        string email,
+        string phone,
+        string fantasyName,
+        CancellationToken cancellationToken = default)
+    {
+        var updateEmailMessage = await UpdateEmailAsync(company, email, cancellationToken);
+        if (updateEmailMessage is not null)
+            return Result.Failure<UpdateCompanyCommandResponse>(updateEmailMessage, HttpStatusCode.Conflict);
+
+        var updatePhoneMessage = await UpdatePhoneAsync(company, phone, cancellationToken);
+        if (updatePhoneMessage is not null)
+            return Result.Failure<UpdateCompanyCommandResponse>(updatePhoneMessage, HttpStatusCode.Conflict);
+
+        UpdateFantasyName(company, fantasyName);
+        return Result.Success<UpdateCompanyCommandResponse>();
+    }
+
+    private async Task<string?> UpdateEmailAsync(Company company, string email,
+        CancellationToken cancellationToken = default)
     {
         email = Email.Standardization(email);
         if (string.IsNullOrWhiteSpace(email) || company.Email.Value == email)
-            return;
+            return null;
 
-        await CheckForConflictAsync(
-            new CompanyEmailSpecification(email),
-            ConflictErrors.Email,
-            cancellationToken
-        );
+        if (await CheckForConflictAsync(new CompanyEmailSpecification(email), cancellationToken))
+            return ConflictErrors.Email;
 
         company.UpdateEmail(email);
+        return null;
     }
 
-    private async Task UpdatePhoneAsync(Company company, string phone, CancellationToken cancellationToken = default)
+    private async Task<string?> UpdatePhoneAsync(
+        Company company,
+        string phone,
+        CancellationToken cancellationToken = default)
     {
         phone = Phone.RemoveFormatting(phone);
         if (string.IsNullOrWhiteSpace(phone) || company.Phone.Value == phone)
-            return;
+            return null;
 
-        await CheckForConflictAsync(
-            new CompanyPhoneSpecification(phone),
-            ConflictErrors.Phone,
-            cancellationToken
-        );
+        if (await CheckForConflictAsync(new CompanyPhoneSpecification(phone), cancellationToken))
+            return ConflictErrors.Phone;
 
         company.UpdatePhone(phone);
+        return null;
     }
 
     private static void UpdateFantasyName(Company company, string fantasyName)
@@ -76,13 +102,11 @@ internal sealed class UpdateCompanyCommandHandler(IUnitOfWork unitOfWork)
         company.UpdateFantasyName(fantasyName);
     }
 
-    private async Task CheckForConflictAsync(
+    private async Task<bool> CheckForConflictAsync(
         Specification<Company> specification,
-        string message,
         CancellationToken cancellationToken = default)
     {
         var companyRepository = unitOfWork.Companies;
-        if (await companyRepository.ExistsAsync(specification, cancellationToken))
-            throw new ConflictException(message);
+        return await companyRepository.ExistsAsync(specification, cancellationToken);
     }
 }

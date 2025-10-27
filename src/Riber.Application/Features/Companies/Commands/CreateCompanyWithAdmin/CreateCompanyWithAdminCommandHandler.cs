@@ -1,9 +1,9 @@
+using System.Net;
 using Riber.Application.Abstractions.Commands;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Common;
-using Riber.Application.Exceptions;
 using Riber.Application.Extensions;
-using Riber.Application.Models;
+using Riber.Application.Models.User;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Entities;
 using Riber.Domain.Enums;
@@ -18,7 +18,7 @@ namespace Riber.Application.Features.Companies.Commands.CreateCompanyWithAdmin;
 
 internal sealed class CreateCompanyWithAdminCommandHandler(
     IUnitOfWork unitOfWork,
-    IUserCreationService userCreationService) 
+    IUserCreationService userCreationService)
     : ICommandHandler<CreateCompanyWithAdminCommand, CreateCompanyWithAdminCommandResponse>
 {
     public async ValueTask<Result<CreateCompanyWithAdminCommandResponse>> Handle(
@@ -27,7 +27,9 @@ internal sealed class CreateCompanyWithAdminCommandHandler(
         await unitOfWork.BeginTransactionAsync(cancellationToken);
         try
         {
-            await ValidateFieldsRequestAsync(request, cancellationToken);
+            var validationMessage = await ValidateFieldsRequestAsync(request, cancellationToken);
+            if (!validationMessage.IsSuccess) return validationMessage;
+
             var companyEntity = Company.Create(
                 corporateName: request.CorporateName,
                 fantasyName: request.FantasyName,
@@ -37,29 +39,12 @@ internal sealed class CreateCompanyWithAdminCommandHandler(
                 type: request.Type
             );
 
-            companyEntity.RaiseEvent(new CompanyWelcomeEmailRequestedEvent(
-                companyEntity.Name,
-                companyEntity.Email
-            ));
-
-            await unitOfWork.Companies.CreateAsync(companyEntity, cancellationToken);
-            await userCreationService.CreateCompleteUserAsync(
-                new CreateUserCompleteModel(
-                    FullName: request.AdminFullName,
-                    UserName: request.AdminUserName,
-                    Email: request.AdminEmail,
-                    Password: request.AdminPassword,
-                    PhoneNumber: request.AdminPhoneNumber,
-                    TaxId: request.AdminTaxId,
-                    Position: BusinessPosition.Owner,
-                    Roles: ["Admin"],
-                    CompanyId: companyEntity.Id
-                ),
-                cancellationToken
-            );
+            companyEntity.RaiseEvent(new CompanyWelcomeEmailRequestedEvent(companyEntity.Name, companyEntity.Email));
+            var createUserResult = await CreateUserAsync(companyEntity, request, cancellationToken);
+            if (!createUserResult.IsSuccess) return createUserResult;
 
             await unitOfWork.CommitTransactionAsync(cancellationToken);
-            return new CreateCompanyWithAdminCommandResponse(
+            return Result.Success(new CreateCompanyWithAdminCommandResponse(
                 CompanyId: companyEntity.Id,
                 FantasyName: companyEntity.Name,
                 Email: companyEntity.Email,
@@ -67,16 +52,41 @@ internal sealed class CreateCompanyWithAdminCommandHandler(
                 Type: companyEntity.TaxId.Type.GetDescription(),
                 AdminUserEmail: request.AdminEmail,
                 AdminUserName: request.AdminUserName
-            );
+            ), HttpStatusCode.Created);
         }
-        catch (Exception)
+        finally
         {
-            await unitOfWork.RollbackTransactionAsync(cancellationToken);
-            throw;
+            if (unitOfWork.HasActiveTransaction())
+                await unitOfWork.RollbackTransactionAsync(cancellationToken);
         }
     }
 
-    private async Task ValidateFieldsRequestAsync(
+    private async Task<Result<CreateCompanyWithAdminCommandResponse>> CreateUserAsync(
+        Company companyEntity,
+        CreateCompanyWithAdminCommand request,
+        CancellationToken cancellationToken)
+    {
+        await unitOfWork.Companies.CreateAsync(companyEntity, cancellationToken);
+        var createUserModel = new CreateUserCompleteModel(
+            FullName: request.AdminFullName,
+            UserName: request.AdminUserName,
+            Email: request.AdminEmail,
+            Password: request.AdminPassword,
+            PhoneNumber: request.AdminPhoneNumber,
+            TaxId: request.AdminTaxId,
+            Position: BusinessPosition.Owner,
+            Roles: ["Admin"],
+            CompanyId: companyEntity.Id
+        );
+
+        var userCreationResult = await userCreationService.CreateCompleteUserAsync(createUserModel, cancellationToken);
+        return !userCreationResult.IsSuccess
+            ? Result.Failure<CreateCompanyWithAdminCommandResponse>(userCreationResult.Error.Message,
+                userCreationResult.StatusCode)
+            : Result.Success<CreateCompanyWithAdminCommandResponse>();
+    }
+
+    private async Task<Result<CreateCompanyWithAdminCommandResponse>> ValidateFieldsRequestAsync(
         CreateCompanyWithAdminCommand request,
         CancellationToken cancellationToken)
     {
@@ -96,7 +106,9 @@ internal sealed class CreateCompanyWithAdminCommandHandler(
         foreach ((Specification<Company> expression, string message) in validations)
         {
             if (await companyRepository.ExistsAsync(expression, cancellationToken))
-                throw new ConflictException(message);
+                return Result.Failure<CreateCompanyWithAdminCommandResponse>(message, HttpStatusCode.Conflict);
         }
+
+        return Result.Success<CreateCompanyWithAdminCommandResponse>();
     }
 }

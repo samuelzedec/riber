@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Mvc;
 using Riber.Api.Attributes;
+using Riber.Api.Extensions;
+using Riber.Api.Requests.Company;
 using Riber.Application.Common;
 using Riber.Application.Features.Companies.Commands.CreateCompanyWithAdmin;
 using Riber.Application.Features.Companies.Commands.UpdateCompany;
@@ -29,19 +31,20 @@ public sealed class CompanyController(IMediator mediator) : ControllerBase
         CancellationToken cancellationToken)
     {
         var response = await mediator.Send(withAdminCommand, cancellationToken);
-        return Created($"/api/company/{response.Value?.CompanyId}", response);
+        return response.ToHttpResult($"/api/company/{response.Value?.CompanyId}");
     }
-    
-    [HttpPut]
+
+    [HttpPut("{id:guid}")]
     [ProducesResponseType<Result<UpdateCompanyCommandResponse>>(StatusCodes.Status200OK)]
     [RequirePermission(PermissionsSettings.Companies.Read, PermissionsSettings.Companies.Update)]
-    [RequestTimeout("standard")] 
+    [RequestTimeout("standard")]
     public async Task<IActionResult> UpdateCompany(
-        [FromBody] UpdateCompanyCommand command,
+        [FromRoute] Guid id,
+        [FromBody] UpdateCompanyRequest request,
         CancellationToken cancellationToken)
     {
-        var response = await mediator.Send(command, cancellationToken);
-        return Ok(response);
+        var response = await mediator.Send(request.ToCommand(id), cancellationToken);
+        return response.ToHttpResult();
     }
 
     [HttpGet("{id:guid}")]
@@ -53,6 +56,6 @@ public sealed class CompanyController(IMediator mediator) : ControllerBase
         CancellationToken cancellationToken)
     {
         var response = await mediator.Send(new GetCompanyByIdQuery(id), cancellationToken);
-        return Ok(response);
+        return response.ToHttpResult();
     }
 }

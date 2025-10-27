@@ -3,6 +3,7 @@ using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Mvc;
+using Riber.Api.Extensions;
 using Riber.Application.Common;
 using Riber.Application.Features.Users.Commands.CreateUser;
 
@@ -25,6 +26,6 @@ public sealed class UserController(IMediator mediator) : ControllerBase
         CancellationToken cancellationToken)
     {
         var response = await mediator.Send(command, cancellationToken);
-        return Created($"/api/user/{response.Value?.Email}", response);
+        return response.ToHttpResult($"/api/user/{response.Value?.Email}");
     }
 }

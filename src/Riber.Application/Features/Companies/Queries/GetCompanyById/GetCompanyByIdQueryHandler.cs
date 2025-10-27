@@ -1,6 +1,6 @@
+using System.Net;
 using Riber.Application.Abstractions.Queries;
 using Riber.Application.Common;
-using Riber.Application.Exceptions;
 using Riber.Application.Extensions;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Repositories;
@@ -17,7 +17,10 @@ internal sealed class GetCompanyByIdQueryHandler(IUnitOfWork unitOfWork)
         var company = await unitOfWork.Companies.GetSingleAsync(
             new CompanyIdSpecification(request.CompanyId),
             cancellationToken
-        ) ?? throw new NotFoundException(NotFoundErrors.Company);
+        );
+        
+        if(company is null)
+            return Result.Failure<GetCompanyByIdQueryResponse>(NotFoundErrors.Company, HttpStatusCode.NotFound);
 
         return new GetCompanyByIdQueryResponse(
             CorporateName: company.Name.Corporate,
