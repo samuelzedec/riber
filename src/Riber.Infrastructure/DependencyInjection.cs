@@ -13,6 +13,7 @@ using Riber.Application.Abstractions.Dispatchers;
 using Serilog;
 using Serilog.Events;
 using Riber.Application.Abstractions.Services;
+using Riber.Application.Abstractions.Services.Authentication;
 using Riber.Application.Abstractions.Services.Email;
 using Riber.Application.Configurations;
 using Riber.Application.Exceptions;
@@ -23,8 +24,8 @@ using Riber.Infrastructure.Persistence;
 using Riber.Infrastructure.Persistence.Interceptors;
 using Riber.Infrastructure.Persistence.Repositories;
 using Riber.Infrastructure.Schedulers;
-using Riber.Infrastructure.Services;
 using Riber.Infrastructure.Services.Authentication;
+using Riber.Infrastructure.Services.Authentication.Identity;
 using Riber.Infrastructure.Services.AWS;
 using Riber.Infrastructure.Services.AWS.Email;
 using Riber.Infrastructure.Services.Local;
@@ -51,7 +52,7 @@ public static class DependencyInjection
         services.AddAwsServices(configuration);
         services.AddBackgroundJobs(defaultConnection);
         services.AddHealthChecksConfiguration(defaultConnection);
-        services.AddSchedulersAndJobs();
+        services.AddDispachersAndJobs();
         services.AddTelemetry();
     }
 
@@ -105,14 +106,18 @@ public static class DependencyInjection
 
     private static void AddServices(this IServiceCollection services, IConfiguration configuration)
     {
-        // Transient
+        // Transient & Scoped
         services.AddTransient<IEmailTemplateRender, EmailTemplateRender>();
         services.AddTransient<IEmailService, AmazonSESService>();
         services.AddTransient<IPermissionDataService, PermissionDataService>();
-        services.AddTransient<IAuthService, AuthService>();
         services.AddTransient<ITokenService, JwtTokenService>();
         services.AddTransient<IUserCreationService, UserCreationService>();
         services.AddTransient<ICurrentUserService, CurrentUserService>();
+        services.AddTransient<IUserQueryService, UserQueryService>();
+        services.AddTransient<IUserManagementService, UserManagementService>();
+        services.AddTransient<IRoleManagementService, RoleManagementService>();
+        services.AddTransient<IAuthenticationService, AuthenticationService>();
+        services.AddScoped<UserMappingService>();
 
         if (configuration["ASPNETCORE_ENVIRONMENT"] == "Development")
             services.AddTransient<IImageStorageService, LocalImageStorageService>();
@@ -130,14 +135,16 @@ public static class DependencyInjection
         services.AddAWSService<IAmazonS3>();
     }
 
-    private static void AddSchedulersAndJobs(this IServiceCollection services)
+    private static void AddDispachersAndJobs(this IServiceCollection services)
     {
         // Background jobs
         services.AddTransient<SendingEmailJob>();
         services.AddTransient<CleanupImageBucketJob>();
+        services.AddTransient<DeleteImageFromStorageJob>();
 
         // Dispatchers
         services.AddScoped<IEmailDispatcher, EmailDispatcher>();
+        services.AddScoped<IDeleteImageFromStorageDispatcher, DeleteImageFromStorageDispatcher>();
     }
 
     private static void AddHealthChecksConfiguration(this IServiceCollection services, string defaultConnection)
@@ -169,6 +176,7 @@ public static class DependencyInjection
 
             CleanupImageBucketScheduler.Configure(quartz);
             SendingEmailScheduler.Configure(quartz);
+            DeleteImageFromStorageScheduler.Configure(quartz);
         });
 
         services.AddQuartzHostedService(options =>

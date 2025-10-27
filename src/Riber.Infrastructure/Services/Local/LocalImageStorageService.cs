@@ -18,11 +18,11 @@ public sealed class LocalImageStorageService
         Directory.CreateDirectory(_storagePath);
     }
 
-    public async Task UploadAsync(Stream stream, string fileName, string contentType)
+    public async Task UploadAsync(Stream stream, string imageKey, string contentType)
     {
         try
         {
-            var filePath = Path.Combine(_storagePath, fileName);
+            var filePath = Path.Combine(_storagePath, imageKey);
             await using var fileStream = new FileStream(filePath, FileMode.Create);
             await stream.CopyToAsync(fileStream);
         }
@@ -37,9 +37,9 @@ public sealed class LocalImageStorageService
         }
     }
 
-    public Task<Stream> GetImageStreamAsync(string fileName)
+    public Task<Stream> GetImageStreamAsync(string imageKey)
     {
-        var imagePath = Path.Combine(_storagePath, fileName);
+        var imagePath = Path.Combine(_storagePath, imageKey);
 
         return !File.Exists(imagePath)
             ? throw new NotFoundException(StorageErrors.RetrieveFailed)
@@ -53,7 +53,7 @@ public sealed class LocalImageStorageService
             );
     }
 
-    public Task<IEnumerable<string>> DeleteAllAsync(List<string> fileKeys)
+    public Task<IEnumerable<string>> DeleteAllAsync(params List<string> fileKeys)
     {
         List<string> deletedKeys = [];
         foreach (var fileKey in fileKeys)
