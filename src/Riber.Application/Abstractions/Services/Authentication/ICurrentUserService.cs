@@ -1,4 +1,4 @@
-namespace Riber.Application.Abstractions.Services;
+namespace Riber.Application.Abstractions.Services.Authentication;
 
 /// <summary>
 /// Define um serviço para acessar informações relacionadas ao usuário atual.
@@ -11,20 +11,20 @@ namespace Riber.Application.Abstractions.Services;
 public interface ICurrentUserService
 {
     /// <summary>
-    /// Obtém as permissões associadas ao usuário atual.
+    /// Retorna as permissões associadas ao usuário atual.
     /// </summary>
-    /// <returns>Um array de strings representando as permissões do usuário atual.</returns>
+    /// <returns>Array de strings com as permissões do usuário.</returns>
     string[] GetPermissions();
 
     /// <summary>
-    /// Obtém o identificador único associado ao usuário atual.
+    /// Retorna o identificador único do usuário atual.
     /// </summary>
-    /// <returns>Um objeto Guid opcional representando o identificador do usuário atual.</returns>
+    /// <returns>Guid do usuário atual.</returns>
     Guid GetUserId();
 
     /// <summary>
-    /// Obtém o identificador único da empresa associado ao usuário atual.
+    /// Retorna o identificador da empresa do usuário atual, se houver.
     /// </summary>
-    /// <returns>Um objeto Guid representando o identificador da empresa do usuário atual.</returns>
-    Guid GetCompanyId();
+    /// <returns>Guid da empresa ou <c>null</c> se não houver.</returns>
+    Guid? GetCompanyId();
 }

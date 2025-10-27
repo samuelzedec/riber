@@ -1,6 +1,6 @@
-using Riber.Application.Models;
+using Riber.Application.Models.User;
 
-namespace Riber.Application.Abstractions.Services;
+namespace Riber.Application.Abstractions.Services.Authentication;
 
 /// <summary>
 /// Interface de serviço responsável pela geração de tokens de autenticação.
