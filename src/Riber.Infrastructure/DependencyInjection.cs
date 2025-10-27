@@ -119,10 +119,10 @@ public static class DependencyInjection
         services.AddTransient<IAuthenticationService, AuthenticationService>();
         services.AddScoped<UserMappingService>();
 
-        if (configuration["ASPNETCORE_ENVIRONMENT"] == "Development")
-            services.AddTransient<IImageStorageService, LocalImageStorageService>();
-        else
+        if (configuration["ASPNETCORE_ENVIRONMENT"] == "Production")
             services.AddTransient<IImageStorageService, AmazonS3Service>();
+        else
+            services.AddTransient<IImageStorageService, LocalImageStorageService>();
 
         // Singleton
         services.AddSingleton<IEmailConcurrencyService, EmailConcurrencyService>();
