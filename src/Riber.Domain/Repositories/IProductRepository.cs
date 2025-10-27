@@ -6,7 +6,7 @@ namespace Riber.Domain.Repositories;
 
 /// <summary>
 /// Representa uma interface de repositório específica para gerenciamento de produtos.
-/// Estende a interface genérica <see cref="IRepository{T}"/>, tendo <see cref="Product"/> como entidade raiz de agregado.
+/// Estende a interface genérica <see cref="IRepository&lt;T&gt;"/>, tendo <see cref="Product"/> como entidade raiz de agregado.
 /// Fornece métodos para operações de persistência e acesso a dados relacionados aos produtos.
 /// </summary>
 public interface IProductRepository : IRepository<Product>
@@ -75,12 +75,20 @@ public interface IProductRepository : IRepository<Product>
         params Expression<Func<ProductCategory, object>>[] includes);
 
     /// <summary>
+    /// Cria e armazena a imagem especificada no serviço de armazenamento.
+    /// </summary>
+    /// <param name="image">A imagem que deve ser criada e salva.</param>
+    /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para observar durante a execução da operação.</param>
+    /// <returns>Uma <see cref="Task"/> que é concluída quando a imagem é criada e armazenada.</returns>
+    Task CreateImageAsync(Image image, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Obtém todas as imagens que não estão sendo utilizadas no sistema.
     /// </summary>
     /// <param name="cancellationToken">Token para cancelamento da operação assíncrona.</param>
     /// <returns>Uma coleção de imagens não utilizadas.</returns>
     Task<IReadOnlyList<Image>> GetUnusedImagesAsync(CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// Remove uma imagem específica do serviço de armazenamento.
     /// </summary>
