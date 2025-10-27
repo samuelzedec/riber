@@ -75,7 +75,7 @@ public abstract class BaseEntityConfiguration<T> : IEntityTypeConfiguration<T>
     /// Pode ser sobrescrito em classes derivadas para implementar filtros específicos para outras condições.
     /// </summary>
     /// <param name="builder">
-    /// O objeto <see cref="EntityTypeBuilder{T}"/> que fornece a API para configurar a entidade.
+    /// O objeto <see cref="EntityTypeBuilder&lt;T&gt;"/> que fornece a API para configurar a entidade.
     /// </param>
     protected virtual void ConfigureQueryFilter(EntityTypeBuilder<T> builder)
         => builder.HasQueryFilter(x => !x.DeletedAt.HasValue);
