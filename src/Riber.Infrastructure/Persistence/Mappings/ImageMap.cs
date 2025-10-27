@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Riber.Domain.Entities;
+using Riber.Infrastructure.Extensions;
 
 namespace Riber.Infrastructure.Persistence.Mappings;
 
@@ -11,16 +12,12 @@ public sealed class ImageMap : BaseEntityConfiguration<Image>
 
     protected override void ConfigureEntity(EntityTypeBuilder<Image> builder)
     {
+        builder.ConfigureContentType();
+
         builder
             .Property(i => i.ShouldDelete)
             .HasColumnName("should_delete")
             .HasColumnType("boolean")
-            .IsRequired();
-
-        builder
-            .Property(i => i.ContentType)
-            .HasColumnName("content_type")
-            .HasColumnType("text")
             .IsRequired();
 
         builder
@@ -38,12 +35,6 @@ public sealed class ImageMap : BaseEntityConfiguration<Image>
         builder
             .Property(i => i.Extension)
             .HasColumnName("extension")
-            .HasColumnType("text")
-            .IsRequired();
-
-        builder
-            .Property(i => i.Key)
-            .HasColumnName("key")
             .HasColumnType("text")
             .IsRequired();
 
