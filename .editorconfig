@@ -11,6 +11,7 @@ indent_size = 2
 # C# files
 [*.cs]
 dotnet_diagnostic.CS8019.severity = error
+# dotnet_diagnostic.IDE0005.severity = error
 
 # Migrations and auto-generated code
 [**/Migrations/*.cs]

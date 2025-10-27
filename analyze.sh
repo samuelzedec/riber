@@ -62,7 +62,8 @@ SONAR_BEGIN_ARGS=(
 **/Identity/**,\
 **/Common/Api/**,\
 **/Requests/**,\
-**/AuthService.cs"
+**/UserManagementService.cs/**,\
+**/UserMappingService.cs/**"
 )
 
 # Adicionar /o: apenas se for SonarCloud
