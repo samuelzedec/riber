@@ -1,7 +1,7 @@
+using System.Net;
 using Bogus.Extensions.Brazil;
 using FluentAssertions;
 using Moq;
-using Riber.Application.Exceptions;
 using Riber.Application.Extensions;
 using Riber.Application.Features.Companies.Queries.GetCompanyById;
 using Riber.Domain.Constants.Messages.Common;
@@ -86,8 +86,8 @@ public sealed class GetCompanyByIdQueryHandlerTests : BaseTest
     #region Not Found Tests
 
     [Trait("Category", "Unit")]
-    [Fact(DisplayName = "Should throw not found exception when company does not exist")]
-    public async Task Handle_WhenCompanyDoesNotExist_ShouldThrowNotFoundException()
+    [Fact(DisplayName = "Should return not found when company does not exist")]
+    public async Task Handle_WhenCompanyDoesNotExist_ShouldReturnNotFound()
     {
         // Arrange
         _mockCompanyRepository
@@ -102,12 +102,12 @@ public sealed class GetCompanyByIdQueryHandlerTests : BaseTest
             .Returns(_mockCompanyRepository.Object);
 
         // Act
-        var result = async () => await _queryHandler.Handle(_query, CancellationToken.None);
+        var result = await _queryHandler.Handle(_query, CancellationToken.None);
 
         // Assert
-        await result.Should()
-            .ThrowAsync<NotFoundException>()
-            .WithMessage(NotFoundErrors.Company);
+        result.IsSuccess.Should().BeFalse();
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        result.Error.Message.Should().Be(NotFoundErrors.Company);
 
         _mockCompanyRepository.Verify(x => x.GetSingleAsync(
             It.IsAny<Specification<Company>>(),
@@ -115,8 +115,8 @@ public sealed class GetCompanyByIdQueryHandlerTests : BaseTest
     }
 
     [Trait("Category", "Unit")]
-    [Fact(DisplayName = "Should throw not found exception when company id is empty")]
-    public async Task Handle_WhenCompanyIdIsEmpty_ShouldThrowNotFoundException()
+    [Fact(DisplayName = "Should return not found when company id is empty")]
+    public async Task Handle_WhenCompanyIdIsEmpty_ShouldReturnNotFound()
     {
         // Arrange
         var emptyQuery = new GetCompanyByIdQuery(Guid.Empty);
@@ -133,12 +133,12 @@ public sealed class GetCompanyByIdQueryHandlerTests : BaseTest
             .Returns(_mockCompanyRepository.Object);
 
         // Act
-        var result = async () => await _queryHandler.Handle(emptyQuery, CancellationToken.None);
+        var result = await _queryHandler.Handle(emptyQuery, CancellationToken.None);
 
         // Assert
-        await result.Should()
-            .ThrowAsync<NotFoundException>()
-            .WithMessage(NotFoundErrors.Company);
+        result.IsSuccess.Should().BeFalse();
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        result.Error.Message.Should().Be(NotFoundErrors.Company);
 
         _mockCompanyRepository.Verify(x => x.GetSingleAsync(
             It.IsAny<Specification<Company>>(),
@@ -203,6 +203,7 @@ public sealed class GetCompanyByIdQueryHandlerTests : BaseTest
         var result = await _queryHandler.Handle(_query, CancellationToken.None);
 
         // Assert
+        result.IsSuccess.Should().BeTrue();
         result.Value.Should().NotBeNull();
 
         result.Value.CorporateName.Should().Be(_company.Name.Corporate);

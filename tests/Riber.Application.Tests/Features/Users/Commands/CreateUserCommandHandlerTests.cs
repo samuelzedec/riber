@@ -4,7 +4,7 @@ using Moq;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Exceptions;
 using Riber.Application.Features.Users.Commands.CreateUser;
-using Riber.Application.Models;
+using Riber.Application.Models.User;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Enums;
 using Riber.Domain.Repositories;

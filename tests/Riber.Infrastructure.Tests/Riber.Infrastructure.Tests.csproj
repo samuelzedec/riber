@@ -26,6 +26,8 @@
     <ProjectReference Include="..\..\src\Riber.Application\Riber.Application.csproj" />
     <ProjectReference Include="..\..\src\Riber.Domain\Riber.Domain.csproj" />
     <ProjectReference Include="..\..\src\Riber.Infrastructure\Riber.Infrastructure.csproj" />
+    <ProjectReference Include="..\Riber.Api.Tests\Riber.Api.Tests.csproj" />
+    <ProjectReference Include="..\Riber.Application.Tests\Riber.Application.Tests.csproj" />
     <ProjectReference Include="..\Riber.Domain.Tests\Riber.Domain.Tests.csproj" />
   </ItemGroup>
 </Project>
