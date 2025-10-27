@@ -1,8 +1,9 @@
+using System.Net;
 using Riber.Application.Abstractions.Commands;
-using Riber.Application.Abstractions.Services;
+using Riber.Application.Abstractions.Services.Authentication;
 using Riber.Application.Common;
-using Riber.Application.Exceptions;
 using Riber.Domain.Constants.Messages.Common;
+using Riber.Domain.Constants.Messages.Entities;
 using Riber.Domain.Entities;
 using Riber.Domain.Repositories;
 using Riber.Domain.Specifications.ProductCategory;
@@ -19,14 +20,18 @@ internal sealed class CreateProductCategoryCommandHandler(
         CancellationToken cancellationToken)
     {
         var companyId = currentUserService.GetCompanyId();
-        await ValidateCode(command.Code, companyId, cancellationToken);
+        if (!companyId.HasValue)
+            return Result.Failure<CreateProductCategoryCommandResponse>(CompanyErrors.Invalid);
+
+        if (await ValidateCode(command.Code, companyId.Value, cancellationToken))
+            return Result.Failure<CreateProductCategoryCommandResponse>(ConflictErrors.CategoryCode, HttpStatusCode.Conflict);
 
         var codeNormalized = command.Code.ToUpperInvariant();
         var category = ProductCategory.Create(
             code: codeNormalized,
             name: command.Name,
             description: command.Description,
-            companyId: companyId
+            companyId: companyId.Value
         );
 
         await unitOfWork.Products.CreateCategoryAsync(category, cancellationToken);
@@ -39,7 +44,7 @@ internal sealed class CreateProductCategoryCommandHandler(
         );
     }
 
-    private async Task ValidateCode(
+    private async Task<bool> ValidateCode(
         string code,
         Guid companyId,
         CancellationToken cancellationToken = default)
@@ -47,7 +52,8 @@ internal sealed class CreateProductCategoryCommandHandler(
         var specification = new TenantSpecification<ProductCategory>(companyId)
             .And(new ProductCategoryCodeSpecification(code));
 
-        if (await unitOfWork.Products.GetCategoryAsync(specification, cancellationToken) is not null)
-            throw new BadRequestException(ConflictErrors.CategoryCode);
+        return await unitOfWork
+            .Products
+            .GetCategoryAsync(specification, cancellationToken) is not null;
     }
 }
