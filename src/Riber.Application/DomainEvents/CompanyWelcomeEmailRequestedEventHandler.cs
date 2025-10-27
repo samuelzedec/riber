@@ -5,7 +5,7 @@ using Riber.Application.Models.Email;
 using Riber.Domain.Enums;
 using Riber.Domain.Events;
 
-namespace Riber.Application.Events.Handlers;
+namespace Riber.Application.DomainEvents;
 
 internal sealed class CompanyWelcomeEmailRequestedEventHandler(
     IEmailDispatcher emailDispatcher)
