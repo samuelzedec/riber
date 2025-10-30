@@ -2,8 +2,8 @@ using Bogus.Extensions.Brazil;
 using FluentAssertions;
 using Moq;
 using Riber.Application.Abstractions.Services.Authentication;
+using Riber.Application.Dtos.User;
 using Riber.Application.Features.Auths.Commands.Login;
-using Riber.Application.Models.User;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Entities;
 using Riber.Domain.Enums;
@@ -17,7 +17,7 @@ public sealed class LoginCommandHandlerTests : BaseTest
 
     private readonly Mock<IAuthenticationService> _mockAuthService;
     private readonly Mock<ITokenService> _mockTokenService;
-    private readonly UserDetailsModel _userDetailsTest;
+    private readonly UserDetailsDto _userDetailsTest;
     private readonly LoginCommand _command;
     private readonly LoginCommandHandler _handler;
 
@@ -33,8 +33,8 @@ public sealed class LoginCommandHandlerTests : BaseTest
             Guid.CreateVersion7()
         );
 
-        _userDetailsTest = CreateFaker<UserDetailsModel>()
-            .CustomInstantiator(f => new UserDetailsModel(
+        _userDetailsTest = CreateFaker<UserDetailsDto>()
+            .CustomInstantiator(f => new UserDetailsDto(
                 Id: Guid.CreateVersion7(),
                 UserName: f.Internet.UserName(),
                 Email: f.Internet.Email(),
@@ -73,7 +73,7 @@ public sealed class LoginCommandHandlerTests : BaseTest
             .ReturnsAsync(_userDetailsTest);
 
         _mockTokenService
-            .Setup(x => x.GenerateToken(It.IsAny<UserDetailsModel>()))
+            .Setup(x => x.GenerateToken(It.IsAny<UserDetailsDto>()))
             .Returns(_faker.Random.AlphaNumeric(32));
 
         _mockTokenService
@@ -93,7 +93,7 @@ public sealed class LoginCommandHandlerTests : BaseTest
         result.Value.UserDomainId.Should().Be(_userDetailsTest.UserDomainId);
 
         _mockAuthService.Verify(x => x.LoginAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
-        _mockTokenService.Verify(x => x.GenerateToken(It.IsAny<UserDetailsModel>()), Times.Once);
+        _mockTokenService.Verify(x => x.GenerateToken(It.IsAny<UserDetailsDto>()), Times.Once);
         _mockTokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<Guid>(), It.IsAny<string>()), Times.Once);
     }
 
@@ -108,7 +108,7 @@ public sealed class LoginCommandHandlerTests : BaseTest
         // Arrange
         _mockAuthService
             .Setup(x => x.LoginAsync(It.IsAny<string>(), It.IsAny<string>()))
-            .ReturnsAsync((UserDetailsModel?)null);
+            .ReturnsAsync((UserDetailsDto?)null);
 
         // Act
         var result = await _handler.Handle(_command, CancellationToken.None);
@@ -121,7 +121,7 @@ public sealed class LoginCommandHandlerTests : BaseTest
         result.Error.Message.Should().Be(AuthenticationErrors.InvalidCredentials);
         
         _mockAuthService.Verify(x => x.LoginAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
-        _mockTokenService.Verify(x => x.GenerateToken(It.IsAny<UserDetailsModel>()), Times.Never);
+        _mockTokenService.Verify(x => x.GenerateToken(It.IsAny<UserDetailsDto>()), Times.Never);
         _mockTokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
     }
 
@@ -132,7 +132,7 @@ public sealed class LoginCommandHandlerTests : BaseTest
         // Arrange
         _mockAuthService
             .Setup(x => x.LoginAsync(It.IsAny<string>(), It.IsAny<string>()))
-            .ReturnsAsync((UserDetailsModel?)null);
+            .ReturnsAsync((UserDetailsDto?)null);
 
         // Act
         var result = await _handler.Handle(_command, CancellationToken.None);
@@ -145,7 +145,7 @@ public sealed class LoginCommandHandlerTests : BaseTest
         result.Error.Message.Should().Be(AuthenticationErrors.InvalidCredentials);
         
         _mockAuthService.Verify(x => x.LoginAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
-        _mockTokenService.Verify(x => x.GenerateToken(It.IsAny<UserDetailsModel>()), Times.Never);
+        _mockTokenService.Verify(x => x.GenerateToken(It.IsAny<UserDetailsDto>()), Times.Never);
         _mockTokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
     }
 
@@ -167,7 +167,7 @@ public sealed class LoginCommandHandlerTests : BaseTest
             .WithMessage("Database connection failed");
 
         _mockAuthService.Verify(x => x.LoginAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
-        _mockTokenService.Verify(x => x.GenerateToken(It.IsAny<UserDetailsModel>()), Times.Never);
+        _mockTokenService.Verify(x => x.GenerateToken(It.IsAny<UserDetailsDto>()), Times.Never);
         _mockTokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
     }
 

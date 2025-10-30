@@ -1,5 +1,5 @@
 using Riber.Application.Common;
-using Riber.Application.Models.Auth;
+using Riber.Application.Dtos.Auth;
 
 namespace Riber.Application.Abstractions.Services.Authentication;
 
@@ -26,5 +26,5 @@ public interface IPermissionDataService
     /// Retorna todas as permissões disponíveis com suas descrições.
     /// </summary>
     /// <returns>Coleção de permissões com detalhes e descrições.</returns>
-    Task<Result<IReadOnlyCollection<PermissionModel>>> GetAllWithDescriptionsAsync();
+    Task<Result<IReadOnlyCollection<PermissionDto>>> GetAllWithDescriptionsAsync();
 }

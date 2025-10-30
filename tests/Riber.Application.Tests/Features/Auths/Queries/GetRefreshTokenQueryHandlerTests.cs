@@ -3,8 +3,8 @@ using Bogus.Extensions.Brazil;
 using FluentAssertions;
 using Moq;
 using Riber.Application.Abstractions.Services.Authentication;
+using Riber.Application.Dtos.User;
 using Riber.Application.Features.Auths.Queries.GetRefreshToken;
-using Riber.Application.Models.User;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Entities;
 using Riber.Domain.Enums;
@@ -20,7 +20,7 @@ public sealed class GetRefreshTokenQueryHandlerTests : BaseTest
     private readonly Mock<IAuthenticationService> _mockAuthenticationService;
     private readonly Mock<IUserQueryService> _mockUserQueryService;
     private readonly Mock<ITokenService> _mockTokenService;
-    private readonly UserDetailsModel _userDetailsTest;
+    private readonly UserDetailsDto _userDetailsTest;
     private readonly GetRefreshTokenQuery _query;
     private readonly GetRefreshTokenQueryHandler _handler;
     private readonly Guid _userId;
@@ -40,8 +40,8 @@ public sealed class GetRefreshTokenQueryHandlerTests : BaseTest
         );
 
         _userId = userDomain.Id;
-        _userDetailsTest = CreateFaker<UserDetailsModel>()
-            .CustomInstantiator(f => new UserDetailsModel(
+        _userDetailsTest = CreateFaker<UserDetailsDto>()
+            .CustomInstantiator(f => new UserDetailsDto(
                 Id: Guid.CreateVersion7(),
                 UserName: f.Internet.UserName(),
                 Email: f.Internet.Email(),
@@ -86,7 +86,7 @@ public sealed class GetRefreshTokenQueryHandlerTests : BaseTest
             .ReturnsAsync(_userDetailsTest);
 
         _mockTokenService
-            .Setup(x => x.GenerateToken(It.IsAny<UserDetailsModel>()))
+            .Setup(x => x.GenerateToken(It.IsAny<UserDetailsDto>()))
             .Returns(_faker.Random.AlphaNumeric(32));
 
         _mockTokenService
@@ -142,7 +142,7 @@ public sealed class GetRefreshTokenQueryHandlerTests : BaseTest
         _mockCurrentUserService.Verify(x => x.GetUserId(), Times.Once);
         _mockAuthenticationService.Verify(x => x.RefreshSecurityStampAsync(_userId.ToString()), Times.Once);
         _mockUserQueryService.Verify(x => x.FindByIdAsync(It.IsAny<Guid>()), Times.Never);
-        _mockTokenService.Verify(x => x.GenerateToken(It.IsAny<UserDetailsModel>()), Times.Never);
+        _mockTokenService.Verify(x => x.GenerateToken(It.IsAny<UserDetailsDto>()), Times.Never);
         _mockTokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
     }
 
@@ -161,7 +161,7 @@ public sealed class GetRefreshTokenQueryHandlerTests : BaseTest
 
         _mockUserQueryService
             .Setup(x => x.FindByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync((UserDetailsModel?)null);
+            .ReturnsAsync((UserDetailsDto?)null);
 
         // Act
         var result = await _handler.Handle(_query, CancellationToken.None);
@@ -177,7 +177,7 @@ public sealed class GetRefreshTokenQueryHandlerTests : BaseTest
         _mockCurrentUserService.Verify(x => x.GetUserId(), Times.Once);
         _mockAuthenticationService.Verify(x => x.RefreshSecurityStampAsync(_userId.ToString()), Times.Once);
         _mockUserQueryService.Verify(x => x.FindByIdAsync(_userId), Times.Once);
-        _mockTokenService.Verify(x => x.GenerateToken(It.IsAny<UserDetailsModel>()), Times.Never);
+        _mockTokenService.Verify(x => x.GenerateToken(It.IsAny<UserDetailsDto>()), Times.Never);
         _mockTokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
     }
 
@@ -206,7 +206,7 @@ public sealed class GetRefreshTokenQueryHandlerTests : BaseTest
         _mockCurrentUserService.Verify(x => x.GetUserId(), Times.Once);
         _mockAuthenticationService.Verify(x => x.RefreshSecurityStampAsync(It.IsAny<string>()), Times.Never);
         _mockUserQueryService.Verify(x => x.FindByIdAsync(It.IsAny<Guid>()), Times.Never);
-        _mockTokenService.Verify(x => x.GenerateToken(It.IsAny<UserDetailsModel>()), Times.Never);
+        _mockTokenService.Verify(x => x.GenerateToken(It.IsAny<UserDetailsDto>()), Times.Never);
         _mockTokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
     }
 
@@ -239,7 +239,7 @@ public sealed class GetRefreshTokenQueryHandlerTests : BaseTest
         _mockCurrentUserService.Verify(x => x.GetUserId(), Times.Once);
         _mockAuthenticationService.Verify(x => x.RefreshSecurityStampAsync(_userId.ToString()), Times.Once);
         _mockUserQueryService.Verify(x => x.FindByIdAsync(_userId), Times.Once);
-        _mockTokenService.Verify(x => x.GenerateToken(It.IsAny<UserDetailsModel>()), Times.Never);
+        _mockTokenService.Verify(x => x.GenerateToken(It.IsAny<UserDetailsDto>()), Times.Never);
         _mockTokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
     }
 
@@ -265,7 +265,7 @@ public sealed class GetRefreshTokenQueryHandlerTests : BaseTest
             .ReturnsAsync(_userDetailsTest);
 
         _mockTokenService
-            .Setup(x => x.GenerateToken(It.IsAny<UserDetailsModel>()))
+            .Setup(x => x.GenerateToken(It.IsAny<UserDetailsDto>()))
             .Returns(_faker.Random.AlphaNumeric(32));
 
         _mockTokenService

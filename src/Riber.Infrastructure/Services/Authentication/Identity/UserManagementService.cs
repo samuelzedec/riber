@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Riber.Application.Abstractions.Services.Authentication;
-using Riber.Application.Models.User;
+using Riber.Application.Dtos.User;
 using Riber.Infrastructure.Extensions;
 using Riber.Infrastructure.Persistence.Identity;
 
@@ -13,30 +13,30 @@ public sealed class UserManagementService(
     ILogger<UserManagementService> logger)
     : IUserManagementService
 {
-    public async Task<bool> CreateUserAsync(CreateApplicationUserModel model)
+    public async Task<bool> CreateUserAsync(CreateApplicationUserDto dto)
     {
-        if (model.Roles.Count == 0)
+        if (dto.Roles.Count == 0)
             return false;
 
         var applicationUser = new ApplicationUser
         {
-            Name = model.Name,
-            UserName = model.UserName,
-            Email = model.Email,
+            Name = dto.Name,
+            UserName = dto.UserName,
+            Email = dto.Email,
             EmailConfirmed = false,
-            PhoneNumber = model.PhoneNumber,
-            UserDomainId = model.UserDomainId
+            PhoneNumber = dto.PhoneNumber,
+            UserDomainId = dto.UserDomainId
         };
 
-        var createResult = await userManager.CreateAsync(applicationUser, model.Password);
+        var createResult = await userManager.CreateAsync(applicationUser, dto.Password);
         if (!createResult.Succeeded)
         {
-            createResult.LogIdentityErrors($"Falha ao criar usuário {model.UserName}", logger);
+            createResult.LogIdentityErrors($"Falha ao criar usuário {dto.UserName}", logger);
             return false;
         }
 
         var roleResult = await roleManagementService.AssignRoleAsync(
-            applicationUser.Id.ToString(), model.Roles.First());
+            applicationUser.Id.ToString(), dto.Roles.First());
 
         if (roleResult)
             return true;

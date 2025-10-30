@@ -55,7 +55,8 @@ SONAR_BEGIN_ARGS=(
 **/Settings/**,\
 **/Interceptors/**,\
 **/Constants/**,\
-**/Models/**,\
+**/Dtos/**,\
+**/DomainEvents/**,\
 **/Exceptions/**,\
 **/Abstractions/**,\
 **/DependencyInjection.cs,\

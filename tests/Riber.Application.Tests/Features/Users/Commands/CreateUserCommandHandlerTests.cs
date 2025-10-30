@@ -5,12 +5,12 @@ using Riber.Application.Abstractions.Services;
 using Riber.Application.Common;
 using Riber.Application.Exceptions;
 using Riber.Application.Features.Users.Commands.CreateUser;
-using Riber.Application.Models.User;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Enums;
 using Riber.Domain.Repositories;
 using Riber.Domain.Tests;
 using System.Net;
+using Riber.Application.Dtos.User;
 
 namespace Riber.Application.Tests.Features.Users.Commands;
 
@@ -58,7 +58,7 @@ public sealed class CreateUserCommandHandlerTests : BaseTest
 
         _mockUserCreationService
             .Setup(x => x.CreateCompleteUserAsync(
-                It.IsAny<CreateUserCompleteModel>(),
+                It.IsAny<CreateUserCompleteDto>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(userCreationResult);
 
@@ -85,7 +85,7 @@ public sealed class CreateUserCommandHandlerTests : BaseTest
         result.Value.UserName.Should().Be(_command.UserName);
 
         _mockUserCreationService.Verify(x => x.CreateCompleteUserAsync(
-            It.Is<CreateUserCompleteModel>(dto =>
+            It.Is<CreateUserCompleteDto>(dto =>
                 dto.FullName == _command.FullName &&
                 dto.UserName == _command.UserName &&
                 dto.Email == _command.Email &&
@@ -119,7 +119,7 @@ public sealed class CreateUserCommandHandlerTests : BaseTest
         // Arrange
         _mockUserCreationService
             .Setup(x => x.CreateCompleteUserAsync(
-                It.IsAny<CreateUserCompleteModel>(),
+                It.IsAny<CreateUserCompleteDto>(),
                 It.IsAny<CancellationToken>()))
             .ThrowsAsync(new ConflictException(ConflictErrors.Email));
 
@@ -143,7 +143,7 @@ public sealed class CreateUserCommandHandlerTests : BaseTest
             .WithMessage(ConflictErrors.Email);
 
         _mockUserCreationService.Verify(x => x.CreateCompleteUserAsync(
-            It.IsAny<CreateUserCompleteModel>(), It.IsAny<CancellationToken>()), Times.Once);
+            It.IsAny<CreateUserCompleteDto>(), It.IsAny<CancellationToken>()), Times.Once);
 
         _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(
             It.IsAny<CancellationToken>()), Times.Once);
@@ -168,7 +168,7 @@ public sealed class CreateUserCommandHandlerTests : BaseTest
 
         _mockUserCreationService
             .Setup(x => x.CreateCompleteUserAsync(
-                It.IsAny<CreateUserCompleteModel>(),
+                It.IsAny<CreateUserCompleteDto>(),
                 It.IsAny<CancellationToken>()))
             .ThrowsAsync(expectedException);
 
@@ -192,7 +192,7 @@ public sealed class CreateUserCommandHandlerTests : BaseTest
             .WithMessage("User creation service error");
 
         _mockUserCreationService.Verify(x => x.CreateCompleteUserAsync(
-            It.IsAny<CreateUserCompleteModel>(), It.IsAny<CancellationToken>()), Times.Once);
+            It.IsAny<CreateUserCompleteDto>(), It.IsAny<CancellationToken>()), Times.Once);
 
         _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(
             It.IsAny<CancellationToken>()), Times.Once);
@@ -214,7 +214,7 @@ public sealed class CreateUserCommandHandlerTests : BaseTest
 
         _mockUserCreationService
             .Setup(x => x.CreateCompleteUserAsync(
-                It.IsAny<CreateUserCompleteModel>(),
+                It.IsAny<CreateUserCompleteDto>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(userCreationResult);
 
@@ -242,7 +242,7 @@ public sealed class CreateUserCommandHandlerTests : BaseTest
             .WithMessage("Commit transaction error");
 
         _mockUserCreationService.Verify(x => x.CreateCompleteUserAsync(
-            It.IsAny<CreateUserCompleteModel>(), It.IsAny<CancellationToken>()), Times.Once);
+            It.IsAny<CreateUserCompleteDto>(), It.IsAny<CancellationToken>()), Times.Once);
 
         _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(
             It.IsAny<CancellationToken>()), Times.Once);
@@ -267,7 +267,7 @@ public sealed class CreateUserCommandHandlerTests : BaseTest
 
         _mockUserCreationService
             .Setup(x => x.CreateCompleteUserAsync(
-                It.IsAny<CreateUserCompleteModel>(),
+                It.IsAny<CreateUserCompleteDto>(),
                 It.Is<CancellationToken>(ct => ct.IsCancellationRequested)))
             .ThrowsAsync(new OperationCanceledException());
 
@@ -291,7 +291,7 @@ public sealed class CreateUserCommandHandlerTests : BaseTest
             .ThrowAsync<OperationCanceledException>();
 
         _mockUserCreationService.Verify(x => x.CreateCompleteUserAsync(
-            It.IsAny<CreateUserCompleteModel>(),
+            It.IsAny<CreateUserCompleteDto>(),
             It.Is<CancellationToken>(ct => ct.IsCancellationRequested)), Times.Once);
 
         _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(
@@ -313,7 +313,7 @@ public sealed class CreateUserCommandHandlerTests : BaseTest
 
         _mockUserCreationService
             .Setup(x => x.CreateCompleteUserAsync(
-                It.IsAny<CreateUserCompleteModel>(),
+                It.IsAny<CreateUserCompleteDto>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(userCreationResult);
 
@@ -341,7 +341,7 @@ public sealed class CreateUserCommandHandlerTests : BaseTest
             .ThrowAsync<OperationCanceledException>();
 
         _mockUserCreationService.Verify(x => x.CreateCompleteUserAsync(
-            It.IsAny<CreateUserCompleteModel>(), It.IsAny<CancellationToken>()), Times.Once);
+            It.IsAny<CreateUserCompleteDto>(), It.IsAny<CancellationToken>()), Times.Once);
 
         _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(
             It.IsAny<CancellationToken>()), Times.Once);
@@ -366,7 +366,7 @@ public sealed class CreateUserCommandHandlerTests : BaseTest
 
         _mockUserCreationService
             .Setup(x => x.CreateCompleteUserAsync(
-                It.IsAny<CreateUserCompleteModel>(),
+                It.IsAny<CreateUserCompleteDto>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(failureResult);
 
@@ -391,7 +391,7 @@ public sealed class CreateUserCommandHandlerTests : BaseTest
         result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
         _mockUserCreationService.Verify(x => x.CreateCompleteUserAsync(
-            It.IsAny<CreateUserCompleteModel>(), It.IsAny<CancellationToken>()), Times.Once);
+            It.IsAny<CreateUserCompleteDto>(), It.IsAny<CancellationToken>()), Times.Once);
 
         _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(
             It.IsAny<CancellationToken>()), Times.Once);

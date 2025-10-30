@@ -2,8 +2,8 @@ using System.Net;
 using Riber.Application.Abstractions.Commands;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Common;
+using Riber.Application.Dtos.User;
 using Riber.Application.Extensions;
-using Riber.Application.Models.User;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Entities;
 using Riber.Domain.Enums;
@@ -67,7 +67,7 @@ internal sealed class CreateCompanyWithAdminCommandHandler(
         CancellationToken cancellationToken)
     {
         await unitOfWork.Companies.CreateAsync(companyEntity, cancellationToken);
-        var createUserModel = new CreateUserCompleteModel(
+        var createUserDto = new CreateUserCompleteDto(
             FullName: request.AdminFullName,
             UserName: request.AdminUserName,
             Email: request.AdminEmail,
@@ -79,7 +79,7 @@ internal sealed class CreateCompanyWithAdminCommandHandler(
             CompanyId: companyEntity.Id
         );
 
-        var userCreationResult = await userCreationService.CreateCompleteUserAsync(createUserModel, cancellationToken);
+        var userCreationResult = await userCreationService.CreateCompleteUserAsync(createUserDto, cancellationToken);
         return !userCreationResult.IsSuccess
             ? Result.Failure<CreateCompanyWithAdminCommandResponse>(userCreationResult.Error.Message,
                 userCreationResult.StatusCode)

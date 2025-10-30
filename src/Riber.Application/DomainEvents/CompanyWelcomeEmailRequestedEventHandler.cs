@@ -1,7 +1,7 @@
 using Riber.Application.Abstractions.Dispatchers;
 using Riber.Application.Abstractions.Events;
+using Riber.Application.Dtos.Email;
 using Riber.Application.Extensions;
-using Riber.Application.Models.Email;
 using Riber.Domain.Enums;
 using Riber.Domain.Events;
 
@@ -14,7 +14,7 @@ internal sealed class CompanyWelcomeEmailRequestedEventHandler(
     public async ValueTask Handle(CompanyWelcomeEmailRequestedEvent notification, CancellationToken cancellationToken)
         => await emailDispatcher.SendAsync(
             EmailAddress.NoReply,
-            new WelcomeBaseEmailModel(
+            new WelcomeBaseEmailDto(
                 TemplatePath: $"{EmailAudience.Company.GetDescription()}-{EmailTemplate.Welcome.GetDescription()}",
                 Name: notification.Name,
                 Subject: "Seja bem-vindo ao Riber!",

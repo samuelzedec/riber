@@ -17,7 +17,6 @@ namespace Riber.Api.Tests;
  *
  * Já a interface IClassFixture<T> cria essa fixture 1 vez e compartilha entre os testes
  */
-
 public abstract class IntegrationTestBase : 
     IClassFixture<WebAppFixture>,
     IClassFixture<DatabaseFixture>, 

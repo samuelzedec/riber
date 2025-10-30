@@ -1,5 +1,5 @@
 using Riber.Application.Common;
-using Riber.Application.Models.User;
+using Riber.Application.Dtos.User;
 
 namespace Riber.Application.Abstractions.Services;
 
@@ -11,8 +11,8 @@ public interface IUserCreationService
     /// <summary>
     /// Cria um usuário completo no sistema, incluindo entidade de domínio e conta de aplicação.
     /// </summary>
-    /// <param name="model">Dados necessários para criação do usuário completo.</param>
+    /// <param name="dto">Dados necessários para criação do usuário completo.</param>
     /// <param name="cancellationToken">Token para cancelamento da operação.</param>
     /// <returns>Resultado da operação de criação do usuário.</returns>
-    Task<Result<EmptyResult>> CreateCompleteUserAsync(CreateUserCompleteModel model, CancellationToken cancellationToken = default);
+    Task<Result<EmptyResult>> CreateCompleteUserAsync(CreateUserCompleteDto dto, CancellationToken cancellationToken = default);
 }

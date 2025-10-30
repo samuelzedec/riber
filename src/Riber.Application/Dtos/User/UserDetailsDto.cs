@@ -1,8 +1,8 @@
-using Riber.Application.Models.Auth;
+using Riber.Application.Dtos.Auth;
 
-namespace Riber.Application.Models.User;
+namespace Riber.Application.Dtos.User;
 
-public sealed record UserDetailsModel(
+public sealed record UserDetailsDto(
     Guid Id,
     string UserName,
     string Email,
@@ -10,7 +10,7 @@ public sealed record UserDetailsModel(
     string PhoneNumber,
     string SecurityStamp,
     ICollection<string> Roles,
-    ICollection<ClaimModel> Claims,
+    ICollection<ClaimDto> Claims,
     Guid UserDomainId,
     Domain.Entities.User UserDomain
 );

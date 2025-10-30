@@ -3,7 +3,7 @@ using System.Net;
 using FluentAssertions;
 using Moq;
 using Riber.Application.Abstractions.Services.Authentication;
-using Riber.Application.Models.User;
+using Riber.Application.Dtos.User;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Entities;
 using Riber.Domain.Enums;
@@ -21,8 +21,8 @@ public sealed class UserCreationServiceTests : BaseTest
     private readonly Mock<IUserQueryService> _mockUserQueryService;
     private readonly Mock<IUserRepository> _mockUserRepository;
     private readonly UserCreationService _service;
-    private readonly CreateUserCompleteModel _model;
-    private readonly UserDetailsModel _response;
+    private readonly CreateUserCompleteDto _dto;
+    private readonly UserDetailsDto _response;
 
     public UserCreationServiceTests()
     {
@@ -36,8 +36,8 @@ public sealed class UserCreationServiceTests : BaseTest
             _mockUserQueryService.Object
         );
 
-        _model = CreateFaker<CreateUserCompleteModel>()
-            .CustomInstantiator(f => new CreateUserCompleteModel(
+        _dto = CreateFaker<CreateUserCompleteDto>()
+            .CustomInstantiator(f => new CreateUserCompleteDto(
                 FullName: f.Person.FullName,
                 UserName: f.Person.UserName,
                 Email: f.Person.Email,
@@ -50,8 +50,8 @@ public sealed class UserCreationServiceTests : BaseTest
             ))
             .Generate();
 
-        _response = CreateFaker<UserDetailsModel>()
-            .CustomInstantiator(f => new UserDetailsModel(
+        _response = CreateFaker<UserDetailsDto>()
+            .CustomInstantiator(f => new UserDetailsDto(
                 Id: Guid.CreateVersion7(),
                 UserName: f.Person.UserName,
                 Email: f.Person.Email,
@@ -73,15 +73,15 @@ public sealed class UserCreationServiceTests : BaseTest
         // Arrange
         _mockUserQueryService
             .Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
-            .ReturnsAsync((UserDetailsModel?)null);
+            .ReturnsAsync((UserDetailsDto?)null);
 
         _mockUserQueryService
             .Setup(x => x.FindByUserNameAsync(It.IsAny<string>()))
-            .ReturnsAsync((UserDetailsModel?)null);
+            .ReturnsAsync((UserDetailsDto?)null);
 
         _mockUserQueryService
             .Setup(x => x.FindByPhoneAsync(It.IsAny<string>()))
-            .ReturnsAsync((UserDetailsModel?)null);
+            .ReturnsAsync((UserDetailsDto?)null);
 
         _mockUnitOfWork
             .Setup(x => x.Users)
@@ -96,11 +96,11 @@ public sealed class UserCreationServiceTests : BaseTest
             .Returns(Task.CompletedTask);
 
         _mockUserManagementService
-            .Setup(x => x.CreateUserAsync(It.IsAny<CreateApplicationUserModel>()))
+            .Setup(x => x.CreateUserAsync(It.IsAny<CreateApplicationUserDto>()))
             .ReturnsAsync(true);
 
         // Act
-        var result = await _service.CreateCompleteUserAsync(_model, CancellationToken.None);
+        var result = await _service.CreateCompleteUserAsync(_dto, CancellationToken.None);
 
         // Assert
         result.Should().NotBeNull();
@@ -112,7 +112,7 @@ public sealed class UserCreationServiceTests : BaseTest
         _mockUserRepository.Verify(
             x => x.ExistsAsync(It.IsAny<Specification<User>>(), It.IsAny<CancellationToken>()), Times.Once);
         _mockUserRepository.Verify(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()), Times.Once);
-        _mockUserManagementService.Verify(x => x.CreateUserAsync(It.IsAny<CreateApplicationUserModel>()), Times.Once);
+        _mockUserManagementService.Verify(x => x.CreateUserAsync(It.IsAny<CreateApplicationUserDto>()), Times.Once);
     }
 
     [Trait("Category", "Unit")]
@@ -125,7 +125,7 @@ public sealed class UserCreationServiceTests : BaseTest
             .ReturnsAsync(_response);
 
         // Act
-        var result = await _service.CreateCompleteUserAsync(_model, CancellationToken.None);
+        var result = await _service.CreateCompleteUserAsync(_dto, CancellationToken.None);
 
         // Assert
         result.Should().NotBeNull();
@@ -140,7 +140,7 @@ public sealed class UserCreationServiceTests : BaseTest
         _mockUserRepository.Verify(
             x => x.ExistsAsync(It.IsAny<Specification<User>>(), It.IsAny<CancellationToken>()), Times.Never);
         _mockUserRepository.Verify(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()), Times.Never);
-        _mockUserManagementService.Verify(x => x.CreateUserAsync(It.IsAny<CreateApplicationUserModel>()), Times.Never);
+        _mockUserManagementService.Verify(x => x.CreateUserAsync(It.IsAny<CreateApplicationUserDto>()), Times.Never);
     }
 
     [Trait("Category", "Unit")]
@@ -150,14 +150,14 @@ public sealed class UserCreationServiceTests : BaseTest
         // Arrange
         _mockUserQueryService
             .Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
-            .ReturnsAsync((UserDetailsModel?)null);
+            .ReturnsAsync((UserDetailsDto?)null);
 
         _mockUserQueryService
             .Setup(x => x.FindByUserNameAsync(It.IsAny<string>()))
             .ReturnsAsync(_response);
 
         // Act
-        var result = await _service.CreateCompleteUserAsync(_model, CancellationToken.None);
+        var result = await _service.CreateCompleteUserAsync(_dto, CancellationToken.None);
 
         // Assert
         result.Should().NotBeNull();
@@ -172,7 +172,7 @@ public sealed class UserCreationServiceTests : BaseTest
         _mockUserRepository.Verify(
             x => x.ExistsAsync(It.IsAny<Specification<User>>(), It.IsAny<CancellationToken>()), Times.Never);
         _mockUserRepository.Verify(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()), Times.Never);
-        _mockUserManagementService.Verify(x => x.CreateUserAsync(It.IsAny<CreateApplicationUserModel>()), Times.Never);
+        _mockUserManagementService.Verify(x => x.CreateUserAsync(It.IsAny<CreateApplicationUserDto>()), Times.Never);
     }
 
     [Trait("Category", "Unit")]
@@ -182,18 +182,18 @@ public sealed class UserCreationServiceTests : BaseTest
         // Arrange
         _mockUserQueryService
             .Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
-            .ReturnsAsync((UserDetailsModel?)null);
+            .ReturnsAsync((UserDetailsDto?)null);
 
         _mockUserQueryService
             .Setup(x => x.FindByUserNameAsync(It.IsAny<string>()))
-            .ReturnsAsync((UserDetailsModel?)null);
+            .ReturnsAsync((UserDetailsDto?)null);
 
         _mockUserQueryService
             .Setup(x => x.FindByPhoneAsync(It.IsAny<string>()))
             .ReturnsAsync(_response);
 
         // Act
-        var result = await _service.CreateCompleteUserAsync(_model, CancellationToken.None);
+        var result = await _service.CreateCompleteUserAsync(_dto, CancellationToken.None);
 
         // Assert
         result.Should().NotBeNull();
@@ -208,7 +208,7 @@ public sealed class UserCreationServiceTests : BaseTest
         _mockUserRepository.Verify(
             x => x.ExistsAsync(It.IsAny<Specification<User>>(), It.IsAny<CancellationToken>()), Times.Never);
         _mockUserRepository.Verify(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()), Times.Never);
-        _mockUserManagementService.Verify(x => x.CreateUserAsync(It.IsAny<CreateApplicationUserModel>()), Times.Never);
+        _mockUserManagementService.Verify(x => x.CreateUserAsync(It.IsAny<CreateApplicationUserDto>()), Times.Never);
     }
 
     [Trait("Category", "Unit")]
@@ -218,15 +218,15 @@ public sealed class UserCreationServiceTests : BaseTest
         // Arrange
         _mockUserQueryService
             .Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
-            .ReturnsAsync((UserDetailsModel?)null);
+            .ReturnsAsync((UserDetailsDto?)null);
 
         _mockUserQueryService
             .Setup(x => x.FindByUserNameAsync(It.IsAny<string>()))
-            .ReturnsAsync((UserDetailsModel?)null);
+            .ReturnsAsync((UserDetailsDto?)null);
 
         _mockUserQueryService
             .Setup(x => x.FindByPhoneAsync(It.IsAny<string>()))
-            .ReturnsAsync((UserDetailsModel?)null);
+            .ReturnsAsync((UserDetailsDto?)null);
 
         _mockUnitOfWork
             .Setup(x => x.Users)
@@ -237,7 +237,7 @@ public sealed class UserCreationServiceTests : BaseTest
             .ReturnsAsync(true);
 
         // Act
-        var result = await _service.CreateCompleteUserAsync(_model, CancellationToken.None);
+        var result = await _service.CreateCompleteUserAsync(_dto, CancellationToken.None);
 
         // Assert
         result.Should().NotBeNull();
@@ -252,7 +252,7 @@ public sealed class UserCreationServiceTests : BaseTest
         _mockUserRepository.Verify(
             x => x.ExistsAsync(It.IsAny<Specification<User>>(), It.IsAny<CancellationToken>()), Times.Once);
         _mockUserRepository.Verify(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()), Times.Never);
-        _mockUserManagementService.Verify(x => x.CreateUserAsync(It.IsAny<CreateApplicationUserModel>()), Times.Never);
+        _mockUserManagementService.Verify(x => x.CreateUserAsync(It.IsAny<CreateApplicationUserDto>()), Times.Never);
     }
 
     [Trait("Category", "Unit")]
@@ -262,15 +262,15 @@ public sealed class UserCreationServiceTests : BaseTest
         // Arrange
         _mockUserQueryService
             .Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
-            .ReturnsAsync((UserDetailsModel?)null);
+            .ReturnsAsync((UserDetailsDto?)null);
 
         _mockUserQueryService
             .Setup(x => x.FindByUserNameAsync(It.IsAny<string>()))
-            .ReturnsAsync((UserDetailsModel?)null);
+            .ReturnsAsync((UserDetailsDto?)null);
 
         _mockUserQueryService
             .Setup(x => x.FindByPhoneAsync(It.IsAny<string>()))
-            .ReturnsAsync((UserDetailsModel?)null);
+            .ReturnsAsync((UserDetailsDto?)null);
 
         _mockUnitOfWork
             .Setup(x => x.Users)
@@ -285,11 +285,11 @@ public sealed class UserCreationServiceTests : BaseTest
             .Returns(Task.CompletedTask);
 
         _mockUserManagementService
-            .Setup(x => x.CreateUserAsync(It.IsAny<CreateApplicationUserModel>()))
+            .Setup(x => x.CreateUserAsync(It.IsAny<CreateApplicationUserDto>()))
             .ReturnsAsync(false);
 
         // Act
-        var result = await _service.CreateCompleteUserAsync(_model, CancellationToken.None);
+        var result = await _service.CreateCompleteUserAsync(_dto, CancellationToken.None);
 
         // Assert
         result.Should().NotBeNull();
@@ -304,7 +304,7 @@ public sealed class UserCreationServiceTests : BaseTest
         _mockUserRepository.Verify(
             x => x.ExistsAsync(It.IsAny<Specification<User>>(), It.IsAny<CancellationToken>()), Times.Once);
         _mockUserRepository.Verify(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()), Times.Once);
-        _mockUserManagementService.Verify(x => x.CreateUserAsync(It.IsAny<CreateApplicationUserModel>()), Times.Once);
+        _mockUserManagementService.Verify(x => x.CreateUserAsync(It.IsAny<CreateApplicationUserDto>()), Times.Once);
     }
 }
 
