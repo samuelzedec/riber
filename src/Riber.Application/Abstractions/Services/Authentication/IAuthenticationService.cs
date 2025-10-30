@@ -1,4 +1,4 @@
-using Riber.Application.Models.User;
+using Riber.Application.Dtos.User;
 
 namespace Riber.Application.Abstractions.Services.Authentication;
 
@@ -10,7 +10,7 @@ public interface IAuthenticationService
     /// <param name="userNameOrEmail">Nome de usuário ou endereço de e-mail.</param>
     /// <param name="password">Senha correspondente ao usuário.</param>
     /// <returns>Modelo com os detalhes do usuário autenticado ou <c>null</c> em caso de falha na autenticação.</returns>
-    Task<UserDetailsModel?> LoginAsync(string userNameOrEmail, string password);
+    Task<UserDetailsDto?> LoginAsync(string userNameOrEmail, string password);
 
     /// <summary>
     /// Atualiza o *security stamp* do usuário, invalidando quaisquer tokens de autenticação existentes.

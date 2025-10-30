@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
-using Riber.Application.Models.Auth;
-using Riber.Application.Models.User;
+using Riber.Application.Dtos.Auth;
+using Riber.Application.Dtos.User;
 using Riber.Infrastructure.Persistence.Identity;
 
 namespace Riber.Infrastructure.Services.Authentication.Identity;
@@ -10,14 +10,14 @@ public sealed class UserMappingService(
     UserManager<ApplicationUser> userManager,
     RoleManager<ApplicationRole> roleManager)
 {
-    public async Task<UserDetailsModel> BuildUserDetailsAsync(ApplicationUser user)
+    public async Task<UserDetailsDto> BuildUserDetailsAsync(ApplicationUser user)
     {
         var userClaims = await userManager.GetClaimsAsync(user);
         var userRoles = await userManager.GetRolesAsync(user);
         var roleClaims = await GetClaimsFromRolesAsync(userRoles);
         var allClaims = userClaims.Concat(roleClaims).ToList();
 
-        return new UserDetailsModel(
+        return new UserDetailsDto(
             Id: user.Id,
             UserName: user.UserName!,
             Email: user.Email!,
@@ -26,7 +26,7 @@ public sealed class UserMappingService(
             SecurityStamp: user.SecurityStamp!,
             UserDomainId: user.UserDomainId,
             Roles: [..userRoles],
-            Claims: [..allClaims.Select(claim => new ClaimModel(claim.Type, claim.Value))],
+            Claims: [..allClaims.Select(claim => new ClaimDto(claim.Type, claim.Value))],
             UserDomain: user.UserDomain
         );
     }

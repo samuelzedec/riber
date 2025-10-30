@@ -3,9 +3,9 @@ using FluentAssertions;
 using Moq;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Common;
+using Riber.Application.Dtos.User;
 using Riber.Application.Extensions;
 using Riber.Application.Features.Companies.Commands.CreateCompanyWithAdmin;
-using Riber.Application.Models.User;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Entities;
 using Riber.Domain.Enums;
@@ -76,7 +76,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
 
         _mockUserCreationService
             .Setup(x => x.CreateCompleteUserAsync(
-                It.IsAny<CreateUserCompleteModel>(),
+                It.IsAny<CreateUserCompleteDto>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success<EmptyResult>());
 
@@ -115,7 +115,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
             It.IsAny<Company>(), CancellationToken.None), Times.Once);
 
         _mockUserCreationService.Verify(x => x.CreateCompleteUserAsync(
-            It.IsAny<CreateUserCompleteModel>(), CancellationToken.None), Times.Once);
+            It.IsAny<CreateUserCompleteDto>(), CancellationToken.None), Times.Once);
 
         _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(
             It.IsAny<CancellationToken>()), Times.Once);
@@ -172,7 +172,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
             It.IsAny<Company>(), CancellationToken.None), Times.Never);
 
         _mockUserCreationService.Verify(x => x.CreateCompleteUserAsync(
-            It.IsAny<CreateUserCompleteModel>(), It.IsAny<CancellationToken>()), Times.Never);
+            It.IsAny<CreateUserCompleteDto>(), It.IsAny<CancellationToken>()), Times.Never);
 
         _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(
             It.IsAny<CancellationToken>()), Times.Once);
@@ -228,7 +228,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
             It.IsAny<Company>(), CancellationToken.None), Times.Never);
 
         _mockUserCreationService.Verify(x => x.CreateCompleteUserAsync(
-            It.IsAny<CreateUserCompleteModel>(), It.IsAny<CancellationToken>()), Times.Never);
+            It.IsAny<CreateUserCompleteDto>(), It.IsAny<CancellationToken>()), Times.Never);
 
         _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(
             It.IsAny<CancellationToken>()), Times.Once);
@@ -284,7 +284,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
             It.IsAny<Company>(), CancellationToken.None), Times.Never);
 
         _mockUserCreationService.Verify(x => x.CreateCompleteUserAsync(
-            It.IsAny<CreateUserCompleteModel>(), It.IsAny<CancellationToken>()), Times.Never);
+            It.IsAny<CreateUserCompleteDto>(), It.IsAny<CancellationToken>()), Times.Never);
 
         _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(
             It.IsAny<CancellationToken>()), Times.Once);
@@ -340,7 +340,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
             It.IsAny<Company>(), CancellationToken.None), Times.Never);
 
         _mockUserCreationService.Verify(x => x.CreateCompleteUserAsync(
-            It.IsAny<CreateUserCompleteModel>(), It.IsAny<CancellationToken>()), Times.Never);
+            It.IsAny<CreateUserCompleteDto>(), It.IsAny<CancellationToken>()), Times.Never);
 
         _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(
             It.IsAny<CancellationToken>()), Times.Once);
@@ -457,7 +457,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
             It.IsAny<Company>(), CancellationToken.None), Times.Never);
 
         _mockUserCreationService.Verify(x => x.CreateCompleteUserAsync(
-            It.IsAny<CreateUserCompleteModel>(), It.IsAny<CancellationToken>()), Times.Never);
+            It.IsAny<CreateUserCompleteDto>(), It.IsAny<CancellationToken>()), Times.Never);
 
         _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(
             It.IsAny<CancellationToken>()), Times.Once);
@@ -491,7 +491,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
 
         _mockUserCreationService
             .Setup(x => x.CreateCompleteUserAsync(
-                It.IsAny<CreateUserCompleteModel>(),
+                It.IsAny<CreateUserCompleteDto>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success<EmptyResult>());
 
@@ -527,7 +527,7 @@ public sealed class CreateCompanyWithAdminCommandHandlerTests : BaseTest
             It.IsAny<Company>(), CancellationToken.None), Times.Never);
 
         _mockUserCreationService.Verify(x => x.CreateCompleteUserAsync(
-            It.IsAny<CreateUserCompleteModel>(), CancellationToken.None), Times.Never);
+            It.IsAny<CreateUserCompleteDto>(), CancellationToken.None), Times.Never);
 
         _mockUnitOfWork.Verify(x => x.BeginTransactionAsync(
             It.IsAny<CancellationToken>()), Times.Once);

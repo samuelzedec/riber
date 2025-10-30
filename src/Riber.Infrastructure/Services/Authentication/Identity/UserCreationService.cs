@@ -2,7 +2,7 @@ using System.Net;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Abstractions.Services.Authentication;
 using Riber.Application.Common;
-using Riber.Application.Models.User;
+using Riber.Application.Dtos.User;
 using Riber.Domain.Abstractions;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Entities;
@@ -20,34 +20,34 @@ public sealed class UserCreationService(
     : IUserCreationService
 {
     public async Task<Result<EmptyResult>> CreateCompleteUserAsync(
-        CreateUserCompleteModel model,
+        CreateUserCompleteDto dto,
         CancellationToken cancellationToken = default)
     {
         var validateResult = await ValidateUserDoesNotExistAsync(
-            model.Email,
-            model.UserName,
-            model.PhoneNumber,
-            model.TaxId
+            dto.Email,
+            dto.UserName,
+            dto.PhoneNumber,
+            dto.TaxId
         );
 
         if (!validateResult.IsSuccess)
             return validateResult;
 
         var domainUser = User.Create(
-            fullName: model.FullName,
-            taxId: model.TaxId,
-            position: model.Position,
-            companyId: model.CompanyId
+            fullName: dto.FullName,
+            taxId: dto.TaxId,
+            position: dto.Position,
+            companyId: dto.CompanyId
         );
 
-        var applicationUser = new CreateApplicationUserModel(
-            UserName: model.UserName,
-            Name: model.FullName.Split(' ')[0],
-            Email: Email.Create(model.Email).Value,
-            PhoneNumber: Phone.Create(model.PhoneNumber).Value,
-            Password: model.Password,
+        var applicationUser = new CreateApplicationUserDto(
+            UserName: dto.UserName,
+            Name: dto.FullName.Split(' ')[0],
+            Email: Email.Create(dto.Email).Value,
+            PhoneNumber: Phone.Create(dto.PhoneNumber).Value,
+            Password: dto.Password,
             UserDomainId: domainUser.Id,
-            Roles: model.Roles
+            Roles: dto.Roles
         );
 
         await unitOfWork.Users.CreateAsync(domainUser, cancellationToken);

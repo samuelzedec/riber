@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Riber.Application.Abstractions.Services.Authentication;
-using Riber.Application.Models.User;
+using Riber.Application.Dtos.User;
 using Riber.Infrastructure.Persistence.Identity;
 
 namespace Riber.Infrastructure.Services.Authentication.Identity;
@@ -14,7 +14,7 @@ public sealed class AuthenticationService(
     private IQueryable<ApplicationUser> GetBaseUserQuery
         => userManager.Users.Include(u => u.UserDomain);
 
-    public async Task<UserDetailsModel?> LoginAsync(string userNameOrEmail, string password)
+    public async Task<UserDetailsDto?> LoginAsync(string userNameOrEmail, string password)
     {
         var normalizedInput = userNameOrEmail.ToUpperInvariant();
         var user = await GetBaseUserQuery.FirstOrDefaultAsync(u =>

@@ -2,7 +2,7 @@ using System.Net;
 using Riber.Application.Abstractions.Commands;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Common;
-using Riber.Application.Models.User;
+using Riber.Application.Dtos.User;
 using Riber.Domain.Repositories;
 
 namespace Riber.Application.Features.Users.Commands.CreateUser;
@@ -20,7 +20,7 @@ internal sealed class CreateUserCommandHandler(
         try
         {
             var result = await userCreationService.CreateCompleteUserAsync(
-                new CreateUserCompleteModel(
+                new CreateUserCompleteDto(
                     FullName: command.FullName,
                     UserName: command.UserName,
                     Email: command.Email,

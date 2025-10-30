@@ -36,8 +36,7 @@ tab_width = 4
 # New line preferences
 insert_final_newline = false
 
-[**/DTOs/**/*.cs]
-# Enforce DTO suffix naming convention
+[**/Dtos/**/*.cs] # Enforce Dto suffix naming convention
 dotnet_naming_rule.dto_classes_should_end_with_dto.severity = error
 dotnet_naming_rule.dto_classes_should_end_with_dto.symbols = dto_classes
 dotnet_naming_rule.dto_classes_should_end_with_dto.style = dto_suffix_style
@@ -48,8 +47,9 @@ dotnet_naming_symbols.dto_classes.applicable_accessibilities = public
 dotnet_naming_symbols.dto_classes.required_modifiers =
 
 # Define the naming style (must end with DTO)
-dotnet_naming_style.dto_suffix_style.required_suffix = DTO
+dotnet_naming_style.dto_suffix_style.required_suffix = Dto
 dotnet_naming_style.dto_suffix_style.capitalization = pascal_case
+
 
 
 #### .NET Coding Conventions ####

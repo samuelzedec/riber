@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Riber.Application.Abstractions.Services.Authentication;
 using Riber.Application.Common;
-using Riber.Application.Models.Auth;
+using Riber.Application.Dtos.Auth;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Infrastructure.Persistence;
 using Riber.Infrastructure.Persistence.Identity;
@@ -57,22 +57,22 @@ public sealed class PermissionDataService(
         }
     }
 
-    public async Task<Result<IReadOnlyCollection<PermissionModel>>> GetAllWithDescriptionsAsync()
+    public async Task<Result<IReadOnlyCollection<PermissionDto>>> GetAllWithDescriptionsAsync()
     {
         try
         {
             var permissions = await GetPermissionsCacheAsync();
-            var result = permissions.Select(p => new PermissionModel(
+            var result = permissions.Select(p => new PermissionDto(
                 Name: p.Name,
                 Description: p.Description,
                 IsActive: p.IsActive
             )).ToList();
 
-            return Result.Success<IReadOnlyCollection<PermissionModel>>(result);
+            return Result.Success<IReadOnlyCollection<PermissionDto>>(result);
         }
         catch (Exception ex)
         {
-            return Result.Failure<IReadOnlyCollection<PermissionModel>>(
+            return Result.Failure<IReadOnlyCollection<PermissionDto>>(
                 $"Erro ao buscar permissões: {ex.Message}",
                 HttpStatusCode.InternalServerError);
         }
