@@ -1,5 +1,22 @@
 # Riber - Changelog
 
+## v4.1.1 - 02/11/2025
+
+- **NOVO**: Sistema de mensageria com MassTransit e RabbitMQ
+- Adiciona `IMessagePublisher` para publicação de mensagens assíncronas
+- Implementa `MassTransitMessagePublisher` para integração com MassTransit
+- Adiciona `MassTransitPublishContextWrapper` para configuração de contexto de publicação
+- Implementa `SendEmailMessageConsumer` para processamento assíncrono de e-mails
+- Adiciona mensagem `SendEmailMessage` para comunicação entre serviços
+- **REFATORAÇÃO**: Migração do sistema de envio de e-mails para arquitetura baseada em mensageria
+- Remove implementação síncrona antiga de envio de e-mails
+- Atualiza handlers para usar publicação de mensagens em vez de chamadas diretas
+- Adiciona configuração do RabbitMQ no Docker Compose
+- **MELHORIA**: Melhor separação de responsabilidades e desacoplamento entre camadas
+- Sistema de e-mails agora opera de forma assíncrona e resiliente
+
+---
+
 ## v4.1.0 - 26/10/2025
 
 - **NOVO**: Sistema modular de serviços de autenticação com separação de responsabilidades
