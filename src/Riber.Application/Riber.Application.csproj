@@ -13,7 +13,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Newtonsoft.Json"/>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Riber.Domain\Riber.Domain.csproj"/>

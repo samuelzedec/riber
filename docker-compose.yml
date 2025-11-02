@@ -34,6 +34,9 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__DefaultConnection: Host=postgres;Database=riber_db;Username=postgres;Password=root
       OTEL_EXPORTER_OTLP_ENDPOINT: http://dashboard:18889
+      RabbitMQ__Host: "amqp://rabbitmq:5672"
+      RabbitMQ__Username: "admin"
+      RabbitMQ__Password: "admin123"
 
   sonarqube:
     profiles: [ "analysis" ]
@@ -53,6 +56,18 @@ services:
       - sonarqube_data:/opt/sonarqube/data
       - sonarqube_extensions:/opt/sonarqube/extensions
       - sonarqube_logs:/opt/sonarqube/logs
+  
+  rabbitmq:
+    image: rabbitmq:4.2.0-management-alpine
+    container_name: riber-rabbitmq-dev
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin123
+      RABBITMQ_DEFAULT_VHOST: /
+    restart: unless-stopped
   
   dashboard:
     image: mcr.microsoft.com/dotnet/aspire-dashboard:latest
