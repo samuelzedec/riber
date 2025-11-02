@@ -1,40 +1,36 @@
 using System.Text;
-using Newtonsoft.Json.Linq;
 using Riber.Application.Abstractions.Services.Email;
 
 namespace Riber.Infrastructure.Services.AWS.Email;
 
 public sealed class EmailTemplateRender : IEmailTemplateRender
 {
-    public async Task<string> GetTemplateAsync(JObject data)
+    public async Task<string> GetTemplateAsync(string templatePath, Dictionary<string, object?> data)
     {
-        var templatePath = Path.Combine(
+        var path = Path.Combine(
             AppDomain.CurrentDomain.BaseDirectory,
-            "Services", 
-            "AWS", 
+            "Services",
+            "AWS",
             "Email",
             "Templates",
-            data["templatePath"]?.ToString()!
+            templatePath
         );
 
-        if (!File.Exists(templatePath))
+        if (!File.Exists(path))
             throw new FileNotFoundException($"Template não encontrado: {templatePath}");
 
-        var templateContent = await File.ReadAllTextAsync(templatePath);
+        var templateContent = await File.ReadAllTextAsync(path);
         return ReplaceTemplatePlaceholders(templateContent, data);
     }
-    
-    private static string ReplaceTemplatePlaceholders(string templateContent, JObject data)
+
+    private static string ReplaceTemplatePlaceholders(
+        string templateContent, 
+        Dictionary<string, object?> properties)
     {
         var sb = new StringBuilder(templateContent);
-        foreach (var property in data.Properties())
-        {
-            if (property.Name is "templatePath")
-                continue;
+        foreach (var property in properties)
+            sb.Replace($"{{{{{property.Key}}}}}", property.Value?.ToString() ?? string.Empty);
 
-            var value = property.Value.ToString();
-            sb.Replace($"{{{{{property.Name}}}}}", value);
-        }
         return sb.ToString();
     }
 }

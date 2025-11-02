@@ -7,7 +7,7 @@ using Riber.Domain.ValueObjects.FullName;
 
 namespace Riber.Infrastructure.Extensions;
 
-public static class EntityConfigurationExtensions
+public static class EntityConfigurationExtension
 {
     public static EntityTypeBuilder<T> ConfigureTaxId<T>(this EntityTypeBuilder<T> builder, string indexName)
         where T : class, IHasTaxId
