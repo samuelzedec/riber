@@ -1,15 +1,20 @@
 ﻿using Amazon.S3;
 using Amazon.SimpleEmail;
+using Anthropic.SDK;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using OllamaSharp;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Quartz;
 using Riber.Application.Abstractions.Dispatchers;
+using Riber.Application.Abstractions.Messaging;
 using Serilog;
 using Serilog.Events;
 using Riber.Application.Abstractions.Services;
@@ -20,6 +25,8 @@ using Riber.Application.Exceptions;
 using Riber.Domain.Repositories;
 using Riber.Infrastructure.BackgroundJobs;
 using Riber.Infrastructure.Dispatchers;
+using Riber.Infrastructure.Messaging;
+using Riber.Infrastructure.Messaging.Consumers;
 using Riber.Infrastructure.Persistence;
 using Riber.Infrastructure.Persistence.Interceptors;
 using Riber.Infrastructure.Persistence.Repositories;
@@ -43,7 +50,7 @@ public static class DependencyInjection
         ILoggingBuilder logging)
     {
         var defaultConnection = configuration.GetConnectionString("DefaultConnection")
-                                ?? throw new InternalException("Default connection string is not set.");
+            ?? throw new InternalException("Default connection string is not set.");
 
         logging.AddLogging();
         services.AddPersistence(defaultConnection);
@@ -52,8 +59,9 @@ public static class DependencyInjection
         services.AddAwsServices(configuration);
         services.AddBackgroundJobs(defaultConnection);
         services.AddHealthChecksConfiguration(defaultConnection);
-        services.AddDispachersAndJobs();
         services.AddTelemetry();
+        services.AddAi(configuration);
+        services.AddMessaging(configuration);
     }
 
     private static void AddLogging(this ILoggingBuilder logging)
@@ -89,9 +97,7 @@ public static class DependencyInjection
     {
         services.AddDbContext<AppDbContext>(options => options
             .UseNpgsql(defaultConnection, b => b.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName))
-            .AddInterceptors(
-                new CaseInsensitiveInterceptor(),
-                new AuditInterceptor()));
+            .AddInterceptors(new CaseInsensitiveInterceptor(), new AuditInterceptor()));
     }
 
     private static void AddRepositories(this IServiceCollection services)
@@ -135,18 +141,6 @@ public static class DependencyInjection
         services.AddAWSService<IAmazonS3>();
     }
 
-    private static void AddDispachersAndJobs(this IServiceCollection services)
-    {
-        // Background jobs
-        services.AddTransient<SendingEmailJob>();
-        services.AddTransient<CleanupImageBucketJob>();
-        services.AddTransient<DeleteImageFromStorageJob>();
-
-        // Dispatchers
-        services.AddScoped<IEmailDispatcher, EmailDispatcher>();
-        services.AddScoped<IDeleteImageFromStorageDispatcher, DeleteImageFromStorageDispatcher>();
-    }
-
     private static void AddHealthChecksConfiguration(this IServiceCollection services, string defaultConnection)
     {
         services
@@ -175,12 +169,17 @@ public static class DependencyInjection
             });
 
             CleanupImageBucketScheduler.Configure(quartz);
-            SendingEmailScheduler.Configure(quartz);
             DeleteImageFromStorageScheduler.Configure(quartz);
         });
 
         services.AddQuartzHostedService(options =>
             options.WaitForJobsToComplete = true);
+
+        // Background jobs
+        services.AddTransient<CleanupImageBucketJob>();
+        services.AddTransient<DeleteImageFromStorageJob>();
+
+        services.AddScoped<IDeleteImageFromStorageDispatcher, DeleteImageFromStorageDispatcher>();
     }
 
     private static void AddTelemetry(this IServiceCollection services)
@@ -199,5 +198,38 @@ public static class DependencyInjection
                 .AddOtlpExporter())
             .WithLogging(logging => logging
                 .AddOtlpExporter());
+    }
+
+    private static void AddAi(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddSingleton(_ => new AnthropicClient(configuration["Anthropic:ApiKey"]));
+        services.AddSingleton<IChatClient>(sp =>
+        {
+            var anthropicClient = sp.GetRequiredService<AnthropicClient>();
+            return new ChatClientBuilder(anthropicClient.Messages).UseFunctionInvocation().Build();
+        });
+
+        services.AddSingleton<IEmbeddingGenerator<string, Embedding<float>>>(_ =>
+            new OllamaApiClient(new Uri(configuration["Ollama:Url"]!), configuration["Ollama:EmbeddingModel"]!));
+    }
+
+    private static void AddMessaging(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddScoped<IMessagePublisher, MassTransitMessagePublisher>();
+        services.AddScoped<SendEmailMessageConsumer>();
+
+        services.AddMassTransit(busConfigurator =>
+        {
+            busConfigurator.AddConsumer<SendEmailMessageConsumer>();
+            busConfigurator.UsingRabbitMq((context, configurator) =>
+            {
+                configurator.Host(new Uri(configuration["RabbitMQ:Host"]!), host =>
+                {
+                    host.Username(configuration["RabbitMQ:UserName"]!);
+                    host.Password(configuration["RabbitMQ:Password"]!);
+                });
+                configurator.ConfigureEndpoints(context);
+            });
+        });
     }
 }

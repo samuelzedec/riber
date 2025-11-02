@@ -7,7 +7,6 @@
     <PackageReference Include="Mediator.Abstractions" />
     <PackageReference Include="FluentValidation" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
-    <PackageReference Include="Microsoft.SemanticKernel.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.AI.Abstractions" />
     <PackageReference Include="Serilog.AspNetCore" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" />
@@ -24,8 +23,6 @@
     <PackageReference Include="Quartz.Extensions.Hosting" />
     <PackageReference Include="Quartz.Serialization.Json" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
-    <PackageReference Include="Microsoft.SemanticKernel.Connectors.Ollama" />
-    <PackageReference Include="Microsoft.SemanticKernel.Core" />
     <PackageReference Include="Pgvector.EntityFrameworkCore" />
     <PackageReference Include="Microsoft.Extensions.AI" />
     <PackageReference Include="Scalar.AspNetCore" />

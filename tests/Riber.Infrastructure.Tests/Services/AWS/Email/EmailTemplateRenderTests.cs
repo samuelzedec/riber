@@ -1,5 +1,4 @@
 using FluentAssertions;
-using Newtonsoft.Json.Linq;
 using Riber.Domain.Tests;
 using Riber.Infrastructure.Services.AWS.Email;
 
@@ -21,7 +20,6 @@ public sealed class EmailTemplateRenderTests : BaseTest
             "Templates"
         );
         
-        // Cria o diretório de templates para testes
         Directory.CreateDirectory(_templateDirectory);
     }
 
@@ -35,13 +33,10 @@ public sealed class EmailTemplateRenderTests : BaseTest
         var templatePath = Path.Combine(_templateDirectory, templateName);
         await File.WriteAllTextAsync(templatePath, templateContent);
 
-        var data = new JObject
-        {
-            ["templatePath"] = templateName
-        };
+        var data = new Dictionary<string, object?>();
 
         // Act
-        var result = await _sut.GetTemplateAsync(data);
+        var result = await _sut.GetTemplateAsync(templateName, data);
 
         // Assert
         result.Should().Be(templateContent);
@@ -52,7 +47,7 @@ public sealed class EmailTemplateRenderTests : BaseTest
 
     [Trait("Category", "Unit")]
     [Fact(DisplayName = "Should replace single placeholder with value")]
-    public async Task GetTemplateAsync_WhenTemplatHasSinglePlaceholder_ShouldReplaceWithValue()
+    public async Task GetTemplateAsync_WhenTemplateHasSinglePlaceholder_ShouldReplaceWithValue()
     {
         // Arrange
         var templateName = $"{_faker.Random.Guid()}.html";
@@ -62,14 +57,13 @@ public sealed class EmailTemplateRenderTests : BaseTest
         var templatePath = Path.Combine(_templateDirectory, templateName);
         await File.WriteAllTextAsync(templatePath, templateContent);
 
-        var data = new JObject
+        var data = new Dictionary<string, object?>
         {
-            ["templatePath"] = templateName,
             ["name"] = userName
         };
 
         // Act
-        var result = await _sut.GetTemplateAsync(data);
+        var result = await _sut.GetTemplateAsync(templateName, data);
 
         // Assert
         result.Should().Be(expectedContent);
@@ -93,44 +87,18 @@ public sealed class EmailTemplateRenderTests : BaseTest
         var templatePath = Path.Combine(_templateDirectory, templateName);
         await File.WriteAllTextAsync(templatePath, templateContent);
 
-        var data = new JObject
+        var data = new Dictionary<string, object?>
         {
-            ["templatePath"] = templateName,
             ["name"] = userName,
             ["email"] = userEmail,
             ["company"] = companyName
         };
 
         // Act
-        var result = await _sut.GetTemplateAsync(data);
+        var result = await _sut.GetTemplateAsync(templateName, data);
 
         // Assert
         result.Should().Be(expectedContent);
-        
-        // Cleanup
-        File.Delete(templatePath);
-    }
-
-    [Trait("Category", "Unit")]
-    [Fact(DisplayName = "Should not replace templatePath property")]
-    public async Task GetTemplateAsync_WhenDataContainsTemplatePath_ShouldNotReplaceIt()
-    {
-        // Arrange
-        var templateName = $"{_faker.Random.Guid()}.html";
-        const string templateContent = "<h1>Path: {{templatePath}}</h1>";
-        var templatePath = Path.Combine(_templateDirectory, templateName);
-        await File.WriteAllTextAsync(templatePath, templateContent);
-
-        var data = new JObject
-        {
-            ["templatePath"] = templateName
-        };
-
-        // Act
-        var result = await _sut.GetTemplateAsync(data);
-
-        // Assert
-        result.Should().Be("<h1>Path: {{templatePath}}</h1>");
         
         // Cleanup
         File.Delete(templatePath);
@@ -142,13 +110,10 @@ public sealed class EmailTemplateRenderTests : BaseTest
     {
         // Arrange
         var nonExistentTemplate = $"{_faker.Random.Guid()}.html";
-        var data = new JObject
-        {
-            ["templatePath"] = nonExistentTemplate
-        };
+        var data = new Dictionary<string, object?>();
 
         // Act
-        var act = async () => await _sut.GetTemplateAsync(data);
+        var act = async () => await _sut.GetTemplateAsync(nonExistentTemplate, data);
 
         // Assert
         await act.Should()
@@ -166,14 +131,13 @@ public sealed class EmailTemplateRenderTests : BaseTest
         var templatePath = Path.Combine(_templateDirectory, templateName);
         await File.WriteAllTextAsync(templatePath, templateContent);
 
-        var data = new JObject
+        var data = new Dictionary<string, object?>
         {
-            ["templatePath"] = templateName,
             ["unusedProperty"] = "This won't be replaced"
         };
 
         // Act
-        var result = await _sut.GetTemplateAsync(data);
+        var result = await _sut.GetTemplateAsync(templateName, data);
 
         // Assert
         result.Should().Be(templateContent);
@@ -194,14 +158,13 @@ public sealed class EmailTemplateRenderTests : BaseTest
         var templatePath = Path.Combine(_templateDirectory, templateName);
         await File.WriteAllTextAsync(templatePath, templateContent);
 
-        var data = new JObject
+        var data = new Dictionary<string, object?>
         {
-            ["templatePath"] = templateName,
             ["content"] = specialContent
         };
 
         // Act
-        var result = await _sut.GetTemplateAsync(data);
+        var result = await _sut.GetTemplateAsync(templateName, data);
 
         // Assert
         result.Should().Be(expectedContent);
@@ -222,14 +185,13 @@ public sealed class EmailTemplateRenderTests : BaseTest
         var templatePath = Path.Combine(_templateDirectory, templateName);
         await File.WriteAllTextAsync(templatePath, templateContent);
 
-        var data = new JObject
+        var data = new Dictionary<string, object?>
         {
-            ["templatePath"] = templateName,
             ["name"] = userName
         };
 
         // Act
-        var result = await _sut.GetTemplateAsync(data);
+        var result = await _sut.GetTemplateAsync(templateName, data);
 
         // Assert
         result.Should().Be(expectedContent);
@@ -249,14 +211,13 @@ public sealed class EmailTemplateRenderTests : BaseTest
         var templatePath = Path.Combine(_templateDirectory, templateName);
         await File.WriteAllTextAsync(templatePath, templateContent);
 
-        var data = new JObject
+        var data = new Dictionary<string, object?>
         {
-            ["templatePath"] = templateName,
             ["name"] = ""
         };
 
         // Act
-        var result = await _sut.GetTemplateAsync(data);
+        var result = await _sut.GetTemplateAsync(templateName, data);
 
         // Assert
         result.Should().Be(expectedContent);
@@ -277,14 +238,13 @@ public sealed class EmailTemplateRenderTests : BaseTest
         var templatePath = Path.Combine(_templateDirectory, templateName);
         await File.WriteAllTextAsync(templatePath, templateContent);
 
-        var data = new JObject
+        var data = new Dictionary<string, object?>
         {
-            ["templatePath"] = templateName,
             ["content"] = largeParagraph
         };
 
         // Act
-        var result = await _sut.GetTemplateAsync(data);
+        var result = await _sut.GetTemplateAsync(templateName, data);
 
         // Assert
         result.Should().Be(expectedContent);
@@ -307,15 +267,40 @@ public sealed class EmailTemplateRenderTests : BaseTest
         var templatePath = Path.Combine(_templateDirectory, templateName);
         await File.WriteAllTextAsync(templatePath, templateContent);
 
-        var data = new JObject
+        var data = new Dictionary<string, object?>
         {
-            ["templatePath"] = templateName,
             ["age"] = age,
             ["price"] = price
         };
 
         // Act
-        var result = await _sut.GetTemplateAsync(data);
+        var result = await _sut.GetTemplateAsync(templateName, data);
+
+        // Assert
+        result.Should().Be(expectedContent);
+        
+        // Cleanup
+        File.Delete(templatePath);
+    }
+
+    [Trait("Category", "Unit")]
+    [Fact(DisplayName = "Should handle null values in placeholders")]
+    public async Task GetTemplateAsync_WhenPlaceholderValueIsNull_ShouldReplaceWithEmptyString()
+    {
+        // Arrange
+        var templateName = $"{_faker.Random.Guid()}.html";
+        const string templateContent = "<h1>Hello {{name}}!</h1>";
+        var expectedContent = "<h1>Hello !</h1>";
+        var templatePath = Path.Combine(_templateDirectory, templateName);
+        await File.WriteAllTextAsync(templatePath, templateContent);
+
+        var data = new Dictionary<string, object?>
+        {
+            ["name"] = null
+        };
+
+        // Act
+        var result = await _sut.GetTemplateAsync(templateName, data);
 
         // Assert
         result.Should().Be(expectedContent);
