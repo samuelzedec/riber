@@ -4,10 +4,10 @@ using Riber.Application.Abstractions.Services;
 using Riber.Application.Abstractions.Services.Authentication;
 using Riber.Application.Common;
 using Riber.Application.Exceptions;
-using Riber.Application.Features.Products.Events;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Constants.Messages.Entities;
 using Riber.Domain.Entities;
+using Riber.Domain.Events;
 using Riber.Domain.Repositories;
 using Riber.Domain.Specifications.ProductCategory;
 
@@ -66,7 +66,7 @@ internal sealed class CreateProductCommandHandler(
         catch (Exception ex) when (ex is not NotFoundException or InternalException)
         {
             if (!string.IsNullOrEmpty(imageKeyInBucket))
-                await mediator.Publish(new ImageDeletedFromStorageEvent(imageKeyInBucket), cancellationToken);
+                await mediator.Publish(new ProductImageCreationFailedEvent(imageKeyInBucket), cancellationToken);
 
             await unitOfWork.RollbackTransactionAsync(cancellationToken);
             throw;

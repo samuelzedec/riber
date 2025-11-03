@@ -1,10 +1,13 @@
 name: CI Pipeline
 on:
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
 jobs:
   test-and-build:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -30,6 +33,56 @@ jobs:
 
       - name: Run Unit tests
         run: dotnet test -c Release --no-build --verbosity minimal --filter Category=Unit
-      
+
       - name: Run Integration tests
         run: dotnet test -c Release --no-build --verbosity minimal --filter Category=Integration
+  
+  sonarcloud:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Baixa o histórico de commits do repositório
+
+      - name: Setup .NET 9
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache # pasta onde irá ficar guardado o cache
+          # runner.os = pega o nome do sistema operacional
+          key: ${{ runner.os }}-sonar # Nome único para identificar o cache
+          restore-keys: ${{ runner.os }}-sonar # Chave alternativa se não encontrar a principal
+
+      - name: Install SonarScanner
+        run: dotnet tool install --global dotnet-sonarscanner
+
+      - name: Generate .sln for compatibility
+        run: |
+          echo "Generating .sln from projects..."
+          dotnet new sln -n riber
+          find . -name "*.csproj" -not -path "*/obj/*" -not -path "*/bin/*" | xargs dotnet sln riber.sln add
+          echo "Solution file created:"
+          ls -lh riber.sln
+
+      - name: Restore dependencies
+        run: dotnet restore riber.sln
+
+      - name: Run analisys with SonarScanner
+        env:
+          CI: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_PROJECT_KEY: "${{ github.repository_owner }}_riber"
+          SONAR_ORGANIZATION: "${{ github.repository_owner }}"
+        run: |
+          chmod +x analyze.sh
+          ./analyze.sh

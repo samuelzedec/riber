@@ -13,7 +13,6 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Quartz;
-using Riber.Application.Abstractions.Dispatchers;
 using Riber.Application.Abstractions.Messaging;
 using Serilog;
 using Serilog.Events;
@@ -24,7 +23,6 @@ using Riber.Application.Configurations;
 using Riber.Application.Exceptions;
 using Riber.Domain.Repositories;
 using Riber.Infrastructure.BackgroundJobs;
-using Riber.Infrastructure.Dispatchers;
 using Riber.Infrastructure.Messaging;
 using Riber.Infrastructure.Messaging.Consumers;
 using Riber.Infrastructure.Persistence;
@@ -50,7 +48,7 @@ public static class DependencyInjection
         ILoggingBuilder logging)
     {
         var defaultConnection = configuration.GetConnectionString("DefaultConnection")
-            ?? throw new InternalException("Default connection string is not set.");
+                                ?? throw new InternalException("Default connection string is not set.");
 
         logging.AddLogging();
         services.AddPersistence(defaultConnection);
@@ -112,7 +110,6 @@ public static class DependencyInjection
 
     private static void AddServices(this IServiceCollection services, IConfiguration configuration)
     {
-        // Transient & Scoped
         services.AddTransient<IEmailTemplateRender, EmailTemplateRender>();
         services.AddTransient<IEmailService, AmazonSESService>();
         services.AddTransient<IPermissionDataService, PermissionDataService>();
@@ -124,14 +121,12 @@ public static class DependencyInjection
         services.AddTransient<IRoleManagementService, RoleManagementService>();
         services.AddTransient<IAuthenticationService, AuthenticationService>();
         services.AddScoped<UserMappingService>();
+        services.AddSingleton<IEmailConcurrencyService, EmailConcurrencyService>();
 
         if (configuration["ASPNETCORE_ENVIRONMENT"] == "Production")
             services.AddTransient<IImageStorageService, AmazonS3Service>();
         else
             services.AddTransient<IImageStorageService, LocalImageStorageService>();
-
-        // Singleton
-        services.AddSingleton<IEmailConcurrencyService, EmailConcurrencyService>();
     }
 
     private static void AddAwsServices(this IServiceCollection services, IConfiguration configuration)
@@ -150,6 +145,8 @@ public static class DependencyInjection
 
     private static void AddBackgroundJobs(this IServiceCollection services, string defaultConnection)
     {
+        services.AddTransient<CleanupImageBucketJob>();
+
         services.Configure<QuartzOptions>(options =>
         {
             options.SchedulerName = "RiberScheduler";
@@ -169,17 +166,10 @@ public static class DependencyInjection
             });
 
             CleanupImageBucketScheduler.Configure(quartz);
-            DeleteImageFromStorageScheduler.Configure(quartz);
         });
 
         services.AddQuartzHostedService(options =>
             options.WaitForJobsToComplete = true);
-
-        // Background jobs
-        services.AddTransient<CleanupImageBucketJob>();
-        services.AddTransient<DeleteImageFromStorageJob>();
-
-        services.AddScoped<IDeleteImageFromStorageDispatcher, DeleteImageFromStorageDispatcher>();
     }
 
     private static void AddTelemetry(this IServiceCollection services)
@@ -217,10 +207,12 @@ public static class DependencyInjection
     {
         services.AddScoped<IMessagePublisher, MassTransitMessagePublisher>();
         services.AddScoped<SendEmailMessageConsumer>();
+        services.AddScoped<ProductImageCreationFailedMessageConsumer>();
 
         services.AddMassTransit(busConfigurator =>
         {
             busConfigurator.AddConsumer<SendEmailMessageConsumer>();
+            busConfigurator.AddConsumer<ProductImageCreationFailedMessageConsumer>();
             busConfigurator.UsingRabbitMq((context, configurator) =>
             {
                 configurator.Host(new Uri(configuration["RabbitMQ:Host"]!), host =>

@@ -6,9 +6,9 @@ using Riber.Application.Abstractions.Services;
 using Riber.Application.Abstractions.Services.Authentication;
 using Riber.Application.Exceptions;
 using Riber.Application.Features.Products.Commands;
-using Riber.Application.Features.Products.Events;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Entities;
+using Riber.Domain.Events;
 using Riber.Domain.Repositories;
 using Riber.Domain.Specifications.ProductCategory;
 using Riber.Domain.Tests;
@@ -273,7 +273,7 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
         _mockImageStorageService.Verify(x => x.UploadAsync(
             It.IsAny<Stream>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         _mockMediator.Verify(x => x.Publish(
-            It.IsAny<ImageDeletedFromStorageEvent>(), It.IsAny<CancellationToken>()), Times.Never);
+            It.IsAny<ProductImageCreationFailedEvent>(), It.IsAny<CancellationToken>()), Times.Never);
         _mockProductRepository.Verify(x => x.CreateAsync(
             It.IsAny<Product>(), It.IsAny<CancellationToken>()), Times.Never);
         _mockUnitOfWork.Verify(x => x.CommitTransactionAsync(It.IsAny<CancellationToken>()), Times.Never);
@@ -308,7 +308,7 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
             .ThrowsAsync(expectedException);
 
         _mockMediator
-            .Setup(x => x.Publish(It.IsAny<ImageDeletedFromStorageEvent>(), It.IsAny<CancellationToken>()));
+            .Setup(x => x.Publish(It.IsAny<ProductImageCreationFailedEvent>(), It.IsAny<CancellationToken>()));
 
         _mockUnitOfWork
             .Setup(x => x.RollbackTransactionAsync(It.IsAny<CancellationToken>()));
@@ -332,7 +332,7 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
         _mockProductRepository.Verify(x => x.CreateAsync(
             It.IsAny<Product>(), It.IsAny<CancellationToken>()), Times.Once);
         _mockMediator.Verify(x => x.Publish(
-            It.IsAny<ImageDeletedFromStorageEvent>(), It.IsAny<CancellationToken>()), Times.Once);
+            It.IsAny<ProductImageCreationFailedEvent>(), It.IsAny<CancellationToken>()), Times.Once);
         _mockUnitOfWork.Verify(x => x.CommitTransactionAsync(It.IsAny<CancellationToken>()), Times.Never);
         _mockUnitOfWork.Verify(x => x.RollbackTransactionAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
@@ -368,7 +368,7 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
             .ThrowsAsync(expectedException);
 
         _mockMediator
-            .Setup(x => x.Publish(It.IsAny<ImageDeletedFromStorageEvent>(), It.IsAny<CancellationToken>()));
+            .Setup(x => x.Publish(It.IsAny<ProductImageCreationFailedEvent>(), It.IsAny<CancellationToken>()));
 
         _mockUnitOfWork
             .Setup(x => x.RollbackTransactionAsync(It.IsAny<CancellationToken>()));
@@ -393,7 +393,7 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
             It.IsAny<Product>(), It.IsAny<CancellationToken>()), Times.Once);
         _mockUnitOfWork.Verify(x => x.CommitTransactionAsync(It.IsAny<CancellationToken>()), Times.Once);
         _mockMediator.Verify(x => x.Publish(
-            It.IsAny<ImageDeletedFromStorageEvent>(), It.IsAny<CancellationToken>()), Times.Once);
+            It.IsAny<ProductImageCreationFailedEvent>(), It.IsAny<CancellationToken>()), Times.Once);
         _mockUnitOfWork.Verify(x => x.RollbackTransactionAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -432,7 +432,7 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
         _mockImageStorageService.Verify(x => x.UploadAsync(
             It.IsAny<Stream>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         _mockMediator.Verify(x => x.Publish(
-            It.IsAny<ImageDeletedFromStorageEvent>(), It.IsAny<CancellationToken>()), Times.Never);
+            It.IsAny<ProductImageCreationFailedEvent>(), It.IsAny<CancellationToken>()), Times.Never);
         _mockUnitOfWork.Verify(x => x.RollbackTransactionAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -471,7 +471,7 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
         _mockImageStorageService.Verify(x => x.UploadAsync(
             It.IsAny<Stream>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         _mockMediator.Verify(x => x.Publish(
-            It.IsAny<ImageDeletedFromStorageEvent>(), It.IsAny<CancellationToken>()), Times.Never);
+            It.IsAny<ProductImageCreationFailedEvent>(), It.IsAny<CancellationToken>()), Times.Never);
         _mockUnitOfWork.Verify(x => x.RollbackTransactionAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -597,7 +597,7 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
             .ThrowsAsync(new OperationCanceledException());
 
         _mockMediator
-            .Setup(x => x.Publish(It.IsAny<ImageDeletedFromStorageEvent>(), It.IsAny<CancellationToken>()));
+            .Setup(x => x.Publish(It.IsAny<ProductImageCreationFailedEvent>(), It.IsAny<CancellationToken>()));
 
         _mockUnitOfWork
             .Setup(x => x.RollbackTransactionAsync(It.IsAny<CancellationToken>()));
@@ -616,7 +616,7 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
             It.IsAny<Product>(),
             It.Is<CancellationToken>(ct => ct.IsCancellationRequested)), Times.Once);
         _mockMediator.Verify(x => x.Publish(
-            It.IsAny<ImageDeletedFromStorageEvent>(), It.IsAny<CancellationToken>()), Times.Once);
+            It.IsAny<ProductImageCreationFailedEvent>(), It.IsAny<CancellationToken>()), Times.Once);
         _mockUnitOfWork.Verify(x => x.RollbackTransactionAsync(It.IsAny<CancellationToken>()), Times.Once);
         _mockCurrentUserService.Verify(x => x.GetCompanyId(), Times.Once);
     }
@@ -653,7 +653,7 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
             .ThrowsAsync(new OperationCanceledException());
 
         _mockMediator
-            .Setup(x => x.Publish(It.IsAny<ImageDeletedFromStorageEvent>(), It.IsAny<CancellationToken>()));
+            .Setup(x => x.Publish(It.IsAny<ProductImageCreationFailedEvent>(), It.IsAny<CancellationToken>()));
 
         _mockUnitOfWork
             .Setup(x => x.RollbackTransactionAsync(It.IsAny<CancellationToken>()));
@@ -673,7 +673,7 @@ public sealed class CreateProductCommandHandlerTests : BaseTest
         _mockUnitOfWork.Verify(x => x.CommitTransactionAsync(
             It.Is<CancellationToken>(ct => ct.IsCancellationRequested)), Times.Once);
         _mockMediator.Verify(x => x.Publish(
-            It.IsAny<ImageDeletedFromStorageEvent>(), It.IsAny<CancellationToken>()), Times.Once);
+            It.IsAny<ProductImageCreationFailedEvent>(), It.IsAny<CancellationToken>()), Times.Once);
         _mockUnitOfWork.Verify(x => x.RollbackTransactionAsync(It.IsAny<CancellationToken>()), Times.Once);
         _mockCurrentUserService.Verify(x => x.GetCompanyId(), Times.Once);
     }
