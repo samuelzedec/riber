@@ -45,8 +45,7 @@ SONAR_BEGIN_ARGS=(
 **/Dockerfile*,\
 **/Seeders/**,\
 **/*Map.cs,\
-**/Schedulers/**,\
-**/Dispatchers,"
+**/Schedulers/**"
   /d:sonar.coverage.exclusions="\
 **/Migrations/**,\
 **/Program.cs,\
@@ -64,7 +63,8 @@ SONAR_BEGIN_ARGS=(
 **/Common/Api/**,\
 **/Requests/**,\
 **/UserManagementService.cs/**,\
-**/UserMappingService.cs/**"
+**/UserMappingService.cs/**,\
+**/EventHandlers/**"
 )
 
 # Adicionar /o: apenas se for SonarCloud

@@ -5,7 +5,7 @@ using Riber.Application.Messages;
 using Riber.Domain.Enums;
 using @event = Riber.Domain.Events.CompanyWelcomeEmailRequestedEvent;
 
-namespace Riber.Application.Events.CompanyWelcomeEmailRequestedEvent;
+namespace Riber.Application.EventHandlers;
 
 internal sealed class CompanyWelcomeEmailRequestedEventHandler(
     IMessagePublisher messagePublisher)
