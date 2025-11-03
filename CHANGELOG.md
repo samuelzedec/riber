@@ -1,5 +1,23 @@
 # Riber - Changelog
 
+## v4.1.2 - 02/11/2025
+
+- **REFATORAÇÃO**: Substituição de jobs de exclusão por arquitetura baseada em mensagens
+- Remove `DeleteImageFromStorageDispatcher` e `DeleteImageFromStorageJob`
+- Remove `DeleteImageFromStorageScheduler` obsoleto
+- Adiciona `ProductImageCreationFailedEvent` para falhas na criação de imagens
+- Implementa `ProductImageCreationFailedEventHandler` para publicação de mensagens
+- Adiciona `ProductImageCreationFailedMessage` para comunicação assíncrona
+- Implementa `ProductImageCreationFailedMessageConsumer` para exclusão assíncrona de imagens
+- **TESTES**: Cobertura completa para novo consumidor de mensagens
+- Adiciona testes unitários para `ProductImageCreationFailedMessageConsumer`
+- Atualiza testes do `CreateProductCommandHandler` para novo fluxo
+- **MELHORIA**: Validação aprimorada com `IsNullOrWhiteSpace` para chaves de imagem
+- **MELHORIA**: Processamento de exclusão de imagens agora totalmente baseado em eventos e mensagens
+- Sistema mais resiliente e escalável para gerenciamento de falhas
+
+---
+
 ## v4.1.1 - 02/11/2025
 
 - **NOVO**: Sistema de mensageria com MassTransit e RabbitMQ
