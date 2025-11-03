@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bem-vindo ao SnackFlow</title>
+    <title>Bem-vindo ao Riber</title>
     <style>
         * {
             margin: 0;
@@ -12,8 +12,8 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
             min-height: 100vh;
             padding: 20px;
         }
@@ -21,14 +21,15 @@
         .email-container {
             max-width: 600px;
             margin: 0 auto;
-            background: #ffffff;
+            background: #111111;
             border-radius: 16px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
             overflow: hidden;
+            border: 1px solid #2a2a2a;
         }
 
         .header {
-            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            background: linear-gradient(135deg, #FE5F2F 0%, #ff7f56 100%);
             padding: 40px 30px;
             text-align: center;
             color: white;
@@ -36,20 +37,23 @@
 
         .logo {
             font-size: 32px;
-            font-weight: bold;
+            font-weight: 700;
             margin-bottom: 10px;
             letter-spacing: -1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
-        .logo::before {
-            content: "🍿";
-            margin-right: 10px;
+        .logo-icon {
+            font-size: 36px;
         }
 
         .tagline {
             font-size: 16px;
-            opacity: 0.9;
-            font-weight: 300;
+            opacity: 0.95;
+            font-weight: 400;
         }
 
         .content {
@@ -58,15 +62,15 @@
 
         .welcome-text {
             font-size: 28px;
-            font-weight: 600;
-            color: #1f2937;
+            font-weight: 700;
+            color: #ffffff;
             margin-bottom: 20px;
             text-align: center;
         }
 
         .subtitle {
             font-size: 18px;
-            color: #6b7280;
+            color: #b0b0b0;
             text-align: center;
             margin-bottom: 30px;
             line-height: 1.6;
@@ -75,39 +79,40 @@
         .features {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            gap: 16px;
             margin: 30px 0;
         }
 
         .feature {
             padding: 20px;
-            background: #f8fafc;
+            background: #1a1a1a;
             border-radius: 12px;
             text-align: center;
-            border: 2px solid #e2e8f0;
+            border: 1px solid #2a2a2a;
             transition: all 0.3s ease;
         }
 
         .feature:hover {
-            border-color: #4f46e5;
+            border-color: #FE5F2F;
+            background: #1f1f1f;
             transform: translateY(-2px);
         }
 
         .feature-icon {
-            font-size: 24px;
-            margin-bottom: 10px;
+            font-size: 28px;
+            margin-bottom: 12px;
         }
 
         .feature-title {
             font-size: 16px;
             font-weight: 600;
-            color: #1f2937;
+            color: #ffffff;
             margin-bottom: 8px;
         }
 
         .feature-desc {
             font-size: 14px;
-            color: #6b7280;
+            color: #909090;
             line-height: 1.4;
         }
 
@@ -115,46 +120,66 @@
             text-align: center;
             margin: 40px 0 30px 0;
             padding: 30px;
-            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            background: #1a1a1a;
             border-radius: 12px;
+            border: 1px solid #FE5F2F;
+            border-opacity: 0.3;
         }
 
         .cta-text {
             font-size: 18px;
-            color: #374151;
+            color: #ffffff;
             margin-bottom: 20px;
-            font-weight: 500;
+            font-weight: 600;
+        }
+
+        .cta-subtext {
+            font-size: 16px;
+            color: #b0b0b0;
+            margin-top: 10px;
         }
 
         .cta-button {
             display: inline-block;
-            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            background: linear-gradient(135deg, #FE5F2F 0%, #ff7f56 100%);
             color: white;
             padding: 14px 32px;
             text-decoration: none;
             border-radius: 10px;
-            font-weight: 600;
+            font-weight: 700;
             font-size: 16px;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+            box-shadow: 0 4px 20px rgba(254, 95, 47, 0.3);
+            border: none;
+            cursor: pointer;
         }
 
         .cta-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
+            box-shadow: 0 8px 30px rgba(254, 95, 47, 0.4);
+        }
+
+        .highlight {
+            color: #FE5F2F;
+            font-weight: 700;
         }
 
         .footer {
-            background: #f9fafb;
+            background: #0a0a0a;
             padding: 30px;
             text-align: center;
-            border-top: 1px solid #e5e7eb;
+            border-top: 1px solid #2a2a2a;
         }
 
         .footer-text {
-            color: #6b7280;
+            color: #808080;
             font-size: 14px;
             line-height: 1.6;
+        }
+
+        .footer-brand {
+            color: #FE5F2F;
+            font-weight: 700;
         }
 
         .social-links {
@@ -166,12 +191,29 @@
             margin: 0 10px;
             font-size: 20px;
             text-decoration: none;
-            color: #9ca3af;
+            color: #505050;
             transition: color 0.3s ease;
         }
 
         .social-link:hover {
-            color: #4f46e5;
+            color: #FE5F2F;
+        }
+
+        .alert-box {
+            padding: 16px;
+            background: rgba(254, 95, 47, 0.1);
+            border-left: 4px solid #FE5F2F;
+            border-radius: 8px;
+            margin: 20px 0;
+            color: #b0b0b0;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .alert-title {
+            color: #FE5F2F;
+            font-weight: 600;
+            margin-bottom: 8px;
         }
 
         @media (max-width: 600px) {
@@ -189,7 +231,7 @@
 
             .features {
                 grid-template-columns: 1fr;
-                gap: 15px;
+                gap: 12px;
             }
 
             .welcome-text {
@@ -207,68 +249,88 @@
             .footer {
                 padding: 20px;
             }
+
+            .logo {
+                font-size: 28px;
+            }
+
+            .logo-icon {
+                font-size: 32px;
+            }
         }
     </style>
 </head>
 <body>
 <div class="email-container">
     <div class="header">
-        <div class="logo">SnackFlow</div>
-        <div class="tagline">Gestão Inteligente para Empresas Pequenas</div>
+        <div class="logo">
+            <span class="logo-icon">⚡</span>
+            <span>Riber</span>
+        </div>
+        <div class="tagline">Controle Financeiro Inteligente para Sua Lanchonete</div>
     </div>
 
     <div class="content">
-        <h1 class="welcome-text">Bem-vindo, {{name}}! 🎉</h1>
+        <h1 class="welcome-text">Bem-vindo, <span class="highlight">{{name}}</span>! 🎉</h1>
 
         <p class="subtitle">
-            É um prazer tê-lo conosco! Agora você faz parte de uma comunidade de empresários que escolheram simplificar e otimizar sua gestão empresarial.
+            Você acaba de se juntar à revolução do controle financeiro para lanchonetes. Prepare-se para descobrir
+            insights incríveis sobre seus produtos!
         </p>
+
+        <div class="alert-box">
+            <div class="alert-title">⏰ Em Breve - Já Tá Chegando!</div>
+            <div>
+                O Riber será lançado em breve e você será um dos primeiros a ter acesso. Fique atento ao seu email para
+                atualizações!
+            </div>
+        </div>
 
         <div class="features">
             <div class="feature">
+                <div class="feature-icon">🤖</div>
+                <div class="feature-title">IA Inteligente</div>
+                <div class="feature-desc">Análise automática de vendas com recomendações baseadas em dados</div>
+            </div>
+
+            <div class="feature">
                 <div class="feature-icon">📊</div>
-                <div class="feature-title">Relatórios Inteligentes</div>
-                <div class="feature-desc">Visualize seus dados de forma clara e tome decisões estratégicas</div>
+                <div class="feature-title">Relatórios Detalhados</div>
+                <div class="feature-desc">Veja quais produtos estão bombando e otimize seu cardápio</div>
             </div>
 
             <div class="feature">
-                <div class="feature-icon">⚡</div>
-                <div class="feature-title">Automação Simples</div>
-                <div class="feature-desc">Automatize processos repetitivos e ganhe mais tempo</div>
+                <div class="feature-icon">💡</div>
+                <div class="feature-title">Dicas de Produtos</div>
+                <div class="feature-desc">Recomendações automáticas para maximizar suas vendas</div>
             </div>
 
             <div class="feature">
-                <div class="feature-icon">🔒</div>
-                <div class="feature-title">Dados Seguros</div>
-                <div class="feature-desc">Sua informação protegida com os mais altos padrões de segurança</div>
-            </div>
-
-            <div class="feature">
-                <div class="feature-icon">📱</div>
-                <div class="feature-title">Acesso Mobile</div>
-                <div class="feature-desc">Gerencie sua empresa de qualquer lugar, a qualquer momento</div>
+                <div class="feature-icon">📈</div>
+                <div class="feature-title">Análise Comparativa</div>
+                <div class="feature-desc">Compare o desempenho entre produtos e períodos</div>
             </div>
         </div>
 
         <div class="cta-section">
-            <p class="cta-text">Sua empresa está pronta para crescer! 🚀</p>
-            <p style="font-size: 16px; color: #6b7280; margin-top: 10px;">
-                Você pode começar a adicionar usuários e configurar os módulos que sua empresa precisa.
+            <p class="cta-text">Sua Lanchonete Vende Muito Mais Com <span class="highlight">Riber</span></p>
+            <p class="cta-subtext">
+                Você será notificado assim que lançarmos. Enquanto isso, acompanhe nossas novidades e dicas no blog!
             </p>
         </div>
     </div>
 
     <div class="footer">
         <p class="footer-text">
-            Este é um email automático. Caso tenha dúvidas, nossa equipe está sempre disponível para ajudar.<br>
-            <strong>SnackFlow</strong> - Transformando a gestão de pequenas empresas
+            Este é um email de boas-vindas automático. Caso tenha dúvidas sobre o beta, nossa equipe está sempre pronta
+            para ajudar.<br><br>
+            <span class="footer-brand">⚡ Riber</span> - Transformando o controle financeiro de lanchonetes
         </p>
 
         <div class="social-links">
-            <a href="#" class="social-link">📧</a>
-            <a href="#" class="social-link">💬</a>
-            <a href="#" class="social-link">📞</a>
-            <a href="#" class="social-link">🌐</a>
+            <a href="#" class="social-link" style="text-decoration: none;">📧</a>
+            <a href="#" class="social-link" style="text-decoration: none;">💬</a>
+            <a href="#" class="social-link" style="text-decoration: none;">🌐</a>
         </div>
     </div>
 </div>

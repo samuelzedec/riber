@@ -15,6 +15,6 @@ public static class ObjectExtension
         var properties = obj
             .GetType()
             .GetProperties(BindingFlags.Public | BindingFlags.Instance);
-        return properties.ToDictionary(x => x.Name, x => x.GetValue(obj));
+        return properties.ToDictionary(x => x.Name.ToLowerInvariant(), x => x.GetValue(obj));
     }
 }
