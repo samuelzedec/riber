@@ -45,11 +45,13 @@ SONAR_BEGIN_ARGS=(
 **/Dockerfile*,\
 **/Seeders/**,\
 **/*Map.cs,\
-**/Schedulers/**"
+**/Schedulers/**,\,
+**/Templates/**"
   /d:sonar.coverage.exclusions="\
 **/Migrations/**,\
 **/Program.cs,\
 **/*Validator.cs,\
+**/Extensions/**,\
 **/Repositories/**,\
 **/Settings/**,\
 **/Interceptors/**,\
