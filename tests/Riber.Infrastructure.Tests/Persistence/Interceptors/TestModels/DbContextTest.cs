@@ -10,6 +10,7 @@ namespace Riber.Infrastructure.Tests.Persistence.Interceptors.TestModels;
 public class DbContextTest(DbContextOptions<DbContextTest> options) : DbContext(options)
 {
     public DbSet<EntityTest> TestEntities { get; set; }
+    public DbSet<ModelTest> TestModels { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -19,6 +20,14 @@ public class DbContextTest(DbContextOptions<DbContextTest> options) : DbContext(
 
         modelBuilder
             .Entity<EntityTest>()
+            .HasQueryFilter(x => !x.DeletedAt.HasValue);
+
+        modelBuilder
+            .Entity<ModelTest>()
+            .HasKey(e => e.Id);
+
+        modelBuilder
+            .Entity<ModelTest>()
             .HasQueryFilter(x => !x.DeletedAt.HasValue);
 
         base.OnModelCreating(modelBuilder);
