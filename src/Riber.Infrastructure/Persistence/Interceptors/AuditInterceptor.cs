@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Riber.Domain.Entities;
 using Riber.Infrastructure.Persistence.Identity;
+using Riber.Infrastructure.Persistence.Models;
 
 namespace Riber.Infrastructure.Persistence.Interceptors;
 
@@ -22,7 +23,10 @@ public sealed class AuditInterceptor : SaveChangesInterceptor
         InterceptionResult<int> result)
     {
         if (eventData.Context is not null)
+        {
             ApplyAuditEntities(eventData.Context);
+            ApplyAuditModels(eventData.Context);
+        }
 
         return base.SavingChanges(eventData, result);
     }
@@ -59,6 +63,22 @@ public sealed class AuditInterceptor : SaveChangesInterceptor
                 
                 if (entry.Entity is User userDomain)
                     DeactivateApplicationUser(context, userDomain.Id);
+            }
+        }
+    }
+
+    private static void ApplyAuditModels(DbContext context)
+    {
+        var entries = context.ChangeTracker.Entries<BaseModel>();
+        foreach (var entry in entries)
+        {
+            if (entry.State is EntityState.Modified)
+                entry.Entity.UpdatedAt = DateTime.UtcNow;
+
+            if (entry.State is EntityState.Deleted)
+            {
+                entry.State = EntityState.Modified;
+                entry.Entity.DeletedAt = DateTime.UtcNow;
             }
         }
     }

@@ -34,6 +34,10 @@ public sealed class DatabaseFixture : IAsyncLifetime
 
     public static async Task ResetDatabaseAsync(AppDbContext context)
     {
+        /*
+         * RawSql: Utilizar quando não precisar de parametros dinâmicos, e se for usar da forma correta
+         * Sql: Utilizar quando tiver parâmetros, porque já tem proteção contra sql injection
+         */
         await context.Database.ExecuteSqlRawAsync("SET session_replication_role = 'replica';");
 
         var seedIds = new Dictionary<string, string[]>
@@ -45,10 +49,7 @@ public sealed class DatabaseFixture : IAsyncLifetime
 
         var tablesToSkipCompletely = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase)
         {
-            "application_permission",
-            "aspnet_role",
-            "aspnet_role_claim",
-            "aspnet_user_role"
+            "application_permission", "aspnet_role", "aspnet_role_claim", "aspnet_user_role"
         };
 
         var tables = await context.Database
@@ -66,13 +67,13 @@ public sealed class DatabaseFixture : IAsyncLifetime
             if (seedIds.TryGetValue(table, out string[]? id))
             {
                 var ids = string.Join("','", id);
-                await context.Database.ExecuteSqlRawAsync(
+                await context.Database.ExecuteSqlAsync(
                     $"DELETE FROM \"{table}\" WHERE id NOT IN ('{ids}');"
                 );
             }
             else
             {
-                await context.Database.ExecuteSqlRawAsync(
+                await context.Database.ExecuteSqlAsync(
                     $"TRUNCATE TABLE \"{table}\" RESTART IDENTITY CASCADE;"
                 );
             }

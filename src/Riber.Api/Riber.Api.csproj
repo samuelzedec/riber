@@ -15,8 +15,4 @@
     <ProjectReference Include="..\Riber.Application\Riber.Application.csproj" />
     <ProjectReference Include="..\Riber.Infrastructure\Riber.Infrastructure.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="storage\images\" />
-  </ItemGroup>
 </Project>

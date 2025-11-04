@@ -53,8 +53,10 @@ internal sealed class CreateProductCommandHandler(
                 image?.Id
             );
 
+            product.RaiseEvent(new GenerateProductEmbeddingsEvent(product.Id));
             await unitOfWork.Products.CreateAsync(product, cancellationToken);
             await unitOfWork.CommitTransactionAsync(cancellationToken);
+
             return Result.Success(new CreateProductCommandResponse(
                 ProductId: product.Id,
                 Name: product.Name,

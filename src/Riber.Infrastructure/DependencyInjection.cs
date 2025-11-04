@@ -17,18 +17,23 @@ using Riber.Application.Abstractions.Messaging;
 using Serilog;
 using Serilog.Events;
 using Riber.Application.Abstractions.Services;
+using Riber.Application.Abstractions.Services.AI;
 using Riber.Application.Abstractions.Services.Authentication;
 using Riber.Application.Abstractions.Services.Email;
 using Riber.Application.Configurations;
 using Riber.Application.Exceptions;
+using Riber.Domain.Entities;
 using Riber.Domain.Repositories;
 using Riber.Infrastructure.BackgroundJobs;
 using Riber.Infrastructure.Messaging;
 using Riber.Infrastructure.Messaging.Consumers;
 using Riber.Infrastructure.Persistence;
 using Riber.Infrastructure.Persistence.Interceptors;
+using Riber.Infrastructure.Persistence.Models.Embeddings;
 using Riber.Infrastructure.Persistence.Repositories;
 using Riber.Infrastructure.Schedulers;
+using Riber.Infrastructure.Services.AI;
+using Riber.Infrastructure.Services.AI.Models;
 using Riber.Infrastructure.Services.Authentication;
 using Riber.Infrastructure.Services.Authentication.Identity;
 using Riber.Infrastructure.Services.AWS;
@@ -94,7 +99,12 @@ public static class DependencyInjection
     private static void AddPersistence(this IServiceCollection services, string defaultConnection)
     {
         services.AddDbContext<AppDbContext>(options => options
-            .UseNpgsql(defaultConnection, b => b.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName))
+            .UseNpgsql(defaultConnection, b =>
+            {
+                b.UseVector();
+                b.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName)
+                    .MigrationsHistoryTable("__EFMigrationsHistory");
+            })
             .AddInterceptors(new CaseInsensitiveInterceptor(), new AuditInterceptor()));
     }
 
@@ -120,6 +130,8 @@ public static class DependencyInjection
         services.AddTransient<IUserManagementService, UserManagementService>();
         services.AddTransient<IRoleManagementService, RoleManagementService>();
         services.AddTransient<IAuthenticationService, AuthenticationService>();
+        services.AddTransient<IEmbeddingsService, EmbeddingsService>();
+        services.AddTransient<IAiModelService<ProductEmbeddingsModel, Product>, AiProductService>();
         services.AddScoped<UserMappingService>();
         services.AddSingleton<IEmailConcurrencyService, EmailConcurrencyService>();
 
@@ -200,19 +212,21 @@ public static class DependencyInjection
         });
 
         services.AddSingleton<IEmbeddingGenerator<string, Embedding<float>>>(_ =>
-            new OllamaApiClient(new Uri(configuration["Ollama:Url"]!), configuration["Ollama:EmbeddingModel"]!));
+            new OllamaApiClient(new Uri(configuration["Ollama:ApiUri"]!), configuration["Ollama:EmbeddingModel"]!));
     }
 
     private static void AddMessaging(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<IMessagePublisher, MassTransitMessagePublisher>();
-        services.AddScoped<SendEmailMessageConsumer>();
-        services.AddScoped<ProductImageCreationFailedMessageConsumer>();
+        services.AddTransient<SendEmailMessageConsumer>();
+        services.AddTransient<ProductImageCreationFailedMessageConsumer>();
+        services.AddTransient<GenerateProductEmbeddingsMessageConsumer>();
 
         services.AddMassTransit(busConfigurator =>
         {
             busConfigurator.AddConsumer<SendEmailMessageConsumer>();
             busConfigurator.AddConsumer<ProductImageCreationFailedMessageConsumer>();
+            busConfigurator.AddConsumer<GenerateProductEmbeddingsMessageConsumer>();
             busConfigurator.UsingRabbitMq((context, configurator) =>
             {
                 configurator.Host(new Uri(configuration["RabbitMQ:Host"]!), host =>
