@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Riber.Domain.Entities;
 
-namespace Riber.Infrastructure.Persistence.Mappings;
+namespace Riber.Infrastructure.Persistence.Mappings.Entities;
 
 public sealed class ProductCategoryMap : BaseEntityConfiguration<ProductCategory>
 {

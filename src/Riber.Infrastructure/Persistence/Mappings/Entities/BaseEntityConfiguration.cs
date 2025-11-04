@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Riber.Domain.Entities;
 
-namespace Riber.Infrastructure.Persistence.Mappings;
+namespace Riber.Infrastructure.Persistence.Mappings.Entities;
 
 /// <summary>
 /// Fornece uma implementação base de configuração para entidades que herdam de BaseEntity.

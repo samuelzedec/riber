@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Riber.Domain.Entities;
 using Riber.Infrastructure.Extensions;
 
-namespace Riber.Infrastructure.Persistence.Mappings;
+namespace Riber.Infrastructure.Persistence.Mappings.Entities;
 
 public sealed class ProductMap : BaseEntityConfiguration<Product>
 {
