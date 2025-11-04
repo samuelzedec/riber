@@ -1,5 +1,17 @@
 # Riber - Changelog
 
+## v4.2.0 - 04/11/2025
+- **NOVO**: Serviço para geração de Embeddings Genérico
+- Adiciona um evento para gerar embeddings dos produtos
+- Adiciona models ao banco onde referência as entidades para guardar os embeddings
+- Adiciona um consumer para poder gerar os embeddings de forma assíncrona
+- **TESTES**: Adiciona testes unitários para o novo consumer de geração de embeddings
+- **REFATORAÇÃO**: Adapta o handler de produto para lançar evento de gerar embeddings do produto
+- Refatora os teste do PermissionDataService para se tornarem de Integração em vez de Unitários
+- Refatora os teste do AuditInterceptor para os casos de ModelBase ter SoftDelete
+
+---
+
 ## v4.1.2 - 02/11/2025
 
 - **REFATORAÇÃO**: Substituição de jobs de exclusão por arquitetura baseada em mensagens
