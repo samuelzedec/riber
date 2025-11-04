@@ -67,13 +67,13 @@ public sealed class DatabaseFixture : IAsyncLifetime
             if (seedIds.TryGetValue(table, out string[]? id))
             {
                 var ids = string.Join("','", id);
-                await context.Database.ExecuteSqlAsync(
+                await context.Database.ExecuteSqlRawAsync(
                     $"DELETE FROM \"{table}\" WHERE id NOT IN ('{ids}');"
                 );
             }
             else
             {
-                await context.Database.ExecuteSqlAsync(
+                await context.Database.ExecuteSqlRawAsync(
                     $"TRUNCATE TABLE \"{table}\" RESTART IDENTITY CASCADE;"
                 );
             }

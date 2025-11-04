@@ -1,86 +1,78 @@
 using System.Net;
+using Bogus;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Moq;
+using Riber.Application.Abstractions.Services.Authentication;
 using Riber.Domain.Constants.Messages.Common;
-using Riber.Domain.Tests;
 using Riber.Infrastructure.Persistence;
 using Riber.Infrastructure.Persistence.Identity;
-using Riber.Infrastructure.Services.Authentication;
+using Riber.Api.Tests;
+using Riber.Api.Tests.Fixtures;
 
 namespace Riber.Infrastructure.Tests.Services.Authentication;
 
-public sealed class PermissionDataServiceTests : BaseTest
+public sealed class PermissionDataServiceTests(WebAppFixture webAppFixture, DatabaseFixture databaseFixture)
+    : IntegrationTestBase(webAppFixture, databaseFixture)
 {
-    #region Fields and Setup
+    private readonly Mock<IMemoryCache> _mockMemoryCache = new();
 
-    private readonly AppDbContext _context;
-    private readonly Mock<IMemoryCache> _mockMemoryCache;
-    private readonly PermissionDataService _permissionDataService;
-
-    public PermissionDataServiceTests()
-    {
-        var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .Options;
-
-        _context = new AppDbContext(options);
-        _mockMemoryCache = new Mock<IMemoryCache>();
-
-        _permissionDataService = new PermissionDataService(
-            _context,
-            _mockMemoryCache.Object
-        );
-    }
-
-    #endregion
-
-    [Trait("Category", "Unit")]
+    [Trait("Category", "Integration")]
     [Fact(DisplayName = "Should return success when permission exists and is active")]
     public async Task ValidateAsync_WhenPermissionExistsAndIsActive_ShouldReturnSuccess()
     {
         // Arrange
-        var permission = CreateFaker<ApplicationPermission>()
-            .RuleFor(x => x.Id, f => f.Random.UInt())
-            .RuleFor(x => x.Name, "create-test")
-            .RuleFor(x => x.Description, f => f.Random.String2(10))
-            .RuleFor(x => x.IsActive, true)
-            .RuleFor(x => x.Category, "test")
-            .Generate();
+        var context = GetDbContext();
+        var permissionService = CreatePermissionService(context);
+        
+        var faker = new Faker();
+        var permission = new ApplicationPermission
+        {
+            Id = faker.Random.UInt(),
+            Name = "create-test-active",
+            Description = faker.Random.String2(10),
+            IsActive = true,
+            Category = "test"
+        };
 
-        _context.Set<ApplicationPermission>().Add(permission);
-        await _context.SaveChangesAsync();
+        context.Set<ApplicationPermission>().Add(permission);
+        await context.SaveChangesAsync();
 
         SetupCacheMiss();
 
         // Act
-        var result = await _permissionDataService.ValidateAsync(permission.Name);
+        var result = await permissionService.ValidateAsync(permission.Name);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
     }
 
-    [Trait("Category", "Unit")]
+    [Trait("Category", "Integration")]
     [Fact(DisplayName = "Should return failure when permission exists but is inactive")]
     public async Task ValidateAsync_WhenPermissionExistsAndIsInactive_ShouldReturnFailure()
     {
         // Arrange
-        var permission = CreateFaker<ApplicationPermission>()
-            .RuleFor(x => x.Id, f => f.Random.UInt())
-            .RuleFor(x => x.Name, "create-test")
-            .RuleFor(x => x.Description, f => f.Random.String2(10))
-            .RuleFor(x => x.IsActive, false)
-            .RuleFor(x => x.Category, "test")
-            .Generate();
+        var context = GetDbContext();
+        var permissionService = CreatePermissionService(context);
+        
+        var faker = new Faker();
+        var permission = new ApplicationPermission
+        {
+            Id = faker.Random.UInt(),
+            Name = "create-test-inactive",
+            Description = faker.Random.String2(10),
+            IsActive = false,
+            Category = "test"
+        };
 
-        _context.Set<ApplicationPermission>().Add(permission);
-        await _context.SaveChangesAsync();
+        context.Set<ApplicationPermission>().Add(permission);
+        await context.SaveChangesAsync();
 
         SetupCacheMiss();
 
         // Act
-        var result = await _permissionDataService.ValidateAsync(permission.Name);
+        var result = await permissionService.ValidateAsync(permission.Name);
 
         // Assert
         result.IsSuccess.Should().BeFalse();
@@ -88,24 +80,29 @@ public sealed class PermissionDataServiceTests : BaseTest
         result.Error.Message.Should().Be("Permissão está inativa");
     }
 
-    [Trait("Category", "Unit")]
+    [Trait("Category", "Integration")]
     [Fact(DisplayName = "Should return not found when permission does not exist")]
     public async Task ValidateAsync_WhenPermissionDoesNotExist_ShouldReturnNotFound()
     {
         // Arrange
-        var permissionName = "create-test";
-        var permissions = CreateFaker<ApplicationPermission>()
-            .RuleFor(x => x.Id, f => f.Random.UInt())
-            .RuleFor(x => x.Name, f => f.Random.String2(10))
-            .RuleFor(x => x.Description, f => f.Random.String2(10))
-            .RuleFor(x => x.IsActive, false)
-            .RuleFor(x => x.Category, "test")
-            .Generate(10);
+        var context = GetDbContext();
+        var permissionService = CreatePermissionService(context);
+        
+        var faker = new Faker();
+        var permissionName = "create-test-nonexistent";
+        var permissions = Enumerable.Range(1, 10).Select(_ => new ApplicationPermission
+        {
+            Id = faker.Random.UInt(),
+            Name = faker.Random.String2(10),
+            Description = faker.Random.String2(10),
+            IsActive = false,
+            Category = "test"
+        }).ToList();
 
         SetupCacheHit(permissions);
 
         // Act
-        var result = await _permissionDataService.ValidateAsync(permissionName);
+        var result = await permissionService.ValidateAsync(permissionName);
 
         // Assert
         result.IsSuccess.Should().BeFalse();
@@ -113,58 +110,68 @@ public sealed class PermissionDataServiceTests : BaseTest
         result.Error.Message.Should().Be(NotFoundErrors.Permission);
     }
 
-    [Trait("Category", "Unit")]
+    [Trait("Category", "Integration")]
     [Fact(DisplayName = "Should toggle permission status successfully")]
     public async Task UpdatePermissionStatusAsync_WhenPermissionExists_ShouldToggleIsActive()
     {
         // Arrange
-        var permission = CreateFaker<ApplicationPermission>()
-            .RuleFor(x => x.Id, f => f.Random.UInt())
-            .RuleFor(x => x.Name, "create-test")
-            .RuleFor(x => x.Description, f => f.Random.String2(10))
-            .RuleFor(x => x.IsActive, false)
-            .RuleFor(x => x.Category, "test")
-            .Generate();
+        var context = GetDbContext();
+        var permissionService = CreatePermissionService(context);
+        
+        var faker = new Faker();
+        var permission = new ApplicationPermission
+        {
+            Id = faker.Random.UInt(),
+            Name = "create-test-toggle",
+            Description = faker.Random.String2(10),
+            IsActive = false,
+            Category = "test"
+        };
 
-        _context.Set<ApplicationPermission>().Add(permission);
-        await _context.SaveChangesAsync();
-        _context.Entry(permission).State = EntityState.Detached;
+        context.Set<ApplicationPermission>().Add(permission);
+        await context.SaveChangesAsync();
+        context.Entry(permission).State = EntityState.Detached;
 
         SetupCacheMiss();
         _mockMemoryCache.Setup(x => x.Remove(It.IsAny<object>()));
 
         // Act
-        var result = await _permissionDataService.UpdatePermissionStatusAsync(permission.Name);
+        var result = await permissionService.UpdatePermissionStatusAsync(permission.Name);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
         
-        var updatedPermission = await _context.Set<ApplicationPermission>()
+        var updatedPermission = await context.Set<ApplicationPermission>()
             .FirstAsync(p => p.Name == permission.Name);
         updatedPermission.IsActive.Should().BeTrue();
     }
 
-    [Trait("Category", "Unit")]
+    [Trait("Category", "Integration")]
     [Fact(DisplayName = "Should return not found when updating non-existent permission")]
     public async Task UpdatePermissionStatusAsync_WhenPermissionDoesNotExist_ShouldReturnNotFound()
     {
         // Arrange
-        var permissionName = "create-test";
-        var permissions = CreateFaker<ApplicationPermission>()
-            .RuleFor(x => x.Id, f => f.Random.UInt())
-            .RuleFor(x => x.Name, f => f.Random.String2(10))
-            .RuleFor(x => x.Description, f => f.Random.String2(10))
-            .RuleFor(x => x.IsActive, false)
-            .RuleFor(x => x.Category, "test")
-            .Generate(10);
+        var context = GetDbContext();
+        var permissionService = CreatePermissionService(context);
+        
+        var faker = new Faker();
+        var permissionName = "create-test-update-nonexistent";
+        var permissions = Enumerable.Range(1, 10).Select(_ => new ApplicationPermission
+        {
+            Id = faker.Random.UInt(),
+            Name = faker.Random.String2(10),
+            Description = faker.Random.String2(10),
+            IsActive = false,
+            Category = "test"
+        }).ToList();
 
-        await _context.Set<ApplicationPermission>().AddRangeAsync(permissions);
-        await _context.SaveChangesAsync();
+        await context.Set<ApplicationPermission>().AddRangeAsync(permissions);
+        await context.SaveChangesAsync();
 
         SetupCacheMiss();
 
         // Act
-        var result = await _permissionDataService.UpdatePermissionStatusAsync(permissionName);
+        var result = await permissionService.UpdatePermissionStatusAsync(permissionName);
 
         // Assert
         result.IsSuccess.Should().BeFalse();
@@ -172,23 +179,28 @@ public sealed class PermissionDataServiceTests : BaseTest
         result.Error.Message.Should().Be(NotFoundErrors.Permission);
     }
 
-    [Trait("Category", "Unit")]
+    [Trait("Category", "Integration")]
     [Fact(DisplayName = "Should return all permissions with descriptions")]
     public async Task GetAllWithDescriptionsAsync_WhenCalled_ShouldReturnAllPermissions()
     {
         // Arrange
-        var permissions = CreateFaker<ApplicationPermission>()
-            .RuleFor(x => x.Id, f => f.Random.UInt())
-            .RuleFor(x => x.Name, f => f.Random.String2(10))
-            .RuleFor(x => x.Description, f => f.Random.String2(10))
-            .RuleFor(x => x.IsActive, f => f.Random.Bool())
-            .RuleFor(x => x.Category, "test")
-            .Generate(10);
+        var context = GetDbContext();
+        var permissionService = CreatePermissionService(context);
+        
+        var faker = new Faker();
+        var permissions = Enumerable.Range(1, 10).Select(i => new ApplicationPermission
+        {
+            Id = faker.Random.UInt(),
+            Name = $"permission-{i}",
+            Description = faker.Random.String2(10),
+            IsActive = faker.Random.Bool(),
+            Category = "test"
+        }).ToList();
 
         SetupCacheHit(permissions);
 
         // Act
-        var result = await _permissionDataService.GetAllWithDescriptionsAsync();
+        var result = await permissionService.GetAllWithDescriptionsAsync();
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -198,6 +210,14 @@ public sealed class PermissionDataServiceTests : BaseTest
     }
 
     #region Helper Methods
+
+    private IPermissionDataService CreatePermissionService(AppDbContext context)
+    {
+        return new Infrastructure.Services.Authentication.PermissionDataService(
+            context,
+            _mockMemoryCache.Object
+        );
+    }
 
     private void SetupCacheMiss()
     {

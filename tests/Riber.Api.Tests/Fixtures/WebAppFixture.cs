@@ -1,3 +1,4 @@
+using MassTransit;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Riber.Infrastructure.Messaging.Consumers;
 using Riber.Infrastructure.Persistence;
 using Riber.Infrastructure.Persistence.Interceptors;
 using Xunit;
@@ -54,9 +56,32 @@ public sealed class WebAppFixture : IAsyncLifetime
                             .AddInterceptors(new CaseInsensitiveInterceptor(), new AuditInterceptor())
                     );
                     services.RemoveAll<IHostedService>();
+
+                    services.RemoveAll<IBusControl>();
+                    services.RemoveAll<IPublishEndpoint>();
+                    services.RemoveAll<ISendEndpointProvider>();
+
+                    var massTransitDescriptors = services
+                        .Where(d => d.ServiceType.FullName?.Contains("MassTransit") ?? false)
+                        .ToList();
+
+                    foreach (var descriptor in massTransitDescriptors)
+                        services.Remove(descriptor);
+
+
+                    services.AddMassTransit(busConfigurator =>
+                    {
+                        busConfigurator.AddConsumer<SendEmailMessageConsumer>();
+                        busConfigurator.AddConsumer<ProductImageCreationFailedMessageConsumer>();
+                        busConfigurator.AddConsumer<GenerateProductEmbeddingsMessageConsumer>();
+
+                        busConfigurator.UsingInMemory((context, configurator) =>
+                        {
+                            configurator.ConfigureEndpoints(context);
+                        });
+                    });
                 });
             });
-
         return _factory;
     }
 }
