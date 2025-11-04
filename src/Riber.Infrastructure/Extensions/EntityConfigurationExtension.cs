@@ -4,6 +4,7 @@ using Riber.Domain.Abstractions;
 using Riber.Domain.Abstractions.ValueObjects;
 using Riber.Domain.ValueObjects.CompanyName;
 using Riber.Domain.ValueObjects.FullName;
+using Riber.Infrastructure.Persistence.Models.Embeddings;
 
 namespace Riber.Infrastructure.Extensions;
 
@@ -207,6 +208,25 @@ public static class EntityConfigurationExtension
             .IsRequired()
         ).Navigation(x => x.ContentType).IsRequired();
 
+        return builder;
+    }
+
+    public static EntityTypeBuilder<T> ConfigureVector<T>(this EntityTypeBuilder<T> builder)
+        where T : BaseEmbeddingsModel
+    {
+        builder
+            .Property(p => p.Embeddings)
+            .HasColumnName("embeddings_vector")
+            .HasColumnType("vector(1024)");
+        
+        builder
+            .HasIndex(x => x.Embeddings)
+            .HasDatabaseName("ix_product_embeddings_vector")
+            .HasMethod("hnsw")
+            .HasOperators("vector_cosine_ops")
+            .HasStorageParameter("m", 16)
+            .HasStorageParameter("ef_construction", 64);
+        
         return builder;
     }
 }

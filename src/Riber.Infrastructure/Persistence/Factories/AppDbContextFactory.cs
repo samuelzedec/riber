@@ -19,9 +19,12 @@ public sealed class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbConte
         optionsBuilder
             .UseNpgsql(
                 configuration.GetConnectionString("DefaultConnection"),
-                b => b
-                    .MigrationsAssembly(typeof(AppDbContext).Assembly.FullName)
-                    .MigrationsHistoryTable("__EFMigrationsHistory"))
+                b =>
+                {
+                    b.UseVector();
+                    b.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName)
+                        .MigrationsHistoryTable("__EFMigrationsHistory");
+                })
             .AddInterceptors(
                 new CaseInsensitiveInterceptor(),
                 new AuditInterceptor());

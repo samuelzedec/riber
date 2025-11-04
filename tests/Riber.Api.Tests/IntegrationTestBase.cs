@@ -11,21 +11,20 @@ using Xunit;
 
 namespace Riber.Api.Tests;
 
-/* 
+/*
  * A interface IAsyncLifeTime define dois métodos um para executar
  * antes dos testes e outro para executar depois dos testes rodarem.
  *
  * Já a interface IClassFixture<T> cria essa fixture 1 vez e compartilha entre os testes
  */
-public abstract class IntegrationTestBase : 
+public abstract class IntegrationTestBase :
     IClassFixture<WebAppFixture>,
-    IClassFixture<DatabaseFixture>, 
+    IClassFixture<DatabaseFixture>,
     IAsyncLifetime
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
-        PropertyNameCaseInsensitive = true, 
-        IncludeFields = true
+        PropertyNameCaseInsensitive = true, IncludeFields = true
     };
 
     private readonly WebAppFixture _webAppFixture;

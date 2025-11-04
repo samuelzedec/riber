@@ -6,8 +6,8 @@
   <!-- Core Framework & Runtime -->
   <ItemGroup>
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.10" />
-    <PackageVersion Include="Microsoft.Extensions.AI.Abstractions" Version="9.10.1" />
-    <PackageVersion Include="Microsoft.Extensions.AI" Version="9.10.1" />
+    <PackageVersion Include="Microsoft.Extensions.AI.Abstractions" Version="9.10.2" />
+    <PackageVersion Include="Microsoft.Extensions.AI" Version="9.10.2" />
   </ItemGroup>
   <!-- Web & API -->
   <ItemGroup>
@@ -39,8 +39,8 @@
   </ItemGroup>
   <!-- Validation -->
   <ItemGroup>
-    <PackageVersion Include="FluentValidation" Version="12.0.0" />
-    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
+    <PackageVersion Include="FluentValidation" Version="12.1.0" />
+    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.0" />
   </ItemGroup>
   <!-- AI & LLM -->
   <ItemGroup>
