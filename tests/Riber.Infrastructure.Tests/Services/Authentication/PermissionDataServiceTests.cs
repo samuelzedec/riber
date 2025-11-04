@@ -13,10 +13,13 @@ using Riber.Api.Tests.Fixtures;
 
 namespace Riber.Infrastructure.Tests.Services.Authentication;
 
-public sealed class PermissionDataServiceTests(WebAppFixture webAppFixture, DatabaseFixture databaseFixture)
+public sealed class PermissionDataServiceTests(
+    WebAppFixture webAppFixture, 
+    DatabaseFixture databaseFixture)
     : IntegrationTestBase(webAppFixture, databaseFixture)
 {
     private readonly Mock<IMemoryCache> _mockMemoryCache = new();
+    private readonly Faker _faker = new();
 
     [Trait("Category", "Integration")]
     [Fact(DisplayName = "Should return success when permission exists and is active")]
@@ -25,20 +28,10 @@ public sealed class PermissionDataServiceTests(WebAppFixture webAppFixture, Data
         // Arrange
         var context = GetDbContext();
         var permissionService = CreatePermissionService(context);
-        
-        var faker = new Faker();
-        var permission = new ApplicationPermission
-        {
-            Id = faker.Random.UInt(),
-            Name = "create-test-active",
-            Description = faker.Random.String2(10),
-            IsActive = true,
-            Category = "test"
-        };
+        var permission = CreatePermission("create-test-active", isActive: true);
 
-        context.Set<ApplicationPermission>().Add(permission);
+        await context.Set<ApplicationPermission>().AddAsync(permission);
         await context.SaveChangesAsync();
-
         SetupCacheMiss();
 
         // Act
@@ -55,20 +48,10 @@ public sealed class PermissionDataServiceTests(WebAppFixture webAppFixture, Data
         // Arrange
         var context = GetDbContext();
         var permissionService = CreatePermissionService(context);
-        
-        var faker = new Faker();
-        var permission = new ApplicationPermission
-        {
-            Id = faker.Random.UInt(),
-            Name = "create-test-inactive",
-            Description = faker.Random.String2(10),
-            IsActive = false,
-            Category = "test"
-        };
+        var permission = CreatePermission("create-test-inactive", isActive: false);
 
-        context.Set<ApplicationPermission>().Add(permission);
+        await context.Set<ApplicationPermission>().AddAsync(permission);
         await context.SaveChangesAsync();
-
         SetupCacheMiss();
 
         // Act
@@ -87,22 +70,12 @@ public sealed class PermissionDataServiceTests(WebAppFixture webAppFixture, Data
         // Arrange
         var context = GetDbContext();
         var permissionService = CreatePermissionService(context);
-        
-        var faker = new Faker();
-        var permissionName = "create-test-nonexistent";
-        var permissions = Enumerable.Range(1, 10).Select(_ => new ApplicationPermission
-        {
-            Id = faker.Random.UInt(),
-            Name = faker.Random.String2(10),
-            Description = faker.Random.String2(10),
-            IsActive = false,
-            Category = "test"
-        }).ToList();
+        var permissions = CreatePermissions(count: 10);
 
         SetupCacheHit(permissions);
 
         // Act
-        var result = await permissionService.ValidateAsync(permissionName);
+        var result = await permissionService.ValidateAsync("create-test-nonexistent");
 
         // Assert
         result.IsSuccess.Should().BeFalse();
@@ -117,18 +90,9 @@ public sealed class PermissionDataServiceTests(WebAppFixture webAppFixture, Data
         // Arrange
         var context = GetDbContext();
         var permissionService = CreatePermissionService(context);
-        
-        var faker = new Faker();
-        var permission = new ApplicationPermission
-        {
-            Id = faker.Random.UInt(),
-            Name = "create-test-toggle",
-            Description = faker.Random.String2(10),
-            IsActive = false,
-            Category = "test"
-        };
+        var permission = CreatePermission("create-test-toggle", isActive: false);
 
-        context.Set<ApplicationPermission>().Add(permission);
+        await context.Set<ApplicationPermission>().AddAsync(permission);
         await context.SaveChangesAsync();
         context.Entry(permission).State = EntityState.Detached;
 
@@ -153,25 +117,14 @@ public sealed class PermissionDataServiceTests(WebAppFixture webAppFixture, Data
         // Arrange
         var context = GetDbContext();
         var permissionService = CreatePermissionService(context);
-        
-        var faker = new Faker();
-        var permissionName = "create-test-update-nonexistent";
-        var permissions = Enumerable.Range(1, 10).Select(_ => new ApplicationPermission
-        {
-            Id = faker.Random.UInt(),
-            Name = faker.Random.String2(10),
-            Description = faker.Random.String2(10),
-            IsActive = false,
-            Category = "test"
-        }).ToList();
+        var permissions = CreatePermissions(count: 10);
 
         await context.Set<ApplicationPermission>().AddRangeAsync(permissions);
         await context.SaveChangesAsync();
-
         SetupCacheMiss();
 
         // Act
-        var result = await permissionService.UpdatePermissionStatusAsync(permissionName);
+        var result = await permissionService.UpdatePermissionStatusAsync("create-test-update-nonexistent");
 
         // Assert
         result.IsSuccess.Should().BeFalse();
@@ -186,16 +139,7 @@ public sealed class PermissionDataServiceTests(WebAppFixture webAppFixture, Data
         // Arrange
         var context = GetDbContext();
         var permissionService = CreatePermissionService(context);
-        
-        var faker = new Faker();
-        var permissions = Enumerable.Range(1, 10).Select(i => new ApplicationPermission
-        {
-            Id = faker.Random.UInt(),
-            Name = $"permission-{i}",
-            Description = faker.Random.String2(10),
-            IsActive = faker.Random.Bool(),
-            Category = "test"
-        }).ToList();
+        var permissions = CreatePermissions(count: 10);
 
         SetupCacheHit(permissions);
 
@@ -212,12 +156,29 @@ public sealed class PermissionDataServiceTests(WebAppFixture webAppFixture, Data
     #region Helper Methods
 
     private IPermissionDataService CreatePermissionService(AppDbContext context)
-    {
-        return new Infrastructure.Services.Authentication.PermissionDataService(
-            context,
-            _mockMemoryCache.Object
-        );
-    }
+        => new Infrastructure.Services.Authentication.PermissionDataService(context, _mockMemoryCache.Object);
+
+    private ApplicationPermission CreatePermission(string name, bool isActive = true)
+        => new()
+        {
+            Id = _faker.Random.UInt(),
+            Name = name,
+            Description = _faker.Random.String2(10),
+            IsActive = isActive,
+            Category = "test"
+        };
+
+    private List<ApplicationPermission> CreatePermissions(int count)
+        => Enumerable.Range(1, count)
+            .Select(i => new ApplicationPermission
+            {
+                Id = _faker.Random.UInt(),
+                Name = $"permission-{i}",
+                Description = _faker.Random.String2(10),
+                IsActive = _faker.Random.Bool(),
+                Category = "test"
+            })
+            .ToList();
 
     private void SetupCacheMiss()
     {
@@ -225,10 +186,9 @@ public sealed class PermissionDataServiceTests(WebAppFixture webAppFixture, Data
             .Setup(x => x.TryGetValue(It.IsAny<object>(), out It.Ref<object?>.IsAny))
             .Returns(false);
 
-        var mockCacheEntry = new Mock<ICacheEntry>();
         _mockMemoryCache
             .Setup(x => x.CreateEntry(It.IsAny<object>()))
-            .Returns(mockCacheEntry.Object);
+            .Returns(new Mock<ICacheEntry>().Object);
     }
 
     private void SetupCacheHit(IEnumerable<ApplicationPermission> permissions)

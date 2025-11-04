@@ -75,10 +75,8 @@ public sealed class WebAppFixture : IAsyncLifetime
                         busConfigurator.AddConsumer<ProductImageCreationFailedMessageConsumer>();
                         busConfigurator.AddConsumer<GenerateProductEmbeddingsMessageConsumer>();
 
-                        busConfigurator.UsingInMemory((context, configurator) =>
-                        {
-                            configurator.ConfigureEndpoints(context);
-                        });
+                        busConfigurator.UsingInMemory((context, configurator)
+                            => configurator.ConfigureEndpoints(context));
                     });
                 });
             });
