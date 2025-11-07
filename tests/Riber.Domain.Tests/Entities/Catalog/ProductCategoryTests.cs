@@ -85,7 +85,7 @@ public sealed class ProductCategoryTests : BaseTest
         var act = () => ProductCategory.Create(invalidName, description, code, companyId);
 
         // Assert
-        act.Should().Throw<ProductCategoryNameNullException>()
+        act.Should().Throw<EmptyProductCategoryNameException>()
            .WithMessage(CategoryErrors.NameEmpty);
     }
 

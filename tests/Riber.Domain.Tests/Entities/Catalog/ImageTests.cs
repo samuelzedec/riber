@@ -53,7 +53,7 @@ public sealed class ImageTests : BaseTest
         var result = () => image.Generate();
 
         // Assert
-        result.Should().ThrowExactly<InvalidLengthImageException>(ImageErrors.Length);
+        result.Should().ThrowExactly<ImageIsEmptyException>(ImageErrors.Length);
     }
 
     [Trait("Category", "Unit")]

@@ -2,5 +2,5 @@ using Riber.Domain.Exceptions;
 
 namespace Riber.Domain.Entities.Catalog.Exceptions;
 
-public sealed class ProductCategoryNameNullException(string message)
+public sealed class EmptyProductDescriptionException(string message)
     : DomainException(message);

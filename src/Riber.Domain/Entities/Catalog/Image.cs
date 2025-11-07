@@ -43,7 +43,7 @@ public sealed class Image : BaseEntity, IHasContentType
     public static Image Create(long length, string originalName, string contentType)
     {
         if (length <= 0)
-            throw new InvalidLengthImageException(ImageErrors.Length);
+            throw new ImageIsEmptyException(ImageErrors.Length);
 
         if (string.IsNullOrWhiteSpace(originalName))
             throw new InvalidImageException(ImageErrors.NameEmpty);

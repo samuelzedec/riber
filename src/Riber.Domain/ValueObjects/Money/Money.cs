@@ -44,12 +44,12 @@ public sealed record Money : BaseValueObject
 
     public static Money operator +(Money left, Money right)
         => left.Currency != right.Currency
-            ? throw new InvalidSumException(MoneyErrors.Sum)
+            ? throw new CurrencyMismatchException(MoneyErrors.Sum)
             : Create(left.Value + right.Value, left.Currency);
 
     public static Money operator -(Money left, Money right)
         => left.Currency != right.Currency
-            ? throw new InvalidSubtractionException(MoneyErrors.Subtraction)
+            ? throw new CurrencyMismatchException(MoneyErrors.Subtraction)
             : Create(left.Value - right.Value, left.Currency);
 
     public static Money operator *(Money money, int multiplier)

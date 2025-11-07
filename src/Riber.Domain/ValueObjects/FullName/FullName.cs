@@ -37,7 +37,7 @@ public sealed partial record FullName : BaseValueObject
         value = value.Trim();
 
         if (value.Length is > MaxLength or < MinLength)
-            throw new InvalidLengthFullNameException(NameErrors.FullNameLength(MinLength, MaxLength));
+            throw new InvalidFullNameLengthException(NameErrors.FullNameLength(MinLength, MaxLength));
 
         return FullNameRegex().IsMatch(value)
             ? new FullName(value)

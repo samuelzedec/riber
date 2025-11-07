@@ -55,10 +55,10 @@ public sealed class ProductCategory
         Guid companyId)
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new ProductCategoryNameNullException(CategoryErrors.NameEmpty);
+            throw new EmptyProductCategoryNameException(CategoryErrors.NameEmpty);
 
         if (string.IsNullOrWhiteSpace(code))
-            throw new ProductCategoryCodeNullException(CategoryErrors.CodeEmpty);
+            throw new EmptyProductCategoryCodeException(CategoryErrors.CodeEmpty);
 
         return companyId == Guid.Empty
             ? throw new IdentifierNullException(CompanyErrors.Invalid)
@@ -72,7 +72,7 @@ public sealed class ProductCategory
     public void UpdateDetails(string name, string? description)
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new ProductCategoryNameNullException(CategoryErrors.NameEmpty);
+            throw new EmptyProductCategoryNameException(CategoryErrors.NameEmpty);
 
         Name = name;
         if (description is not null)

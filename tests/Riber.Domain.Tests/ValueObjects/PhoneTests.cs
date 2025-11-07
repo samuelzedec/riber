@@ -71,7 +71,7 @@ public sealed class PhoneTests : BaseTest
         var act = () => Phone.Create(phone);
 
         // Assert
-        act.Should().Throw<PhoneNullOrEmptyException>().WithMessage(PhoneErrors.Empty);
+        act.Should().Throw<EmptyPhoneException>().WithMessage(PhoneErrors.Empty);
     }
 
     [Trait("Category", "Unit")]
@@ -86,7 +86,7 @@ public sealed class PhoneTests : BaseTest
         var act = () => Phone.Create(phone);
 
         // Assert
-        act.Should().ThrowExactly<PhoneFormatInvalidException>().WithMessage(PhoneErrors.Format);
+        act.Should().ThrowExactly<InvalidPhoneFormatException>().WithMessage(PhoneErrors.Format);
     }
     
     [Trait("Category", "Unit")]
@@ -99,7 +99,7 @@ public sealed class PhoneTests : BaseTest
         var act = () => Phone.Create(phone);
 
         // Assert
-        act.Should().ThrowExactly<PhoneFormatInvalidException>();
+        act.Should().ThrowExactly<InvalidPhoneFormatException>();
     }
 
     [Trait("Category", "Unit")]
@@ -112,7 +112,7 @@ public sealed class PhoneTests : BaseTest
         var act = () => Phone.Create(phone);
 
         // Assert
-        act.Should().ThrowExactly<PhoneFormatInvalidException>();
+        act.Should().ThrowExactly<InvalidPhoneFormatException>();
     }
 
     #endregion

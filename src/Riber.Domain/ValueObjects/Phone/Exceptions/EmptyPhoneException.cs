@@ -2,5 +2,5 @@
 
 namespace Riber.Domain.ValueObjects.Phone.Exceptions;
 
-public class PhoneNullOrEmptyException(string message)
+public class EmptyPhoneException(string message)
     : DomainException(message);

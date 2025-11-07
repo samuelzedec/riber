@@ -99,7 +99,7 @@ public sealed class ProductTests : BaseTest
             companyId
         );
 
-        act.Should().Throw<ProductNameNullException>();
+        act.Should().Throw<EmptyProductNameException>();
     }
 
     [Trait("Category", "Unit")]
@@ -123,7 +123,7 @@ public sealed class ProductTests : BaseTest
             companyId
         );
 
-        act.Should().Throw<ProductDescriptionNullException>();
+        act.Should().Throw<EmptyProductDescriptionException>();
     }
 
     [Trait("Category", "Unit")]
@@ -223,7 +223,7 @@ public sealed class ProductTests : BaseTest
         // Act & Assert
         var act = () => product.UpdateDetails(invalidName, description, price);
 
-        act.Should().Throw<ProductNameNullException>();
+        act.Should().Throw<EmptyProductNameException>();
     }
 
     [Trait("Category", "Unit")]
@@ -248,7 +248,7 @@ public sealed class ProductTests : BaseTest
         // Act & Assert
         var act = () => product.UpdateDetails(name, invalidDescription, price);
 
-        act.Should().Throw<ProductDescriptionNullException>();
+        act.Should().Throw<EmptyProductDescriptionException>();
     }
 
     [Trait("Category", "Unit")]

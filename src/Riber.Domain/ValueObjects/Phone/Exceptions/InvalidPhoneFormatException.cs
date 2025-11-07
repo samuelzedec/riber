@@ -2,5 +2,5 @@
 
 namespace Riber.Domain.ValueObjects.Phone.Exceptions;
 
-public class PhoneFormatInvalidException(string message)
+public class InvalidPhoneFormatException(string message)
     : DomainException(message);

@@ -68,10 +68,10 @@ public sealed class Product
         Guid? imageId = null)
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new ProductNameNullException(ProductErrors.NameEmpty);
+            throw new EmptyProductNameException(ProductErrors.NameEmpty);
 
         if (string.IsNullOrWhiteSpace(description))
-            throw new ProductDescriptionNullException(ProductErrors.DescriptionEmpty);
+            throw new EmptyProductDescriptionException(ProductErrors.DescriptionEmpty);
 
         if (categoryId == Guid.Empty)
             throw new IdentifierNullException(ProductErrors.InvalidCategory);
@@ -88,10 +88,10 @@ public sealed class Product
     public void UpdateDetails(string name, string description, decimal price)
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new ProductNameNullException(ProductErrors.NameEmpty);
+            throw new EmptyProductNameException(ProductErrors.NameEmpty);
 
         if (string.IsNullOrWhiteSpace(description))
-            throw new ProductDescriptionNullException(ProductErrors.DescriptionEmpty);
+            throw new EmptyProductDescriptionException(ProductErrors.DescriptionEmpty);
 
         Name = name;
         Description = description;

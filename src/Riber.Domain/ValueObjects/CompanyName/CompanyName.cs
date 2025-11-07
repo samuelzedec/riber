@@ -46,10 +46,10 @@ public sealed record CompanyName : BaseValueObject
     private static void CheckCorporateNameValidity(ref string corporateName)
     {
         if (string.IsNullOrWhiteSpace(corporateName))
-            throw new InvalidNameCorporateException(NameErrors.CorporateNameEmpty);
+            throw new EmptyNameCorporateException(NameErrors.CorporateNameEmpty);
 
         if (corporateName.Length is > CorporateMaxLength or < MinLength)
-            throw new InvalidLengthCorporateNameException(NameErrors.CorporateNameLength(MinLength, CorporateMaxLength));
+            throw new InvalidCorporateNameLengthException(NameErrors.CorporateNameLength(MinLength, CorporateMaxLength));
 
         corporateName = corporateName.Trim();
     }
@@ -57,10 +57,10 @@ public sealed record CompanyName : BaseValueObject
     private static void CheckFantasyNameValidity(ref string fantasyName)
     {
         if (string.IsNullOrWhiteSpace(fantasyName))
-            throw new InvalidFantasyNameException(NameErrors.FantasyNameEmpty);
+            throw new EmptyFantasyNameException(NameErrors.FantasyNameEmpty);
 
         if (fantasyName.Length is > FantasyMaxLength or < MinLength)
-            throw new InvalidFantasyLengthNameException(NameErrors.FantasyNameLength(MinLength, FantasyMaxLength));
+            throw new InvalidFantasyNameLengthException(NameErrors.FantasyNameLength(MinLength, FantasyMaxLength));
 
         fantasyName = fantasyName.Trim();
     }

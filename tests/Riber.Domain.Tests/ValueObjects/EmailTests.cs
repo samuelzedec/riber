@@ -38,7 +38,7 @@ public sealed class EmailTests : BaseTest
     public void Create_WhenNullOrEmptyEmail_ShouldThrowEmailNullOrEmptyException(string email)
     {
         var act = () => Email.Create(email);
-        act.Should().Throw<EmailNullOrEmptyException>().WithMessage(EmailErrors.Empty);
+        act.Should().Throw<EmptyEmailException>().WithMessage(EmailErrors.Empty);
     }
 
     [Trait("Category", "Unit")]
@@ -52,7 +52,7 @@ public sealed class EmailTests : BaseTest
         var act = () => Email.Create(invalidEmail);
 
         // Assert
-        act.Should().ThrowExactly<EmailFormatInvalidException>().WithMessage(EmailErrors.Format);
+        act.Should().ThrowExactly<InvalidEmailFormatException>().WithMessage(EmailErrors.Format);
     }
 
     #endregion
