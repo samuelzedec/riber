@@ -1,6 +1,7 @@
 using Riber.Domain.Abstractions;
 using Riber.Domain.Abstractions.ValueObjects;
 using Riber.Domain.Constants.Messages.Entities;
+using Riber.Domain.Entities.Catalog.Exceptions;
 using Riber.Domain.Entities.Tenants;
 using Riber.Domain.Exceptions;
 using Riber.Domain.ValueObjects.Money;

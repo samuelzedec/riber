@@ -1,6 +1,7 @@
 using Riber.Domain.Abstractions.ValueObjects;
 using Riber.Domain.Constants.Messages.Entities;
 using Riber.Domain.Entities.Abstractions;
+using Riber.Domain.Entities.Catalog.Exceptions;
 using Riber.Domain.Exceptions;
 using Riber.Domain.ValueObjects.ContentType;
 

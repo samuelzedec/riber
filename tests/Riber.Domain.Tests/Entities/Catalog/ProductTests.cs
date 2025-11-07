@@ -1,6 +1,7 @@
 using FluentAssertions;
 using Riber.Domain.Constants.Messages.Entities;
 using Riber.Domain.Entities.Catalog;
+using Riber.Domain.Entities.Catalog.Exceptions;
 using Riber.Domain.Exceptions;
 
 namespace Riber.Domain.Tests.Entities.Catalog;
