@@ -3,7 +3,6 @@ using FluentAssertions;
 using Moq;
 using Riber.Application.Abstractions.Services;
 using Riber.Application.Common;
-using Riber.Application.Exceptions;
 using Riber.Application.Features.Users.Commands.CreateUser;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Enums;
@@ -112,16 +111,17 @@ public sealed class CreateUserCommandHandlerTests : BaseTest
     #region Conflict Tests
 
     [Trait("Category", "Unit")]
-    [Fact(DisplayName =
-        "Creating user when user creation service throws ConflictException should rollback and rethrow")]
-    public async Task Handle_WhenUserCreationServiceThrowsConflictException_ShouldRollbackAndRethrow()
+    [Fact(DisplayName = "Creating user when user creation service returns conflict should rollback and return conflict")]
+    public async Task Handle_WhenUserCreationServiceReturnsConflict_ShouldRollbackAndReturnConflict()
     {
         // Arrange
+        var conflictResult = Result.Failure<EmptyResult>(ConflictErrors.Email, HttpStatusCode.Conflict);
+
         _mockUserCreationService
             .Setup(x => x.CreateCompleteUserAsync(
                 It.IsAny<CreateUserCompleteDto>(),
                 It.IsAny<CancellationToken>()))
-            .ThrowsAsync(new ConflictException(ConflictErrors.Email));
+            .ReturnsAsync(conflictResult);
 
         _mockUnitOfWork
             .Setup(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()))
@@ -136,11 +136,13 @@ public sealed class CreateUserCommandHandlerTests : BaseTest
             .Returns(Task.CompletedTask);
 
         // Act
-        var result = async () => await _handler.Handle(_command, CancellationToken.None);
+        var result = await _handler.Handle(_command, CancellationToken.None);
 
         // Assert
-        await result.Should().ThrowExactlyAsync<ConflictException>()
-            .WithMessage(ConflictErrors.Email);
+        result.Should().NotBeNull();
+        result.IsSuccess.Should().BeFalse();
+        result.StatusCode.Should().Be(HttpStatusCode.Conflict);
+        result.Error.Message.Should().Be(ConflictErrors.Email);
 
         _mockUserCreationService.Verify(x => x.CreateCompleteUserAsync(
             It.IsAny<CreateUserCompleteDto>(), It.IsAny<CancellationToken>()), Times.Once);

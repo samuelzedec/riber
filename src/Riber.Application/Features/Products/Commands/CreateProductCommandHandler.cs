@@ -6,7 +6,6 @@ using Riber.Application.Common;
 using Riber.Application.Exceptions;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Constants.Messages.Entities;
-using Riber.Domain.Entities;
 using Riber.Domain.Entities.Catalog;
 using Riber.Domain.Events;
 using Riber.Domain.Repositories;
@@ -66,7 +65,7 @@ internal sealed class CreateProductCommandHandler(
                 ImageName: imageKeyInBucket
             ), HttpStatusCode.Created);
         }
-        catch (Exception ex) when (ex is not NotFoundException or InternalException)
+        catch (Exception ex) when (ex is not InternalException)
         {
             if (!string.IsNullOrEmpty(imageKeyInBucket))
                 await mediator.Publish(new ProductImageCreationFailedEvent(imageKeyInBucket), cancellationToken);
