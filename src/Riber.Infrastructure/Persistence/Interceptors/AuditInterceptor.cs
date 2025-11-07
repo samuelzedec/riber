@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Riber.Domain.Abstractions;
 using Riber.Domain.Entities;
 using Riber.Infrastructure.Persistence.Identity;
-using Riber.Infrastructure.Persistence.Models;
 
 namespace Riber.Infrastructure.Persistence.Interceptors;
 
@@ -23,10 +23,7 @@ public sealed class AuditInterceptor : SaveChangesInterceptor
         InterceptionResult<int> result)
     {
         if (eventData.Context is not null)
-        {
-            ApplyAuditEntities(eventData.Context);
-            ApplyAuditModels(eventData.Context);
-        }
+            ApplyAuditTracker(eventData.Context);
 
         return base.SavingChanges(eventData, result);
     }
@@ -37,20 +34,20 @@ public sealed class AuditInterceptor : SaveChangesInterceptor
         CancellationToken cancellationToken = default)
     {
         if (eventData.Context is not null)
-            ApplyAuditEntities(eventData.Context);
+            ApplyAuditTracker(eventData.Context);
 
         return base.SavingChangesAsync(eventData, result, cancellationToken);
     }
 
     /// <summary>
-    /// Aplica lógica de auditoria às entidades rastreadas pelo contexto do Entity Framework Core.
+    /// Aplica lógica de auditoria às trackers rastreadas pelo contexto do Entity Framework Core.
     /// Atualiza os timestamps de modificação ou realiza ações específicas para estados de entidade,
     /// como exclusões suaves.
     /// </summary>
     /// <param name="context">O contexto do banco de dados que contém o rastreador de alterações para as entidades alvo.</param>
-    private static void ApplyAuditEntities(DbContext context)
+    private static void ApplyAuditTracker(DbContext context)
     {
-        var entries = context.ChangeTracker.Entries<BaseEntity>();
+        var entries = context.ChangeTracker.Entries<Tracker>();
         foreach (var entry in entries)
         {
             if (entry.State is EntityState.Modified)
@@ -63,22 +60,6 @@ public sealed class AuditInterceptor : SaveChangesInterceptor
                 
                 if (entry.Entity is User userDomain)
                     DeactivateApplicationUser(context, userDomain.Id);
-            }
-        }
-    }
-
-    private static void ApplyAuditModels(DbContext context)
-    {
-        var entries = context.ChangeTracker.Entries<BaseModel>();
-        foreach (var entry in entries)
-        {
-            if (entry.State is EntityState.Modified)
-                entry.Entity.UpdatedAt = DateTime.UtcNow;
-
-            if (entry.State is EntityState.Deleted)
-            {
-                entry.State = EntityState.Modified;
-                entry.Entity.DeletedAt = DateTime.UtcNow;
             }
         }
     }

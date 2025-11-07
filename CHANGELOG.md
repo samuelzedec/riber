@@ -1,5 +1,15 @@
 # Riber - Changelog
 
+## v4.2.1 - 07/11/2025
+- **REFATORAÇÃO**: Unificar BaseEntity e BaseModel em Tracker para herança simplificada
+- Remove `BaseEntityConfiguration` e `BaseModelConfiguration`, substituindo por `BaseTypeConfiguration`
+- Introduz abstração `Tracker` consolidando propriedades e métodos comuns
+- Atualiza modelos e mapeamentos para herdar de `Tracker`
+- Simplifica lógica de auditoria em `AuditInterceptor` para manipular exclusivamente entidades `Tracker`
+- Reorganiza mapeamentos seguindo a nova estrutura de herança
+
+---
+
 ## v4.2.0 - 04/11/2025
 - **NOVO**: Serviço para geração de Embeddings Genérico
 - Adiciona um evento para gerar embeddings dos produtos

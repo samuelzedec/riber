@@ -5,12 +5,12 @@ using Riber.Infrastructure.Extensions;
 
 namespace Riber.Infrastructure.Persistence.Mappings.Entities;
 
-public sealed class OrderMap : BaseEntityConfiguration<Order>
+public sealed class OrderMap : BaseTypeConfiguration<Order>
 {
     protected override string GetTableName()
         => "order";
 
-    protected override void ConfigureEntity(EntityTypeBuilder<Order> builder)
+    protected override void Mapping(EntityTypeBuilder<Order> builder)
     {
         builder.ConfigureRandomToken(GetTableName(), "order_token");
         

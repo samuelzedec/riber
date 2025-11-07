@@ -4,12 +4,12 @@ using Riber.Infrastructure.Extensions;
 
 namespace Riber.Infrastructure.Persistence.Mappings.Entities;
 
-public sealed class CompanyMap : BaseEntityConfiguration<Company>
+public sealed class CompanyMap : BaseTypeConfiguration<Company>
 {
     protected override string GetTableName()
         => "company";
 
-    protected override void ConfigureEntity(EntityTypeBuilder<Company> builder)
+    protected override void Mapping(EntityTypeBuilder<Company> builder)
     {
         builder
             .ConfigureTaxId("uq_company_tax_id")

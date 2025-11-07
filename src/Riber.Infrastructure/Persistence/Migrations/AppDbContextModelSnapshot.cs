@@ -1423,34 +1423,7 @@ namespace Riber.Infrastructure.Persistence.Migrations
                             b1.HasIndex(new[] { "Value" }, "uq_company_email")
                                 .IsUnique();
 
-                            b1.ToTable("company");
-
-                            b1.WithOwner()
-                                .HasForeignKey("CompanyId");
-                        });
-
-                    b.OwnsOne("Riber.Domain.ValueObjects.TaxId.TaxId", "TaxId", b1 =>
-                        {
-                            b1.Property<Guid>("CompanyId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("Type")
-                                .IsRequired()
-                                .HasColumnType("text")
-                                .HasColumnName("tax_id_type");
-
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasMaxLength(14)
-                                .HasColumnType("text")
-                                .HasColumnName("tax_id_value");
-
-                            b1.HasKey("CompanyId");
-
-                            b1.HasIndex(new[] { "Value" }, "uq_company_tax_id")
-                                .IsUnique();
-
-                            b1.ToTable("company");
+                            b1.ToTable("company", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("CompanyId");
@@ -1477,7 +1450,7 @@ namespace Riber.Infrastructure.Persistence.Migrations
 
                             b1.HasIndex(new[] { "Corporate" }, "uq_company_corporate_name");
 
-                            b1.ToTable("company");
+                            b1.ToTable("company", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("CompanyId");
@@ -1499,7 +1472,34 @@ namespace Riber.Infrastructure.Persistence.Migrations
                             b1.HasIndex(new[] { "Value" }, "uq_company_phone")
                                 .IsUnique();
 
-                            b1.ToTable("company");
+                            b1.ToTable("company", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("CompanyId");
+                        });
+
+                    b.OwnsOne("Riber.Domain.ValueObjects.TaxId.TaxId", "TaxId", b1 =>
+                        {
+                            b1.Property<Guid>("CompanyId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Type")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("tax_id_type");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(14)
+                                .HasColumnType("text")
+                                .HasColumnName("tax_id_value");
+
+                            b1.HasKey("CompanyId");
+
+                            b1.HasIndex(new[] { "Value" }, "uq_company_tax_id")
+                                .IsUnique();
+
+                            b1.ToTable("company", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("CompanyId");
@@ -1533,7 +1533,7 @@ namespace Riber.Infrastructure.Persistence.Migrations
 
                             b1.HasKey("ImageId");
 
-                            b1.ToTable("image");
+                            b1.ToTable("image", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("ImageId");
@@ -1561,7 +1561,7 @@ namespace Riber.Infrastructure.Persistence.Migrations
                             b1.HasIndex(new[] { "Value" }, "uq_invitations_email")
                                 .IsUnique();
 
-                            b1.ToTable("invitation");
+                            b1.ToTable("invitation", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("InvitationId");
@@ -1583,7 +1583,7 @@ namespace Riber.Infrastructure.Persistence.Migrations
                             b1.HasIndex(new[] { "Value" }, "uq_invitation_invite_token")
                                 .IsUnique();
 
-                            b1.ToTable("invitation");
+                            b1.ToTable("invitation", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("InvitationId");
@@ -1628,7 +1628,7 @@ namespace Riber.Infrastructure.Persistence.Migrations
                             b1.HasIndex(new[] { "Value" }, "uq_order_order_token")
                                 .IsUnique();
 
-                            b1.ToTable("order");
+                            b1.ToTable("order", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("OrderId");
@@ -1658,29 +1658,6 @@ namespace Riber.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_order_item_product_id");
 
-                    b.OwnsOne("Riber.Domain.ValueObjects.Money.Money", "UnitPrice", b1 =>
-                        {
-                            b1.Property<Guid>("OrderItemId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("Currency")
-                                .IsRequired()
-                                .HasMaxLength(3)
-                                .HasColumnType("text")
-                                .HasColumnName("unit_price_currency");
-
-                            b1.Property<decimal>("Value")
-                                .HasColumnType("numeric")
-                                .HasColumnName("unit_price");
-
-                            b1.HasKey("OrderItemId");
-
-                            b1.ToTable("order_item");
-
-                            b1.WithOwner()
-                                .HasForeignKey("OrderItemId");
-                        });
-
                     b.OwnsOne("Riber.Domain.ValueObjects.Discount.Discount", "ItemDiscount", b1 =>
                         {
                             b1.Property<Guid>("OrderItemId")
@@ -1705,7 +1682,7 @@ namespace Riber.Infrastructure.Persistence.Migrations
 
                             b1.HasKey("OrderItemId");
 
-                            b1.ToTable("order_item");
+                            b1.ToTable("order_item", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("OrderItemId");
@@ -1722,7 +1699,30 @@ namespace Riber.Infrastructure.Persistence.Migrations
 
                             b1.HasKey("OrderItemId");
 
-                            b1.ToTable("order_item");
+                            b1.ToTable("order_item", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderItemId");
+                        });
+
+                    b.OwnsOne("Riber.Domain.ValueObjects.Money.Money", "UnitPrice", b1 =>
+                        {
+                            b1.Property<Guid>("OrderItemId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("text")
+                                .HasColumnName("unit_price_currency");
+
+                            b1.Property<decimal>("Value")
+                                .HasColumnType("numeric")
+                                .HasColumnName("unit_price");
+
+                            b1.HasKey("OrderItemId");
+
+                            b1.ToTable("order_item", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("OrderItemId");
@@ -1780,7 +1780,7 @@ namespace Riber.Infrastructure.Persistence.Migrations
 
                             b1.HasKey("ProductId");
 
-                            b1.ToTable("product");
+                            b1.ToTable("product", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("ProductId");
@@ -1816,6 +1816,25 @@ namespace Riber.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.SetNull)
                         .HasConstraintName("fk_user_company_id");
 
+                    b.OwnsOne("Riber.Domain.ValueObjects.FullName.FullName", "FullName", b1 =>
+                        {
+                            b1.Property<Guid>("UserId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(255)
+                                .HasColumnType("text")
+                                .HasColumnName("full_name");
+
+                            b1.HasKey("UserId");
+
+                            b1.ToTable("user", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId");
+                        });
+
                     b.OwnsOne("Riber.Domain.ValueObjects.TaxId.TaxId", "TaxId", b1 =>
                         {
                             b1.Property<Guid>("UserId")
@@ -1837,26 +1856,7 @@ namespace Riber.Infrastructure.Persistence.Migrations
                             b1.HasIndex(new[] { "Value" }, "uq_user_tax_id")
                                 .IsUnique();
 
-                            b1.ToTable("user");
-
-                            b1.WithOwner()
-                                .HasForeignKey("UserId");
-                        });
-
-                    b.OwnsOne("Riber.Domain.ValueObjects.FullName.FullName", "FullName", b1 =>
-                        {
-                            b1.Property<Guid>("UserId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasMaxLength(255)
-                                .HasColumnType("text")
-                                .HasColumnName("full_name");
-
-                            b1.HasKey("UserId");
-
-                            b1.ToTable("user");
+                            b1.ToTable("user", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("UserId");

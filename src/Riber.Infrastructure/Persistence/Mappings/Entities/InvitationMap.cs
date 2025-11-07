@@ -5,12 +5,12 @@ using Riber.Infrastructure.Extensions;
 
 namespace Riber.Infrastructure.Persistence.Mappings.Entities;
 
-public sealed class InvitationMap : BaseEntityConfiguration<Invitation>
+public sealed class InvitationMap : BaseTypeConfiguration<Invitation>
 {
     protected override string GetTableName()
         => "invitation";
 
-    protected override void ConfigureEntity(EntityTypeBuilder<Invitation> builder)
+    protected override void Mapping(EntityTypeBuilder<Invitation> builder)
     {
         builder
             .ConfigureEmail("uq_invitations_email")

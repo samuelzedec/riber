@@ -5,12 +5,12 @@ using Riber.Infrastructure.Extensions;
 
 namespace Riber.Infrastructure.Persistence.Mappings.Entities;
 
-public sealed class UserMap : BaseEntityConfiguration<User>
+public sealed class UserMap : BaseTypeConfiguration<User>
 {
     protected override string GetTableName()
         => "user";
     
-    protected override void ConfigureEntity(EntityTypeBuilder<User> builder)
+    protected override void Mapping(EntityTypeBuilder<User> builder)
     {
         builder
             .Property(u => u.CompanyId)

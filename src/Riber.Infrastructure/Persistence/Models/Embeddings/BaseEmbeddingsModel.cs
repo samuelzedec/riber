@@ -7,7 +7,7 @@ namespace Riber.Infrastructure.Persistence.Models.Embeddings;
 /// Esta classe abstrata serve como fundação para modelos específicos de embedding
 /// e inclui uma propriedade vetorial obrigatória para armazenar embeddings.
 /// </summary>
-public abstract class BaseEmbeddingsModel : BaseModel
+public abstract class BaseEmbeddingsModel() : BaseModel(Guid.CreateVersion7())
 {
     /// <summary>
     /// Obtém a representação vetorial dos embeddings para o modelo.
