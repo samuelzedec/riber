@@ -5,7 +5,7 @@ using Riber.Domain.Enums;
 using Riber.Domain.ValueObjects.Email;
 using Riber.Domain.ValueObjects.RandomToken;
 
-namespace Riber.Domain.Entities;
+namespace Riber.Domain.Entities.User;
 
 public sealed class Invitation 
     : TenantEntity, IAggregateRoot, IHasEmail, IHasRandomToken

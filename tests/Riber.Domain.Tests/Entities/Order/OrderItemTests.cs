@@ -1,11 +1,11 @@
 using FluentAssertions;
 using Riber.Domain.Abstractions.ValueObjects;
 using Riber.Domain.Constants.Messages.ValueObjects;
-using Riber.Domain.Entities;
+using Riber.Domain.Entities.Order;
 using Riber.Domain.ValueObjects.Discount;
 using Riber.Domain.ValueObjects.Discount.Exceptions;
 
-namespace Riber.Domain.Tests.Entities;
+namespace Riber.Domain.Tests.Entities.Order;
 
 public sealed class OrderItemTests : BaseTest
 {

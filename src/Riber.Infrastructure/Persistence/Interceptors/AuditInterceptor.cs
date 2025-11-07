@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Riber.Domain.Abstractions;
 using Riber.Domain.Entities;
+using Riber.Domain.Entities.Abstractions;
+using Riber.Domain.Entities.User;
 using Riber.Infrastructure.Persistence.Identity;
 
 namespace Riber.Infrastructure.Persistence.Interceptors;

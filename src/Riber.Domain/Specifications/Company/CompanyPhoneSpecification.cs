@@ -4,8 +4,8 @@ using Riber.Domain.Specifications.Core;
 namespace Riber.Domain.Specifications.Company;
 
 public sealed class CompanyPhoneSpecification(string phone)
-    : Specification<Entities.Company>
+    : Specification<Entities.Company.Company>
 {
-    public override Expression<Func<Entities.Company, bool>> ToExpression()
+    public override Expression<Func<Entities.Company.Company, bool>> ToExpression()
         => entity => entity.Phone.Value == phone;
 }

@@ -5,6 +5,7 @@ using FluentAssertions;
 using Riber.Api.Tests.Fixtures;
 using Riber.Application.Features.Products.Commands;
 using Riber.Domain.Entities;
+using Riber.Domain.Entities.Catalog;
 using Xunit;
 
 namespace Riber.Api.Tests.Controllers;

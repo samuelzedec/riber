@@ -1,4 +1,4 @@
-namespace Riber.Domain.Abstractions;
+namespace Riber.Domain.Entities.Abstractions;
 
 /// <summary>
 /// Define um contrato para rastreamento das propriedades fundamentais de uma entidade, incluindo seu identificador único

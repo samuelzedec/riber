@@ -1,6 +1,6 @@
 using Riber.Domain.Abstractions;
 
-namespace Riber.Domain.Entities;
+namespace Riber.Domain.Entities.Abstractions;
 
 /// <summary>
 /// Representa uma entidade base abstrata que fornece funcionalidades comuns para entidades de domínio.

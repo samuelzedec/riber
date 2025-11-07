@@ -7,6 +7,7 @@ using Riber.Application.Dtos.User;
 using Riber.Application.Features.Auths.Queries.GetRefreshToken;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Entities;
+using Riber.Domain.Entities.User;
 using Riber.Domain.Enums;
 using Riber.Domain.Tests;
 

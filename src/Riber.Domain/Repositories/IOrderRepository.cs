@@ -1,4 +1,5 @@
 using Riber.Domain.Entities;
+using Riber.Domain.Entities.Order;
 
 namespace Riber.Domain.Repositories;
 

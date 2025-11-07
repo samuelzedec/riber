@@ -3,7 +3,7 @@ using Riber.Domain.Abstractions.ValueObjects;
 using Riber.Domain.Entities.Tenants;
 using Riber.Domain.ValueObjects.RandomToken;
 
-namespace Riber.Domain.Entities;
+namespace Riber.Domain.Entities.Order;
 
 public sealed class Order
     : TenantEntity, IAggregateRoot, IHasRandomToken
@@ -21,8 +21,8 @@ public sealed class Order
 
     #region Navigation Properties
 
-    public Company Company { get; private set; } = null!;
-    public User Attendant { get; private set; } = null!;
+    public Company.Company Company { get; private set; } = null!;
+    public User.User Attendant { get; private set; } = null!;
     public IReadOnlyCollection<OrderItem> ItemsReadOnly => _items.AsReadOnly();
 
     #endregion

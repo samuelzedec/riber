@@ -1,10 +1,11 @@
 using FluentAssertions;
 using Riber.Domain.Constants.Messages.Entities;
 using Riber.Domain.Constants.Messages.ValueObjects;
+using Riber.Domain.Entities.Catalog;
 using Riber.Domain.Exceptions;
 using Riber.Domain.ValueObjects.ContentType.Exceptions;
 
-namespace Riber.Domain.Tests.Entities;
+namespace Riber.Domain.Tests.Entities.Catalog;
 
 public sealed class ImageTests : BaseTest
 {
@@ -15,8 +16,8 @@ public sealed class ImageTests : BaseTest
     public void CreateImage_WhenParametersAreValid_ShouldCreateSuccessfully()
     {
         // Arrange
-        var image = CreateFaker<Domain.Entities.Image>()
-            .CustomInstantiator(f => Domain.Entities.Image.Create(
+        var image = CreateFaker<Image>()
+            .CustomInstantiator(f => Image.Create(
                 length: f.Random.Long(1_000L, 10_000_000L),
                 contentType: f.PickRandom("image/png", "image/jpeg", "image/webp"),
                 originalName: f.System.FileName("png"))
@@ -40,8 +41,8 @@ public sealed class ImageTests : BaseTest
     public void CreateImage_WhenLengthIsInvalid_ShouldThrowException()
     {
         // Arrange
-        var image = CreateFaker<Domain.Entities.Image>()
-            .CustomInstantiator(f => Domain.Entities.Image.Create(
+        var image = CreateFaker<Image>()
+            .CustomInstantiator(f => Image.Create(
                 length: f.Random.Long(0L, 0L),
                 contentType: f.PickRandom("image/png", "image/jpeg", "image/webp"),
                 originalName: f.System.FileName("png"))
@@ -59,8 +60,8 @@ public sealed class ImageTests : BaseTest
     public void CreateImage_WhenContentTypeIsInvalid_ShouldThrowException()
     {
         // Arrange
-        var image = CreateFaker<Domain.Entities.Image>()
-            .CustomInstantiator(f => Domain.Entities.Image.Create(
+        var image = CreateFaker<Image>()
+            .CustomInstantiator(f => Image.Create(
                 length: f.Random.Long(1_000L, 10_000_000L),
                 contentType: "image/gif",
                 originalName: f.System.FileName("png"))
@@ -78,8 +79,8 @@ public sealed class ImageTests : BaseTest
     public void CreateImage_WhenOriginalNameIsEmpty_ShouldThrowException()
     {
         // Arrange
-        var image = CreateFaker<Domain.Entities.Image>()
-            .CustomInstantiator(f => Domain.Entities.Image.Create(
+        var image = CreateFaker<Image>()
+            .CustomInstantiator(f => Image.Create(
                 length: f.Random.Long(1_000L, 10_000_000L),
                 contentType: f.PickRandom("image/png", "image/jpeg", "image/webp"),
                 originalName: string.Empty));
@@ -96,8 +97,8 @@ public sealed class ImageTests : BaseTest
     public void CreateImage_WhenOriginalNameHasNoExtension_ShouldThrowException()
     {
         // Arrange
-        var image = CreateFaker<Domain.Entities.Image>()
-            .CustomInstantiator(f => Domain.Entities.Image.Create(
+        var image = CreateFaker<Image>()
+            .CustomInstantiator(f => Image.Create(
                 length: f.Random.Long(1_000L, 10_000_000L),
                 contentType: f.PickRandom("image/png", "image/jpeg", "image/webp"),
                 originalName: f.System.FileName("")));
@@ -118,8 +119,8 @@ public sealed class ImageTests : BaseTest
     public void MarkForDeletion_WhenCalled_ShouldSetDeletionFlags()
     {
         // Arrange
-        var image = CreateFaker<Domain.Entities.Image>()
-            .CustomInstantiator(f => Domain.Entities.Image.Create(
+        var image = CreateFaker<Image>()
+            .CustomInstantiator(f => Image.Create(
                 length: f.Random.Long(1_000L, 10_000_000L),
                 contentType: f.PickRandom("image/png", "image/jpeg", "image/webp"),
                 originalName: f.System.FileName("png"))
@@ -139,8 +140,8 @@ public sealed class ImageTests : BaseTest
     public void IsMarkedForDeletion_WhenMarked_ShouldReturnTrue()
     {
         // Arrange
-        var image = CreateFaker<Domain.Entities.Image>()
-            .CustomInstantiator(f => Domain.Entities.Image.Create(
+        var image = CreateFaker<Image>()
+            .CustomInstantiator(f => Image.Create(
                 length: f.Random.Long(1_000L, 10_000_000L),
                 contentType: f.PickRandom("image/png", "image/jpeg", "image/webp"),
                 originalName: f.System.FileName("png"))
@@ -163,8 +164,8 @@ public sealed class ImageTests : BaseTest
     public void ToString_WhenCalled_ShouldReturnKeyWithExtension()
     {
         // Arrange
-        var image = CreateFaker<Domain.Entities.Image>()
-            .CustomInstantiator(f => Domain.Entities.Image.Create(
+        var image = CreateFaker<Image>()
+            .CustomInstantiator(f => Image.Create(
                 length: f.Random.Long(1_000L, 10_000_000L),
                 contentType: f.PickRandom("image/png", "image/jpeg", "image/webp"),
                 originalName: f.System.FileName("png"))
@@ -182,8 +183,8 @@ public sealed class ImageTests : BaseTest
     public void ImplicitOperatorString_WhenCalled_ShouldReturnCorrectString()
     {
         // Arrange
-        var image = CreateFaker<Domain.Entities.Image>()
-            .CustomInstantiator(f => Domain.Entities.Image.Create(
+        var image = CreateFaker<Image>()
+            .CustomInstantiator(f => Image.Create(
                 length: f.Random.Long(1_000L, 10_000_000L),
                 contentType: f.PickRandom("image/png", "image/jpeg", "image/webp"),
                 originalName: f.System.FileName("png"))

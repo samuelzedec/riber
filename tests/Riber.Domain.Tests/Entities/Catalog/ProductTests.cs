@@ -1,9 +1,9 @@
 using FluentAssertions;
 using Riber.Domain.Constants.Messages.Entities;
-using Riber.Domain.Entities;
+using Riber.Domain.Entities.Catalog;
 using Riber.Domain.Exceptions;
 
-namespace Riber.Domain.Tests.Entities;
+namespace Riber.Domain.Tests.Entities.Catalog;
 
 public sealed class ProductTests : BaseTest
 {

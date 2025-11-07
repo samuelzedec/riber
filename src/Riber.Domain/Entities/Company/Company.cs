@@ -1,12 +1,13 @@
 using Riber.Domain.Abstractions;
 using Riber.Domain.Abstractions.ValueObjects;
+using Riber.Domain.Entities.Abstractions;
 using Riber.Domain.Enums;
 using Riber.Domain.ValueObjects.CompanyName;
 using Riber.Domain.ValueObjects.Email;
 using Riber.Domain.ValueObjects.Phone;
 using Riber.Domain.ValueObjects.TaxId;
 
-namespace Riber.Domain.Entities;
+namespace Riber.Domain.Entities.Company;
 
 public sealed class Company 
     : BaseEntity, IAggregateRoot, IHasCompanyName, IHasTaxId, IHasEmail, IHasPhone

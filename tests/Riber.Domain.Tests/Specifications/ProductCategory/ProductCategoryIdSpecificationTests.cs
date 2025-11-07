@@ -87,8 +87,8 @@ public sealed class ProductCategoryIdSpecificationTests : BaseTest
         resultFromMethod.Should().Be(resultFromExpression);
     }
     
-    private Entity.ProductCategory CreateDefaultProductCategory()
-        => Entity.ProductCategory.Create(
+    private Domain.Entities.Catalog.ProductCategory CreateDefaultProductCategory()
+        => Domain.Entities.Catalog.ProductCategory.Create(
             code: _faker.Commerce.Categories(1).First().ToUpperInvariant(),
             name: _faker.Commerce.Department(),
             description: _faker.Lorem.Sentence(),

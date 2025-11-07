@@ -7,7 +7,7 @@ using Riber.Domain.Exceptions;
 using Riber.Domain.ValueObjects.FullName;
 using Riber.Domain.ValueObjects.TaxId;
 
-namespace Riber.Domain.Entities;
+namespace Riber.Domain.Entities.User;
 
 public sealed class User
     : OptionalTenantEntity, IAggregateRoot, IHasFullName, IHasTaxId
@@ -23,7 +23,7 @@ public sealed class User
 
     #region Navigation Properties
 
-    public Company Company { get; private set; } = null!;
+    public Company.Company Company { get; private set; } = null!;
 
     #endregion
 

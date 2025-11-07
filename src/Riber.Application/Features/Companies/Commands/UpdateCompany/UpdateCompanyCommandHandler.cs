@@ -4,6 +4,7 @@ using Riber.Application.Common;
 using Riber.Application.Extensions;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Entities;
+using Riber.Domain.Entities.Company;
 using Riber.Domain.Repositories;
 using Riber.Domain.Specifications.Company;
 using Riber.Domain.Specifications.Core;

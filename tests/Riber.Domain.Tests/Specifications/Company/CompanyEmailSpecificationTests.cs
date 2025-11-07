@@ -47,7 +47,7 @@ public sealed class CompanyEmailSpecificationTests : BaseTest
     public void Should_ReturnFalse_ForEmptyEmail()
     {
         // Arrange
-        var company = Entity.Company.Create(
+        var company = Domain.Entities.Company.Company.Create(
             _faker.Company.CompanyName(),
             _faker.Company.CompanyName(),
             _faker.Company.Cnpj(),
@@ -189,8 +189,8 @@ public sealed class CompanyEmailSpecificationTests : BaseTest
         result.Should().BeTrue();
     }
     
-    private Entity.Company CreateDefaultCompany(string? email = null)
-        => Entity.Company.Create(
+    private Domain.Entities.Company.Company CreateDefaultCompany(string? email = null)
+        => Domain.Entities.Company.Company.Create(
             _faker.Company.CompanyName(),
             _faker.Company.CompanyName(),
             _faker.Company.Cnpj(),

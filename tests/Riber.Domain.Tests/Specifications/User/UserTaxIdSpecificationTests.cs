@@ -93,8 +93,8 @@ public sealed class UserTaxIdSpecificationTests : BaseTest
         resultFromMethod.Should().Be(resultFromExpression);
     }
     
-    private Entity.User CreateDefaultCompany(string? email = null)
-        => Entity.User.Create(
+    private Domain.Entities.User.User CreateDefaultCompany(string? email = null)
+        => Domain.Entities.User.User.Create(
             _faker.Person.FullName,
             email ?? _faker.Person.Cpf(),
             BusinessPosition.Director

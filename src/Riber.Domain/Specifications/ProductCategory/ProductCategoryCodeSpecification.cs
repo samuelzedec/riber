@@ -4,8 +4,8 @@ using Riber.Domain.Specifications.Core;
 namespace Riber.Domain.Specifications.ProductCategory;
 
 public sealed class ProductCategoryCodeSpecification(string code)
-    : Specification<Entities.ProductCategory>
+    : Specification<Entities.Catalog.ProductCategory>
 {
-    public override Expression<Func<Entities.ProductCategory, bool>> ToExpression()
+    public override Expression<Func<Entities.Catalog.ProductCategory, bool>> ToExpression()
         => entity => entity.Code == code;
 }

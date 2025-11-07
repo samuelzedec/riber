@@ -8,6 +8,7 @@ using Riber.Application.Exceptions;
 using Riber.Application.Features.Products.Commands;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Entities;
+using Riber.Domain.Entities.Catalog;
 using Riber.Domain.Events;
 using Riber.Domain.Repositories;
 using Riber.Domain.Specifications.ProductCategory;

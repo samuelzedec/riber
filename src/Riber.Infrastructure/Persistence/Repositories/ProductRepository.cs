@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Riber.Domain.Entities;
+using Riber.Domain.Entities.Catalog;
 using Riber.Domain.Repositories;
 using Riber.Domain.Specifications.Core;
 using Riber.Domain.Specifications.Image;

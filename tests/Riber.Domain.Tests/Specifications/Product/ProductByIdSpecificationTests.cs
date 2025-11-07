@@ -87,8 +87,8 @@ public sealed class ProductByIdSpecificationTests : BaseTest
         resultFromMethod.Should().Be(resultFromExpression);
     }
     
-    private Entity.Product CreateDefaultProduct()
-        => Entity.Product.Create(
+    private Domain.Entities.Catalog.Product CreateDefaultProduct()
+        => Domain.Entities.Catalog.Product.Create(
             _faker.Commerce.ProductName(),
             _faker.Commerce.ProductDescription(),
             _faker.Random.Decimal(1, 1000),

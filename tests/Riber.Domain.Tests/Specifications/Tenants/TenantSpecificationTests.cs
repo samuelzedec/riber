@@ -14,7 +14,7 @@ public sealed class TenantSpecificationTests : BaseTest
         var tenantId = Guid.NewGuid();
         var product = CreateProductDefault(companyId: tenantId);
         
-        var specification = new TenantSpecification<Entity.Product>(tenantId);
+        var specification = new TenantSpecification<Domain.Entities.Catalog.Product>(tenantId);
         
         // Act
         var result = specification.IsSatisfiedBy(product);
@@ -32,7 +32,7 @@ public sealed class TenantSpecificationTests : BaseTest
         var differentTenantId = Guid.NewGuid();
         
         var product = CreateProductDefault(companyId: productTenantId);
-        var specification = new TenantSpecification<Entity.Product>(differentTenantId);
+        var specification = new TenantSpecification<Domain.Entities.Catalog.Product>(differentTenantId);
         
         // Act
         var result = specification.IsSatisfiedBy(product);
@@ -47,7 +47,7 @@ public sealed class TenantSpecificationTests : BaseTest
     {
         // Arrange
         var product = CreateProductDefault();
-        var specification = new TenantSpecification<Entity.Product>(Guid.Empty);
+        var specification = new TenantSpecification<Domain.Entities.Catalog.Product>(Guid.Empty);
         
         // Act
         var result = specification.IsSatisfiedBy(product);
@@ -62,7 +62,7 @@ public sealed class TenantSpecificationTests : BaseTest
     {
         // Arrange
         var tenantId = Guid.NewGuid();
-        var specification = new TenantSpecification<Entity.Product>(tenantId);
+        var specification = new TenantSpecification<Domain.Entities.Catalog.Product>(tenantId);
         
         // Act
         var expression = specification.ToExpression();
@@ -81,7 +81,7 @@ public sealed class TenantSpecificationTests : BaseTest
         var tenantId = Guid.NewGuid();
         var product = CreateProductDefault(companyId: tenantId);
         
-        var specification = new TenantSpecification<Entity.Product>(tenantId);
+        var specification = new TenantSpecification<Domain.Entities.Catalog.Product>(tenantId);
         var compiledExpression = specification.ToExpression().Compile();
         
         // Act
@@ -103,7 +103,7 @@ public sealed class TenantSpecificationTests : BaseTest
         var product1 = CreateProductDefault(companyId: tenantId1);
         var product2 = CreateProductDefault(companyId: tenantId2);
         
-        var specification = new TenantSpecification<Entity.Product>(tenantId1);
+        var specification = new TenantSpecification<Domain.Entities.Catalog.Product>(tenantId1);
         var predicate = specification.ToExpression().Compile();
         
         // Act
@@ -126,7 +126,7 @@ public sealed class TenantSpecificationTests : BaseTest
         // Arrange
         var tenantId = Guid.Parse(guidString);
         var product = CreateProductDefault(companyId: tenantId);
-        var specification = new TenantSpecification<Entity.Product>(tenantId);
+        var specification = new TenantSpecification<Domain.Entities.Catalog.Product>(tenantId);
         
         // Act
         var result = specification.IsSatisfiedBy(product);
@@ -145,8 +145,8 @@ public sealed class TenantSpecificationTests : BaseTest
         var differentTenantId = Guid.NewGuid();
         
         var product = CreateProductDefault(companyId: originalTenantId);
-        var specSame = new TenantSpecification<Entity.Product>(sameTenantId);
-        var specDifferent = new TenantSpecification<Entity.Product>(differentTenantId);
+        var specSame = new TenantSpecification<Domain.Entities.Catalog.Product>(sameTenantId);
+        var specDifferent = new TenantSpecification<Domain.Entities.Catalog.Product>(differentTenantId);
         
         // Act
         var resultSame = specSame.IsSatisfiedBy(product);
@@ -169,7 +169,7 @@ public sealed class TenantSpecificationTests : BaseTest
         // Desativa um produto
         inactiveProduct.Deactivate();
         
-        var specification = new TenantSpecification<Entity.Product>(tenantId);
+        var specification = new TenantSpecification<Domain.Entities.Catalog.Product>(tenantId);
         
         // Act
         var resultActive = specification.IsSatisfiedBy(activeProduct);
@@ -192,7 +192,7 @@ public sealed class TenantSpecificationTests : BaseTest
         var product1 = CreateProductDefault(companyId: tenantId, categoryId: categoryId1);
         var product2 = CreateProductDefault(companyId: tenantId, categoryId: categoryId2);
         
-        var specification = new TenantSpecification<Entity.Product>(tenantId);
+        var specification = new TenantSpecification<Domain.Entities.Catalog.Product>(tenantId);
         
         // Act
         var result1 = specification.IsSatisfiedBy(product1);
@@ -203,13 +203,13 @@ public sealed class TenantSpecificationTests : BaseTest
         result2.Should().BeTrue();
     }
     
-    private Entity.Product CreateProductDefault(
+    private Domain.Entities.Catalog.Product CreateProductDefault(
         string? name = null,
         string? description = null,
         decimal? price = null,
         Guid? categoryId = null,
         Guid? companyId = null)
-        => Entity.Product.Create(
+        => Domain.Entities.Catalog.Product.Create(
             name ?? _faker.Commerce.ProductName(),
             description ?? _faker.Commerce.ProductDescription(),
             price ?? _faker.Random.Decimal(10, 1000),

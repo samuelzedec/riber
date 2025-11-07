@@ -175,8 +175,8 @@ public sealed class CompanyPhoneSpecificationTests : BaseTest
         result.Should().BeTrue();
     }
 
-    private Entity.Company CreateDefaultCompany()
-        => Entity.Company.Create(
+    private Domain.Entities.Company.Company CreateDefaultCompany()
+        => Domain.Entities.Company.Company.Create(
             _faker.Company.CompanyName(),
             _faker.Company.CompanyName(),
             _faker.Company.Cnpj(),
@@ -185,8 +185,8 @@ public sealed class CompanyPhoneSpecificationTests : BaseTest
             TaxIdType.LegalEntityWithCnpj
         );
 
-    private Entity.Company CreateCompanyWithPhone(string phone)
-        => Entity.Company.Create(
+    private Domain.Entities.Company.Company CreateCompanyWithPhone(string phone)
+        => Domain.Entities.Company.Company.Create(
             _faker.Company.CompanyName(),
             _faker.Company.CompanyName(),
             _faker.Company.Cnpj(),

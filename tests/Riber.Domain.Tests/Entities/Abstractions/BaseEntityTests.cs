@@ -1,8 +1,8 @@
 using FluentAssertions;
 using Riber.Domain.Abstractions;
-using Riber.Domain.Entities;
+using Riber.Domain.Entities.Abstractions;
 
-namespace Riber.Domain.Tests.Entities;
+namespace Riber.Domain.Tests.Entities.Abstractions;
 
 public sealed class BaseEntityTests : BaseTest
 {

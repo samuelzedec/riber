@@ -73,8 +73,8 @@ public sealed class UserIdSpecificationTests : BaseTest
         resultFromMethod.Should().Be(resultFromExpression);
     }
     
-    private Entity.User CreateDefaultUser()
-        => Entity.User.Create(
+    private Domain.Entities.User.User CreateDefaultUser()
+        => Domain.Entities.User.User.Create(
             _faker.Person.FullName,
             _faker.Person.Cpf(),
             BusinessPosition.Director

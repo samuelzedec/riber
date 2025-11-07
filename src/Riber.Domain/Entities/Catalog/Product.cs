@@ -5,7 +5,7 @@ using Riber.Domain.Entities.Tenants;
 using Riber.Domain.Exceptions;
 using Riber.Domain.ValueObjects.Money;
 
-namespace Riber.Domain.Entities;
+namespace Riber.Domain.Entities.Catalog;
 
 public sealed class Product
     : TenantEntity, IAggregateRoot, IHasUnitPrice, IHasXmin
@@ -24,7 +24,7 @@ public sealed class Product
 
     #region Navigation Properties
 
-    public Company Company { get; private set; } = null!;
+    public Company.Company Company { get; private set; } = null!;
     public ProductCategory Category { get; private set; } = null!;
     public Image? Image { get; private set; }
 

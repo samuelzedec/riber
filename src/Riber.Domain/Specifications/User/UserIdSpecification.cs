@@ -4,8 +4,8 @@ using Riber.Domain.Specifications.Core;
 namespace Riber.Domain.Specifications.User;
 
 public sealed class UserIdSpecification(Guid id) 
-    : Specification<Entities.User>
+    : Specification<Entities.User.User>
 {
-    public override Expression<Func<Entities.User, bool>> ToExpression()
+    public override Expression<Func<Entities.User.User, bool>> ToExpression()
         => user => user.Id == id;
 }

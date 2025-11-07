@@ -10,6 +10,7 @@ using Riber.Domain.Specifications.Product;
 using Riber.Infrastructure.Messaging.Consumers;
 using Riber.Infrastructure.Persistence.Models.Embeddings;
 using System.Linq.Expressions;
+using Riber.Domain.Entities.Catalog;
 
 namespace Riber.Infrastructure.Tests.Messaging.Consumers;
 

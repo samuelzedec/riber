@@ -2,7 +2,7 @@ using Riber.Domain.Constants.Messages.Entities;
 using Riber.Domain.Entities.Tenants;
 using Riber.Domain.Exceptions;
 
-namespace Riber.Domain.Entities;
+namespace Riber.Domain.Entities.Catalog;
 
 public sealed class ProductCategory
     : TenantEntity
@@ -19,7 +19,7 @@ public sealed class ProductCategory
 
     #region Navigation Properties
 
-    public Company Company { get; private set; } = null!;
+    public Company.Company Company { get; private set; } = null!;
     public IReadOnlyCollection<Product> ProductsReadOnly => _products.AsReadOnly();
 
     #endregion

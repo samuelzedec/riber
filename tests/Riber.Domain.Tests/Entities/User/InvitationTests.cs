@@ -1,10 +1,10 @@
 using FluentAssertions;
 using Riber.Domain.Abstractions;
 using Riber.Domain.Abstractions.ValueObjects;
-using Riber.Domain.Entities;
+using Riber.Domain.Entities.User;
 using Riber.Domain.Enums;
 
-namespace Riber.Domain.Tests.Entities;
+namespace Riber.Domain.Tests.Entities.User;
 
 public sealed class InvitationTests : BaseTest
 {

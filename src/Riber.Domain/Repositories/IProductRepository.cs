@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using Riber.Domain.Entities;
+using Riber.Domain.Entities.Catalog;
 using Riber.Domain.Specifications.Core;
 
 namespace Riber.Domain.Repositories;

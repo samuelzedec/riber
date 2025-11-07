@@ -4,8 +4,8 @@ using Riber.Domain.Specifications.Core;
 namespace Riber.Domain.Specifications.Product;
 
 public sealed class ProductByCategoryIdSpecification(Guid categoryId)
-    : Specification<Entities.Product>
+    : Specification<Entities.Catalog.Product>
 {
-    public override Expression<Func<Entities.Product, bool>> ToExpression()
+    public override Expression<Func<Entities.Catalog.Product, bool>> ToExpression()
         => entity => entity.CategoryId == categoryId;
 }

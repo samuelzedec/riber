@@ -1,13 +1,12 @@
 ﻿using Bogus.Extensions.Brazil;
 using FluentAssertions;
-using Riber.Domain.Entities;
 using Riber.Domain.Enums;
 using Riber.Domain.ValueObjects.CompanyName;
 using Riber.Domain.ValueObjects.Email;
 using Riber.Domain.ValueObjects.Phone;
 using Riber.Domain.ValueObjects.TaxId;
 
-namespace Riber.Domain.Tests.Entities;
+namespace Riber.Domain.Tests.Entities.Company;
 
 public sealed class CompanyTests : BaseTest
 {
@@ -26,7 +25,7 @@ public sealed class CompanyTests : BaseTest
         var companyType = TaxIdType.LegalEntityWithCnpj;
 
         // Act
-        var result = Company.Create(
+        var result = Domain.Entities.Company.Company.Create(
             name,
             fantasyName,
             taxId,
@@ -65,7 +64,7 @@ public sealed class CompanyTests : BaseTest
         var companyPhone = Phone.Create(_faker.Phone.PhoneNumber("(11) 9####-####"));
 
         // Act
-        var result = Company.Create(
+        var result = Domain.Entities.Company.Company.Create(
             companyName,
             companyTaxId,
             companyEmail,
@@ -92,7 +91,7 @@ public sealed class CompanyTests : BaseTest
     public void UpdateEmail_WhenValidEmail_ShouldUpdateSuccessfully()
     {
         // Arrange
-        var company = Company.Create(
+        var company = Domain.Entities.Company.Company.Create(
             _faker.Name.FullName(),
             _faker.Company.CompanyName(),
             _faker.Company.Cnpj(false),
@@ -115,7 +114,7 @@ public sealed class CompanyTests : BaseTest
     public void UpdatePhone_WhenValidPhone_ShouldUpdateSuccessfully()
     {
         // Arrange
-        var company = Company.Create(
+        var company = Domain.Entities.Company.Company.Create(
             _faker.Name.FullName(),
             _faker.Company.CompanyName(),
             _faker.Company.Cnpj(false),
@@ -139,7 +138,7 @@ public sealed class CompanyTests : BaseTest
     {
         // Arrange
         var originalName = _faker.Name.FullName();
-        var company = Company.Create(
+        var company = Domain.Entities.Company.Company.Create(
             originalName,
             _faker.Company.CompanyName(),
             _faker.Company.Cnpj(false),
@@ -163,7 +162,7 @@ public sealed class CompanyTests : BaseTest
     {
         // Arrange
         var originalName = _faker.Name.FullName();
-        var company = Company.Create(
+        var company = Domain.Entities.Company.Company.Create(
             originalName,
             _faker.Company.CompanyName(),
             _faker.Company.Cnpj(false),

@@ -1,7 +1,7 @@
 using FluentAssertions;
-using Riber.Domain.Entities;
+using Riber.Domain.Entities.Order;
 
-namespace Riber.Domain.Tests.Entities;
+namespace Riber.Domain.Tests.Entities.Order;
 
 public sealed class OrderTests : BaseTest
 {
@@ -16,7 +16,7 @@ public sealed class OrderTests : BaseTest
         var attendantId = Guid.NewGuid();
 
         // Act
-        var result = Order.Create(companyId, attendantId);
+        var result = Domain.Entities.Order.Order.Create(companyId, attendantId);
 
         // Assert
         result.Should().NotBeNull();
@@ -41,8 +41,8 @@ public sealed class OrderTests : BaseTest
         var attendantId = Guid.NewGuid();
 
         // Act
-        var order1 = Order.Create(companyId, attendantId);
-        var order2 = Order.Create(companyId, attendantId);
+        var order1 = Domain.Entities.Order.Order.Create(companyId, attendantId);
+        var order2 = Domain.Entities.Order.Order.Create(companyId, attendantId);
 
         // Assert
         order1.Token.Value.Should().NotBe(order2.Token.Value);
@@ -57,8 +57,8 @@ public sealed class OrderTests : BaseTest
         var attendantId = Guid.NewGuid();
 
         // Act
-        var order1 = Order.Create(companyId, attendantId);
-        var order2 = Order.Create(companyId, attendantId);
+        var order1 = Domain.Entities.Order.Order.Create(companyId, attendantId);
+        var order2 = Domain.Entities.Order.Order.Create(companyId, attendantId);
 
         // Assert
         order1.Id.Should().NotBe(order2.Id);
@@ -73,7 +73,7 @@ public sealed class OrderTests : BaseTest
         var attendantId = Guid.NewGuid();
 
         // Act
-        var result = Order.Create(companyId, attendantId);
+        var result = Domain.Entities.Order.Order.Create(companyId, attendantId);
 
         // Assert
         result.ItemsReadOnly.Should().NotBeNull();
@@ -90,7 +90,7 @@ public sealed class OrderTests : BaseTest
         var attendantId = Guid.NewGuid();
 
         // Act
-        var result = Order.Create(companyId, attendantId);
+        var result = Domain.Entities.Order.Order.Create(companyId, attendantId);
 
         // Assert
         result.ItemsReadOnly.Should().BeAssignableTo<IReadOnlyCollection<OrderItem>>();
@@ -105,7 +105,7 @@ public sealed class OrderTests : BaseTest
     public void SubTotal_WhenNoItems_ShouldReturnZero()
     {
         // Arrange
-        var order = Order.Create(Guid.NewGuid(), Guid.NewGuid());
+        var order = Domain.Entities.Order.Order.Create(Guid.NewGuid(), Guid.NewGuid());
 
         // Act
         var result = order.SubTotal;
@@ -119,7 +119,7 @@ public sealed class OrderTests : BaseTest
     public void TotalDiscounts_WhenNoItems_ShouldReturnZero()
     {
         // Arrange
-        var order = Order.Create(Guid.NewGuid(), Guid.NewGuid());
+        var order = Domain.Entities.Order.Order.Create(Guid.NewGuid(), Guid.NewGuid());
 
         // Act
         var result = order.TotalDiscounts;
@@ -133,7 +133,7 @@ public sealed class OrderTests : BaseTest
     public void TotalAmount_WhenNoItems_ShouldReturnZero()
     {
         // Arrange
-        var order = Order.Create(Guid.NewGuid(), Guid.NewGuid());
+        var order = Domain.Entities.Order.Order.Create(Guid.NewGuid(), Guid.NewGuid());
 
         // Act
         var result = order.TotalAmount;
@@ -147,7 +147,7 @@ public sealed class OrderTests : BaseTest
     public void TotalAmount_Always_ShouldEqualSubTotalMinusDiscounts()
     {
         // Arrange
-        var order = Order.Create(Guid.NewGuid(), Guid.NewGuid());
+        var order = Domain.Entities.Order.Order.Create(Guid.NewGuid(), Guid.NewGuid());
 
         // Act
         var totalAmount = order.TotalAmount;
@@ -170,7 +170,7 @@ public sealed class OrderTests : BaseTest
         var attendantId = Guid.NewGuid();
 
         // Act
-        var result = Order.Create(companyId, attendantId);
+        var result = Domain.Entities.Order.Order.Create(companyId, attendantId);
 
         // Assert
         result.Token.Should().NotBeNull();
@@ -185,12 +185,12 @@ public sealed class OrderTests : BaseTest
         // Arrange
         var companyId = Guid.NewGuid();
         var attendantId = Guid.NewGuid();
-        var orders = new List<Order>();
+        var orders = new List<Domain.Entities.Order.Order>();
 
         // Act
         for (int i = 0; i < 10; i++)
         {
-            orders.Add(Order.Create(companyId, attendantId));
+            orders.Add(Domain.Entities.Order.Order.Create(companyId, attendantId));
         }
 
         // Assert
@@ -207,7 +207,7 @@ public sealed class OrderTests : BaseTest
     public void Company_WhenAccessed_ShouldHaveNavigationProperty()
     {
         // Arrange
-        var order = Order.Create(Guid.NewGuid(), Guid.NewGuid());
+        var order = Domain.Entities.Order.Order.Create(Guid.NewGuid(), Guid.NewGuid());
 
         // Act & Assert
         // Navigation property exists and can be accessed
@@ -220,7 +220,7 @@ public sealed class OrderTests : BaseTest
     public void Attendant_WhenAccessed_ShouldHaveNavigationProperty()
     {
         // Arrange
-        var order = Order.Create(Guid.NewGuid(), Guid.NewGuid());
+        var order = Domain.Entities.Order.Order.Create(Guid.NewGuid(), Guid.NewGuid());
 
         // Act & Assert
         // Navigation property exists and can be accessed
@@ -241,7 +241,7 @@ public sealed class OrderTests : BaseTest
         var attendantId = Guid.NewGuid();
 
         // Act
-        var result = Order.Create(companyId, attendantId);
+        var result = Domain.Entities.Order.Order.Create(companyId, attendantId);
 
         // Assert
         result.CompanyId.Should().Be(Guid.Empty);
@@ -257,7 +257,7 @@ public sealed class OrderTests : BaseTest
         var attendantId = Guid.Empty;
 
         // Act
-        var result = Order.Create(companyId, attendantId);
+        var result = Domain.Entities.Order.Order.Create(companyId, attendantId);
 
         // Assert
         result.AttendantId.Should().Be(Guid.Empty);
@@ -273,7 +273,7 @@ public sealed class OrderTests : BaseTest
         var attendantId = Guid.Empty;
 
         // Act
-        var result = Order.Create(companyId, attendantId);
+        var result = Domain.Entities.Order.Order.Create(companyId, attendantId);
 
         // Assert
         result.CompanyId.Should().Be(Guid.Empty);

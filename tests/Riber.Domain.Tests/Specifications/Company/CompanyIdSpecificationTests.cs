@@ -113,8 +113,8 @@ public sealed class CompanyIdSpecificationTests : BaseTest
         result2.Should().BeFalse();
     }
     
-    private Entity.Company CreateDefaultCompany()
-        => Entity.Company.Create(
+    private Domain.Entities.Company.Company CreateDefaultCompany()
+        => Domain.Entities.Company.Company.Create(
             _faker.Company.CompanyName(),
             _faker.Company.CompanyName(),
             _faker.Company.Cnpj(),

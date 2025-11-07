@@ -1,11 +1,13 @@
 using Riber.Domain.Abstractions.ValueObjects;
 using Riber.Domain.Constants.Messages.ValueObjects;
+using Riber.Domain.Entities.Abstractions;
+using Riber.Domain.Entities.Catalog;
 using Riber.Domain.ValueObjects.Discount;
 using Riber.Domain.ValueObjects.Discount.Exceptions;
 using Riber.Domain.ValueObjects.Money;
 using Riber.Domain.ValueObjects.Quantity;
 
-namespace Riber.Domain.Entities;
+namespace Riber.Domain.Entities.Order;
 
 public sealed class OrderItem
     : BaseEntity, IHasDiscount, IHasQuantity, IHasUnitPrice
