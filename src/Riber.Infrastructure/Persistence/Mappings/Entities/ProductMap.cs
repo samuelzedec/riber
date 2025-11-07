@@ -5,12 +5,12 @@ using Riber.Infrastructure.Extensions;
 
 namespace Riber.Infrastructure.Persistence.Mappings.Entities;
 
-public sealed class ProductMap : BaseEntityConfiguration<Product>
+public sealed class ProductMap : BaseTypeConfiguration<Product>
 {
     protected override string GetTableName()
         => "product";
 
-    protected override void ConfigureEntity(EntityTypeBuilder<Product> builder)
+    protected override void Mapping(EntityTypeBuilder<Product> builder)
     {
         builder
             .ConfigureUnitPrice()

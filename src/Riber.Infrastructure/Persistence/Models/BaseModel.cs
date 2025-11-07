@@ -1,3 +1,5 @@
+using Riber.Domain.Abstractions;
+
 namespace Riber.Infrastructure.Persistence.Models;
 
 /// <summary>
@@ -5,10 +7,4 @@ namespace Riber.Infrastructure.Persistence.Models;
 /// Inclui propriedades comuns para identificar registros de forma única e
 /// gerenciar seu ciclo de vida dentro do sistema.
 /// </summary>
-public abstract class BaseModel
-{
-    public Guid Id { get; init; } = Guid.CreateVersion7();
-    public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
-    public DateTime? UpdatedAt { get; set; }
-    public DateTime? DeletedAt { get; set; }
-}
+public abstract class BaseModel(Guid id) : Tracker(id);

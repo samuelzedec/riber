@@ -5,12 +5,12 @@ using Riber.Infrastructure.Extensions;
 
 namespace Riber.Infrastructure.Persistence.Mappings.Entities;
 
-public sealed class ImageMap : BaseEntityConfiguration<Image>
+public sealed class ImageMap : BaseTypeConfiguration<Image>
 {
     protected override string GetTableName()
         => "image";
 
-    protected override void ConfigureEntity(EntityTypeBuilder<Image> builder)
+    protected override void Mapping(EntityTypeBuilder<Image> builder)
     {
         builder.ConfigureContentType();
 

@@ -5,12 +5,12 @@ using Riber.Infrastructure.Extensions;
 
 namespace Riber.Infrastructure.Persistence.Mappings.Entities;
 
-public sealed class OrderItemMap : BaseEntityConfiguration<OrderItem>
+public sealed class OrderItemMap : BaseTypeConfiguration<OrderItem>
 {
     protected override string GetTableName()
         => "order_item";
 
-    protected override void ConfigureEntity(EntityTypeBuilder<OrderItem> builder)
+    protected override void Mapping(EntityTypeBuilder<OrderItem> builder)
     {
         builder
             .ConfigureUnitPrice()

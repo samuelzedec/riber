@@ -5,13 +5,12 @@ using Riber.Infrastructure.Persistence.Models.Embeddings;
 
 namespace Riber.Infrastructure.Persistence.Mappings.Models;
 
-public sealed class ProductEmbeddingsModelMap
-    : BaseModelConfiguration<ProductEmbeddingsModel>
+public sealed class ProductEmbeddingsModelMap : BaseTypeConfiguration<ProductEmbeddingsModel>
 {
     protected override string GetTableName()
         => "product_embeddings";
 
-    protected override void ConfigureModel(EntityTypeBuilder<ProductEmbeddingsModel> builder)
+    protected override void Mapping(EntityTypeBuilder<ProductEmbeddingsModel> builder)
     {
         builder.ConfigureVector();
 

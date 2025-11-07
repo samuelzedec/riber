@@ -4,12 +4,12 @@ using Riber.Domain.Entities;
 
 namespace Riber.Infrastructure.Persistence.Mappings.Entities;
 
-public sealed class ProductCategoryMap : BaseEntityConfiguration<ProductCategory>
+public sealed class ProductCategoryMap : BaseTypeConfiguration<ProductCategory>
 {
     protected override string GetTableName()
         => "product_category";
 
-    protected override void ConfigureEntity(EntityTypeBuilder<ProductCategory> builder)
+    protected override void Mapping(EntityTypeBuilder<ProductCategory> builder)
     {
         builder
             .Property(pc => pc.Name)

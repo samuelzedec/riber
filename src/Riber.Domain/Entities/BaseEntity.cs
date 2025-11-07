@@ -6,20 +6,12 @@ namespace Riber.Domain.Entities;
 /// Representa uma entidade base abstrata que fornece funcionalidades comuns para entidades de domínio.
 /// Esta classe inclui um identificador, gerenciamento de eventos de domínio e mecanismos de comparação de igualdade.
 /// </summary>
-public abstract class BaseEntity(Guid id) : IEquatable<BaseEntity>
+public abstract class BaseEntity(Guid id) 
+    : Tracker(id), IEquatable<BaseEntity>
 {
     #region Private Members
 
     private readonly List<IDomainEvent> _events = [];
-
-    #endregion
-
-    #region Properties
-
-    public Guid Id { get; } = id;
-    public DateTime CreatedAt { get; } = DateTime.UtcNow;
-    public DateTime? UpdatedAt { get; private set; }
-    public DateTime? DeletedAt { get; private set; }
 
     #endregion
 
@@ -48,16 +40,6 @@ public abstract class BaseEntity(Guid id) : IEquatable<BaseEntity>
 
     public void RaiseEvent(IDomainEvent @event)
         => _events.Add(@event);
-
-    #endregion
-
-    #region BaseEntity Methods
-
-    public void UpdateEntity()
-        => UpdatedAt = DateTime.UtcNow;
-
-    public void DeleteEntity()
-        => DeletedAt = DateTime.UtcNow;
 
     #endregion
 
