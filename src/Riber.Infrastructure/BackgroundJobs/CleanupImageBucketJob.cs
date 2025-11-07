@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Quartz;
 using Riber.Application.Abstractions.Services;
-using Riber.Domain.Entities;
 using Riber.Domain.Entities.Catalog;
 using Riber.Domain.Repositories;
 

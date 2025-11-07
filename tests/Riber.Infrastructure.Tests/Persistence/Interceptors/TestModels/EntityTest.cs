@@ -1,4 +1,3 @@
-using Riber.Domain.Entities;
 using Riber.Domain.Entities.Abstractions;
 
 namespace Riber.Infrastructure.Tests.Persistence.Interceptors.TestModels;

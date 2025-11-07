@@ -1,4 +1,3 @@
-using Riber.Domain.Abstractions;
 using Riber.Domain.Entities.Abstractions;
 
 namespace Riber.Infrastructure.Persistence.Models;

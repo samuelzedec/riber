@@ -1,4 +1,3 @@
-using Riber.Domain.Entities;
 using Riber.Domain.Entities.User;
 
 namespace Riber.Domain.Repositories;

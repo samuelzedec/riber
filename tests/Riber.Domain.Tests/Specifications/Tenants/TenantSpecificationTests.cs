@@ -1,4 +1,3 @@
-using Entity = Riber.Domain.Entities;
 using FluentAssertions;
 using Riber.Domain.Specifications.Tenants;
 

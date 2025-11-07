@@ -6,7 +6,6 @@ using Microsoft.IdentityModel.Tokens;
 using Moq;
 using Riber.Application.Dtos.Auth;
 using Riber.Application.Dtos.User;
-using Riber.Domain.Entities;
 using Riber.Domain.Entities.User;
 using Riber.Domain.Enums;
 using Riber.Domain.Tests;

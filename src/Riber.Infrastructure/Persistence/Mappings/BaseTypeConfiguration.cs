@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Riber.Domain.Abstractions;
 using Riber.Domain.Entities.Abstractions;
 
 namespace Riber.Infrastructure.Persistence.Mappings;

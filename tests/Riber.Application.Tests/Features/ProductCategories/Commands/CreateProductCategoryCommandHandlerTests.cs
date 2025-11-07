@@ -6,7 +6,6 @@ using Riber.Application.Abstractions.Services.Authentication;
 using Riber.Application.Features.ProductCategories.Commands;
 using Riber.Domain.Constants.Messages.Common;
 using Riber.Domain.Constants.Messages.Entities;
-using Riber.Domain.Entities;
 using Riber.Domain.Entities.Catalog;
 using Riber.Domain.Repositories;
 using Riber.Domain.Specifications.Core;

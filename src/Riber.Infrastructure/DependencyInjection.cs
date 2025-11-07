@@ -22,7 +22,6 @@ using Riber.Application.Abstractions.Services.Authentication;
 using Riber.Application.Abstractions.Services.Email;
 using Riber.Application.Configurations;
 using Riber.Application.Exceptions;
-using Riber.Domain.Entities;
 using Riber.Domain.Entities.Catalog;
 using Riber.Domain.Repositories;
 using Riber.Infrastructure.BackgroundJobs;

@@ -1,4 +1,3 @@
-using Riber.Domain.Entities;
 using Riber.Domain.Entities.Catalog;
 
 namespace Riber.Infrastructure.Persistence.Models.Embeddings;

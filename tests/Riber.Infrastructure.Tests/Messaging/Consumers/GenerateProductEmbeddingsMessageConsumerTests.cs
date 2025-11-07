@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Riber.Application.Abstractions.Services.AI;
 using Riber.Application.Messages;
-using Riber.Domain.Entities;
 using Riber.Domain.Repositories;
 using Riber.Domain.Specifications.Product;
 using Riber.Infrastructure.Messaging.Consumers;

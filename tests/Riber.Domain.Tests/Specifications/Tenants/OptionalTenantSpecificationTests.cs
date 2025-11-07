@@ -1,4 +1,3 @@
-using Entity = Riber.Domain.Entities;
 using Bogus.Extensions.Brazil;
 using FluentAssertions;
 using Riber.Domain.Enums;

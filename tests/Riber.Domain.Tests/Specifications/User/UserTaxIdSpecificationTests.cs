@@ -2,7 +2,6 @@ using Bogus.Extensions.Brazil;
 using FluentAssertions;
 using Riber.Domain.Abstractions;
 using Riber.Domain.Enums;
-using Entity = Riber.Domain.Entities;
 using Riber.Domain.Specifications.User;
 
 namespace Riber.Domain.Tests.Specifications.User;

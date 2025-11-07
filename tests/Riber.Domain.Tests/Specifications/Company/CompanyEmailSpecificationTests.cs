@@ -3,7 +3,6 @@ using FluentAssertions;
 using Riber.Domain.Enums;
 using Riber.Domain.Specifications.Company;
 using Riber.Domain.ValueObjects.Email;
-using Entity = Riber.Domain.Entities;
 
 namespace Riber.Domain.Tests.Specifications.Company;
 

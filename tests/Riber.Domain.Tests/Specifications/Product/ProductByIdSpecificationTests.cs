@@ -1,6 +1,5 @@
 using FluentAssertions;
 using Riber.Domain.Specifications.Product;
-using Entity = Riber.Domain.Entities;
 
 namespace Riber.Domain.Tests.Specifications.Product;
 

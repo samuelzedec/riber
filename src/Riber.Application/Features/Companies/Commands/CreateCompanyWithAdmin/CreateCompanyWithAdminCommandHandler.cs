@@ -5,7 +5,6 @@ using Riber.Application.Common;
 using Riber.Application.Dtos.User;
 using Riber.Application.Extensions;
 using Riber.Domain.Constants.Messages.Common;
-using Riber.Domain.Entities;
 using Riber.Domain.Entities.Company;
 using Riber.Domain.Enums;
 using Riber.Domain.Events;
