@@ -12,7 +12,7 @@ public sealed class AiProductService(AppDbContext context)
 {
     public override async Task<ReadOnlyMemory<Product>> FindSimilarAsync(
         float[] query,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         var products = await _table
             .AsNoTracking()
@@ -27,6 +27,6 @@ public sealed class AiProductService(AppDbContext context)
 
     public override async Task<ProductEmbeddingsModel?> GetByEntityIdAsync(
         Guid entityId,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
         => await _table.LastOrDefaultAsync(p => p.ProductId == entityId, cancellationToken);
 }
