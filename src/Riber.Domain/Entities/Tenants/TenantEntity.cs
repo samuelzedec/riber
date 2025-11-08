@@ -1,4 +1,5 @@
 using Riber.Domain.Abstractions.MultiTenant;
+using Riber.Domain.Entities.Abstractions;
 
 namespace Riber.Domain.Entities.Tenants;
 

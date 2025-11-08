@@ -129,7 +129,7 @@ public sealed class MoneyTests : BaseTest
         var act = () => money1 + money2;
 
         // Assert
-        act.Should().Throw<InvalidSumException>()
+        act.Should().Throw<CurrencyMismatchException>()
            .WithMessage(MoneyErrors.Sum);
     }
 
@@ -165,7 +165,7 @@ public sealed class MoneyTests : BaseTest
         var act = () => money1 - money2;
 
         // Assert
-        act.Should().Throw<InvalidSubtractionException>()
+        act.Should().Throw<CurrencyMismatchException>()
            .WithMessage(MoneyErrors.Subtraction);
     }
 

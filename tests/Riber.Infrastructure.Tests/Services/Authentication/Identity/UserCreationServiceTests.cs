@@ -5,7 +5,7 @@ using Moq;
 using Riber.Application.Abstractions.Services.Authentication;
 using Riber.Application.Dtos.User;
 using Riber.Domain.Constants.Messages.Common;
-using Riber.Domain.Entities;
+using Riber.Domain.Entities.User;
 using Riber.Domain.Enums;
 using Riber.Domain.Repositories;
 using Riber.Domain.Specifications.Core;

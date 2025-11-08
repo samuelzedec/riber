@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Pgvector;
 using Riber.Application.Abstractions.Services.AI;
 using Riber.Application.Messages;
-using Riber.Domain.Entities;
+using Riber.Domain.Entities.Catalog;
 using Riber.Domain.Repositories;
 using Riber.Domain.Specifications.Product;
 using Riber.Infrastructure.Persistence.Models.Embeddings;

@@ -2,7 +2,6 @@ using Bogus.Extensions.Brazil;
 using FluentAssertions;
 using Riber.Domain.Enums;
 using Riber.Domain.Specifications.User;
-using Entity = Riber.Domain.Entities;
 
 namespace Riber.Domain.Tests.Specifications.User;
 
@@ -73,8 +72,8 @@ public sealed class UserIdSpecificationTests : BaseTest
         resultFromMethod.Should().Be(resultFromExpression);
     }
     
-    private Entity.User CreateDefaultUser()
-        => Entity.User.Create(
+    private Domain.Entities.User.User CreateDefaultUser()
+        => Domain.Entities.User.User.Create(
             _faker.Person.FullName,
             _faker.Person.Cpf(),
             BusinessPosition.Director

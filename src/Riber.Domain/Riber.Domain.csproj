@@ -1,5 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
     <PackageReference Include="Mediator.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.AI.Abstractions" />
   </ItemGroup>
 </Project>

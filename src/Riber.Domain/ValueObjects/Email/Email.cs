@@ -30,13 +30,13 @@ public sealed partial record Email : BaseValueObject
     public static Email Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
-            throw new EmailNullOrEmptyException(EmailErrors.Empty);
+            throw new EmptyEmailException(EmailErrors.Empty);
 
         value = Standardization(value);
 
         return EmailRegex().IsMatch(value)
             ? new Email(value)
-            : throw new EmailFormatInvalidException(EmailErrors.Format);
+            : throw new InvalidEmailFormatException(EmailErrors.Format);
     }
 
     #endregion

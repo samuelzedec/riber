@@ -54,8 +54,8 @@ public sealed class ImagesReadyForCleanupSpecificationTests : BaseTest
 
     #region Helpers
 
-    private static Domain.Entities.Image CreateImage()
-        => Domain.Entities.Image.Create(
+    private static Domain.Entities.Catalog.Image CreateImage()
+        => Domain.Entities.Catalog.Image.Create(
             length: 100000L,
             contentType: "image/png",
             originalName: "test.png"

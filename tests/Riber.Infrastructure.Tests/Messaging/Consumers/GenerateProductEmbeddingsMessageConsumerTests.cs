@@ -4,12 +4,12 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Riber.Application.Abstractions.Services.AI;
 using Riber.Application.Messages;
-using Riber.Domain.Entities;
 using Riber.Domain.Repositories;
 using Riber.Domain.Specifications.Product;
 using Riber.Infrastructure.Messaging.Consumers;
 using Riber.Infrastructure.Persistence.Models.Embeddings;
 using System.Linq.Expressions;
+using Riber.Domain.Entities.Catalog;
 
 namespace Riber.Infrastructure.Tests.Messaging.Consumers;
 

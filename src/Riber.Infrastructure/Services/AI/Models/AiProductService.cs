@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Pgvector;
 using Pgvector.EntityFrameworkCore;
-using Riber.Domain.Entities;
+using Riber.Domain.Entities.Catalog;
 using Riber.Infrastructure.Persistence;
 using Riber.Infrastructure.Persistence.Models.Embeddings;
 

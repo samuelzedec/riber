@@ -5,7 +5,7 @@ using Moq;
 using Riber.Application.Extensions;
 using Riber.Application.Features.Companies.Queries.GetCompanyById;
 using Riber.Domain.Constants.Messages.Common;
-using Riber.Domain.Entities;
+using Riber.Domain.Entities.Company;
 using Riber.Domain.Enums;
 using Riber.Domain.Repositories;
 using Riber.Domain.Specifications.Core;

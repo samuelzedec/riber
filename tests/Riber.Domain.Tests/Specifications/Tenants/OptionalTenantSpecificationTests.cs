@@ -1,4 +1,3 @@
-using Entity = Riber.Domain.Entities;
 using Bogus.Extensions.Brazil;
 using FluentAssertions;
 using Riber.Domain.Enums;
@@ -15,7 +14,7 @@ public sealed class OptionalTenantSpecificationTests : BaseTest
         // Arrange
         var tenantId = Guid.NewGuid();
         var user = CreateUserDefault(companyId: tenantId);
-        var specification = new OptionalTenantSpecification<Entity.User>(tenantId);
+        var specification = new OptionalTenantSpecification<Domain.Entities.User.User>(tenantId);
 
         // Act
         var result = specification.IsSatisfiedBy(user);
@@ -32,7 +31,7 @@ public sealed class OptionalTenantSpecificationTests : BaseTest
         var userTenantId = Guid.NewGuid();
         var differentTenantId = Guid.NewGuid();
         var user = CreateUserDefault(companyId: userTenantId);
-        var specification = new OptionalTenantSpecification<Entity.User>(differentTenantId);
+        var specification = new OptionalTenantSpecification<Domain.Entities.User.User>(differentTenantId);
 
         // Act
         var result = specification.IsSatisfiedBy(user);
@@ -47,7 +46,7 @@ public sealed class OptionalTenantSpecificationTests : BaseTest
     {
         // Arrange
         var user = CreateUserDefault();
-        var specification = new OptionalTenantSpecification<Entity.User>(Guid.Empty);
+        var specification = new OptionalTenantSpecification<Domain.Entities.User.User>(Guid.Empty);
 
         // Act
         var result = specification.IsSatisfiedBy(user);
@@ -62,7 +61,7 @@ public sealed class OptionalTenantSpecificationTests : BaseTest
     {
         // Arrange
         var user = CreateUserDefault(companyId: null);
-        var specification = new OptionalTenantSpecification<Entity.User>(Guid.NewGuid());
+        var specification = new OptionalTenantSpecification<Domain.Entities.User.User>(Guid.NewGuid());
 
         // Act
         var result = specification.IsSatisfiedBy(user);
@@ -77,7 +76,7 @@ public sealed class OptionalTenantSpecificationTests : BaseTest
     {
         // Arrange
         var tenantId = Guid.NewGuid();
-        var specification = new OptionalTenantSpecification<Entity.User>(tenantId);
+        var specification = new OptionalTenantSpecification<Domain.Entities.User.User>(tenantId);
 
         // Act
         var expression = specification.ToExpression();
@@ -95,7 +94,7 @@ public sealed class OptionalTenantSpecificationTests : BaseTest
         // Arrange
         var tenantId = Guid.NewGuid();
         var user = CreateUserDefault(companyId: tenantId);
-        var specification = new OptionalTenantSpecification<Entity.User>(tenantId);
+        var specification = new OptionalTenantSpecification<Domain.Entities.User.User>(tenantId);
         var compiledExpression = specification.ToExpression().Compile();
 
         // Act
@@ -115,7 +114,7 @@ public sealed class OptionalTenantSpecificationTests : BaseTest
         var tenantId2 = Guid.NewGuid();
         var user1 = CreateUserDefault(companyId: tenantId1);
         var user2 = CreateUserDefault(companyId: tenantId2);
-        var specification = new OptionalTenantSpecification<Entity.User>(tenantId1);
+        var specification = new OptionalTenantSpecification<Domain.Entities.User.User>(tenantId1);
         var predicate = specification.ToExpression().Compile();
 
         // Act
@@ -138,7 +137,7 @@ public sealed class OptionalTenantSpecificationTests : BaseTest
         // Arrange
         var tenantId = Guid.Parse(guidString);
         var user = CreateUserDefault(companyId: tenantId);
-        var specification = new OptionalTenantSpecification<Entity.User>(tenantId);
+        var specification = new OptionalTenantSpecification<Domain.Entities.User.User>(tenantId);
 
         // Act
         var result = specification.IsSatisfiedBy(user);
@@ -156,8 +155,8 @@ public sealed class OptionalTenantSpecificationTests : BaseTest
         var sameTenantId = new Guid(originalTenantId.ToString());
         var differentTenantId = Guid.NewGuid();
         var user = CreateUserDefault(companyId: originalTenantId);
-        var specSame = new OptionalTenantSpecification<Entity.User>(sameTenantId);
-        var specDifferent = new OptionalTenantSpecification<Entity.User>(differentTenantId);
+        var specSame = new OptionalTenantSpecification<Domain.Entities.User.User>(sameTenantId);
+        var specDifferent = new OptionalTenantSpecification<Domain.Entities.User.User>(differentTenantId);
 
         // Act
         var resultSame = specSame.IsSatisfiedBy(user);
@@ -176,7 +175,7 @@ public sealed class OptionalTenantSpecificationTests : BaseTest
         var tenantId = Guid.NewGuid();
         var directorUser = CreateUserDefault(companyId: tenantId, position: BusinessPosition.Director);
         var managerUser = CreateUserDefault(companyId: tenantId, position: BusinessPosition.Manager);
-        var specification = new OptionalTenantSpecification<Entity.User>(tenantId);
+        var specification = new OptionalTenantSpecification<Domain.Entities.User.User>(tenantId);
 
         // Act
         var resultDirector = specification.IsSatisfiedBy(directorUser);
@@ -187,12 +186,12 @@ public sealed class OptionalTenantSpecificationTests : BaseTest
         resultManager.Should().BeTrue();
     }
 
-    private Entity.User CreateUserDefault(
+    private Domain.Entities.User.User CreateUserDefault(
         string? name = null,
         string? taxId = null,
         BusinessPosition? position = null,
         Guid? companyId = null)
-        => Entity.User.Create(
+        => Domain.Entities.User.User.Create(
             name ?? _faker.Person.FullName,
             taxId ?? _faker.Person.Cpf(),
             position ?? BusinessPosition.Director,

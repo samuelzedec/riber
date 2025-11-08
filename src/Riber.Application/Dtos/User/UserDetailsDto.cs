@@ -12,5 +12,5 @@ public sealed record UserDetailsDto(
     ICollection<string> Roles,
     ICollection<ClaimDto> Claims,
     Guid UserDomainId,
-    Domain.Entities.User UserDomain
+    Domain.Entities.User.User UserDomain
 );

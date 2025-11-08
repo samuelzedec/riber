@@ -30,13 +30,13 @@ public sealed partial record Phone : BaseValueObject
     public static Phone Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
-            throw new PhoneNullOrEmptyException(PhoneErrors.Empty);
+            throw new EmptyPhoneException(PhoneErrors.Empty);
 
         value = value.Trim();
 
         return PhoneRegex().IsMatch(value)
             ? new Phone(RemoveFormatting(value))
-            : throw new PhoneFormatInvalidException(PhoneErrors.Format);
+            : throw new InvalidPhoneFormatException(PhoneErrors.Format);
     }
 
     #endregion

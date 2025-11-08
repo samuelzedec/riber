@@ -1,4 +1,3 @@
-using Entity = Riber.Domain.Entities;
 using Bogus.Extensions.Brazil;
 using FluentAssertions;
 using Riber.Domain.Enums;
@@ -209,12 +208,12 @@ public sealed class CorporateNameSpecificationTests : BaseTest
         result.Should().BeTrue();
     }
 
-    private Entity.Company CreateCompanyDefault(
+    private Domain.Entities.Company.Company CreateCompanyDefault(
         string? taxId = null,
         string? email = null,
         string? phone = null,
         string? corporateName = null)
-        => Entity.Company.Create(
+        => Domain.Entities.Company.Company.Create(
             corporateName ?? _faker.Company.CompanyName(),
             _faker.Company.CompanyName(),
             taxId ?? _faker.Company.Cnpj(),

@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Quartz;
 using Riber.Application.Abstractions.Services;
-using Riber.Domain.Entities;
+using Riber.Domain.Entities.Catalog;
 using Riber.Domain.Repositories;
 using Riber.Infrastructure.BackgroundJobs;
 

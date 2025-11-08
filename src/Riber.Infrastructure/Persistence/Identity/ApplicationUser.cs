@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Identity;
-using Riber.Domain.Entities;
+using Riber.Domain.Entities.User;
 
 namespace Riber.Infrastructure.Persistence.Identity;
 

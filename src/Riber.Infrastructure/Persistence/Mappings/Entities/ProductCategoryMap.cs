@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Riber.Domain.Entities;
+using Riber.Domain.Entities.Catalog;
 
 namespace Riber.Infrastructure.Persistence.Mappings.Entities;
 

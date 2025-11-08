@@ -24,32 +24,7 @@ namespace Riber.Infrastructure.Persistence.Migrations
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "vector");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Riber.Domain.Entities.Company", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamptz")
-                        .HasColumnName("created_at");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamptz")
-                        .HasColumnName("deleted_at");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamptz")
-                        .HasColumnName("modified_at");
-
-                    b.HasKey("Id")
-                        .HasName("pk_company_id");
-
-                    b.ToTable("company", (string)null);
-                });
-
-            modelBuilder.Entity("Riber.Domain.Entities.Image", b =>
+            modelBuilder.Entity("Riber.Domain.Entities.Catalog.Image", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -96,145 +71,7 @@ namespace Riber.Infrastructure.Persistence.Migrations
                     b.ToTable("image", (string)null);
                 });
 
-            modelBuilder.Entity("Riber.Domain.Entities.Invitation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<Guid>("CompanyId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("company_id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamptz")
-                        .HasColumnName("created_at");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("created_by_user_id");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamptz")
-                        .HasColumnName("deleted_at");
-
-                    b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("timestamptz")
-                        .HasColumnName("expires_at");
-
-                    b.Property<bool>("IsUsed")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_used");
-
-                    b.Property<string>("Permissions")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("permissions");
-
-                    b.Property<string>("Position")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("text")
-                        .HasColumnName("position");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("text")
-                        .HasColumnName("role");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamptz")
-                        .HasColumnName("modified_at");
-
-                    b.HasKey("Id")
-                        .HasName("pk_invitation_id");
-
-                    b.HasIndex(new[] { "CompanyId" }, "ix_invitations_company_id");
-
-                    b.ToTable("invitation", (string)null);
-                });
-
-            modelBuilder.Entity("Riber.Domain.Entities.Order", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<Guid>("AttendantId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CompanyId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamptz")
-                        .HasColumnName("created_at");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamptz")
-                        .HasColumnName("deleted_at");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamptz")
-                        .HasColumnName("modified_at");
-
-                    b.HasKey("Id")
-                        .HasName("pk_order_id");
-
-                    b.HasIndex("AttendantId");
-
-                    b.HasIndex("CompanyId");
-
-                    b.ToTable("order", (string)null);
-                });
-
-            modelBuilder.Entity("Riber.Domain.Entities.OrderItem", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamptz")
-                        .HasColumnName("created_at");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamptz")
-                        .HasColumnName("deleted_at");
-
-                    b.Property<Guid>("OrderId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("order_id");
-
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ProductName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("text")
-                        .HasColumnName("product_name");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamptz")
-                        .HasColumnName("modified_at");
-
-                    b.HasKey("Id")
-                        .HasName("pk_order_item_id");
-
-                    b.HasIndex("OrderId");
-
-                    b.HasIndex("ProductId")
-                        .IsUnique();
-
-                    b.ToTable("order_item", (string)null);
-                });
-
-            modelBuilder.Entity("Riber.Domain.Entities.Product", b =>
+            modelBuilder.Entity("Riber.Domain.Entities.Catalog.Product", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -302,7 +139,7 @@ namespace Riber.Infrastructure.Persistence.Migrations
                     b.ToTable("product", (string)null);
                 });
 
-            modelBuilder.Entity("Riber.Domain.Entities.ProductCategory", b =>
+            modelBuilder.Entity("Riber.Domain.Entities.Catalog.ProductCategory", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -358,7 +195,292 @@ namespace Riber.Infrastructure.Persistence.Migrations
                     b.ToTable("product_category", (string)null);
                 });
 
-            modelBuilder.Entity("Riber.Domain.Entities.User", b =>
+            modelBuilder.Entity("Riber.Domain.Entities.Chat.Assistant", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.Property<string>("SystemPrompt")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("system_prompt");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("type");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("modified_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_assistant_id");
+
+                    b.ToTable("assistant", (string)null);
+                });
+
+            modelBuilder.Entity("Riber.Domain.Entities.Chat.Chat", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("AssistantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("assistant_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("modified_at");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_chat_id");
+
+                    b.HasIndex("AssistantId");
+
+                    b.HasIndex("UserId", "AssistantId")
+                        .IsUnique()
+                        .HasDatabaseName("uq_chat_user_assistant_id");
+
+                    b.ToTable("chat", (string)null);
+                });
+
+            modelBuilder.Entity("Riber.Domain.Entities.Chat.ChatMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("ChatId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("chat_id");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("text")
+                        .HasColumnName("content");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("role");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("modified_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_chat_message_id");
+
+                    b.HasIndex("ChatId");
+
+                    b.ToTable("chat_message", (string)null);
+                });
+
+            modelBuilder.Entity("Riber.Domain.Entities.Company.Company", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("modified_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_company_id");
+
+                    b.ToTable("company", (string)null);
+                });
+
+            modelBuilder.Entity("Riber.Domain.Entities.Order.Order", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("AttendantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("modified_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_order_id");
+
+                    b.HasIndex("AttendantId");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("order", (string)null);
+                });
+
+            modelBuilder.Entity("Riber.Domain.Entities.Order.OrderItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("order_id");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("text")
+                        .HasColumnName("product_name");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("modified_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_order_item_id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId")
+                        .IsUnique();
+
+                    b.ToTable("order_item", (string)null);
+                });
+
+            modelBuilder.Entity("Riber.Domain.Entities.User.Invitation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("company_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("CreatedByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by_user_id");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("expires_at");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_used");
+
+                    b.Property<string>("Permissions")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("permissions");
+
+                    b.Property<string>("Position")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("text")
+                        .HasColumnName("position");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("text")
+                        .HasColumnName("role");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("modified_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_invitation_id");
+
+                    b.HasIndex(new[] { "CompanyId" }, "ix_invitations_company_id");
+
+                    b.ToTable("invitation", (string)null);
+                });
+
+            modelBuilder.Entity("Riber.Domain.Entities.User.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1405,7 +1527,132 @@ namespace Riber.Infrastructure.Persistence.Migrations
                     b.ToTable("product_embeddings", (string)null);
                 });
 
-            modelBuilder.Entity("Riber.Domain.Entities.Company", b =>
+            modelBuilder.Entity("Riber.Domain.Entities.Catalog.Image", b =>
+                {
+                    b.OwnsOne("Riber.Domain.ValueObjects.ContentType.ContentType", "ContentType", b1 =>
+                        {
+                            b1.Property<Guid>("ImageId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(255)
+                                .HasColumnType("text")
+                                .HasColumnName("content_type");
+
+                            b1.HasKey("ImageId");
+
+                            b1.ToTable("image");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ImageId");
+                        });
+
+                    b.Navigation("ContentType")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Riber.Domain.Entities.Catalog.Product", b =>
+                {
+                    b.HasOne("Riber.Domain.Entities.Catalog.ProductCategory", "Category")
+                        .WithMany("_products")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_product_category_id");
+
+                    b.HasOne("Riber.Domain.Entities.Company.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_product_company_id");
+
+                    b.HasOne("Riber.Domain.Entities.Catalog.Image", "Image")
+                        .WithOne()
+                        .HasForeignKey("Riber.Domain.Entities.Catalog.Product", "ImageId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_product_image_id");
+
+                    b.OwnsOne("Riber.Domain.ValueObjects.Money.Money", "UnitPrice", b1 =>
+                        {
+                            b1.Property<Guid>("ProductId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("text")
+                                .HasColumnName("unit_price_currency");
+
+                            b1.Property<decimal>("Value")
+                                .HasColumnType("numeric")
+                                .HasColumnName("unit_price");
+
+                            b1.HasKey("ProductId");
+
+                            b1.ToTable("product");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ProductId");
+                        });
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Image");
+
+                    b.Navigation("UnitPrice")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Riber.Domain.Entities.Catalog.ProductCategory", b =>
+                {
+                    b.HasOne("Riber.Domain.Entities.Company.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_product_category_company_id");
+
+                    b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("Riber.Domain.Entities.Chat.Chat", b =>
+                {
+                    b.HasOne("Riber.Domain.Entities.Chat.Assistant", "Assistant")
+                        .WithMany()
+                        .HasForeignKey("AssistantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_chat_assistant_id");
+
+                    b.HasOne("Riber.Domain.Entities.User.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_chat_user_id");
+
+                    b.Navigation("Assistant");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Riber.Domain.Entities.Chat.ChatMessage", b =>
+                {
+                    b.HasOne("Riber.Domain.Entities.Chat.Chat", "Chat")
+                        .WithMany("Messages")
+                        .HasForeignKey("ChatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_chatmessage_chat_id");
+
+                    b.Navigation("Chat");
+                });
+
+            modelBuilder.Entity("Riber.Domain.Entities.Company.Company", b =>
                 {
                     b.OwnsOne("Riber.Domain.ValueObjects.Email.Email", "Email", b1 =>
                         {
@@ -1423,56 +1670,7 @@ namespace Riber.Infrastructure.Persistence.Migrations
                             b1.HasIndex(new[] { "Value" }, "uq_company_email")
                                 .IsUnique();
 
-                            b1.ToTable("company", (string)null);
-
-                            b1.WithOwner()
-                                .HasForeignKey("CompanyId");
-                        });
-
-                    b.OwnsOne("Riber.Domain.ValueObjects.CompanyName.CompanyName", "Name", b1 =>
-                        {
-                            b1.Property<Guid>("CompanyId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("Corporate")
-                                .IsRequired()
-                                .HasMaxLength(150)
-                                .HasColumnType("text")
-                                .HasColumnName("corporate_name");
-
-                            b1.Property<string>("Fantasy")
-                                .IsRequired()
-                                .HasMaxLength(100)
-                                .HasColumnType("text")
-                                .HasColumnName("fantasy_name");
-
-                            b1.HasKey("CompanyId");
-
-                            b1.HasIndex(new[] { "Corporate" }, "uq_company_corporate_name");
-
-                            b1.ToTable("company", (string)null);
-
-                            b1.WithOwner()
-                                .HasForeignKey("CompanyId");
-                        });
-
-                    b.OwnsOne("Riber.Domain.ValueObjects.Phone.Phone", "Phone", b1 =>
-                        {
-                            b1.Property<Guid>("CompanyId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasMaxLength(15)
-                                .HasColumnType("text")
-                                .HasColumnName("phone");
-
-                            b1.HasKey("CompanyId");
-
-                            b1.HasIndex(new[] { "Value" }, "uq_company_phone")
-                                .IsUnique();
-
-                            b1.ToTable("company", (string)null);
+                            b1.ToTable("company");
 
                             b1.WithOwner()
                                 .HasForeignKey("CompanyId");
@@ -1499,7 +1697,56 @@ namespace Riber.Infrastructure.Persistence.Migrations
                             b1.HasIndex(new[] { "Value" }, "uq_company_tax_id")
                                 .IsUnique();
 
-                            b1.ToTable("company", (string)null);
+                            b1.ToTable("company");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CompanyId");
+                        });
+
+                    b.OwnsOne("Riber.Domain.ValueObjects.CompanyName.CompanyName", "Name", b1 =>
+                        {
+                            b1.Property<Guid>("CompanyId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Corporate")
+                                .IsRequired()
+                                .HasMaxLength(150)
+                                .HasColumnType("text")
+                                .HasColumnName("corporate_name");
+
+                            b1.Property<string>("Fantasy")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("text")
+                                .HasColumnName("fantasy_name");
+
+                            b1.HasKey("CompanyId");
+
+                            b1.HasIndex(new[] { "Corporate" }, "uq_company_corporate_name");
+
+                            b1.ToTable("company");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CompanyId");
+                        });
+
+                    b.OwnsOne("Riber.Domain.ValueObjects.Phone.Phone", "Phone", b1 =>
+                        {
+                            b1.Property<Guid>("CompanyId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(15)
+                                .HasColumnType("text")
+                                .HasColumnName("phone");
+
+                            b1.HasKey("CompanyId");
+
+                            b1.HasIndex(new[] { "Value" }, "uq_company_phone")
+                                .IsUnique();
+
+                            b1.ToTable("company");
 
                             b1.WithOwner()
                                 .HasForeignKey("CompanyId");
@@ -1518,94 +1765,16 @@ namespace Riber.Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Riber.Domain.Entities.Image", b =>
+            modelBuilder.Entity("Riber.Domain.Entities.Order.Order", b =>
                 {
-                    b.OwnsOne("Riber.Domain.ValueObjects.ContentType.ContentType", "ContentType", b1 =>
-                        {
-                            b1.Property<Guid>("ImageId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasMaxLength(255)
-                                .HasColumnType("text")
-                                .HasColumnName("content_type");
-
-                            b1.HasKey("ImageId");
-
-                            b1.ToTable("image", (string)null);
-
-                            b1.WithOwner()
-                                .HasForeignKey("ImageId");
-                        });
-
-                    b.Navigation("ContentType")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Riber.Domain.Entities.Invitation", b =>
-                {
-                    b.OwnsOne("Riber.Domain.ValueObjects.Email.Email", "Email", b1 =>
-                        {
-                            b1.Property<Guid>("InvitationId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasMaxLength(255)
-                                .HasColumnType("text")
-                                .HasColumnName("email");
-
-                            b1.HasKey("InvitationId");
-
-                            b1.HasIndex(new[] { "Value" }, "uq_invitations_email")
-                                .IsUnique();
-
-                            b1.ToTable("invitation", (string)null);
-
-                            b1.WithOwner()
-                                .HasForeignKey("InvitationId");
-                        });
-
-                    b.OwnsOne("Riber.Domain.ValueObjects.RandomToken.RandomToken", "Token", b1 =>
-                        {
-                            b1.Property<Guid>("InvitationId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasMaxLength(100)
-                                .HasColumnType("text")
-                                .HasColumnName("invite_token");
-
-                            b1.HasKey("InvitationId");
-
-                            b1.HasIndex(new[] { "Value" }, "uq_invitation_invite_token")
-                                .IsUnique();
-
-                            b1.ToTable("invitation", (string)null);
-
-                            b1.WithOwner()
-                                .HasForeignKey("InvitationId");
-                        });
-
-                    b.Navigation("Email")
-                        .IsRequired();
-
-                    b.Navigation("Token")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Riber.Domain.Entities.Order", b =>
-                {
-                    b.HasOne("Riber.Domain.Entities.User", "Attendant")
+                    b.HasOne("Riber.Domain.Entities.User.User", "Attendant")
                         .WithMany()
                         .HasForeignKey("AttendantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_order_attendant_id");
 
-                    b.HasOne("Riber.Domain.Entities.Company", "Company")
+                    b.HasOne("Riber.Domain.Entities.Company.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1628,7 +1797,7 @@ namespace Riber.Infrastructure.Persistence.Migrations
                             b1.HasIndex(new[] { "Value" }, "uq_order_order_token")
                                 .IsUnique();
 
-                            b1.ToTable("order", (string)null);
+                            b1.ToTable("order");
 
                             b1.WithOwner()
                                 .HasForeignKey("OrderId");
@@ -1642,21 +1811,44 @@ namespace Riber.Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Riber.Domain.Entities.OrderItem", b =>
+            modelBuilder.Entity("Riber.Domain.Entities.Order.OrderItem", b =>
                 {
-                    b.HasOne("Riber.Domain.Entities.Order", "Order")
+                    b.HasOne("Riber.Domain.Entities.Order.Order", "Order")
                         .WithMany("_items")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_order_item_order_id");
 
-                    b.HasOne("Riber.Domain.Entities.Product", "Product")
+                    b.HasOne("Riber.Domain.Entities.Catalog.Product", "Product")
                         .WithOne()
-                        .HasForeignKey("Riber.Domain.Entities.OrderItem", "ProductId")
+                        .HasForeignKey("Riber.Domain.Entities.Order.OrderItem", "ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_order_item_product_id");
+
+                    b.OwnsOne("Riber.Domain.ValueObjects.Money.Money", "UnitPrice", b1 =>
+                        {
+                            b1.Property<Guid>("OrderItemId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("text")
+                                .HasColumnName("unit_price_currency");
+
+                            b1.Property<decimal>("Value")
+                                .HasColumnType("numeric")
+                                .HasColumnName("unit_price");
+
+                            b1.HasKey("OrderItemId");
+
+                            b1.ToTable("order_item");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderItemId");
+                        });
 
                     b.OwnsOne("Riber.Domain.ValueObjects.Discount.Discount", "ItemDiscount", b1 =>
                         {
@@ -1682,7 +1874,7 @@ namespace Riber.Infrastructure.Persistence.Migrations
 
                             b1.HasKey("OrderItemId");
 
-                            b1.ToTable("order_item", (string)null);
+                            b1.ToTable("order_item");
 
                             b1.WithOwner()
                                 .HasForeignKey("OrderItemId");
@@ -1699,30 +1891,7 @@ namespace Riber.Infrastructure.Persistence.Migrations
 
                             b1.HasKey("OrderItemId");
 
-                            b1.ToTable("order_item", (string)null);
-
-                            b1.WithOwner()
-                                .HasForeignKey("OrderItemId");
-                        });
-
-                    b.OwnsOne("Riber.Domain.ValueObjects.Money.Money", "UnitPrice", b1 =>
-                        {
-                            b1.Property<Guid>("OrderItemId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("Currency")
-                                .IsRequired()
-                                .HasMaxLength(3)
-                                .HasColumnType("text")
-                                .HasColumnName("unit_price_currency");
-
-                            b1.Property<decimal>("Value")
-                                .HasColumnType("numeric")
-                                .HasColumnName("unit_price");
-
-                            b1.HasKey("OrderItemId");
-
-                            b1.ToTable("order_item", (string)null);
+                            b1.ToTable("order_item");
 
                             b1.WithOwner()
                                 .HasForeignKey("OrderItemId");
@@ -1741,99 +1910,66 @@ namespace Riber.Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Riber.Domain.Entities.Product", b =>
+            modelBuilder.Entity("Riber.Domain.Entities.User.Invitation", b =>
                 {
-                    b.HasOne("Riber.Domain.Entities.ProductCategory", "Category")
-                        .WithMany("_products")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_product_category_id");
-
-                    b.HasOne("Riber.Domain.Entities.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_product_company_id");
-
-                    b.HasOne("Riber.Domain.Entities.Image", "Image")
-                        .WithOne()
-                        .HasForeignKey("Riber.Domain.Entities.Product", "ImageId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("fk_product_image_id");
-
-                    b.OwnsOne("Riber.Domain.ValueObjects.Money.Money", "UnitPrice", b1 =>
+                    b.OwnsOne("Riber.Domain.ValueObjects.Email.Email", "Email", b1 =>
                         {
-                            b1.Property<Guid>("ProductId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("Currency")
-                                .IsRequired()
-                                .HasMaxLength(3)
-                                .HasColumnType("text")
-                                .HasColumnName("unit_price_currency");
-
-                            b1.Property<decimal>("Value")
-                                .HasColumnType("numeric")
-                                .HasColumnName("unit_price");
-
-                            b1.HasKey("ProductId");
-
-                            b1.ToTable("product", (string)null);
-
-                            b1.WithOwner()
-                                .HasForeignKey("ProductId");
-                        });
-
-                    b.Navigation("Category");
-
-                    b.Navigation("Company");
-
-                    b.Navigation("Image");
-
-                    b.Navigation("UnitPrice")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Riber.Domain.Entities.ProductCategory", b =>
-                {
-                    b.HasOne("Riber.Domain.Entities.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_product_category_company_id");
-
-                    b.Navigation("Company");
-                });
-
-            modelBuilder.Entity("Riber.Domain.Entities.User", b =>
-                {
-                    b.HasOne("Riber.Domain.Entities.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("fk_user_company_id");
-
-                    b.OwnsOne("Riber.Domain.ValueObjects.FullName.FullName", "FullName", b1 =>
-                        {
-                            b1.Property<Guid>("UserId")
+                            b1.Property<Guid>("InvitationId")
                                 .HasColumnType("uuid");
 
                             b1.Property<string>("Value")
                                 .IsRequired()
                                 .HasMaxLength(255)
                                 .HasColumnType("text")
-                                .HasColumnName("full_name");
+                                .HasColumnName("email");
 
-                            b1.HasKey("UserId");
+                            b1.HasKey("InvitationId");
 
-                            b1.ToTable("user", (string)null);
+                            b1.HasIndex(new[] { "Value" }, "uq_invitations_email")
+                                .IsUnique();
+
+                            b1.ToTable("invitation");
 
                             b1.WithOwner()
-                                .HasForeignKey("UserId");
+                                .HasForeignKey("InvitationId");
                         });
+
+                    b.OwnsOne("Riber.Domain.ValueObjects.RandomToken.RandomToken", "Token", b1 =>
+                        {
+                            b1.Property<Guid>("InvitationId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("text")
+                                .HasColumnName("invite_token");
+
+                            b1.HasKey("InvitationId");
+
+                            b1.HasIndex(new[] { "Value" }, "uq_invitation_invite_token")
+                                .IsUnique();
+
+                            b1.ToTable("invitation");
+
+                            b1.WithOwner()
+                                .HasForeignKey("InvitationId");
+                        });
+
+                    b.Navigation("Email")
+                        .IsRequired();
+
+                    b.Navigation("Token")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Riber.Domain.Entities.User.User", b =>
+                {
+                    b.HasOne("Riber.Domain.Entities.Company.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_user_company_id");
 
                     b.OwnsOne("Riber.Domain.ValueObjects.TaxId.TaxId", "TaxId", b1 =>
                         {
@@ -1856,7 +1992,26 @@ namespace Riber.Infrastructure.Persistence.Migrations
                             b1.HasIndex(new[] { "Value" }, "uq_user_tax_id")
                                 .IsUnique();
 
-                            b1.ToTable("user", (string)null);
+                            b1.ToTable("user");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId");
+                        });
+
+                    b.OwnsOne("Riber.Domain.ValueObjects.FullName.FullName", "FullName", b1 =>
+                        {
+                            b1.Property<Guid>("UserId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(255)
+                                .HasColumnType("text")
+                                .HasColumnName("full_name");
+
+                            b1.HasKey("UserId");
+
+                            b1.ToTable("user");
 
                             b1.WithOwner()
                                 .HasForeignKey("UserId");
@@ -1873,7 +2028,7 @@ namespace Riber.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Riber.Infrastructure.Persistence.Identity.ApplicationUser", b =>
                 {
-                    b.HasOne("Riber.Domain.Entities.User", "UserDomain")
+                    b.HasOne("Riber.Domain.Entities.User.User", "UserDomain")
                         .WithOne()
                         .HasForeignKey("Riber.Infrastructure.Persistence.Identity.ApplicationUser", "UserDomainId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1885,7 +2040,7 @@ namespace Riber.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Riber.Infrastructure.Persistence.Models.Embeddings.ProductEmbeddingsModel", b =>
                 {
-                    b.HasOne("Riber.Domain.Entities.Product", "Product")
+                    b.HasOne("Riber.Domain.Entities.Catalog.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -1895,14 +2050,19 @@ namespace Riber.Infrastructure.Persistence.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Riber.Domain.Entities.Order", b =>
-                {
-                    b.Navigation("_items");
-                });
-
-            modelBuilder.Entity("Riber.Domain.Entities.ProductCategory", b =>
+            modelBuilder.Entity("Riber.Domain.Entities.Catalog.ProductCategory", b =>
                 {
                     b.Navigation("_products");
+                });
+
+            modelBuilder.Entity("Riber.Domain.Entities.Chat.Chat", b =>
+                {
+                    b.Navigation("Messages");
+                });
+
+            modelBuilder.Entity("Riber.Domain.Entities.Order.Order", b =>
+                {
+                    b.Navigation("_items");
                 });
 #pragma warning restore 612, 618
         }

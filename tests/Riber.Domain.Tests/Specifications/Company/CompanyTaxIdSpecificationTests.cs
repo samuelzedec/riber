@@ -1,4 +1,3 @@
-using Entity = Riber.Domain.Entities;
 using Bogus.Extensions.Brazil;
 using FluentAssertions;
 using Riber.Domain.Abstractions;
@@ -137,8 +136,8 @@ public sealed class CompanyTaxIdSpecificationTests : BaseTest
         result.Should().BeFalse();
     }
     
-    private Entity.Company CreateCompanyDefault(string? taxId = null)
-        => Entity.Company.Create(
+    private Domain.Entities.Company.Company CreateCompanyDefault(string? taxId = null)
+        => Domain.Entities.Company.Company.Create(
             _faker.Company.CompanyName(),
             _faker.Company.CompanyName(),
             taxId ?? _faker.Company.Cnpj(),

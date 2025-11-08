@@ -1,4 +1,3 @@
-using Entity = Riber.Domain.Entities;
 using Bogus.Extensions.Brazil;
 using FluentAssertions;
 using Riber.Domain.Enums;
@@ -14,7 +13,7 @@ public sealed class NoTenantSpecificationTests : BaseTest
     {
         // Arrange
         var user = CreateUserDefault(companyId: null);
-        var specification = new NoTenantSpecification<Entity.User>();
+        var specification = new NoTenantSpecification<Domain.Entities.User.User>();
         
         // Act
         var result = specification.IsSatisfiedBy(user);
@@ -30,7 +29,7 @@ public sealed class NoTenantSpecificationTests : BaseTest
         // Arrange
         var tenantId = Guid.NewGuid();
         var user = CreateUserDefault(companyId: tenantId);
-        var specification = new NoTenantSpecification<Entity.User>();
+        var specification = new NoTenantSpecification<Domain.Entities.User.User>();
         
         // Act
         var result = specification.IsSatisfiedBy(user);
@@ -44,7 +43,7 @@ public sealed class NoTenantSpecificationTests : BaseTest
     public void ToExpression_Should_BeCompilable()
     {
         // Arrange
-        var specification = new NoTenantSpecification<Entity.User>();
+        var specification = new NoTenantSpecification<Domain.Entities.User.User>();
         
         // Act
         var expression = specification.ToExpression();
@@ -61,7 +60,7 @@ public sealed class NoTenantSpecificationTests : BaseTest
     {
         // Arrange
         var user = CreateUserDefault(companyId: null);
-        var specification = new NoTenantSpecification<Entity.User>();
+        var specification = new NoTenantSpecification<Domain.Entities.User.User>();
         var compiledExpression = specification.ToExpression().Compile();
         
         // Act
@@ -79,7 +78,7 @@ public sealed class NoTenantSpecificationTests : BaseTest
         // Arrange
         var userWithoutTenant = CreateUserDefault(companyId: null);
         var userWithTenant = CreateUserDefault(companyId: Guid.NewGuid());
-        var specification = new NoTenantSpecification<Entity.User>();
+        var specification = new NoTenantSpecification<Domain.Entities.User.User>();
         var predicate = specification.ToExpression().Compile();
         
         // Act
@@ -99,7 +98,7 @@ public sealed class NoTenantSpecificationTests : BaseTest
         var userWithoutTenant = CreateUserDefault(companyId: null);
         var userWithTenant = CreateUserDefault(companyId: Guid.NewGuid());
         var userWithEmptyGuid = CreateUserDefault(companyId: Guid.Empty);
-        var specification = new NoTenantSpecification<Entity.User>();
+        var specification = new NoTenantSpecification<Domain.Entities.User.User>();
         
         // Act
         var resultNull = specification.IsSatisfiedBy(userWithoutTenant);
@@ -120,7 +119,7 @@ public sealed class NoTenantSpecificationTests : BaseTest
         var directorUser = CreateUserDefault(companyId: null, position: BusinessPosition.Director);
         var managerUser = CreateUserDefault(companyId: null, position: BusinessPosition.Manager);
         var employeeUser = CreateUserDefault(companyId: null, position: BusinessPosition.Employee);
-        var specification = new NoTenantSpecification<Entity.User>();
+        var specification = new NoTenantSpecification<Domain.Entities.User.User>();
         
         // Act
         var resultDirector = specification.IsSatisfiedBy(directorUser);
@@ -142,7 +141,7 @@ public sealed class NoTenantSpecificationTests : BaseTest
         var globalUser2 = CreateUserDefault(companyId: null);
         var tenantUser1 = CreateUserDefault(companyId: Guid.NewGuid());
         var tenantUser2 = CreateUserDefault(companyId: Guid.NewGuid());
-        var specification = new NoTenantSpecification<Entity.User>();
+        var specification = new NoTenantSpecification<Domain.Entities.User.User>();
         
         // Act
         var resultGlobal1 = specification.IsSatisfiedBy(globalUser1);
@@ -164,7 +163,7 @@ public sealed class NoTenantSpecificationTests : BaseTest
         // Arrange
         var userWithoutTenant = CreateUserDefault(companyId: null);
         var userWithTenant = CreateUserDefault(companyId: Guid.NewGuid());
-        var specification = new NoTenantSpecification<Entity.User>();
+        var specification = new NoTenantSpecification<Domain.Entities.User.User>();
         
         // Act
         var result1 = specification.IsSatisfiedBy(userWithoutTenant);
@@ -179,12 +178,12 @@ public sealed class NoTenantSpecificationTests : BaseTest
         result4.Should().BeFalse();
     }
     
-    private Entity.User CreateUserDefault(
+    private Domain.Entities.User.User CreateUserDefault(
         string? name = null,
         string? taxId = null,
         BusinessPosition? position = null,
         Guid? companyId = null)
-        => Entity.User.Create(
+        => Domain.Entities.User.User.Create(
             name ?? _faker.Person.FullName,
             taxId ?? _faker.Person.Cpf(),
             position ?? BusinessPosition.Director,

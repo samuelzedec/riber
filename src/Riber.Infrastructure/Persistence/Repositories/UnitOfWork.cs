@@ -1,6 +1,6 @@
 ﻿using Mediator;
 using Microsoft.EntityFrameworkCore.Storage;
-using Riber.Domain.Entities;
+using Riber.Domain.Entities.Abstractions;
 using Riber.Domain.Repositories;
 
 namespace Riber.Infrastructure.Persistence.Repositories;

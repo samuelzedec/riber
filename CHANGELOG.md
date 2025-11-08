@@ -1,5 +1,14 @@
 # Riber - Changelog
 
+## v4.3.0 - 08/11/2025
+- **NOVO**: Novas entidades par uso de chat e agendes de IA
+- Adiciona entidade `Chat` para o usuário armazenar conversas com IA
+- Adiciona entidade `ChatMessage` para armazenar mensagens dentro de um chat
+- Adiciona a entidade `Assitant` junto com seeders de alguns assistente que terão na aplicacão
+- **REFATORAÇÃO**: Mudança na organização de pasta das entidades e corrigindo os Namespace
+
+---
+
 ## v4.2.1 - 07/11/2025
 - **REFATORAÇÃO**: Unificar BaseEntity e BaseModel em Tracker para herança simplificada
 - Remove `BaseEntityConfiguration` e `BaseModelConfiguration`, substituindo por `BaseTypeConfiguration`

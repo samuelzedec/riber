@@ -107,7 +107,7 @@ public sealed class CompanyNameTests : BaseTest
 
         // Assert
         act.Should().Throw<DomainException>();
-        act.Should().ThrowExactly<InvalidFantasyNameException>().WithMessage(NameErrors.FantasyNameEmpty);
+        act.Should().ThrowExactly<EmptyFantasyNameException>().WithMessage(NameErrors.FantasyNameEmpty);
     }
 
     [Trait("Category", "Unit")]
@@ -127,7 +127,7 @@ public sealed class CompanyNameTests : BaseTest
 
         // Assert
         act.Should().Throw<DomainException>();
-        act.Should().ThrowExactly<InvalidNameCorporateException>().WithMessage(NameErrors.CorporateNameEmpty);
+        act.Should().ThrowExactly<EmptyNameCorporateException>().WithMessage(NameErrors.CorporateNameEmpty);
     }
 
     #endregion
@@ -147,7 +147,7 @@ public sealed class CompanyNameTests : BaseTest
 
         // Assert
         result.Should().Throw<DomainException>();
-        result.Should().ThrowExactly<InvalidLengthCorporateNameException>()
+        result.Should().ThrowExactly<InvalidCorporateNameLengthException>()
             .WithMessage(NameErrors.CorporateNameLength(CompanyName.MinLength, CompanyName.CorporateMaxLength));
     }
 
@@ -164,7 +164,7 @@ public sealed class CompanyNameTests : BaseTest
 
         // Assert
         result.Should().Throw<DomainException>();
-        result.Should().ThrowExactly<InvalidLengthCorporateNameException>()
+        result.Should().ThrowExactly<InvalidCorporateNameLengthException>()
             .WithMessage(NameErrors.CorporateNameLength(CompanyName.MinLength, CompanyName.CorporateMaxLength));
     }
 
@@ -181,7 +181,7 @@ public sealed class CompanyNameTests : BaseTest
 
         // Assert
         result.Should().Throw<DomainException>();
-        result.Should().ThrowExactly<InvalidNameCorporateException>().WithMessage(NameErrors.CorporateNameEmpty);
+        result.Should().ThrowExactly<EmptyNameCorporateException>().WithMessage(NameErrors.CorporateNameEmpty);
     }
 
     #endregion
@@ -201,7 +201,7 @@ public sealed class CompanyNameTests : BaseTest
 
         // Assert
         result.Should().Throw<DomainException>();
-        result.Should().ThrowExactly<InvalidFantasyLengthNameException>().WithMessage(
+        result.Should().ThrowExactly<InvalidFantasyNameLengthException>().WithMessage(
             NameErrors.FantasyNameLength(CompanyName.MinLength, CompanyName.FantasyMaxLength));
     }
 
@@ -218,7 +218,7 @@ public sealed class CompanyNameTests : BaseTest
 
         // Assert
         result.Should().Throw<DomainException>();
-        result.Should().ThrowExactly<InvalidFantasyLengthNameException>().WithMessage(
+        result.Should().ThrowExactly<InvalidFantasyNameLengthException>().WithMessage(
             NameErrors.FantasyNameLength(CompanyName.MinLength, CompanyName.FantasyMaxLength));
     }
 
@@ -235,7 +235,7 @@ public sealed class CompanyNameTests : BaseTest
 
         // Assert
         result.Should().Throw<DomainException>();
-        result.Should().ThrowExactly<InvalidFantasyNameException>().WithMessage(NameErrors.FantasyNameEmpty);
+        result.Should().ThrowExactly<EmptyFantasyNameException>().WithMessage(NameErrors.FantasyNameEmpty);
     }
 
     [Trait("Category", "Unit")]
