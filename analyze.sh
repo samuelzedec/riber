@@ -44,8 +44,8 @@ SONAR_BEGIN_ARGS=(
 **/appsettings*.json,\
 **/Dockerfile*,\
 **/Seeders/**,\
-**/Schedulers/**,\,
-**/Templates/**,\
+**/Schedulers/**,\
+**/*.html,\
 **/Mappings/**"
   /d:sonar.coverage.exclusions="\
 **/Migrations/**,\

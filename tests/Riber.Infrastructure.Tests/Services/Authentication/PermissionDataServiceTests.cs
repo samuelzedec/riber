@@ -10,11 +10,12 @@ using Riber.Infrastructure.Persistence;
 using Riber.Infrastructure.Persistence.Identity;
 using Riber.Api.Tests;
 using Riber.Api.Tests.Fixtures;
+using Riber.Infrastructure.Services.Authentication;
 
 namespace Riber.Infrastructure.Tests.Services.Authentication;
 
 public sealed class PermissionDataServiceTests(
-    WebAppFixture webAppFixture, 
+    WebAppFixture webAppFixture,
     DatabaseFixture databaseFixture)
     : IntegrationTestBase(webAppFixture, databaseFixture)
 {
@@ -104,7 +105,7 @@ public sealed class PermissionDataServiceTests(
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-        
+
         var updatedPermission = await context.Set<ApplicationPermission>()
             .FirstAsync(p => p.Name == permission.Name);
         updatedPermission.IsActive.Should().BeTrue();
@@ -155,8 +156,8 @@ public sealed class PermissionDataServiceTests(
 
     #region Helper Methods
 
-    private IPermissionDataService CreatePermissionService(AppDbContext context)
-        => new Infrastructure.Services.Authentication.PermissionDataService(context, _mockMemoryCache.Object);
+    private PermissionDataService CreatePermissionService(AppDbContext context)
+        => new(context, _mockMemoryCache.Object);
 
     private ApplicationPermission CreatePermission(string name, bool isActive = true)
         => new()
@@ -169,16 +170,18 @@ public sealed class PermissionDataServiceTests(
         };
 
     private List<ApplicationPermission> CreatePermissions(int count)
-        => Enumerable.Range(1, count)
-            .Select(i => new ApplicationPermission
-            {
-                Id = _faker.Random.UInt(),
-                Name = $"permission-{i}",
-                Description = _faker.Random.String2(10),
-                IsActive = _faker.Random.Bool(),
-                Category = "test"
-            })
-            .ToList();
+        =>
+        [
+            .. Enumerable.Range(1, count)
+                .Select(i => new ApplicationPermission
+                {
+                    Id = _faker.Random.UInt(),
+                    Name = $"permission-{i}",
+                    Description = _faker.Random.String2(10),
+                    IsActive = _faker.Random.Bool(),
+                    Category = "test"
+                })
+        ];
 
     private void SetupCacheMiss()
     {
