@@ -1,5 +1,11 @@
 # Riber - Changelog
 
+## v4.3.1 - 09/12/2025
+**REFATOÇÃO**: Remove o método de busca por id da entidade nos IAiModelService
+Adiciona relationacimento entre entidade `ProductEmbeddings` e `Company` para uma melhor busca
+
+---
+
 ## v4.3.0 - 08/11/2025
 - **NOVO**: Novas entidades par uso de chat e agendes de IA
 - Adiciona entidade `Chat` para o usuário armazenar conversas com IA
