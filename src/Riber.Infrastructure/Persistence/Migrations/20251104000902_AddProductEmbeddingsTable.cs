@@ -39,7 +39,7 @@ namespace Riber.Infrastructure.Persistence.Migrations
                 column: "product_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_product_embeddings_vector",
+                name: "ix_embeddings_vector",
                 table: "product_embeddings",
                 column: "embeddings_vector")
                 .Annotation("Npgsql:IndexMethod", "hnsw")
