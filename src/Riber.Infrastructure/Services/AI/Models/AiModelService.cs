@@ -23,6 +23,8 @@ public abstract class AiModelService<TInput, TOutput>(AppDbContext context)
         await context.SaveChangesAsync(cancellationToken);
     }
 
-    public abstract Task<ReadOnlyMemory<TOutput>> FindSimilarAsync(float[] query, CancellationToken cancellationToken = default);
-    public abstract Task<TInput?> GetByEntityIdAsync(Guid entityId, CancellationToken cancellationToken = default);
+    public abstract Task<ReadOnlyMemory<TOutput>> FindSimilarAsync(
+        Guid companyId, 
+        float[] query,
+        CancellationToken cancellationToken = default);
 }

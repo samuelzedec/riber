@@ -4,5 +4,4 @@ public enum AssistantType
 {
     SalesAnalysis = 1,
     ProductAnalysis = 2,
-    MonthlyReport = 3
 }

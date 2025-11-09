@@ -30,5 +30,18 @@ public sealed class ProductEmbeddingsModelMap : BaseTypeConfiguration<ProductEmb
             .HasForeignKey(p => p.ProductId)
             .HasConstraintName("fk_product_embeddings_product_id")
             .OnDelete(DeleteBehavior.NoAction);
+
+        builder
+            .Property(p => p.CompanyId)
+            .HasColumnName("company_id")
+            .HasColumnType("uuid")
+            .IsRequired();
+
+        builder
+            .HasOne(p => p.Company)
+            .WithMany()
+            .HasForeignKey(p => p.CompanyId)
+            .HasConstraintName("fk_product_embeddings_company_id")
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

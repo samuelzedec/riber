@@ -105,7 +105,10 @@ public static class DependencyInjection
                 b.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName)
                     .MigrationsHistoryTable("__EFMigrationsHistory");
             })
-            .AddInterceptors(new CaseInsensitiveInterceptor(), new AuditInterceptor()));
+            .AddInterceptors(new CaseInsensitiveInterceptor(), new AuditInterceptor())
+            .EnableDetailedErrors()
+            .EnableServiceProviderCaching()
+        );
     }
 
     private static void AddRepositories(this IServiceCollection services)

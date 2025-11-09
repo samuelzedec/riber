@@ -1,6 +1,6 @@
 namespace Riber.Application.Abstractions.Services.AI;
 
-public interface IAiModelService<TInput, TOutput>
+public interface IAiModelService<in TInput, TOutput>
     where TInput : class
     where TOutput : class
 {
@@ -23,17 +23,10 @@ public interface IAiModelService<TInput, TOutput>
     /// <summary>
     /// Encontra itens semelhantes com base no vetor de consulta fornecido.
     /// </summary>
+    /// <param name="companyId">O identificador único da empresa a ser consultada.</param>
     /// <param name="query">Um array de números de ponto flutuante representando o vetor de consulta para a operação de similaridade.</param>
     /// <param name="cancellationToken">Um token para monitorar solicitações de cancelamento.</param>
     /// <typeparam name="TOutput">O tipo de item que será retornado como resultado da operação.</typeparam>
     /// <returns>Uma tarefa que representa a operação assíncrona, contendo uma memória somente leitura de itens semelhantes do tipo especificado.</returns>
-    Task<ReadOnlyMemory<TOutput>> FindSimilarAsync(float[] query, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Obtém um recurso ou dado com base no identificador da entidade especificado.
-    /// </summary>
-    /// <param name="entityId">O identificador único da entidade a ser recuperada.</param>
-    /// <param name="cancellationToken">Um token para monitorar solicitações de cancelamento.</param>
-    /// <returns>Uma tarefa que representa a operação assíncrona, contendo o recurso ou dado encontrado, ou null se não encontrado.</returns>
-    Task<TInput?> GetByEntityIdAsync(Guid entityId, CancellationToken cancellationToken = default);
+    Task<ReadOnlyMemory<TOutput>> FindSimilarAsync(Guid companyId, float[] query, CancellationToken cancellationToken = default);
 }
