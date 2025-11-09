@@ -25,9 +25,9 @@ public sealed class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbConte
                     b.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName)
                         .MigrationsHistoryTable("__EFMigrationsHistory");
                 })
-            .AddInterceptors(
-                new CaseInsensitiveInterceptor(),
-                new AuditInterceptor());
+            .AddInterceptors(new CaseInsensitiveInterceptor(), new AuditInterceptor())
+            .EnableSensitiveDataLogging()
+            .EnableServiceProviderCaching();
 
         return new AppDbContext(optionsBuilder.Options);
     }
