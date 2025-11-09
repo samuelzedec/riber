@@ -1,8 +1,10 @@
 # Riber - Changelog
 
+---
+
 ## v4.3.1 - 09/12/2025
-**REFATOÇÃO**: Remove o método de busca por id da entidade nos IAiModelService
-Adiciona relationacimento entre entidade `ProductEmbeddings` e `Company` para uma melhor busca
+**REFATORAÇÃO**: Remove o método de busca por id da entidade nos IAiModelService
+Adiciona relacionamento entre entidade `ProductEmbeddings` e `Company` para uma melhor busca
 
 ---
 

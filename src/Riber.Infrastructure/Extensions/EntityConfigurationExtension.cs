@@ -221,7 +221,7 @@ public static class EntityConfigurationExtension
         
         builder
             .HasIndex(x => x.Embeddings)
-            .HasDatabaseName("ix_product_embeddings_vector")
+            .HasDatabaseName("ix_embeddings_vector")
             .HasMethod("hnsw")
             .HasOperators("vector_cosine_ops")
             .HasStorageParameter("m", 16)
