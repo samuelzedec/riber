@@ -40,8 +40,7 @@ public sealed class GenerateProductEmbeddingsMessageConsumer(
             logger.LogInformation("Embeddings do produto {ProductId} gerados.", productId);
             var productEmbeddingsModel = new ProductEmbeddingsModel
             {
-                ProductId = productId, 
-                Embeddings = new Vector(embeddings)
+                ProductId = productId, CompanyId = product.CompanyId, Embeddings = new Vector(embeddings)
             };
 
             await modelService.CreateAsync(productEmbeddingsModel, context.CancellationToken);
