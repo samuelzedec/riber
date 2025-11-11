@@ -17,16 +17,15 @@ public static class HttpContextExtension
         this HttpContext context,
         HttpStatusCode code,
         string message,
-        Dictionary<string, string[]> details)
+        Dictionary<string, string[]>? details = null,
+        CancellationToken cancellationToken = default)
     {
-        var response = details.Count == 0
-            ? Result.Failure<object>(message, code)
-            : Result.Failure<object>(details, code);
-
+        var response = Result.Failure<object>(message, code, details);
         var jsonResponse = JsonSerializer.Serialize(response, JsonOptions);
+
         context.Response.StatusCode = (int)code;
         context.Response.ContentType = "application/json";
 
-        await context.Response.WriteAsync(jsonResponse);
+        await context.Response.WriteAsync(jsonResponse, cancellationToken);
     }
 }
