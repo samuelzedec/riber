@@ -45,17 +45,19 @@ public class Result
     public static Result<EmptyResult> Failure(
         string message,
         HttpStatusCode statusCode = HttpStatusCode.BadRequest)
-        => new(new EmptyResult(), false, new Error(message, statusCode), statusCode);
+    {
+        var error = new Error(message, statusCode, null);
+        return new Result<EmptyResult>(new EmptyResult(), false, error, statusCode);
+    }
 
     public static Result<T> Failure<T>(
         string message,
-        HttpStatusCode statusCode = HttpStatusCode.BadRequest)
-        => new(default, false, new Error(message, statusCode), statusCode);
-
-    public static Result<T> Failure<T>(
-        Dictionary<string, string[]> details,
-        HttpStatusCode statusCode = HttpStatusCode.BadRequest)
-        => new(default, false, new Error(details, statusCode), statusCode);
+        HttpStatusCode statusCode = HttpStatusCode.BadRequest,
+        Dictionary<string, string[]>? details = null)
+    {
+        var error = new Error(message, statusCode, details);
+        return new Result<T>(default, false, error, statusCode);
+    }
 
     #endregion
 }
