@@ -20,27 +20,18 @@ public sealed class SecurityStampMiddleware(
         (string? userId, string? tokenSecurityStamp) = ExtractUserClaims(context.User);
         if (!Guid.TryParse(userId, out var userIdParse) || string.IsNullOrWhiteSpace(tokenSecurityStamp))
         {
-            await RespondUnauthorized(context, "Token do usuário inválido ou mal formado.");
+            await context.WriteErrorResponse(HttpStatusCode.Unauthorized, "Token do usuário inválido ou mal formado.");
             return;
         }
-        
+
         var user = await userQueryService.FindByIdAsync(userIdParse);
         if (user is null || user.SecurityStamp != tokenSecurityStamp)
         {
-            await RespondUnauthorized(context, "Security stamp inválido ou usuário não encontrado.");
+            await context.WriteErrorResponse(HttpStatusCode.Unauthorized, "Security stamp inválido ou usuário não encontrado.");
             return;
         }
 
         await next(context);
-    }
-
-    private static async Task RespondUnauthorized(HttpContext context, string message)
-    {
-        await context.WriteErrorResponse(
-            code: HttpStatusCode.Unauthorized,
-            message: message,
-            details: []
-        );
     }
 
     private static (string? userId, string? securityStamp) ExtractUserClaims(ClaimsPrincipal user)
