@@ -12,7 +12,7 @@ public sealed class Error
 
     public string Type { get; init; } = string.Empty;
     public string Message { get; init; } = string.Empty;
-    public Dictionary<string, string[]> Details { get; set; } = [];
+    public Dictionary<string, string[]>? Details { get; init; }
 
     #endregion
 
@@ -21,17 +21,11 @@ public sealed class Error
     [JsonConstructor]
     public Error() { }
 
-    public Error(string message, HttpStatusCode statusCode)
+    public Error(string message, HttpStatusCode statusCode, Dictionary<string, string[]>? details)
     {
         Message = message;
         Type = statusCode.ToString();
-    }
-
-    public Error(Dictionary<string, string[]> details, HttpStatusCode statusCode)
-    {
-        Message = "Dados Inválidos.";
         Details = details;
-        Type = statusCode.ToString();
     }
 
     #endregion

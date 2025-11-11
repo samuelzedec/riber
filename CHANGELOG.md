@@ -2,6 +2,15 @@
 
 ---
 
+## v4.3.2 - 11/12/2025
+**REFATORAÇÃO**: Mudança no result pattern e na classe de erro
+- Remove a redundância de codigo na criação de um Error
+- Remove sobrecargas na criação de Result com Errors
+- Simplifica as respostas de Errors
+- Remove método redundante do middleware de validação do token
+
+---
+
 ## v4.3.1 - 09/12/2025
 **REFATORAÇÃO**: Remove o método de busca por id da entidade nos IAiModelService
 Adiciona relacionamento entre entidade `ProductEmbeddings` e `Company` para uma melhor busca
