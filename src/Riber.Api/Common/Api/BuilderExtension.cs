@@ -161,12 +161,12 @@ public static class BuilderExtension
         builder.Services.AddOpenApi(options
             => options.AddDocumentTransformer((document, _, _) =>
             {
-                document.Info = new()
+                document.Info = new OpenApiInfo
                 {
                     Title = "Riber Documentation API", Version = "v1", Description = "API do Riber"
                 };
 
-                document.Components ??= new();
+                document.Components ??= new OpenApiComponents();
                 document.Components.SecuritySchemes = new Dictionary<string, OpenApiSecurityScheme>
                 {
                     ["Bearer"] = new()
