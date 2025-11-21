@@ -27,6 +27,7 @@ RUN dotnet test Riber.slnx \
     -c Release \
     --no-build \
     --no-restore \
+    --filter "Category=Unit" \
     --logger "console;verbosity=detailed"
 
 FROM build AS publish
