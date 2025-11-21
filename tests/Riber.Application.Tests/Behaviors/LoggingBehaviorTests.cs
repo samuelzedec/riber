@@ -122,8 +122,8 @@ public sealed class LoggingBehaviorTests : BaseTest
     }
 
     [Trait("Category", "Unit")]
-    [Fact(DisplayName = "Should log error and re-throw when handler throws exception")]
-    public async Task Handle_WhenHandlerThrowsException_ShouldLogErrorAndReThrow()
+    [Fact(DisplayName = "Should add metadata to exception when handler throws")]
+    public async Task Handle_WhenHandlerThrowsException_ShouldAddMetadataAndReThrow()
     {
         // Arrange
         var sut = CreateSut();
@@ -138,22 +138,18 @@ public sealed class LoggingBehaviorTests : BaseTest
         );
 
         // Assert
-        await act.Should()
+        var exception = await act.Should()
             .ThrowExactlyAsync<InvalidOperationException>()
             .WithMessage("Test error");
 
-        VerifyLogContains(
-            LogLevel.Error,
-            expectedMessageName,
-            "failed after",
-            "ms",
-            Times.Once()
-        );
+        exception.Which.Data["RequestName"].Should().Be(expectedMessageName);
+        exception.Which.Data["ElapsedMs"].Should().NotBeNull();
+        exception.Which.Data["ElapsedMs"].Should().BeOfType<long>();
     }
 
     [Trait("Category", "Unit")]
-    [Fact(DisplayName = "Should preserve exception details when logging error")]
-    public async Task Handle_WhenHandlerThrowsException_ShouldLogExceptionDetails()
+    [Fact(DisplayName = "Should NOT log error when handler throws exception")]
+    public async Task Handle_WhenHandlerThrowsException_ShouldNotLogError()
     {
         // Arrange
         var sut = CreateSut();
@@ -173,17 +169,52 @@ public sealed class LoggingBehaviorTests : BaseTest
             // Expected exception
         }
 
-        // Assert
+        // Assert - Verifica que NÃO logou erro
         _mockLogger.Verify(
             x => x.Log(
                 LogLevel.Error,
                 It.IsAny<EventId>(),
                 It.IsAny<It.IsAnyType>(),
-                expectedException, // Verifica que a exceção original foi passada
+                It.IsAny<Exception>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()
             ),
-            Times.Once
+            Times.Never // ← Mudou de Once para Never
         );
+    }
+
+    [Trait("Category", "Unit")]
+    [Fact(DisplayName = "Should set activity status to error when exception occurs")]
+    public async Task Handle_WhenHandlerThrowsException_ShouldSetActivityStatusToError()
+    {
+        // Arrange
+        var sut = CreateSut();
+        var expectedException = new InvalidOperationException("Test error");
+        Activity? capturedActivity = null;
+
+        using var listener = new ActivityListener();
+        listener.ShouldListenTo = source => source.Name == "Riber.Application";
+        listener.Sample = (ref _) => ActivitySamplingResult.AllData;
+        listener.ActivityStarted = activity => capturedActivity = activity;
+        ActivitySource.AddActivityListener(listener);
+
+        // Act
+        try
+        {
+            await sut.Handle(
+                _request,
+                CreateFailingHandler(expectedException),
+                CancellationToken.None
+            );
+        }
+        catch (InvalidOperationException)
+        {
+            // Expected
+        }
+
+        // Assert
+        capturedActivity.Should().NotBeNull();
+        capturedActivity!.Status.Should().Be(ActivityStatusCode.Error);
+        capturedActivity.StatusDescription.Should().Be("Test error");
     }
 
     [Trait("Category", "Unit")]
@@ -194,10 +225,9 @@ public sealed class LoggingBehaviorTests : BaseTest
         var sut = CreateSut();
         Activity? capturedActivity = null;
 
-        // Captura a Activity criada
         using var listener = new ActivityListener();
         listener.ShouldListenTo = source => source.Name == "Riber.Application";
-        listener.Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllData;
+        listener.Sample = (ref _) => ActivitySamplingResult.AllData;
         listener.ActivityStarted = activity => capturedActivity = activity;
         ActivitySource.AddActivityListener(listener);
 
@@ -207,6 +237,28 @@ public sealed class LoggingBehaviorTests : BaseTest
         // Assert
         capturedActivity.Should().NotBeNull();
         capturedActivity!.DisplayName.Should().Be($"Mediator.{nameof(RequestTest)}");
+    }
+
+    [Trait("Category", "Unit")]
+    [Fact(DisplayName = "Should set activity status to Ok when request succeeds")]
+    public async Task Handle_WhenRequestSucceeds_ShouldSetActivityStatusToOk()
+    {
+        // Arrange
+        var sut = CreateSut();
+        Activity? capturedActivity = null;
+
+        using var listener = new ActivityListener();
+        listener.ShouldListenTo = source => source.Name == "Riber.Application";
+        listener.Sample = (ref _) => ActivitySamplingResult.AllData;
+        listener.ActivityStarted = activity => capturedActivity = activity;
+        ActivitySource.AddActivityListener(listener);
+
+        // Act
+        await sut.Handle(_request, CreateSuccessfulHandler(), CancellationToken.None);
+
+        // Assert
+        capturedActivity.Should().NotBeNull();
+        capturedActivity!.Status.Should().Be(ActivityStatusCode.Ok);
     }
 
     #region Helper Methods

@@ -4,9 +4,7 @@
     <File Path="Directory.Packages.props" />
     <File Path="docker-compose.yml" />
     <File Path="Dockerfile" />
-    <File Path="Dockerfile.dev" />
-    <File Path=".dockerignore"/>
-    <File Path="CHANGELOG.md"/>
+    <File Path=".dockerignore" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/Riber.Api/Riber.Api.csproj" />
