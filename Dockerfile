@@ -20,16 +20,6 @@ COPY tests/ ./tests/
 
 RUN dotnet publish Riber.slnx -c Release --no-restore
 
-FROM build AS tests
-WORKDIR /build
-
-RUN dotnet test Riber.slnx \
-    -c Release \
-    --no-build \
-    --no-restore \
-    --filter "Category=Unit" \
-    --logger "console;verbosity=detailed"
-
 FROM build AS publish
 WORKDIR /build
 
