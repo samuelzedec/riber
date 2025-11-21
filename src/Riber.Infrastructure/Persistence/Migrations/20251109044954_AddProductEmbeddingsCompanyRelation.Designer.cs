@@ -1523,7 +1523,7 @@ namespace Riber.Infrastructure.Persistence.Migrations
                     b.HasIndex("CompanyId");
 
                     b.HasIndex("Embeddings")
-                        .HasDatabaseName("ix_product_embeddings_vector")
+                        .HasDatabaseName("ix_embeddings_vector")
                         .HasAnnotation("Npgsql:StorageParameter:ef_construction", 64)
                         .HasAnnotation("Npgsql:StorageParameter:m", 16);
 

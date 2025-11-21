@@ -2,17 +2,21 @@
   <PropertyGroup>
     <UserSecretsId>e2e3dfd3-be66-444b-9252-3a3db2ea0e9c</UserSecretsId>
   </PropertyGroup>
-
+  
   <ItemGroup>
-    <PackageReference Include="Asp.Versioning.Mvc" />
-    <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
-    <PackageReference Include="Scalar.AspNetCore" />
+    <InternalsVisibleTo Include="Riber.Api.Tests"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Riber.Application\Riber.Application.csproj" />
-    <ProjectReference Include="..\Riber.Infrastructure\Riber.Infrastructure.csproj" />
+    <PackageReference Include="Asp.Versioning.Mvc"/>
+    <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer"/>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer"/>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
+    <PackageReference Include="Scalar.AspNetCore"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Riber.Application\Riber.Application.csproj"/>
+    <ProjectReference Include="..\Riber.Infrastructure\Riber.Infrastructure.csproj"/>
   </ItemGroup>
 </Project>

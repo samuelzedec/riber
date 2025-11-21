@@ -69,30 +69,16 @@ public static class DependencyInjection
 
     private static void AddLogging(this ILoggingBuilder logging)
     {
-        const string output =
-            "[{Timestamp:dd/MM/yyyy HH:mm:ss}] {Level:u3} | {SourceContext} | {Message:lj}{NewLine}{Exception}";
+        const string logStructure = "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}] {Message:lj}{NewLine}{Exception}";
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Information()
-            .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-            .MinimumLevel.Override("System", LogEventLevel.Warning)
-            .Enrich.FromLogContext()
-            .WriteTo.Console(outputTemplate: output)
-            .WriteTo.Logger(lc => lc
-                .Filter.ByExcluding(evt => evt.Level >= LogEventLevel.Error)
-                .WriteTo.File(
-                    path: "Common/Logs/app-.log",
-                    outputTemplate: output,
-                    rollingInterval: RollingInterval.Day,
-                    restrictedToMinimumLevel: LogEventLevel.Information,
-                    retainedFileCountLimit: 30))
-            .WriteTo.File(
-                path: "Common/Logs/errors-.log",
-                outputTemplate: output,
-                rollingInterval: RollingInterval.Day,
-                restrictedToMinimumLevel: LogEventLevel.Error,
-                retainedFileCountLimit: 90)
+            .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+            .MinimumLevel.Override("Microsoft.AspNetCore.Routing", LogEventLevel.Warning)
+            .MinimumLevel.Override("Microsoft.AspNetCore.Mvc", LogEventLevel.Warning)
+            .WriteTo.Console(outputTemplate: logStructure)
             .CreateLogger();
 
+        logging.ClearProviders();
         logging.AddSerilog();
     }
 

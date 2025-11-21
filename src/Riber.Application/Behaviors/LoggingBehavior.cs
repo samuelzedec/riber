@@ -38,13 +38,12 @@ public class LoggingBehavior<TRequest, TResponse>(ILogger<TRequest> logger)
 
             return result;
         }
-        catch (OperationCanceledException ex) when (cancellationToken.IsCancellationRequested)
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
             stopwatch.Stop();
             activity?.SetStatus(ActivityStatusCode.Error, "Request cancelled");
 
             logger.LogWarning(
-                ex,
                 "{RequestName} cancelled after {ElapsedSeconds:F2}s",
                 messageName,
                 stopwatch.Elapsed.TotalSeconds
@@ -65,12 +64,6 @@ public class LoggingBehavior<TRequest, TResponse>(ILogger<TRequest> logger)
             if (!ex.Data.Contains("ElapsedMs"))
                 ex.Data["ElapsedMs"] = stopwatch.ElapsedMilliseconds;
 
-            logger.LogError(
-                ex,
-                "{RequestName} failed after {ElapsedMs}ms",
-                messageName,
-                stopwatch.ElapsedMilliseconds
-            );
             throw;
         }
     }

@@ -1,6 +1,6 @@
-﻿namespace Riber.Application.Exceptions;
+﻿using System.Net;
 
-public sealed class ValidationException(Dictionary<string, string[]> details) : Exception
-{
-    public Dictionary<string, string[]> Details => details;
-}
+namespace Riber.Application.Exceptions;
+
+public sealed class ValidationException(Dictionary<string, string[]> details) 
+    : ApplicationException("Dados Inválidos.", HttpStatusCode.BadRequest, details);
