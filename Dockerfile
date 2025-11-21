@@ -1,32 +1,48 @@
-﻿FROM mcr.microsoft.com/dotnet/sdk:9.0-alpine AS build
+﻿FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
 WORKDIR /build
 
 RUN apk add --no-cache bash dos2unix
-
-COPY Directory.Packages.props Directory.Build.props ./
+COPY Directory.Packages.props Directory.Build.props Riber.slnx ./
 
 COPY src/Riber.Api/Riber.Api.csproj ./src/Riber.Api/
 COPY src/Riber.Application/Riber.Application.csproj ./src/Riber.Application/
 COPY src/Riber.Domain/Riber.Domain.csproj ./src/Riber.Domain/
 COPY src/Riber.Infrastructure/Riber.Infrastructure.csproj ./src/Riber.Infrastructure/
 
-RUN dotnet restore ./src/Riber.Api/Riber.Api.csproj
+COPY tests/Riber.Api.Tests/Riber.Api.Tests.csproj ./tests/Riber.Api.Tests/
+COPY tests/Riber.Application.Tests.Tests/Riber.Application.Tests.csproj ./tests/Riber.Application.Tests/
+COPY tests/Riber.Domain.Tests/Riber.Domain.Tests.csproj ./tests/Riber.Domain.Tests/
+COPY tests/Riber.Infrastructure.Tests/Riber.Infrastructure.Tests.csproj ./tests/Riber.Infrastructure.Tests/
 
-COPY src/Riber.Api ./src/Riber.Api/
-COPY src/Riber.Application ./src/Riber.Application/
-COPY src/Riber.Domain ./src/Riber.Domain/
-COPY src/Riber.Infrastructure ./src/Riber.Infrastructure/
+RUN dotnet restore Riber.slnx
+COPY src/ ./src/
+COPY tests/ ./tests/
+
+RUN dotnet publish Riber.slnx -c Release --no-restore
+
+FROM build AS tests
+WORKDIR /build
+
+RUN dotnet test Riber.slnx \
+    -c Release \
+    --no-build \
+    --no-restore \
+    --logger "console;verbosity=detailed"
+
+FROM build AS publish
+WORKDIR /build
 
 RUN dotnet publish src/Riber.Api/Riber.Api.csproj \
     -c Release \
-    -o /app/publish \
-    --no-restore
+    -o /publish \
+    --no-restore \
+    --no-build
 
-FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine AS runtime
 WORKDIR /app
 
-RUN addgroup -g 1000 appgroup && \
-    adduser -u 1000 -G appgroup -s /bin/sh -D appuser && \
+RUN addgroup -g 1000 app-group && \
+    adduser -u 1000 -G app-group -s /bin/sh -D app-user && \
     apk add --no-cache bash
 
 ENV ConnectionStrings__DefaultConnection="" \
@@ -36,10 +52,8 @@ ENV ConnectionStrings__DefaultConnection="" \
     ASPNETCORE_ENVIRONMENT=Production \
     ASPNETCORE_URLS=http://0.0.0.0:8080
 
-COPY --from=build /app/publish .
-
-RUN chown -R appuser:appgroup /app
-USER appuser
+COPY --from=publish --chown=app-user:app-group /publish .
+USER app-user
 
 EXPOSE 8080
 ENTRYPOINT ["dotnet", "Riber.Api.dll"]
