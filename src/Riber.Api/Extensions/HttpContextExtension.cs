@@ -20,7 +20,7 @@ public static class HttpContextExtension
         Dictionary<string, string[]>? details = null,
         CancellationToken cancellationToken = default)
     {
-        var response = Result.Failure<object>(message, code, details);
+        var response = Result.Failure<EmptyResult>(message, code, details);
         var jsonResponse = JsonSerializer.Serialize(response, JsonOptions);
 
         context.Response.StatusCode = (int)code;

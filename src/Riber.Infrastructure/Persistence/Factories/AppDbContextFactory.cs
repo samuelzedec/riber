@@ -7,16 +7,15 @@ namespace Riber.Infrastructure.Persistence.Factories;
 
 public sealed class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
 {
+    private const string AppSettingsPath = "../../../../Riber.Api/appsettings.json";
+
     public AppDbContext CreateDbContext(string[] args)
     {
         var configuration = new ConfigurationBuilder()
-            .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../Riber.Api"))
-            .AddJsonFile("appsettings.json", optional: false)
-            .AddEnvironmentVariables()
+            .AddJsonFile(Path.Combine(AppContext.BaseDirectory, AppSettingsPath), optional: false)
             .Build();
 
-        var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
-        optionsBuilder
+        var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>()
             .UseNpgsql(
                 configuration.GetConnectionString("DefaultConnection"),
                 b =>
@@ -26,7 +25,7 @@ public sealed class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbConte
                         .MigrationsHistoryTable("__EFMigrationsHistory");
                 })
             .AddInterceptors(new CaseInsensitiveInterceptor(), new AuditInterceptor())
-            .EnableSensitiveDataLogging()
+            .EnableDetailedErrors()
             .EnableServiceProviderCaching();
 
         return new AppDbContext(optionsBuilder.Options);

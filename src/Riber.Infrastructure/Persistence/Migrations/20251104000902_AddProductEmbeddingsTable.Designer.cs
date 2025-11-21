@@ -1395,7 +1395,7 @@ namespace Riber.Infrastructure.Persistence.Migrations
                         .HasName("pk_product_embeddings_id");
 
                     b.HasIndex("Embeddings")
-                        .HasDatabaseName("ix_product_embeddings_vector")
+                        .HasDatabaseName("ixembeddings_vector")
                         .HasAnnotation("Npgsql:StorageParameter:ef_construction", 64)
                         .HasAnnotation("Npgsql:StorageParameter:m", 16);
 
